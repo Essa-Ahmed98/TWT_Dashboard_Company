@@ -1,0 +1,268 @@
+<!-- Modal backdrop -->
+@if (showModal()) {
+  <div class="modal-backdrop" (click)="closeModal()"></div>
+}
+
+<div class="campaigns">
+
+  <!-- ══════════════════════════════════════════
+       PAGE HEADER
+  ══════════════════════════════════════════ -->
+  <div class="campaigns__header">
+    <div class="campaigns__title">
+      <h1 class="campaigns__title-text">إدارة الحملات</h1>
+      <span class="campaigns__title-count">
+        {{ campaigns().length }} حملة مسجلة &bull; {{ totalGroups() }} مجموعة
+      </span>
+    </div>
+    <div class="campaigns__actions">
+      <!-- Search + page size -->
+      <div class="campaigns__search">
+        <i class="pi pi-search campaigns__search-icon"></i>
+        <input
+          class="campaigns__search-input"
+          type="text"
+          placeholder="بحث..."
+          [value]="searchQuery()"
+          (input)="onSearch($any($event.target).value)"
+        />
+      </div>
+      <select class="page-size-select" (change)="onPageSizeChange(+$any($event.target).value)">
+        <option [value]="10" [selected]="selectedPageSize() === 10">10</option>
+        <option [value]="20" [selected]="selectedPageSize() === 20">20</option>
+        <option [value]="30" [selected]="selectedPageSize() === 30">30</option>
+        <option [value]="40" [selected]="selectedPageSize() === 40">40</option>
+        <option [value]="50" [selected]="selectedPageSize() === 50">50</option>
+      </select>
+
+      <!-- View toggle -->
+      <div class="view-toggle">
+        <button class="view-toggle__btn"
+                [class.view-toggle__btn--active]="viewMode() === 'grid'"
+                (click)="viewMode.set('grid')" title="عرض الشبكة">
+          <i class="pi pi-th-large"></i>
+        </button>
+        <button class="view-toggle__btn"
+                [class.view-toggle__btn--active]="viewMode() === 'list'"
+                (click)="viewMode.set('list')" title="عرض القائمة">
+          <i class="pi pi-list"></i>
+        </button>
+      </div>
+
+      <button class="btn btn--primary" (click)="openModal()">
+        <i class="pi pi-plus"></i>
+        <span>إضافة حملة</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       LOADING SPINNER
+  ══════════════════════════════════════════ -->
+  @if (loading()) {
+    <div class="campaigns__loading">
+      <span class="campaigns__spinner"></span>
+      <span class="campaigns__loading-text">جاري التحميل...</span>
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════
+       GRID VIEW
+  ══════════════════════════════════════════ -->
+  @if (!loading() && viewMode() === 'grid') {
+    <div class="campaigns__grid">
+      @for (c of filteredCampaigns(); track c.id) {
+        <div class="campaign-card">
+          <div class="campaign-card__head">
+            <div class="campaign-card__info">
+              <span class="campaign-card__name">{{ c.name }}</span>
+              <span class="campaign-card__number">رقم الحملة: {{ c.number }}</span>
+            </div>
+            <span class="status-badge status-badge--{{ statusClass(c.status) }}">
+              <span class="status-badge__dot"></span>
+              {{ c.status }}
+            </span>
+          </div>
+
+          <div class="campaign-card__stats">
+            <div class="cstat">
+              <i class="pi pi-users cstat__icon"></i>
+              <span class="cstat__value">{{ c.pilgrimsCount | number }}</span>
+              <span class="cstat__label">حاج</span>
+            </div>
+            <div class="cstat">
+              <i class="pi pi-sitemap cstat__icon"></i>
+              <span class="cstat__value">{{ c.groupsCount }}</span>
+              <span class="cstat__label">مجموعة</span>
+            </div>
+            <div class="cstat">
+              <i class="pi pi-user cstat__icon"></i>
+              <span class="cstat__value">{{ c.supervisorsCount }}</span>
+              <span class="cstat__label">مشرف</span>
+            </div>
+            <div class="cstat">
+              <i class="pi pi-car cstat__icon"></i>
+              <span class="cstat__value">{{ c.busesCount }}</span>
+              <span class="cstat__label">حافلة</span>
+            </div>
+          </div>
+
+          <div class="campaign-card__footer">
+            <a class="campaign-card__link" (click)="openDetail(c.id)">
+              عرض التفاصيل والمجموعات
+              <i class="pi pi-angle-left"></i>
+            </a>
+          </div>
+        </div>
+      }
+
+      @if (filteredCampaigns().length === 0) {
+        <div class="campaigns__empty">
+          <i class="pi pi-inbox"></i>
+          <p>لا توجد نتائج</p>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════
+       LIST VIEW
+  ══════════════════════════════════════════ -->
+  @if (!loading() && viewMode() === 'list') {
+    <div class="campaigns__table-wrap">
+      <table class="campaigns__table">
+        <thead>
+          <tr>
+            <th>الحملة</th>
+            <th>الحجاج</th>
+            <th>المجموعات</th>
+            <th>المشرفين</th>
+            <th>الحافلات</th>
+            <th>الحالة</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of filteredCampaigns(); track c.id) {
+            <tr>
+              <td>
+                <div class="campaign-name">
+                  <span class="campaign-name__text">{{ c.name }}</span>
+                  <span class="campaign-name__sub">رقم الحملة {{ c.number }}</span>
+                </div>
+              </td>
+              <td>{{ c.pilgrimsCount | number }}</td>
+              <td>{{ c.groupsCount }}</td>
+              <td>{{ c.supervisorsCount }}</td>
+              <td>{{ c.busesCount }}</td>
+              <td>
+                <span class="status-badge status-badge--{{ statusClass(c.status) }}">
+                  <span class="status-badge__dot"></span>
+                  {{ c.status }}
+                </span>
+              </td>
+              <td>
+                <a class="table-link" (click)="openDetail(c.id)">
+                  عرض التفاصيل والمجموعات
+                  <i class="pi pi-angle-left"></i>
+                </a>
+              </td>
+            </tr>
+          }
+
+          @if (filteredCampaigns().length === 0) {
+            <tr>
+              <td colspan="7" class="campaigns__empty">
+                <i class="pi pi-inbox"></i>
+                <p>لا توجد نتائج</p>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════
+       PAGINATION
+  ══════════════════════════════════════════ -->
+  @if (!loading() && totalCount() > 0) {
+    <div class="pagination-bar">
+      <div class="pagination-bar__controls">
+        <button class="pagination__btn"
+                [disabled]="currentPage() === 1"
+                (click)="goToPage(currentPage() - 1)">
+          <i class="pi pi-angle-right"></i>
+        </button>
+
+        @for (p of visiblePages(); track $index) {
+          @if (p === '...') {
+            <span class="pagination__ellipsis">…</span>
+          } @else {
+            <button class="pagination__btn"
+                    [class.pagination__btn--active]="p === currentPage()"
+                    (click)="goToPage(p)">
+              {{ p }}
+            </button>
+          }
+        }
+
+        <button class="pagination__btn"
+                [disabled]="currentPage() === totalPages()"
+                (click)="goToPage(currentPage() + 1)">
+          <i class="pi pi-angle-left"></i>
+        </button>
+      </div>
+
+      <span class="pagination-bar__info">
+        {{ campaigns().length }} من {{ totalCount() | number }}
+      </span>
+    </div>
+  }
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     ADD CAMPAIGN DIALOG
+══════════════════════════════════════════ -->
+@if (showModal()) {
+  <div class="dialog" (click)="$event.stopPropagation()">
+
+    <div class="dialog__header">
+      <div>
+        <h2 class="dialog__title">إضافة حملة جديدة</h2>
+        <p class="dialog__sub">أدخل بيانات الحملة لإنشائها</p>
+      </div>
+      <button class="dialog__close" (click)="closeModal()">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <div class="dialog__body">
+
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">اسم الحملة <span class="form-req">*</span></label>
+          <input class="form-input" type="text" placeholder="مثال: حملة الراجحي"
+            [value]="formData().name"
+            (input)="patchForm({ name: $any($event.target).value })" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">رقم الحملة <span class="form-req">*</span></label>
+          <input class="form-input" type="text" placeholder="رقم الحملة"
+            [value]="formData().number"
+            (input)="patchForm({ number: $any($event.target).value })" />
+        </div>
+      </div>
+
+    </div>
+
+    <div class="dialog__footer">
+      <button class="btn btn--outline" (click)="closeModal()">إلغاء</button>
+      <button class="btn btn--primary" (click)="submitForm()" [disabled]="submitting()">
+        @if (submitting()) { <i class="pi pi-spin pi-spinner"></i> } @else { إنشاء حملة }
+      </button>
+    </div>
+
+  </div>
+}

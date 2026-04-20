@@ -1,0 +1,342 @@
+<!-- Backdrops -->
+@if (showModal()) {
+  <div class="modal-backdrop" (click)="closeModal()"></div>
+}
+@if (showImportModal()) {
+  <div class="modal-backdrop" (click)="closeImportModal()"></div>
+}
+@if (showLinkModal()) {
+  <div class="modal-backdrop" (click)="closeLinkModal()"></div>
+}
+@if (showPilgrimDrop()) {
+  <div class="backdrop" (click)="showPilgrimDrop.set(false)"></div>
+}
+
+<div class="devices">
+  <div class="devices__header">
+    <div class="devices__title">
+      <h1 class="devices__title-text">
+        <i class="pi pi-mobile"></i>
+        إدارة الأجهزة (الساعات)
+      </h1>
+      <span class="devices__title-count">{{ totalCount() }} جهاز مسجل</span>
+    </div>
+    <div class="devices__actions">
+      <button class="btn btn--ghost" (click)="openImportModal()">
+        <i class="pi pi-file-excel"></i>
+        <span>استيراد Excel</span>
+      </button>
+      <button class="btn btn--primary" (click)="openModal()">
+        <i class="pi pi-plus"></i>
+        <span>إضافة جهاز</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="devices__filters">
+    <div class="devices__search">
+      <i class="pi pi-search devices__search-icon"></i>
+      <input
+        class="devices__search-input"
+        type="text"
+        placeholder="بحث برقم IMEI أو رقم الخط..."
+        [value]="searchQuery()"
+        (input)="onSearch($any($event.target).value)"
+      />
+    </div>
+    <select class="page-size-select" (change)="onPageSizeChange(+$any($event.target).value)">
+      <option [value]="10" [selected]="pageSize() === 10">10</option>
+      <option [value]="20" [selected]="pageSize() === 20">20</option>
+      <option [value]="30" [selected]="pageSize() === 30">30</option>
+      <option [value]="40" [selected]="pageSize() === 40">40</option>
+      <option [value]="50" [selected]="pageSize() === 50">50</option>
+    </select>
+  </div>
+
+  <div class="devices__table-wrap">
+    @if (loading()) {
+      <div class="devices__spinner">
+        <p-progressSpinner
+          strokeWidth="4"
+          styleClass="devices__progress-spinner"
+        />
+      </div>
+    } @else {
+      <table class="devices__table">
+        <thead>
+          <tr>
+            <th>رقم IMEI</th>
+            <th>رقم الخط</th>
+            <th>ملاحظات</th>
+            <th>المستخدم المرتبط</th>
+            <th>إجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (d of devices(); track d.Id) {
+            <tr>
+              <td class="devices__serial">{{ d.ImeiNumber || '—' }}</td>
+              <td>{{ d.SimNumber || '—' }}</td>
+              <td class="devices__notes">{{ d.Notes || '—' }}</td>
+              <td>
+                @if (d.UserId) {
+                  <span class="assigned-user">
+                    @if (d.UserName) { <i class="pi pi-user"></i> }
+                    {{ d.UserName || '—' }}
+                  </span>
+                } @else {
+                  <span class="no-user">—</span>
+                }
+              </td>
+              <td>
+                <div class="row-actions">
+                  <button
+                    class="row-actions__btn"
+                    pTooltip="تعديل بيانات الجهاز"
+                    tooltipPosition="top"
+                    (click)="openEditModal(d)"
+                  >
+                    <i class="pi pi-pencil"></i>
+                  </button>
+
+                  @if (d.UserId) {
+                    <button
+                      class="row-actions__btn row-actions__btn--warning"
+                      pTooltip="فك الربط عن المستخدم"
+                      tooltipPosition="top"
+                      (click)="unlinkDevice(d)"
+                    >
+                      <i class="pi pi-user-minus"></i>
+                    </button>
+                  } @else {
+                    <button
+                      class="row-actions__btn row-actions__btn--success"
+                      pTooltip="ربط الجهاز بحاج"
+                      tooltipPosition="top"
+                      (click)="openLinkModal(d)"
+                    >
+                      <i class="pi pi-user-plus"></i>
+                    </button>
+                  }
+
+                  <button
+                    class="row-actions__btn row-actions__btn--danger"
+                    pTooltip="حذف الجهاز"
+                    tooltipPosition="top"
+                    (click)="deleteDevice(d.Id)"
+                  >
+                    <i class="pi pi-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+
+          @if (devices().length === 0) {
+            <tr>
+              <td colspan="5" class="devices__empty">
+                <i class="pi pi-mobile"></i>
+                <p>لا توجد أجهزة</p>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+  @if (!loading() && totalCount() > 0) {
+    <div class="pagination-bar">
+      <div class="pagination-bar__controls">
+        <button class="pagination__btn" [disabled]="currentPage() <= 1" (click)="goToPage(currentPage() - 1)">
+          <i class="pi pi-angle-right"></i>
+        </button>
+
+        @for (p of visiblePages(); track $index) {
+          @if (p === '...') {
+            <span class="pagination__ellipsis">…</span>
+          } @else {
+            <button class="pagination__btn"
+                    [class.pagination__btn--active]="p === currentPage()"
+                    (click)="goToPage(p)">
+              {{ p }}
+            </button>
+          }
+        }
+
+        <button class="pagination__btn" [disabled]="currentPage() >= totalPages()" (click)="goToPage(currentPage() + 1)">
+          <i class="pi pi-angle-left"></i>
+        </button>
+      </div>
+
+      <span class="pagination-bar__info">
+        {{ devices().length }} من {{ totalCount() | number }}
+      </span>
+    </div>
+  }
+</div>
+
+@if (showImportModal()) {
+  <div class="dialog dialog--import" (click)="$event.stopPropagation()">
+    <div class="dialog__header">
+      <div>
+        <h2 class="dialog__title">استيراد أجهزة من Excel</h2>
+        <p class="dialog__sub">حمّل النموذج، املأ بيانات الأجهزة، ثم ارفع الملف.</p>
+      </div>
+      <button class="dialog__close" (click)="closeImportModal()" [disabled]="uploadingImportFile()">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <div class="dialog__body dialog__body--import">
+      <section class="import-card">
+        <div class="import-card__head">
+          <div class="import-card__icon"><i class="pi pi-info-circle"></i></div>
+          <div>
+            <h3 class="import-card__title">تحميل النموذج</h3>
+            <p class="import-card__text">حمّل ملف الإكسل الذي يحتوي على الأعمدة المطلوبة وبيانات توضيحية.</p>
+          </div>
+        </div>
+        <button type="button" class="btn import-card__action"
+          [disabled]="downloadingTemplate()"
+          (click)="downloadImportTemplate()">
+          @if (downloadingTemplate()) {
+            <span class="btn-spinner import-card__spinner"></span>
+            <span>جاري تحميل النموذج...</span>
+          } @else {
+            <i class="pi pi-download"></i>
+            <span>تحميل نموذج Excel</span>
+          }
+        </button>
+      </section>
+
+      <section class="import-card">
+        <div class="import-card__head">
+          <div class="import-card__icon"><i class="pi pi-upload"></i></div>
+          <div>
+            <h3 class="import-card__title">رفع الملف</h3>
+            <p class="import-card__text">بعد ملء البيانات، ارفع الملف هنا لإضافة الأجهزة تلقائيًا.</p>
+          </div>
+        </div>
+
+        <input #importDevicesFileInput type="file" accept=".xlsx,.xls,.csv" class="import-file-input" (change)="onImportFileSelected($event)" />
+
+        <button type="button" class="btn btn--primary import-card__upload"
+          [disabled]="uploadingImportFile()"
+          (click)="handleImportUpload(importDevicesFileInput)">
+          @if (uploadingImportFile()) {
+            <span class="btn-spinner"></span>
+            <span>جاري رفع الملف...</span>
+          } @else {
+            <i class="pi pi-upload"></i>
+            <span>{{ importSelectedName() || 'رفع ملف Excel' }}</span>
+          }
+        </button>
+      </section>
+    </div>
+  </div>
+}
+
+@if (showModal()) {
+  <div class="dialog" (click)="$event.stopPropagation()">
+
+    <div class="dialog__header">
+      <div>
+        <h2 class="dialog__title">{{ editingId() ? 'تعديل الجهاز' : 'إضافة جهاز جديد' }}</h2>
+        <p class="dialog__sub">{{ editingId() ? 'عدّل بيانات الجهاز' : 'أدخل بيانات الساعة لإضافتها للنظام' }}</p>
+      </div>
+      <button class="dialog__close" (click)="closeModal()">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <div class="dialog__body">
+      <div class="form-field">
+        <label class="form-label">رقم IMEI <span class="form-req">*</span></label>
+        <input class="form-input" type="text"
+          [value]="formData().imeiNumber"
+          (input)="patchForm({ imeiNumber: $any($event.target).value })" />
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">رقم الخط (SIM)</label>
+        <input class="form-input" type="text"
+          [value]="formData().simNumber"
+          (input)="patchForm({ simNumber: $any($event.target).value })" />
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">ملاحظات</label>
+        <textarea class="form-input form-input--textarea" rows="3"
+          [value]="formData().notes"
+          (input)="patchForm({ notes: $any($event.target).value })"></textarea>
+      </div>
+    </div>
+
+    <div class="dialog__footer">
+      <button class="btn btn--outline" (click)="closeModal()" [disabled]="saving()">إلغاء</button>
+      <button class="btn btn--primary" (click)="submitForm()" [disabled]="saving()">
+        @if (saving()) { <i class="pi pi-spin pi-spinner"></i> } @else { {{ editingId() ? 'حفظ التعديلات' : 'إضافة الجهاز' }} }
+      </button>
+    </div>
+
+  </div>
+}
+
+@if (showLinkModal()) {
+  <div class="dialog" (click)="$event.stopPropagation()">
+
+    <div class="dialog__header">
+      <div>
+        <h2 class="dialog__title">ربط الجهاز بحاج</h2>
+        <p class="dialog__sub">اختر الحاج الذي سيرتبط بهذا الجهاز</p>
+      </div>
+      <button class="dialog__close" (click)="closeLinkModal()">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <div class="dialog__body">
+      <div class="form-field">
+        <label class="form-label">اختر الحاج <span class="form-req">*</span></label>
+        <div class="ss">
+          <button type="button" class="ss__trigger" (click)="togglePilgrimDrop()">
+            <span [class.ss__placeholder]="!selectedPilgrimName()">
+              {{ selectedPilgrimName() || 'اختر الحاج' }}
+            </span>
+            @if (selectedPilgrimName()) {
+              <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearPilgrim()"></i>
+            } @else {
+              <i class="pi pi-angle-down"></i>
+            }
+          </button>
+          @if (showPilgrimDrop()) {
+            <div class="ss__dropdown">
+              @if (loadingPilgrims()) {
+                <div class="ss__state"><span class="ss-spinner"></span></div>
+              } @else if (pilgrims().length === 0) {
+                <div class="ss__state">لا يوجد حجاج</div>
+              } @else {
+                <ul class="ss__list">
+                  @for (p of pilgrims(); track p.Id) {
+                    <li class="ss__item"
+                        [class.ss__item--active]="selectedPilgrimId() === p.Id"
+                        (click)="selectPilgrim(p)">{{ p.Name }}</li>
+                  }
+                </ul>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="dialog__footer">
+      <button class="btn btn--outline" (click)="closeLinkModal()" [disabled]="savingLink()">إلغاء</button>
+      <button class="btn btn--primary" (click)="confirmLink()" [disabled]="savingLink() || !selectedPilgrimId()">
+        @if (savingLink()) { <i class="pi pi-spin pi-spinner"></i> } @else { تأكيد الربط }
+      </button>
+    </div>
+
+  </div>
+}

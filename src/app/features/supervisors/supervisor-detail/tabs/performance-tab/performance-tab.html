@@ -1,0 +1,109 @@
+<div class="perf">
+  <div class="perf__two-cols">
+    <div class="info-card">
+      <div class="info-card__header">
+        <i class="pi pi-clock"></i>
+        مهام اليوم ({{ supervisor().tasksDone }}/{{ supervisor().tasksTotal }})
+      </div>
+      <div class="info-card__body">
+        @if (supervisor().tasks.length === 0) {
+          <div class="empty-msg">
+            <i class="pi pi-clock"></i>
+            <p>لا توجد مهام متاحة من الـ API الحالي</p>
+          </div>
+        }
+        @for (task of supervisor().tasks; track task.label) {
+          <div class="task-row" [class.task-row--done]="task.done">
+            <i [class]="task.done ? 'pi pi-check-circle task-row__icon task-row__icon--done' : 'pi pi-circle task-row__icon'"></i>
+            <span class="task-row__label">{{ task.label }}</span>
+            <span class="task-row__time">{{ task.time }}</span>
+          </div>
+        }
+        <div class="task-progress">
+          <div class="task-progress__bar-wrap">
+            <div class="task-progress__bar" [style.width.%]="supervisor().tasksCompletionPct"></div>
+          </div>
+          <div class="task-progress__info">
+            <span class="task-progress__label">نسبة الإنجاز</span>
+            <span class="task-progress__pct">{{ supervisor().tasksCompletionPct }}%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card__header">
+        <i class="pi pi-chart-bar"></i>
+        مقاييس الأداء
+      </div>
+      <div class="info-card__body">
+        @for (m of supervisor().performanceMetrics; track m.label) {
+          <div class="metric-row">
+            <div class="metric-row__top">
+              <span class="metric-row__label">{{ m.label }}</span>
+              <span class="metric-row__value" [style.color]="m.color">{{ m.pct }}%</span>
+            </div>
+            <div class="metric-bar-wrap">
+              <div class="metric-bar" [style.width.%]="m.pct" [style.background]="m.color"></div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="perf__two-cols">
+    <div class="info-card">
+      <div class="info-card__header">
+        <i class="pi pi-star"></i>
+        التقييم العام
+      </div>
+      <div class="perf__overall">
+        <div class="perf__stars">
+          @for (s of filledStars(supervisor().ratingAvg); track $index) {
+            <i class="pi pi-star-fill perf__star"></i>
+          }
+        </div>
+        <span class="perf__rating-num">{{ supervisor().ratingAvg }}</span>
+        <div class="perf__overall-stats">
+          <div class="perf__overall-stat">
+            <span class="perf__stat-value">{{ supervisor().reports.length }}</span>
+            <span class="perf__stat-label">تقارير مرفوعة</span>
+          </div>
+          <div class="perf__overall-divider"></div>
+          <div class="perf__overall-stat">
+            <span class="perf__stat-value">{{ supervisor().yearsOfExperience }}</span>
+            <span class="perf__stat-label">سنوات خبرة</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card__header">
+        <i class="pi pi-file"></i>
+        التقارير المقدمة
+      </div>
+      <div class="info-card__body">
+        @if (supervisor().reports.length === 0) {
+          <div class="empty-msg">
+            <i class="pi pi-file"></i>
+            <p>لا توجد تقارير متاحة لهذا المشرف حاليًا</p>
+          </div>
+        }
+        @for (r of supervisor().reports; track r.title) {
+          <div class="report-row">
+            <div class="report-row__icon">
+              <i class="pi pi-file-pdf"></i>
+            </div>
+            <div class="report-row__info">
+              <span class="report-row__title">{{ r.title }}</span>
+              <span class="report-row__date">{{ r.date }}</span>
+            </div>
+            <span class="report-row__badge">مقدم</span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

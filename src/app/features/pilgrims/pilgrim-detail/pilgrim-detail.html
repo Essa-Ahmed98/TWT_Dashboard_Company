@@ -1,0 +1,127 @@
+@if (detailState().loading) {
+  <div class="pd pd--not-found">
+    <i class="pi pi-spin pi-spinner"></i>
+    <p>جاري تحميل بيانات الحاج...</p>
+  </div>
+} @else if (pilgrim(); as p) {
+  <div class="pd">
+    <div class="pd__page-header">
+      <div class="pd__page-header-right">
+        <button class="pd__back-btn" (click)="goBack()">
+          <i class="pi pi-arrow-right"></i>
+        </button>
+        <div>
+          <h1 class="pd__page-title">ملف الحاج</h1>
+          <p class="pd__page-subtitle">رقم: {{ p.id }}</p>
+        </div>
+      </div>
+      <div class="pd__page-actions">
+        @if (isEditing()) {
+          <button class="pd__action-btn pd__action-btn--cancel" (click)="cancelEditing()">
+            <i class="pi pi-times"></i>
+            إلغاء
+          </button>
+          <button class="pd__action-btn pd__action-btn--save" (click)="saveEdit()">
+            <i class="pi pi-check"></i>
+            حفظ التعديلات
+          </button>
+        } @else {
+          <button class="pd__action-btn" (click)="openChat(p.userId, p.name)">
+            <i class="pi pi-comments"></i>
+            مراسلة
+          </button>
+          <button class="pd__action-btn">
+            <i class="pi pi-phone"></i>
+            اتصال
+          </button>
+          <button class="pd__action-btn pd__action-btn--primary" (click)="startEditing()">
+            <i class="pi pi-pencil"></i>
+            تعديل البيانات
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="pd__profile-card">
+      <div class="pd__profile-top">
+        <div class="pd__avatar pd__avatar--{{ p.status }}">
+          <i class="pi pi-user"></i>
+        </div>
+        <div class="pd__info">
+          <div class="pd__name-row">
+            <h2 class="pd__name">{{ p.name }}</h2>
+            <span class="status-badge status-badge--{{ p.status }}">
+              <span class="status-badge__dot"></span>
+              {{ statusLabel[p.status] }}
+            </span>
+          </div>
+          <div class="pd__meta-row">
+            <span><i class="pi pi-calendar"></i> {{ p.age }} سنة</span>
+            <span><i class="pi pi-globe"></i> {{ p.nationality }}</span>
+            @if (p.location) {
+              <span><i class="pi pi-map-marker"></i> {{ p.location }}</span>
+            }
+          </div>
+          <div class="pd__tags-row">
+            <span class="pd__tag">{{ p.campaign }}</span>
+            <span class="pd__tag">{{ p.group }}</span>
+            <span class="pd__tag">{{ p.accommodation }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pd__profile-divider"></div>
+
+      <div class="pd__vitals-row">
+        @for (v of p.vitals; track v.label) {
+          <div class="pd__vital">
+            <div class="pd__vital-icon" [style.color]="v.color">
+              <i [class]="v.icon"></i>
+            </div>
+            <span class="pd__vital-value">{{ v.value }}</span>
+            <span class="pd__vital-label">{{ v.label }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="pd__tabs">
+      @for (tab of tabs; track tab.key) {
+        <button
+          class="pd__tab"
+          [class.pd__tab--active]="activeTab() === tab.key"
+          (click)="activeTab.set(tab.key)">
+          <i [class]="tab.icon"></i>
+          {{ tab.label }}
+        </button>
+      }
+    </div>
+
+    @switch (activeTab()) {
+      @case ('personal') {
+        <app-personal-tab
+          [pilgrim]="p"
+          [isEditing]="isEditing()"
+          [editData]="editData()"
+          (fieldChanged)="onFieldChanged($event)" />
+      }
+      @case ('health') {
+        <app-health-tab [pilgrim]="p" />
+      }
+      @case ('rituals') {
+        <app-rituals-tab [pilgrim]="p" />
+      }
+      @case ('family') {
+        <app-family-tab [pilgrim]="p" />
+      }
+      @case ('ratings') {
+        <app-ratings-tab [pilgrim]="p" />
+      }
+    }
+  </div>
+} @else {
+  <div class="pd pd--not-found">
+    <i class="pi pi-exclamation-circle"></i>
+    <p>لم يتم العثور على بيانات الحاج</p>
+  </div>
+}

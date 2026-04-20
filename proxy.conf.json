@@ -1,0 +1,8 @@
+{
+  "/api": {
+    "target": "http://212.102.11.66:20032",
+    "changeOrigin": true,
+    "secure": false,
+    "ws": true
+  }
+}

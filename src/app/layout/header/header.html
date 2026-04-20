@@ -1,0 +1,30 @@
+<header class="header">
+
+  <!-- RIGHT: toggle + title -->
+  <div class="header__start">
+    <button class="header__icon-btn" (click)="toggleSidenav.emit()" title="القائمة">
+      <i class="pi pi-microsoft"></i>
+    </button>
+    <div class="header__title">
+      <div class="header__title-icon">
+        <i class="pi pi-shield"></i>
+      </div>
+      <span>لوحة الإدارة</span>
+    </div>
+  </div>
+
+  <!-- LEFT: actions -->
+  <div class="header__actions">
+    <!-- User pill -->
+    <div class="header__user">
+      <i class="pi pi-user"></i>
+      <span class="header__user-name">{{ auth.currentUser()?.displayName }}</span>
+    </div>
+
+    <!-- Logout -->
+    <button class="header__icon-btn header__logout" (click)="auth.logout()" title="تسجيل الخروج">
+      <i class="pi pi-sign-out"></i>
+    </button>
+  </div>
+
+</header>

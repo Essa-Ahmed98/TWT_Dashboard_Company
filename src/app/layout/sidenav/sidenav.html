@@ -1,0 +1,44 @@
+<nav class="sidenav" [class.sidenav--collapsed]="collapsed()">
+
+  <!-- Brand -->
+  <div class="sidenav__brand">
+    <div class="sidenav__brand-logo">
+      <img src="assets/logo-nav.png" alt="لوحة الإدارة" width="40" height="40" />
+    </div>
+    @if (!collapsed()) {
+      <div class="sidenav__brand-text">
+        <span class="sidenav__brand-name">تطمن وطقن</span>
+        <span class="sidenav__brand-role">{{ auth.currentUser()?.displayName || 'أدمن' }}</span>
+      </div>
+    }
+  </div>
+
+  <!-- Nav Groups -->
+  <div class="sidenav__nav">
+    @for (group of navGroups; track group.label) {
+      <div class="sidenav__group">
+        @if (!collapsed()) {
+          <span class="sidenav__group-label">{{ group.label }}</span>
+        }
+        <ul class="sidenav__list">
+          @for (item of group.items; track item.route) {
+            <li>
+              <a
+                [routerLink]="item.route"
+                routerLinkActive="active"
+                class="sidenav__item"
+                [title]="collapsed() ? item.label : ''"
+              >
+                <i [class]="item.icon"></i>
+                @if (!collapsed()) {
+                  <span class="sidenav__item-label">{{ item.label }}</span>
+                }
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </div>
+
+</nav>

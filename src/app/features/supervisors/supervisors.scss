@@ -1,0 +1,903 @@
+@use 'sass:color';
+// ── Design tokens ────────────────────────────────────────────────
+$primary:      #0b405b;
+$primary-dark: #0a3550;
+$green:        #22c35d;
+$orange:       #fb8c00;
+$red:          #e53935;
+$border:       #e9edf2;
+$bg-page:      #f4f6f9;
+$bg-white:     #ffffff;
+$text-main:    #1a2e3b;
+$text-muted:   #6c7a89;
+$text-label:   #374151;
+
+// ── Backdrops ─────────────────────────────────────────────────────
+.backdrop,
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+}
+
+.modal-backdrop {
+  background: rgba(0, 0, 0, .45);
+  z-index: 200;
+}
+
+// ── Page layout ───────────────────────────────────────────────────
+.supervisors {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  &__title {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__title-text {
+    font-size: 22px;
+    font-weight: 700;
+    color: $text-main;
+    margin: 0;
+  }
+
+  &__title-count {
+    font-size: 13px;
+    color: $text-muted;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  // ── Stats ────────────────────────────────────────────────────────
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  // ── Filters ──────────────────────────────────────────────────────
+  &__filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  &__search {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+  }
+
+  &__search-icon {
+    position: absolute;
+    inset-inline-end: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $text-muted;
+    font-size: 13px;
+    pointer-events: none;
+  }
+
+  &__search-input {
+    width: 100%;
+    height: 38px;
+    border: 1px solid $border;
+    border-radius: 8px;
+    padding: 0 38px 0 12px;
+    font-family: inherit;
+    font-size: 13.5px;
+    color: $text-main;
+    background: transparent;
+    outline: none;
+    transition: border-color .18s;
+
+    &::placeholder { color: $text-muted; }
+    &:focus        { border-color: $primary; }
+  }
+
+  // ── Table ────────────────────────────────────────────────────────
+  &__table-wrap {
+    background: $bg-white;
+    border-radius: 12px;
+    border: 1px solid $border;
+    overflow: hidden;
+    overflow-x: auto;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+
+    thead tr {
+      background: $bg-page;
+      border-bottom: 1px solid $border;
+    }
+
+    th {
+      padding: 12px 14px;
+      text-align: start;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: $text-muted;
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid $border;
+      transition: background .12s;
+
+      &:last-child { border-bottom: none; }
+      &:hover      { background: rgba($bg-page, .7); }
+    }
+
+    td {
+      padding: 12px 14px;
+      color: $text-main;
+      white-space: nowrap;
+    }
+  }
+
+  &__number {
+    font-weight: 600;
+    color: $primary;
+    text-align: center;
+  }
+
+  &__empty {
+    text-align: center;
+    padding: 48px !important;
+    color: $text-muted;
+
+    i { font-size: 36px; display: block; margin-bottom: 10px; opacity: .4; }
+    p { font-size: 14px; }
+  }
+}
+
+// ── Stat cards ────────────────────────────────────────────────────
+.stat-card {
+  background: $bg-white;
+  border-radius: 12px;
+  border: 1px solid $border;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &__value {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  &__label {
+    font-size: 13px;
+    font-weight: 500;
+    color: $text-muted;
+  }
+
+  &--pilgrims { .stat-card__value { color: $primary; } }
+  &--alerts   { .stat-card__value { color: $orange;  } }
+  &--online   { .stat-card__value { color: $green;   } }
+  &--total    { .stat-card__value { color: $primary; } }
+}
+
+// ── Supervisor avatar cell ────────────────────────────────────────
+.supervisor-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.supervisor-avatar {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba($primary, .08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  i { color: $primary; font-size: 15px; }
+
+  &__dot {
+    position: absolute;
+    bottom: 1px;
+    inset-inline-end: 1px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 2px solid $bg-white;
+
+    &--online  { background: $green;  }
+    &--offline { background: $red;    }
+    &--leave   { background: $orange; }
+  }
+}
+
+.supervisor-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  &__name { font-weight: 600; color: $text-main; font-size: 13.5px; }
+  &__id   { font-size: 11.5px; color: $text-muted; font-family: monospace; }
+
+}
+
+// ── Rating ────────────────────────────────────────────────────────
+.rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+
+  &__star {
+    font-size: 12px;
+    color: $border;
+
+    &--filled { color: #f5a623; }
+  }
+
+  &__value {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: $text-main;
+    margin-inline-start: 4px;
+  }
+}
+
+// ── Completion bar ────────────────────────────────────────────────
+.completion {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &__bar {
+    width: 60px;
+    height: 6px;
+    background: $bg-page;
+    border-radius: 3px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  &__fill {
+    height: 100%;
+    background: $green;
+    border-radius: 3px;
+    transition: width .3s;
+  }
+
+  &__label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: $text-main;
+    min-width: 34px;
+  }
+}
+
+// ── Alert badge ───────────────────────────────────────────────────
+.alert-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  background: #fff0f0;
+  border: 1px solid #ffd6d6;
+  color: $red;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 0 6px;
+}
+
+.no-alerts { color: $text-muted; }
+
+// ── Location cell ─────────────────────────────────────────────────
+.location-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  color: $text-muted;
+
+  i { font-size: 12px; color: $primary; }
+}
+
+// ── Status badges ─────────────────────────────────────────────────
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 600;
+
+  &__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  &--online  { background: #edfaf3; color: color.adjust($green, $lightness: -10%); .status-badge__dot { background: $green;  } }
+  &--offline { background: #fff0f0; color: color.adjust($red, $lightness: -10%); .status-badge__dot { background: $red;    } }
+  &--leave   { background: #fff4e3; color: color.adjust($orange, $lightness: -10%); .status-badge__dot { background: $orange; } }
+}
+
+// ── Row actions ───────────────────────────────────────────────────
+.row-actions {
+  display: flex;
+  gap: 4px;
+
+  &__btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    border: 1px solid $border;
+    background: $bg-white;
+    color: $text-muted;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s, color .15s, border-color .15s;
+
+    &:hover {
+      background: $bg-page;
+      color: $primary;
+      border-color: color.adjust($border, $lightness: -8%);
+    }
+  }
+}
+
+// ── Dropdown ──────────────────────────────────────────────────────
+.dropdown {
+  position: relative;
+
+  &__trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 38px;
+    padding: 0 12px;
+    border: 1px solid $border;
+    border-radius: 8px;
+    background: transparent;
+    font-family: inherit;
+    font-size: 13.5px;
+    color: $text-main;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color .18s;
+
+    &:hover { border-color: color.adjust($border, $lightness: -10%); }
+  }
+
+  &--open .dropdown__trigger { border-color: $primary; }
+
+  &__arrow {
+    font-size: 12px;
+    color: $text-muted;
+    transition: transform .2s;
+  }
+
+  &--open &__arrow { transform: rotate(180deg); }
+
+  &__menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    inset-inline-start: 0;
+    min-width: 180px;
+    background: $bg-white;
+    border: 1px solid $border;
+    border-radius: 10px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, .1);
+    z-index: 100;
+    overflow: hidden;
+    list-style: none;
+    padding: 4px;
+    margin: 0;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    font-size: 13.5px;
+    color: $text-main;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background .12s;
+
+    i { color: $primary; font-size: 13px; }
+
+    &:hover   { background: $bg-page; }
+    &--active { font-weight: 600; color: $primary; background: rgba($primary, .06); }
+  }
+}
+
+// ── Buttons ───────────────────────────────────────────────────────
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background .18s, color .18s, border-color .18s;
+  white-space: nowrap;
+
+  i { font-size: 14px; }
+
+  &--primary {
+    background: $primary;
+    color: #fff;
+    &:hover { background: $primary-dark; }
+  }
+
+  &--ghost {
+    background: transparent;
+    color: $text-muted;
+    border-color: $border;
+    &:hover { background: $bg-page; color: $text-main; }
+  }
+
+  &--outline {
+    background: transparent;
+    color: $text-main;
+    border-color: $border;
+    &:hover { background: $bg-page; }
+  }
+}
+
+// ── Centered dialog ───────────────────────────────────────────────
+.dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(680px, calc(100vw - 32px));
+  height: fit-content;
+  max-height: calc(100vh - 48px);
+  background: $bg-white;
+  z-index: 201;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .2);
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid $border;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-size: 18px;
+    font-weight: 700;
+    color: $text-main;
+    margin: 0 0 4px;
+  }
+
+  &__sub {
+    font-size: 13px;
+    color: $text-muted;
+    margin: 0;
+  }
+
+  &__close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: $text-muted;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background .15s, color .15s;
+
+    &:hover { background: $bg-page; color: $text-main; }
+  }
+
+  &__body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb { background: rgba(0,0,0,.1); border-radius: 2px; }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 16px 24px;
+    border-top: 1px solid $border;
+    flex-shrink: 0;
+
+    .btn--primary { padding: 0 24px; }
+  }
+}
+
+// ── Form elements ─────────────────────────────────────────────────
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-label;
+}
+
+.form-req {
+  color: $red;
+  margin-inline-start: 2px;
+}
+
+.form-input,
+.form-select {
+  height: 38px;
+  border: 1px solid $border;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: $text-main;
+  background: $bg-white;
+  outline: none;
+  transition: border-color .18s;
+  width: 100%;
+
+  &::placeholder { color: $text-muted; }
+  &:focus        { border-color: $primary; }
+
+  &--textarea {
+    height: auto;
+    padding: 10px 12px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+}
+
+.form-select {
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236c7a89' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 12px center;
+  padding-left: 32px;
+}
+
+// ── Spinner ───────────────────────────────────────────────────────
+.supervisors__spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 64px 0;
+
+  ::ng-deep .supervisors__progress-spinner {
+    width: 48px !important;
+    height: 48px !important;
+
+    .p-progressspinner-circle {
+      stroke: $primary !important;
+    }
+  }
+}
+
+// ── Page-size select ──────────────────────────────────────────────
+.page-size-select {
+  border: 1px solid $border;
+  border-radius: 8px;
+  background: transparent;
+  color: $text-main;
+  font-size: 13px;
+  font-family: inherit;
+  padding: 5px 10px;
+  height: 38px;
+  cursor: pointer;
+  outline: none;
+  flex-shrink: 0;
+
+  &:focus { border-color: $primary; }
+}
+
+// ── Pagination bar ────────────────────────────────────────────────
+.pagination-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__info {
+    position: absolute;
+    right: 0;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: $text-main;
+    white-space: nowrap;
+    background: $bg-white;
+    border: 1px solid $border;
+    border-radius: 8px;
+    padding: 4px 12px;
+  }
+}
+
+// ── Pagination ────────────────────────────────────────────────────
+.supervisors__pagination {
+  padding: 12px 0;
+  border-top: 1px solid $border;
+}
+
+.supervisors__pagination-info {
+  font-size: 13px;
+  color: $text-muted;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  &__btn {
+    min-width: 34px;
+    height: 34px;
+    border-radius: 7px;
+    border: 1px solid $border;
+    background: $bg-white;
+    color: $text-main;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s, color .15s, border-color .15s;
+    padding: 0 6px;
+
+    &:hover:not(:disabled) {
+      background: $bg-page;
+      border-color: color.adjust($border, $lightness: -8%);
+    }
+
+    &--active {
+      background: $primary;
+      color: #fff;
+      border-color: $primary;
+      font-weight: 700;
+    }
+
+    &:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.pagination__ellipsis {
+  min-width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: $text-muted;
+}
+
+@keyframes sv-spin { to { transform: rotate(360deg); } }
+
+// ── Buttons ───────────────────────────────────────────────────────
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 38px; padding: 0 16px; border-radius: 8px;
+  font-family: inherit; font-size: 13.5px; font-weight: 600;
+  cursor: pointer; border: 1px solid transparent;
+  transition: background .18s, color .18s, border-color .18s;
+  white-space: nowrap;
+  i { font-size: 14px; }
+  &--primary { background: $primary; color: #fff; &:hover { background: $primary-dark; } }
+  &--ghost   { background: transparent; color: $text-muted; border-color: $border; &:hover { background: $bg-page; color: $text-main; } }
+  &--outline { background: transparent; color: $text-main; border-color: $border; &:hover { background: $bg-page; } }
+}
+
+button[disabled] { opacity: .5; cursor: not-allowed; }
+
+// ── Centered dialog ───────────────────────────────────────────────
+.dialog {
+  position: fixed; inset: 0; margin: auto;
+  width: min(640px, calc(100vw - 32px));
+  height: fit-content; max-height: calc(100vh - 48px);
+  background: $bg-white; z-index: 201; border-radius: 16px;
+  display: flex; flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0,0,0,.2); overflow: hidden;
+
+  &__header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 12px; padding: 20px 24px 16px; border-bottom: 1px solid $border; flex-shrink: 0;
+  }
+  &__title { font-size: 18px; font-weight: 700; color: $text-main; margin: 0 0 4px; }
+  &__sub   { font-size: 13px; color: $text-muted; margin: 0; }
+  &__close {
+    width: 32px; height: 32px; border: none; background: transparent;
+    color: $text-muted; font-size: 16px; cursor: pointer; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: background .15s, color .15s;
+    &:hover { background: $bg-page; color: $text-main; }
+  }
+  &__body {
+    flex: 1; overflow-y: auto; padding: 20px 24px;
+    display: flex; flex-direction: column; gap: 14px;
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb { background: rgba(0,0,0,.1); border-radius: 2px; }
+  }
+  &__footer {
+    display: flex; justify-content: flex-end; gap: 10px;
+    padding: 16px 24px; border-top: 1px solid $border; flex-shrink: 0;
+    .btn--primary { padding: 0 24px; }
+  }
+}
+
+// ── Form elements ─────────────────────────────────────────────────
+.form-row   { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-field { display: flex; flex-direction: column; gap: 5px; &--full { grid-column: 1 / -1; } }
+.form-label { font-size: 13px; font-weight: 600; color: $text-label; }
+.form-req   { color: $red; margin-inline-start: 2px; }
+
+.form-input,
+.form-select {
+  height: 38px; border: 1px solid $border; border-radius: 8px;
+  padding: 0 12px; font-family: inherit; font-size: 13.5px;
+  color: $text-main; background: $bg-white; outline: none;
+  transition: border-color .18s; width: 100%;
+  &::placeholder { color: $text-muted; }
+  &:focus { border-color: $primary; }
+  &--textarea { height: auto; padding: 10px 12px; resize: vertical; line-height: 1.5; }
+}
+
+.form-select {
+  appearance: none; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236c7a89' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: left 12px center; padding-left: 32px;
+}
+
+.form-error {
+  font-size: 13px; color: $red; background: #fff0f0;
+  border: 1px solid #ffd6d6; border-radius: 8px; padding: 10px 14px; margin: 0;
+}
+
+// ── Smart-select (ss) ─────────────────────────────────────────────
+.ss {
+  position: relative;
+
+  &__trigger {
+    width: 100%; height: 38px; border: 1px solid $border; border-radius: 8px;
+    padding: 0 10px 0 12px; font-family: inherit; font-size: 13.5px;
+    color: $text-main; background: $bg-white; cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between; gap: 6px;
+    transition: border-color .18s; box-sizing: border-box; text-align: start;
+    &:hover:not(:disabled) { border-color: color.adjust($border, $lightness: -10%); }
+    &:disabled { background: $bg-page; cursor: not-allowed; opacity: .65; }
+    span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  }
+
+  &__placeholder { color: $text-muted !important; }
+
+  &__clear {
+    color: $text-muted; font-size: 11px; cursor: pointer;
+    padding: 4px; border-radius: 4px; flex-shrink: 0;
+    transition: background .12s, color .12s;
+    &:hover { background: rgba(0,0,0,.07); color: $text-main; }
+  }
+
+  &__dropdown {
+    position: absolute; top: calc(100% + 4px);
+    inset-inline-start: 0; inset-inline-end: 0;
+    background: $bg-white; border: 1px solid $border;
+    border-radius: 10px; box-shadow: 0 6px 22px rgba(0,0,0,.11); z-index: 300; overflow: hidden;
+  }
+
+  &__state {
+    padding: 18px; text-align: center; color: $text-muted; font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  &__list {
+    list-style: none; padding: 4px; margin: 0;
+    max-height: 192px; overflow-y: auto;
+  }
+
+  &__item {
+    padding: 9px 12px; border-radius: 6px; font-size: 13.5px;
+    color: $text-main; cursor: pointer; transition: background .12s;
+    &:hover { background: $bg-page; }
+    &--active { background: rgba($primary, .08); color: $primary; font-weight: 500; }
+
+    // multi-select item with checkbox
+    &--check {
+      display: flex; align-items: center; gap: 8px;
+    }
+  }
+
+  &__check {
+    width: 16px; height: 16px; border: 1.5px solid $border; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    font-size: 10px; color: $primary;
+    .ss__item--active & { border-color: $primary; background: rgba($primary, .1); }
+  }
+
+  &--disabled .ss__trigger { opacity: .6; pointer-events: none; }
+}
+
+.ss-spinner {
+  display: inline-block; width: 18px; height: 18px;
+  border: 2px solid rgba($primary, .2); border-top-color: $primary;
+  border-radius: 50%; animation: sv-spin .7s linear infinite;
+}
+
+.btn-spinner {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,.35); border-top-color: #fff;
+  border-radius: 50%; animation: sv-spin .7s linear infinite; flex-shrink: 0;
+}

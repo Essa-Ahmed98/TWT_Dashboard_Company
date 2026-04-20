@@ -1,0 +1,176 @@
+@if (showModal()) {
+  <div class="modal-backdrop" (click)="closeModal()"></div>
+}
+
+<div class="cd__tab-panel">
+
+  <div class="cd__tab-panel-header">
+    <span class="cd__tab-panel-count">
+      {{ totalCount() | number }} حافلة مسجلة في الحملة
+    </span>
+    <button class="btn btn--primary" (click)="openModal()">
+      <i class="pi pi-plus"></i>
+      إضافة حافلة
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="cd__tab-loading">
+      <span class="cd__spinner--sm"></span>
+      <span>جاري تحميل الحافلات...</span>
+    </div>
+  }
+
+  @if (!loading() && buses().length === 0) {
+    <div class="cd__empty">
+      <i class="pi pi-car"></i>
+      <p>لا توجد حافلات بعد</p>
+    </div>
+  }
+
+  @if (!loading() && buses().length > 0) {
+    <div class="cd__table-wrap">
+      <table class="cd__table">
+        <thead>
+          <tr>
+            <th>رقم الحافلة</th>
+            <th>السائق</th>
+            <th>النوع</th>
+            <th>المقاعد</th>
+            <th>رقم اللوحة</th>
+            <th>ملاحظات</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (b of buses(); track b.Id) {
+            <tr>
+              <td class="cd__bus-number">{{ b.BusNumber }}</td>
+              <td>
+                <div class="cd__driver">
+                  <span class="cd__driver-name">{{ b.DriverName }}</span>
+                  <span class="cd__driver-phone">{{ b.DriverPhone }}</span>
+                </div>
+              </td>
+              <td>{{ b.BusType || '—' }}</td>
+              <td>{{ b.SeatsCount }}</td>
+              <td>{{ b.PlateNumber || '—' }}</td>
+              <td class="cd__notes">{{ b.Notes || '—' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (totalPages() > 1) {
+      <div class="pagination pagination--inner">
+        <span class="pagination__info">{{ totalCount() | number }} حافلة</span>
+        <div class="pagination__controls">
+          <button class="pagination__btn"
+                  [disabled]="currentPage() === 1"
+                  (click)="goToPage(currentPage() - 1)">
+            <i class="pi pi-angle-right"></i>
+          </button>
+          @for (p of visiblePages(); track $index) {
+            @if (p === '...') {
+              <span class="pagination__ellipsis">…</span>
+            } @else {
+              <button class="pagination__btn"
+                      [class.pagination__btn--active]="p === currentPage()"
+                      (click)="goToPage(p)">{{ p }}</button>
+            }
+          }
+          <button class="pagination__btn"
+                  [disabled]="currentPage() === totalPages()"
+                  (click)="goToPage(currentPage() + 1)">
+            <i class="pi pi-angle-left"></i>
+          </button>
+        </div>
+      </div>
+    }
+  }
+
+</div>
+
+<!-- ══ ADD BUS DIALOG ══ -->
+@if (showModal()) {
+  <div class="dialog" (click)="$event.stopPropagation()">
+    <div class="dialog__header">
+      <div class="dialog__title-row">
+        <div class="dialog__title-icon"><i class="pi pi-car"></i></div>
+        <div>
+          <h2 class="dialog__title">إضافة حافلة جديدة</h2>
+          <p class="dialog__sub">أدخل بيانات الحافلة والسائق</p>
+        </div>
+      </div>
+      <button class="dialog__close" (click)="closeModal()">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <div class="dialog__body">
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">رقم الحافلة <span class="form-req">*</span></label>
+          <input class="form-input" type="text" placeholder="مثال: ح-٧٢١"
+            [value]="form().number"
+            (input)="patchForm({ number: $any($event.target).value })" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">اسم السائق <span class="form-req">*</span></label>
+          <input class="form-input" type="text" placeholder="اسم السائق"
+            [value]="form().driverName"
+            (input)="patchForm({ driverName: $any($event.target).value })" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">عدد المقاعد</label>
+          <input class="form-input" type="number" placeholder="45"
+            [value]="form().capacity"
+            (input)="patchForm({ capacity: $any($event.target).value })" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">نوع الحافلة</label>
+          <select class="form-select"
+            [value]="form().type"
+            (change)="patchForm({ type: $any($event.target).value })">
+            <option value="">اختر النوع</option>
+            @for (t of busTypes; track t) {
+              <option [value]="t">{{ t }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">رقم هاتف السائق</label>
+          <input class="form-input" type="tel" placeholder="+966 5x xxx xxxx"
+            [value]="form().driverPhone"
+            (input)="patchForm({ driverPhone: $any($event.target).value })" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">رقم اللوحة</label>
+          <input class="form-input" type="text" placeholder="رقم لوحة الحافلة"
+            [value]="form().plateNumber"
+            (input)="patchForm({ plateNumber: $any($event.target).value })" />
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">ملاحظات</label>
+        <textarea class="form-input form-input--textarea" rows="3" placeholder="ملاحظات إضافية..."
+          [value]="form().notes"
+          (input)="patchForm({ notes: $any($event.target).value })"></textarea>
+      </div>
+    </div>
+
+    <div class="dialog__footer">
+      <button class="btn btn--outline" (click)="closeModal()">إلغاء</button>
+      <button class="btn btn--primary" (click)="submit()" [disabled]="submitting()">
+        @if (submitting()) { <i class="pi pi-spin pi-spinner"></i> } @else { إضافة الحافلة }
+      </button>
+    </div>
+  </div>
+}

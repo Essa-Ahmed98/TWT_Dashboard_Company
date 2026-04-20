@@ -1,0 +1,114 @@
+<!-- ══════════════════════════════════════════
+     LOADING
+══════════════════════════════════════════ -->
+@if (loading()) {
+  <div class="cd cd--loading">
+    <span class="cd__spinner"></span>
+    <span>جاري التحميل...</span>
+  </div>
+}
+
+@if (!loading() && campaign(); as c) {
+<div class="cd">
+
+  <!-- ══════════════════════════════════════════
+       PAGE HEADER
+  ══════════════════════════════════════════ -->
+  <div class="cd__page-header">
+    <div class="cd__page-header-start">
+      <button class="cd__back-btn" (click)="goBack()">
+        <i class="pi pi-arrow-right"></i>
+      </button>
+      <div>
+        <h1 class="cd__page-title">{{ c.name }}</h1>
+        <p class="cd__page-subtitle">
+          رقم الحملة {{ c.number }}
+          &bull; {{ c.groupsCount }} مجموعة
+          &bull; {{ c.busesCount }} حافلة
+        </p>
+      </div>
+    </div>
+    <span class="status-badge status-badge--{{ statusClass(c.status) }}">
+      <span class="status-badge__dot"></span>
+      {{ c.status }}
+    </span>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       STAT CARDS
+  ══════════════════════════════════════════ -->
+  <div class="cd__stats">
+
+    <div class="cd__stat cd__stat--primary">
+      <div class="cd__stat-body">
+        <span class="cd__stat-label">الحجاج</span>
+        <span class="cd__stat-value">{{ c.pilgrimsCount | number }}</span>
+      </div>
+      <div class="cd__stat-icon"><i class="pi pi-users"></i></div>
+    </div>
+
+    <div class="cd__stat">
+      <div class="cd__stat-body">
+        <span class="cd__stat-label">المجموعات</span>
+        <span class="cd__stat-value">{{ c.groupsCount }}</span>
+      </div>
+      <div class="cd__stat-icon"><i class="pi pi-microsoft"></i></div>
+    </div>
+
+    <div class="cd__stat cd__stat--gold">
+      <div class="cd__stat-body">
+        <span class="cd__stat-label">المشرفين</span>
+        <span class="cd__stat-value">{{ c.supervisorsCount }}</span>
+      </div>
+      <div class="cd__stat-icon"><i class="pi pi-user-edit"></i></div>
+    </div>
+
+    <div class="cd__stat">
+      <div class="cd__stat-body">
+        <span class="cd__stat-label">الحافلات</span>
+        <span class="cd__stat-value">{{ c.busesCount }}</span>
+      </div>
+      <div class="cd__stat-icon"><i class="pi pi-car"></i></div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       TABS
+  ══════════════════════════════════════════ -->
+  <div class="cd__tabs">
+    @for (tab of tabs; track tab.key) {
+      <button
+        class="cd__tab"
+        [class.cd__tab--active]="activeTab() === tab.key"
+        (click)="activeTab.set(tab.key)">
+        <i [class]="tab.icon"></i>
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       TAB PANELS
+  ══════════════════════════════════════════ -->
+  @if (activeTab() === 'groups') {
+    <app-campaign-groups-tab
+      [campaignId]="c.id"
+      [companyId]="c.companyId" />
+  }
+
+  @if (activeTab() === 'buses') {
+    <app-campaign-buses-tab
+      [campaignId]="c.id"
+      [companyId]="c.companyId" />
+  }
+
+</div>
+}
+
+@if (!loading() && !campaign()) {
+  <div class="cd cd--not-found">
+    <i class="pi pi-exclamation-circle"></i>
+    <p>لم يتم العثور على الحملة</p>
+  </div>
+}

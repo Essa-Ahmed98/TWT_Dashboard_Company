@@ -1,0 +1,26 @@
+<div class="lt">
+  <div class="info-card">
+    <div class="info-card__header">
+      <i class="pi pi-history"></i>
+      سجل النشاط
+    </div>
+    <div class="log-timeline">
+      @for (entry of pilgrim().log; track entry.event; let last = $last) {
+        <div class="log-item">
+          <div class="log-item__line-wrap">
+            <div class="log-item__icon"
+              [style.background]="entry.iconColor + '1a'"
+              [style.color]="entry.iconColor">
+              <i [class]="entry.icon"></i>
+            </div>
+            @if (!last) { <div class="log-item__connector"></div> }
+          </div>
+          <div class="log-item__info">
+            <span class="log-item__event">{{ entry.event }}</span>
+            <span class="log-item__date">{{ entry.date }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

@@ -1,0 +1,71 @@
+
+<div class="login-page flex-1 flex flex-column align-items-center justify-content-center px-6" dir="rtl">
+
+
+  <div class="login-container">
+
+    <!-- Logo -->
+    <div class="login-logo">
+      <div class="login-logo__row">
+        <img src="assets/logo.png" alt="TWT Logo" class="login-logo__img login-logo__img--main" />
+        <img src="assets/aiLogo.png" alt="AI Logo" class="login-logo__img login-logo__img--partner" />
+      </div>
+    </div>
+
+    <h1 class="login-title">الأدمن</h1>
+    <p class="login-subtitle">إدارة المنظومة والشركات والصلاحيات</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="login-form">
+
+      <!-- Email or Phone -->
+      <div class="login-field">
+        <input
+          formControlName="emailOrPhone"
+          type="text"
+          placeholder="البريد الإلكتروني أو رقم الهاتف"
+          class="login-input"
+          autocomplete="username"
+        />
+        <i class="pi pi-envelope login-field__icon"></i>
+      </div>
+
+      <!-- Password -->
+      <div class="login-field">
+        <input
+          formControlName="password"
+          [type]="showPassword() ? 'text' : 'password'"
+          placeholder="كلمة المرور"
+          class="login-input login-input--password"
+          autocomplete="current-password"
+        />
+        <i class="pi pi-lock login-field__icon"></i>
+        <button
+          type="button"
+          class="login-field__toggle"
+          (click)="showPassword.set(!showPassword())"
+          tabindex="-1"
+        >
+          <i [class]="showPassword() ? 'pi pi-eye-slash with-font-size' : 'pi pi-eye with-font-size'"></i>
+        </button>
+      </div>
+
+      <!-- Remember / Forgot -->
+      <div class="login-options">
+        <label class="login-options__remember" [class.login-options__remember--active]="rememberMe()" (click)="rememberMe.set(!rememberMe())">
+          <i [class]="rememberMe() ? 'pi pi-check-circle login-options__check login-options__check--active' : 'pi pi-circle login-options__check'"></i>
+          <span class="remmeber-me-text">تذكرني</span>
+        </label>
+        <a href="#" class="login-options__forgot">نسيت كلمة المرور؟</a>
+      </div>
+
+      <!-- Submit -->
+     <div class="submit-btn">
+      <button type="submit" class="login-btn" [disabled]="loading()">
+        <i class="pi pi-shield"></i>
+        {{ loading() ? 'جاري الدخول...' : 'دخول لوحة الإدارة' }}
+      </button>
+     </div>
+
+    </form>
+  </div>
+</div>

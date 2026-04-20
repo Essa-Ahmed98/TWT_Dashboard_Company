@@ -1,0 +1,83 @@
+<div class="ht">
+  @if (pilgrim().vitalBars.length > 0) {
+    <div class="info-card">
+      <div class="info-card__header">
+        <i class="pi pi-chart-line"></i>
+        المؤشرات الحيوية
+      </div>
+      <div class="vital-bars">
+        @for (vb of pilgrim().vitalBars; track vb.label) {
+          <div class="vital-bar-item">
+            <div class="vital-bar-item__header">
+              <span class="vital-bar-item__label">
+                <i [class]="vb.icon" [style.color]="vb.color"></i>
+                {{ vb.label }}
+              </span>
+              <span class="vital-bar-item__value" dir="ltr">{{ vb.value }}</span>
+            </div>
+            <div class="vital-bar-item__track">
+              <div class="vital-bar-item__fill" [style.width.%]="vb.pct" [style.background]="vb.color"></div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <div class="ht__two-cols">
+    <div class="info-card">
+      <div class="info-card__header">
+        <i class="pi pi-shield"></i>
+        البيانات الطبية
+      </div>
+      <div class="info-card__body">
+        <div class="info-row">
+          <span class="info-row__label">فصيلة الدم</span>
+          <span class="info-row__value">{{ pilgrim().bloodType }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-row__label">الأمراض المزمنة</span>
+          <span class="info-row__value">{{ pilgrim().chronicDiseases }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-row__label">الحساسيات</span>
+          <span class="info-row__value">{{ pilgrim().allergies }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card__header">
+        <i class="pi pi-tag"></i>
+        الأدوية المسجلة
+      </div>
+      <div class="info-card__body">
+        @if (loadingDrugs()) {
+          <div class="empty-msg"><i class="pi pi-spin pi-spinner"></i> جاري التحميل...</div>
+        } @else if (drugs().length === 0) {
+          <p class="empty-msg">لا توجد أدوية مسجلة</p>
+        } @else {
+          @for (drug of drugs(); track drug.Id) {
+            <div class="med-item">
+              <div class="med-item__header">
+                <span class="med-item__name">{{ drug.Name }}</span>
+                @if (!drug.IsActive) {
+                  <span class="med-item__inactive">متوقف</span>
+                }
+              </div>
+              <div class="med-item__times">
+                @for (t of drug.IntakeTimes; track t) {
+                  <span class="med-time"><i class="pi pi-clock"></i> {{ t }}</span>
+                }
+              </div>
+              <span class="med-item__dose">{{ drug.Dosage }}</span>
+              @if (drug.Notes) {
+                <span class="med-item__notes">{{ drug.Notes }}</span>
+              }
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </div>
+</div>

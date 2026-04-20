@@ -1,0 +1,299 @@
+@use 'sass:color';
+$primary:      #0b405b;
+$card-radius:  .75rem;
+$card-shadow:  0 4px 24px -4px hsla(200, 79%, 20%, .1);
+$safe:         #22c35d;
+$warning:      #fb8c00;
+$danger:       #e53935;
+
+.pd {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  direction: rtl;
+
+  // ── Page Header ──────────────────────────────────────────────
+  &__page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__page-header-right {
+    display: flex;
+    align-items: center;
+    gap: .875rem;
+  }
+
+  &__back-btn {
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid #eef0f4;
+    border-radius: .625rem;
+    color: $primary;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: .875rem;
+    box-shadow: $card-shadow;
+    transition: background .15s;
+    flex-shrink: 0;
+    background: #fff;
+
+    &:hover { background: #f4f6f9; }
+  }
+
+  &__page-title {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: $primary;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  &__page-subtitle {
+    font-size: .8125rem;
+    color: #647b87;
+    margin: 2px 0 0;
+  }
+
+  &__page-actions {
+    display: flex;
+    gap: .625rem;
+    align-items: center;
+  }
+
+  &__action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .375rem;
+    padding: .5rem .75rem;
+    border: 1px solid #dce2e5;
+    border-radius: .75rem;
+    color: $primary;
+    font-size: .875rem;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .15s;
+    background: transparent;
+    line-height: 1.25rem;
+
+    &:hover { background: #f4f6f9; }
+
+    i { font-size: .875rem; }
+
+    &--primary {
+      background: $primary;
+      color: #fff;
+      border-color: $primary;
+      &:hover { background: color.adjust($primary, $lightness: -5%); }
+    }
+
+    &--save {
+      background: $primary;
+      color: #fff;
+      border-color: $primary;
+      &:hover { background: color.adjust($primary, $lightness: -5%); }
+    }
+
+    &--cancel {
+      color: #647b87;
+      &:hover { background: #f4f6f9; color: $primary; }
+    }
+  }
+
+  // ── Profile Card ─────────────────────────────────────────────
+  &__profile-card {
+    background: #fff;
+    border-radius: $card-radius;
+    border: 1px solid #eef0f4;
+    box-shadow: $card-shadow;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  &__profile-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    direction: rtl;
+  }
+
+  &__avatar {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    i { font-size: 30px; }
+
+    &--safe    { background: #{$safe}1a;    color: $safe;    }
+    &--warning { background: #{$warning}1a; color: $warning; }
+    &--danger  { background: #{$danger}1a;  color: $danger;  }
+  }
+
+  &__info { display: flex; flex-direction: column; gap: .5rem; }
+
+  &__name-row {
+    display: flex;
+    align-items: center;
+    gap: .625rem;
+    flex-wrap: wrap;
+  }
+
+  &__name {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: $primary;
+    margin: 0;
+  }
+
+  &__meta-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: .8125rem;
+    color: #647b87;
+    flex-wrap: wrap;
+
+    i { font-size: .8rem; margin-left: .25rem; }
+  }
+
+  &__tags-row {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+  }
+
+  &__tag {
+    display: inline-block;
+    padding: .2rem .75rem;
+    border-radius: 20px;
+    background: #eef0f4;
+    font-size: .8125rem;
+    color: $primary;
+    font-weight: 500;
+  }
+
+  &__profile-divider {
+    height: 1px;
+    background: #f0f2f5;
+  }
+
+  &__vitals-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: .75rem;
+
+    @media (max-width: 600px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  &__vital {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .375rem;
+    padding: .75rem;
+    background: #f9fafb;
+    border-radius: .75rem;
+    text-align: center;
+  }
+
+  &__vital-icon { font-size: 1.25rem; }
+
+  &__vital-value {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: $primary;
+    line-height: 1.2;
+  }
+
+  &__vital-label {
+    font-size: .75rem;
+    color: #647b87;
+  }
+
+  // ── Tabs ─────────────────────────────────────────────────────
+  &__tabs {
+    display: flex;
+    gap: 4px;
+    border: 1px solid #eef0f4;
+    border-radius: $card-radius;
+    padding: .25rem;
+    box-shadow: $card-shadow;
+    overflow-x: auto;
+    scrollbar-width: none;
+    background: #fff;
+
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  &__tab {
+    display: inline-flex;
+    align-items: center;
+    gap: .375rem;
+    padding: .375rem .75rem;
+    border: none;
+    border-radius: .5rem;
+    background: transparent;
+    color: #647b87;
+    font-size: .8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+    transition: all .15s;
+
+    i { font-size: .8rem; }
+
+    &--active {
+      background: #f6f8f8;
+      color: #0f2e3d;
+      font-weight: 600;
+      box-shadow: $card-shadow;
+    }
+  }
+
+  // ── Not found ─────────────────────────────────────────────────
+  &--not-found {
+    align-items: center;
+    justify-content: center;
+    padding: 4rem;
+    color: #647b87;
+
+    i { font-size: 3rem; }
+    p { margin-top: .75rem; font-size: 1rem; }
+  }
+}
+
+// ── Status badge ─────────────────────────────────────────────────
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .375rem;
+  font-size: .75rem;
+  font-weight: 600;
+  padding: .25rem .75rem;
+  border-radius: 20px;
+  white-space: nowrap;
+
+  &__dot {
+    width: .5rem;
+    height: .5rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  &--safe    { background: #e8f5ee; color: $safe;    .status-badge__dot { background: $safe;    } }
+  &--warning { background: #fff8e1; color: #e65100;  .status-badge__dot { background: $warning; } }
+  &--danger  { background: #ffebee; color: #c62828;  .status-badge__dot { background: $danger;  } }
+}

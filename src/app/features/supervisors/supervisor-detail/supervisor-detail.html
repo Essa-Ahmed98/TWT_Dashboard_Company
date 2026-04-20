@@ -1,0 +1,99 @@
+@if (loading()) {
+  <div class="pd pd--not-found">
+    <i class="pi pi-spin pi-spinner"></i>
+    <p>جاري تحميل بيانات المشرف...</p>
+  </div>
+} @else if (supervisor(); as s) {
+  <div class="pd">
+    <div class="pd__page-header">
+      <div class="pd__page-header-right">
+        <button class="pd__back-btn" (click)="goBack()">
+          <i class="pi pi-arrow-right"></i>
+        </button>
+        <div>
+          <h1 class="pd__page-title">تفاصيل المشرف</h1>
+          <p class="pd__page-subtitle">رقم المشرف: {{ s.id }}</p>
+        </div>
+      </div>
+      <div class="pd__page-actions">
+        <button class="pd__action-btn" (click)="openChat(s.userId, s.name)">
+          <i class="pi pi-comments"></i>
+          مراسلة
+        </button>
+      </div>
+    </div>
+
+    <div class="pd__profile-card">
+      <div class="pd__profile-top">
+        <div class="pd__avatar pd__avatar--{{ s.statusClass }}">
+          <i class="pi pi-user"></i>
+        </div>
+        <div class="pd__info">
+          <div class="pd__name-row">
+            <h2 class="pd__name">{{ s.name }}</h2>
+            <span class="status-badge status-badge--{{ s.statusClass }}">
+              <span class="status-badge__dot"></span>
+              {{ s.status }}
+            </span>
+          </div>
+          <div class="pd__meta-row">
+            <span><i class="pi pi-briefcase"></i> {{ s.yearsOfExperience }} سنوات خبرة</span>
+            <span><i class="pi pi-globe"></i> {{ s.nationality }}</span>
+            <span><i class="pi pi-id-card"></i> {{ s.passportNumber }}</span>
+          </div>
+          <div class="pd__tags-row">
+            <span class="pd__tag">{{ s.campaignName }}</span>
+            <span class="pd__tag">{{ s.group }}</span>
+            @if (s.qualification !== '—') {
+              <span class="pd__tag">{{ s.qualification }}</span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="pd__profile-divider"></div>
+
+      <div class="pd__vitals-row">
+        @for (v of s.vitals; track v.label) {
+          <div class="pd__vital">
+            <div class="pd__vital-icon" [style.color]="v.color">
+              <i [class]="v.icon"></i>
+            </div>
+            <span class="pd__vital-value">{{ v.value }}</span>
+            <span class="pd__vital-label">{{ v.label }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="pd__tabs">
+      @for (tab of tabs; track tab.key) {
+        <button
+          class="pd__tab"
+          [class.pd__tab--active]="activeTab() === tab.key"
+          (click)="activeTab.set(tab.key)">
+          <i [class]="tab.icon"></i>
+          {{ tab.label }}
+          @if (tab.key === 'pilgrims') { ({{ s.pilgrimsCount }}) }
+        </button>
+      }
+    </div>
+
+    @switch (activeTab()) {
+      @case ('personal') {
+        <app-sv-personal-tab [supervisor]="s" />
+      }
+      @case ('pilgrims') {
+        <app-sv-pilgrims-tab [supervisor]="s" />
+      }
+      @case ('ratings') {
+        <app-sv-ratings-tab [supervisor]="s" />
+      }
+    }
+  </div>
+} @else {
+  <div class="pd pd--not-found">
+    <i class="pi pi-exclamation-circle"></i>
+    <p>لم يتم العثور على بيانات المشرف</p>
+  </div>
+}

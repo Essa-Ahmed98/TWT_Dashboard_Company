@@ -1,0 +1,200 @@
+<div class="chat">
+
+  <!-- ═══════════════════════════════════════════════════
+       SIDEBAR – Conversations list
+  ═══════════════════════════════════════════════════ -->
+  <aside class="chat__sidebar">
+
+    <!-- Header -->
+    <div class="chat__sidebar-header">
+      <div class="chat__sidebar-title">
+        <span>الدردشة</span>
+        @if (totalUnread() > 0) {
+          <span class="chat__sidebar-badge">{{ totalUnread() }}</span>
+        }
+      </div>
+
+      <!-- Search -->
+      <div class="chat__search">
+        <i class="pi pi-search chat__search-icon"></i>
+        <input
+          class="chat__search-input"
+          type="text"
+          placeholder="ابحث في المحادثات..."
+          [value]="searchQuery()"
+          (input)="searchQuery.set($any($event.target).value)"
+        />
+      </div>
+
+      <!-- Tabs -->
+      <div class="chat__tabs">
+        <button class="chat__tab" [class.chat__tab--active]="activeTab() === 'all'"         (click)="setTab('all')">الكل</button>
+        <button class="chat__tab" [class.chat__tab--active]="activeTab() === 'groups'"      (click)="setTab('groups')">الحجاج</button>
+        <button class="chat__tab" [class.chat__tab--active]="activeTab() === 'supervisors'" (click)="setTab('supervisors')">المشرفين</button>
+      </div>
+    </div>
+
+    <!-- Conversation list -->
+    <ul class="chat__list">
+
+      @if (loadingConvs()) {
+        <li class="chat__list-loading">
+          <i class="pi pi-spin pi-spinner"></i>
+        </li>
+      } @else if (filteredConversations().length === 0) {
+        <li class="chat__list-empty">لا توجد محادثات</li>
+      } @else {
+        @for (conv of filteredConversations(); track conv.ConversationId) {
+          <li
+            class="chat__item"
+            [class.chat__item--active]="activeFriendId() === conv.FriendId"
+            (click)="selectConversation(conv)"
+          >
+            <!-- Avatar -->
+            <div class="chat__avatar" [style.background-color]="getAvatarColor(conv.FriendId)">
+              {{ conv.FriendDisplayName.charAt(0) }}
+              <span class="chat__avatar-dot" [class.chat__avatar-dot--online]="conv.IsOnline"></span>
+            </div>
+
+            <!-- Info -->
+            <div class="chat__item-body">
+              <div class="chat__item-top">
+                <span class="chat__item-name">{{ conv.FriendDisplayName }}</span>
+                <span class="chat__item-time">{{ lastMessageTime(conv) }}</span>
+              </div>
+              <div class="chat__item-bottom">
+                <span class="chat__item-preview">{{ conv.LastMessagePreview }}</span>
+                @if (conv.UnreadCount > 0) {
+                  <span class="chat__item-unread">{{ conv.UnreadCount }}</span>
+                }
+              </div>
+            </div>
+          </li>
+        }
+      }
+    </ul>
+
+  </aside>
+
+  <!-- ═══════════════════════════════════════════════════
+       MAIN – Chat window
+  ═══════════════════════════════════════════════════ -->
+  <section class="chat__window">
+
+    @if (activeFriendId()) {
+
+      @if (loadingMsgs()) {
+        <!-- Loading conversation -->
+        <div class="chat__loading">
+          <i class="pi pi-spin pi-spinner chat__loading-icon"></i>
+        </div>
+
+      } @else if (activeConversation(); as conv) {
+
+        <!-- Window header -->
+        <div class="chat__win-header">
+          <div class="chat__win-user">
+            <div class="chat__avatar chat__avatar--lg" [style.background-color]="getAvatarColor(conv.FriendId)">
+              {{ conv.FriendDisplayName.charAt(0) }}
+              <span class="chat__avatar-dot" [class.chat__avatar-dot--online]="conv.IsOnline"></span>
+            </div>
+            <div class="chat__win-info">
+              <span class="chat__win-name">{{ conv.FriendDisplayName }}</span>
+              <span class="chat__win-status" [class.chat__win-status--online]="conv.IsOnline">
+                {{ conv.IsOnline ? 'متصل الآن' : 'غير متصل' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Messages area -->
+        <div class="chat__messages" #msgsEl (scroll)="onMessagesScroll($event)">
+
+          <!-- Load more indicator -->
+          @if (loadingMore()) {
+            <div class="chat__load-more">
+              <i class="pi pi-spin pi-spinner"></i>
+            </div>
+          } @else if (nextCursor()) {
+            <div class="chat__load-more chat__load-more--btn" (click)="loadMoreMessages()">
+              <i class="pi pi-arrow-up"></i>
+              <span>تحميل رسائل أقدم</span>
+            </div>
+          }
+
+          @for (msg of activeMessages(); track msg.Id) {
+            @let mine = isMine(msg);
+            <div class="chat__msg" [class.chat__msg--mine]="mine">
+              @if (!mine) {
+                <div class="chat__msg-avatar" [style.background-color]="getAvatarColor(conv.FriendId)">
+                  {{ conv.FriendDisplayName.charAt(0) }}
+                </div>
+              }
+              <div class="chat__msg-wrap">
+                <div class="chat__bubble" [class.chat__bubble--mine]="mine">
+                  {{ msg.Content }}
+                </div>
+                <span class="chat__msg-time">
+                  {{ formatTime(msg.SentAt) }}
+                  @if (mine) {
+                    <i class="pi chat__msg-read"
+                       [class.pi-check-circle]="msg.IsRead"
+                       [class.pi-check]="!msg.IsRead">
+                    </i>
+                  }
+                </span>
+              </div>
+            </div>
+          }
+
+          @if (activeMessages().length === 0) {
+            <div class="chat__no-msgs">
+              <span>لا توجد رسائل بعد، ابدأ المحادثة!</span>
+            </div>
+          }
+        </div>
+
+        <!-- Error banner -->
+        @if (sendError()) {
+          <div class="chat__send-error">
+            <i class="pi pi-exclamation-circle"></i>
+            {{ sendError() }}
+          </div>
+        }
+
+        <!-- Input area -->
+        <div class="chat__input-area">
+          <input
+            class="chat__input"
+            type="text"
+            placeholder="اكتب رسالة..."
+            [value]="newMessage()"
+            (input)="newMessage.set($any($event.target).value)"
+            (keydown)="onKeydown($event)"
+          />
+          <button
+            class="chat__send-btn"
+            [class.chat__send-btn--active]="newMessage().trim().length > 0"
+            (click)="sendMessage()"
+            title="إرسال"
+          >
+            <i class="pi pi-send"></i>
+          </button>
+        </div>
+
+      }
+
+    } @else {
+      <!-- Empty state -->
+      <div class="chat__empty">
+        <div class="chat__empty-icon">
+          <i class="pi pi-comments"></i>
+        </div>
+        <p class="chat__empty-title">اختر محادثة للبدء</p>
+        <p class="chat__empty-sub">اختر إحدى المحادثات من القائمة على اليمين</p>
+      </div>
+    }
+
+  </section>
+
+</div>

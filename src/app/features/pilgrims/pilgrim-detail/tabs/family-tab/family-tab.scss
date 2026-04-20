@@ -1,0 +1,77 @@
+$primary:     #0b405b;
+$card-radius: .75rem;
+$card-shadow: 0 4px 24px -4px hsla(200, 79%, 20%, .1);
+
+.ft {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.family-card {
+  background: #fff;
+  border-radius: $card-radius;
+  border: 1px solid #eef0f4;
+  box-shadow: $card-shadow;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+
+  &__avatar {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background: #f0f4f8;
+    color: #647b87;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  &__info    { display: flex; flex-direction: column; gap: .375rem; }
+
+  &__name-row {
+    display: flex;
+    align-items: center;
+    gap: .625rem;
+  }
+
+  &__name { font-size: 1rem; font-weight: 600; color: $primary; }
+
+  &__relation {
+    font-size: .8125rem;
+    color: #647b87;
+    background: #f0f4f8;
+    border-radius: 20px;
+    padding: .125rem .625rem;
+  }
+
+  &__contacts {
+    display: flex;
+    gap: 1.5rem;
+    font-size: .8125rem;
+    color: #647b87;
+
+    i { font-size: .8rem; margin-left: .25rem; }
+  }
+}
+
+.empty-card {
+  background: #fff;
+  border-radius: $card-radius;
+  border: 1px solid #eef0f4;
+  box-shadow: $card-shadow;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .75rem;
+  padding: 3rem;
+  color: #a0aab4;
+
+  i { font-size: 2rem; }
+  p { font-size: .875rem; font-weight: 500; margin: 0; }
+}

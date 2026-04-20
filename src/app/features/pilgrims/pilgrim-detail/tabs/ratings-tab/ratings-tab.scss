@@ -1,0 +1,66 @@
+$primary:     #0b405b;
+$card-radius: .75rem;
+$card-shadow: 0 4px 24px -4px hsla(200, 79%, 20%, .1);
+
+.ratt {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rating-card {
+  background: #fff;
+  border-radius: $card-radius;
+  border: 1px solid #eef0f4;
+  box-shadow: $card-shadow;
+  padding: 1rem 1.25rem;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: .5rem;
+  }
+
+  &__meta   { display: flex; flex-direction: column; gap: .125rem; }
+
+  &__category { font-size: .9375rem; font-weight: 600; color: $primary; }
+  &__date     { font-size: .75rem; color: #a0aab4; }
+
+  &__stars {
+    display: flex;
+    gap: .125rem;
+    direction: ltr;
+  }
+
+  &__star {
+    font-size: .9375rem;
+    color: #dce2e5;
+
+    &--filled { color: #f59e0b; }
+  }
+
+  &__comment {
+    font-size: .875rem;
+    color: #647b87;
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+.empty-card {
+  background: #fff;
+  border-radius: $card-radius;
+  border: 1px solid #eef0f4;
+  box-shadow: $card-shadow;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .75rem;
+  padding: 3rem;
+  color: #a0aab4;
+
+  i { font-size: 2rem; }
+  p { font-size: .875rem; font-weight: 500; margin: 0; }
+}

@@ -1,1 +1,75 @@
-/* You can add global styles to this file, and also import other style files */
+
+@font-face {
+  font-family: 'Cairo';
+  src: url('../public/fonts/Cairo-Regular.woff2') format('woff2'),
+       url('../public/fonts/Cairo-Regular.ttf')   format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cairo';
+  src: url('../public/fonts/Cairo-SemiBold.woff2') format('woff2'),
+       url('../public/fonts/Cairo-SemiBold.ttf')   format('truetype');
+  font-weight: 500 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cairo';
+  src: url('../public/fonts/Cairo-Bold.woff2') format('woff2'),
+       url('../public/fonts/Cairo-Bold.ttf')   format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Cairo', sans-serif !important;
+  direction: rtl;
+}
+
+/* ── Leaflet zone centre label ──────────────────────────────── */
+.zone-centre-label {
+  font-family: 'Cairo', sans-serif;
+  font-size: .8125rem;
+  font-weight: 700;
+  white-space: nowrap;
+  text-align: center;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+
+  span {
+    text-shadow:
+      0 0 4px #fff,
+      0 0 4px #fff,
+      0 0 6px #fff;
+    line-height: 1.2;
+  }
+
+  &__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,.3);
+    flex-shrink: 0;
+  }
+}
+
+// ── PrimeNG DatePicker RTL icon fix ─────────────────────────────
+.p-datepicker-prev-button svg,
+.p-datepicker-next-button svg {
+  transform: scaleX(-1);
+}

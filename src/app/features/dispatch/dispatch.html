@@ -1,0 +1,440 @@
+@if (hasAnyFilterDropdownOpen()) {
+  <div class="backdrop" (click)="closeAllDropdowns()"></div>
+}
+
+@if (showModal()) {
+  <div class="modal-backdrop" (click)="closeModal()"></div>
+  <div class="dialog" (click)="$event.stopPropagation()">
+    <div class="dialog__header">
+      <div>
+        <h2 class="dialog__title">إضافة رحلة جديدة</h2>
+        <p class="dialog__sub">أدخل بيانات الرحلة لجدولتها داخل النظام</p>
+      </div>
+      <button class="dialog__close" type="button" (click)="closeModal()" [disabled]="saving()">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <div class="dialog__body">
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">الحملة <span class="form-req">*</span></label>
+          <div class="ss" [class.ss--disabled]="saving()">
+            <button class="ss__trigger" type="button" (click)="toggleModalCampaignDrop($event)" [disabled]="saving()">
+              <span [class.ss__placeholder]="!form().campaignName">{{ form().campaignName || 'اختر الحملة' }}</span>
+              @if (form().campaignId) {
+                <i class="pi pi-times ss__clear" (click)="clearModalCampaign($event)"></i>
+              } @else {
+                <i class="pi pi-angle-down"></i>
+              }
+            </button>
+            @if (openModalCampaignDrop()) {
+              <div class="ss__dropdown">
+                @if (modalCampaignLoading()) {
+                  <div class="ss__state"><span class="ss-spinner"></span></div>
+                } @else if (modalCampaignList().length === 0) {
+                  <div class="ss__state">لا توجد حملات متاحة</div>
+                } @else {
+                  <ul class="ss__list">
+                    @for (option of modalCampaignList(); track option.Id) {
+                      <li
+                        class="ss__item"
+                        [class.ss__item--active]="form().campaignId === option.Id"
+                        (click)="selectModalCampaign(option)"
+                      >
+                        {{ option.Name }}
+                      </li>
+                    }
+                  </ul>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">المجموعة <span class="form-req">*</span></label>
+          <div class="ss" [class.ss--disabled]="!form().campaignId || saving()">
+            <button
+              class="ss__trigger"
+              type="button"
+              [disabled]="!form().campaignId || saving()"
+              (click)="toggleModalGroupDrop($event)"
+            >
+              <span [class.ss__placeholder]="!form().groupName">
+                {{ form().groupName || (form().campaignId ? 'اختر المجموعة' : 'اختر الحملة أولًا') }}
+              </span>
+              @if (form().groupId) {
+                <i class="pi pi-times ss__clear" (click)="clearModalGroup($event)"></i>
+              } @else {
+                <i class="pi pi-angle-down"></i>
+              }
+            </button>
+            @if (openModalGroupDrop()) {
+              <div class="ss__dropdown">
+                @if (modalGroupLoading()) {
+                  <div class="ss__state"><span class="ss-spinner"></span></div>
+                } @else if (modalGroupList().length === 0) {
+                  <div class="ss__state">لا توجد مجموعات متاحة</div>
+                } @else {
+                  <ul class="ss__list">
+                    @for (group of modalGroupList(); track group.Id) {
+                      <li
+                        class="ss__item"
+                        [class.ss__item--active]="form().groupId === group.Id"
+                        (click)="selectModalGroup(group)"
+                      >
+                        {{ group.Name }}
+                      </li>
+                    }
+                  </ul>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">الحافلة <span class="form-req">*</span></label>
+          <div class="ss" [class.ss--disabled]="!form().campaignId || saving()">
+            <button
+              class="ss__trigger"
+              type="button"
+              [disabled]="!form().campaignId || saving()"
+              (click)="toggleModalBusDrop($event)"
+            >
+              <span [class.ss__placeholder]="!form().busName">
+                {{ form().busName || (form().campaignId ? 'اختر الحافلة' : 'اختر الحملة أولًا') }}
+              </span>
+              @if (form().busId) {
+                <i class="pi pi-times ss__clear" (click)="clearModalBus($event)"></i>
+              } @else {
+                <i class="pi pi-angle-down"></i>
+              }
+            </button>
+            @if (openModalBusDrop()) {
+              <div class="ss__dropdown">
+                @if (modalBusLoading()) {
+                  <div class="ss__state"><span class="ss-spinner"></span></div>
+                } @else if (modalBusList().length === 0) {
+                  <div class="ss__state">لا توجد حافلات متاحة</div>
+                } @else {
+                  <ul class="ss__list">
+                    @for (bus of modalBusList(); track bus.Id) {
+                      <li
+                        class="ss__item"
+                        [class.ss__item--active]="form().busId === bus.Id"
+                        (click)="selectModalBus(bus)"
+                      >
+                        {{ bus.BusNumber }}
+                      </li>
+                    }
+                  </ul>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">موعد الانطلاق <span class="form-req">*</span></label>
+          <p-datepicker
+            [ngModel]="form().departureTime"
+            (ngModelChange)="patchForm({ departureTime: $event })"
+            (onSelect)="patchForm({ departureTime: $event })"
+            dateFormat="yy-mm-dd"
+            [showIcon]="true"
+            [showTime]="true"
+            hourFormat="24"
+            [disabled]="saving()"
+            appendTo="body"
+            [baseZIndex]="3000"
+            placeholder="اختر موعد الانطلاق">
+          </p-datepicker>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">من <span class="form-req">*</span></label>
+          <input
+            class="form-input"
+            type="text"
+            placeholder="أدخل موقع الانطلاق"
+            [disabled]="saving()"
+            [value]="form().fromLocation"
+            (input)="patchForm({ fromLocation: $any($event.target).value })"
+          />
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">إلى <span class="form-req">*</span></label>
+          <input
+            class="form-input"
+            type="text"
+            placeholder="أدخل موقع الوصول"
+            [disabled]="saving()"
+            [value]="form().toLocation"
+            (input)="patchForm({ toLocation: $any($event.target).value })"
+          />
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">ملاحظات</label>
+        <textarea
+          class="form-input form-input--textarea"
+          rows="4"
+          placeholder="أدخل أي ملاحظات إضافية"
+          [disabled]="saving()"
+          [value]="form().notes"
+          (input)="patchForm({ notes: $any($event.target).value })"
+        ></textarea>
+      </div>
+
+      @if (submitError()) {
+        <p class="form-error">{{ submitError() }}</p>
+      }
+    </div>
+
+    <div class="dialog__footer">
+      <button class="btn btn--outline" type="button" (click)="closeModal()" [disabled]="saving()">إلغاء</button>
+      <button class="btn btn--primary" type="button" (click)="submitForm()" [disabled]="saving() || !isCreateFormValid()">
+        @if (saving()) {
+          <span class="btn-spinner"></span>
+          جاري الإضافة...
+        } @else {
+          <i class="pi pi-plus"></i>
+          إضافة الرحلة
+        }
+      </button>
+    </div>
+  </div>
+}
+
+<div class="dispatch">
+  <div class="dispatch__header">
+    <div class="dispatch__title">
+      <h1 class="dispatch__title-text">{{ title }}</h1>
+      <span class="dispatch__title-count">{{ subtitle }}</span>
+    </div>
+
+    <div class="dispatch__actions">
+      <button class="btn btn--primary" type="button" (click)="openCreateModal()">
+        <i class="pi pi-plus"></i>
+        <span>إضافة رحلة</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="dispatch__stats">
+    @for (stat of stats(); track stat.label) {
+      <article class="dispatch-stat">
+        <i class="pi {{ stat.icon }} dispatch-stat__icon dispatch-stat__icon--{{ stat.tone }}"></i>
+        <strong class="dispatch-stat__value dispatch-stat__value--{{ stat.tone }}">{{ stat.value }}</strong>
+        <span class="dispatch-stat__label">{{ stat.label }}</span>
+      </article>
+    }
+  </div>
+
+  <div class="dispatch__filters">
+    <div class="dispatch__search">
+      <i class="pi pi-search dispatch__search-icon"></i>
+      <input
+        class="dispatch__search-input"
+        type="text"
+        placeholder="بحث..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="onSearch($event)"
+      />
+    </div>
+    <select class="page-size-select" (change)="onPageSizeChange(+$any($event.target).value)">
+      <option [value]="10" [selected]="pageSize() === 10">10</option>
+      <option [value]="20" [selected]="pageSize() === 20">20</option>
+      <option [value]="30" [selected]="pageSize() === 30">30</option>
+      <option [value]="40" [selected]="pageSize() === 40">40</option>
+      <option [value]="50" [selected]="pageSize() === 50">50</option>
+    </select>
+
+    <div class="dropdown" [class.dropdown--open]="openCampaignDrop()">
+      <button class="dropdown__trigger" type="button" (click)="toggleCampaignDrop($event)">
+        <i class="pi pi-building"></i>
+        <span>{{ campaignFilterLabel() }}</span>
+        @if (selectedCampaignId()) {
+          <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectCampaignFilter()"></i>
+        } @else {
+          <i class="pi pi-angle-down dropdown__arrow"></i>
+        }
+      </button>
+      @if (openCampaignDrop()) {
+        <ul class="dropdown__menu">
+          @if (campaignLoading()) {
+            <li class="dropdown__item dropdown__item--state">
+              <span class="ss-spinner"></span>
+            </li>
+          } @else {
+            @for (option of campaignList(); track option.Id) {
+              <li
+                class="dropdown__item"
+                [class.dropdown__item--active]="selectedCampaignId() === option.Id"
+                (click)="selectCampaignFilter(option)"
+              >
+                @if (selectedCampaignId() === option.Id) { <i class="pi pi-check"></i> }
+                {{ option.Name }}
+              </li>
+            }
+          }
+        </ul>
+      }
+    </div>
+
+    <div class="dropdown" [class.dropdown--open]="openGroupDrop()" [class.dropdown--disabled]="!selectedCampaignId()">
+      <button class="dropdown__trigger" type="button" [disabled]="!selectedCampaignId()" (click)="toggleGroupDrop($event)">
+        <i class="pi pi-users"></i>
+        <span>{{ selectedGroupName() || (selectedCampaignId() ? 'اختر المجموعة' : 'اختر الحملة أولًا') }}</span>
+        @if (selectedGroupId()) {
+          <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectGroupFilter()"></i>
+        } @else {
+          <i class="pi pi-angle-down dropdown__arrow"></i>
+        }
+      </button>
+      @if (openGroupDrop()) {
+        <ul class="dropdown__menu">
+          @if (groupLoading()) {
+            <li class="dropdown__item dropdown__item--state">
+              <span class="ss-spinner"></span>
+            </li>
+          } @else {
+            @for (group of groupList(); track group.Id) {
+              <li
+                class="dropdown__item"
+                [class.dropdown__item--active]="selectedGroupId() === group.Id"
+                (click)="selectGroupFilter(group)"
+              >
+                @if (selectedGroupId() === group.Id) { <i class="pi pi-check"></i> }
+                {{ group.Name }}
+              </li>
+            }
+          }
+        </ul>
+      }
+    </div>
+
+    <div class="dropdown" [class.dropdown--open]="openBusDrop()" [class.dropdown--disabled]="!selectedCampaignId()">
+      <button class="dropdown__trigger" type="button" [disabled]="!selectedCampaignId()" (click)="toggleBusDrop($event)">
+        <i class="pi pi-car"></i>
+        <span>{{ selectedBusName() || (selectedCampaignId() ? 'اختر الحافلة' : 'اختر الحملة أولًا') }}</span>
+        @if (selectedBusId()) {
+          <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectBusFilter()"></i>
+        } @else {
+          <i class="pi pi-angle-down dropdown__arrow"></i>
+        }
+      </button>
+      @if (openBusDrop()) {
+        <ul class="dropdown__menu">
+          @if (busLoading()) {
+            <li class="dropdown__item dropdown__item--state">
+              <span class="ss-spinner"></span>
+            </li>
+          } @else {
+            @for (bus of busList(); track bus.Id) {
+              <li
+                class="dropdown__item"
+                [class.dropdown__item--active]="selectedBusId() === bus.Id"
+                (click)="selectBusFilter(bus)"
+              >
+                @if (selectedBusId() === bus.Id) { <i class="pi pi-check"></i> }
+                {{ bus.BusNumber }}
+              </li>
+            }
+          }
+        </ul>
+      }
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="dispatch__spinner">
+      <p-progressSpinner strokeWidth="4" styleClass="dispatch__progress-spinner" />
+    </div>
+  } @else {
+    <div class="dispatch__grid">
+      @for (item of items(); track item.id) {
+        <article class="trip-card">
+          <div class="trip-card__head">
+           <div class="flex align-items-center">
+               <div class="trip-card__icon">
+              <i class="pi pi-car"></i>
+            </div>
+              <div class="trip-card__identity mx-2">
+              <strong class="trip-card__code">{{ item.code }}</strong>
+              <span class="trip-card__campaign">{{ item.campaign }}</span>
+            </div>
+
+           </div>
+     <span class="trip-card__badge trip-card__badge--{{ statusClass(item.status) }}">
+              <span class="trip-card__badge-dot"></span>
+              {{ statusLabel(item.status) }}
+            </span>
+          </div>
+
+          <div class="trip-card__route">
+            <i class="pi pi-map-marker"></i>
+            <span>{{ item.routeFrom }}</span>
+            <i class="pi pi-arrow-left"></i>
+            <span>{{ item.routeTo }}</span>
+          </div>
+
+          <div class="trip-card__meta">
+            <div class="trip-card__meta-box">
+              <i class="pi pi-clock"></i>
+              <strong>{{ item.departureTime }}</strong>
+              <span>موعد الانطلاق</span>
+            </div>
+          </div>
+
+          @if (item.note) {
+            <div class="trip-card__note">
+              {{ item.note }}
+            </div>
+          }
+        </article>
+      }
+
+      @if (items().length === 0) {
+        <div class="dispatch__empty">
+          <i class="pi pi-inbox"></i>
+          <p>لا توجد بيانات متاحة</p>
+        </div>
+      }
+    </div>
+
+  }
+
+  @if (totalCount() > 0) {
+    <div class="pagination-bar">
+      <div class="pagination-bar__controls">
+        <button class="pagination__btn" type="button" [disabled]="!hasPrevious()" (click)="prevPage()">
+          <i class="pi pi-angle-right"></i>
+        </button>
+        @for (p of visiblePages(); track $index) {
+          @if (p === '...') {
+            <span class="pagination__ellipsis">…</span>
+          } @else {
+            <button class="pagination__btn" type="button"
+                    [class.pagination__btn--active]="p === currentPage()"
+                    (click)="goToPage(p)">{{ p }}</button>
+          }
+        }
+        <button class="pagination__btn" type="button" [disabled]="!hasNext()" (click)="nextPage()">
+          <i class="pi pi-angle-left"></i>
+        </button>
+      </div>
+      <span class="pagination-bar__info">
+        {{ items().length }} من {{ totalCount() | number }}
+      </span>
+    </div>
+  }
+</div>

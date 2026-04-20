@@ -1,0 +1,195 @@
+@if (showModal()) {
+  <div class="modal-backdrop" (click)="closeModal()"></div>
+}
+
+<div class="cd__tab-panel">
+
+  <div class="cd__tab-panel-header">
+    <span class="cd__tab-panel-count">
+      {{ totalCount() | number }} مجموعة
+    </span>
+    <button class="btn btn--primary" (click)="openModal()">
+      <i class="pi pi-plus"></i>
+      إضافة مجموعة
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="cd__tab-loading">
+      <span class="cd__spinner--sm"></span>
+      <span>جاري تحميل المجموعات...</span>
+    </div>
+  }
+
+  @if (!loading() && groups().length === 0) {
+    <div class="cd__empty">
+      <i class="pi pi-inbox"></i>
+      <p>لا توجد مجموعات بعد</p>
+    </div>
+  }
+
+  @if (!loading() && groups().length > 0) {
+    <div class="cd__group-list">
+      @for (g of groups(); track g.Id) {
+        <div class="group-card" [class.group-card--open]="isExpanded(g.Id)">
+
+          <div class="group-card__row" (click)="toggleGroup(g.Id)">
+            <div class="group-card__row-start">
+              <div class="group-card__icon"><i class="pi pi-sitemap"></i></div>
+              <div class="group-card__info">
+                <div class="group-card__title-row">
+                  <span class="group-card__name">{{ g.Name }}</span>
+                </div>
+                <span class="group-card__meta">
+                  <i class="pi pi-users"></i> {{ g.PilgrimsCount }} حاج
+                  &bull;
+                  <i class="pi pi-user-edit"></i> {{ g.SupervisorsCount }} مشرف
+                </span>
+              </div>
+            </div>
+            <div class="group-card__row-end">
+              <span class="group-card__supervisors">
+                <i class="pi pi-user-edit"></i>
+                {{ g.SupervisorsCount }} مشرف
+              </span>
+              <i class="group-card__chevron pi"
+                 [class.pi-chevron-up]="isExpanded(g.Id)"
+                 [class.pi-chevron-down]="!isExpanded(g.Id)"></i>
+            </div>
+          </div>
+
+          <div class="group-card__body">
+            <div class="group-card__body-inner">
+
+              <div class="group-section">
+                <div class="group-section__header">
+                  <span class="group-section__title">
+                    <i class="pi pi-user-edit"></i>
+                    مشرفو المجموعة ({{ g.SupervisorsCount }})
+                  </span>
+                </div>
+                <div class="group-section__chips">
+                  @for (sup of g.Supervisors; track sup) {
+                    <span class="supervisor-chip">
+                      <i class="pi pi-user supervisor-chip__avatar"></i>
+                      <span class="supervisor-chip__name">{{ sup }}</span>
+                    </span>
+                  }
+                  @if (g.Supervisors.length === 0) {
+                    <span class="group-section__empty">لا يوجد مشرفون</span>
+                  }
+                </div>
+              </div>
+
+              <div class="group-section">
+                <div class="group-table-wrap">
+                  <table class="group-table">
+                    <thead>
+                      <tr>
+                        <th>الحاج</th>
+                        <th>الجنسية</th>
+                        <th>إجراءات</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @if (g.Pilgrims.length === 0) {
+                        <tr>
+                          <td colspan="3" class="group-table__empty">لا يوجد حجاج</td>
+                        </tr>
+                      }
+                      @for (p of g.Pilgrims; track p.Id) {
+                        <tr>
+                          <td>{{ p.DisplayName }}</td>
+                          <td>{{ p.Nationality }}</td>
+                          <td>
+                            <button class="icon-btn" title="عرض التفاصيل" (click)="openPilgrimDetail(p.Id)">
+                              <i class="pi pi-eye"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              @if (g.PilgrimsCount > 0) {
+                <div class="group-section group-section--footer">
+                  <button class="group-section__more" (click)="viewGroupPilgrims()">
+                    عرض كل حجاج المجموعة ({{ g.PilgrimsCount }})
+                    <i class="pi pi-arrow-left"></i>
+                  </button>
+                </div>
+              }
+
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (totalPages() > 1) {
+      <div class="pagination pagination--inner">
+        <span class="pagination__info">{{ totalCount() | number }} مجموعة</span>
+        <div class="pagination__controls">
+          <button class="pagination__btn"
+                  [disabled]="currentPage() === 1"
+                  (click)="goToPage(currentPage() - 1)">
+            <i class="pi pi-angle-right"></i>
+          </button>
+          @for (p of visiblePages(); track $index) {
+            @if (p === '...') {
+              <span class="pagination__ellipsis">...</span>
+            } @else {
+              <button class="pagination__btn"
+                      [class.pagination__btn--active]="p === currentPage()"
+                      (click)="goToPage(p)">{{ p }}</button>
+            }
+          }
+          <button class="pagination__btn"
+                  [disabled]="currentPage() === totalPages()"
+                  (click)="goToPage(currentPage() + 1)">
+            <i class="pi pi-angle-left"></i>
+          </button>
+        </div>
+      </div>
+    }
+  }
+
+</div>
+
+@if (showModal()) {
+  <div class="dialog" (click)="$event.stopPropagation()">
+    <div class="dialog__header">
+      <div>
+        <h2 class="dialog__title">إضافة مجموعة جديدة</h2>
+        <p class="dialog__sub">أدخل بيانات المجموعة لإنشائها داخل الحملة</p>
+      </div>
+      <button class="dialog__close" (click)="closeModal()">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <div class="dialog__body">
+      <div class="form-field">
+        <label class="form-label">اسم المجموعة <span class="form-req">*</span></label>
+        <input class="form-input" type="text" placeholder="مثال: المجموعة أ"
+          [value]="form().name"
+          (input)="patchForm({ name: $any($event.target).value })" />
+      </div>
+      <div class="form-field">
+        <label class="form-label">ملاحظات</label>
+        <textarea class="form-input form-input--textarea" rows="3" placeholder="ملاحظات..."
+          [value]="form().notes"
+          (input)="patchForm({ notes: $any($event.target).value })"></textarea>
+      </div>
+    </div>
+
+    <div class="dialog__footer">
+      <button class="btn btn--outline" (click)="closeModal()">إلغاء</button>
+      <button class="btn btn--primary" (click)="submit()" [disabled]="submitting()">
+        @if (submitting()) { <i class="pi pi-spin pi-spinner"></i> } @else { إنشاء مجموعة }
+      </button>
+    </div>
+  </div>
+}

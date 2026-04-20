@@ -1,0 +1,78 @@
+$primary:     #0b405b;
+$card-radius: .75rem;
+$card-shadow: 0 4px 24px -4px hsla(200, 79%, 20%, .1);
+
+.lt {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-card {
+  background: #fff;
+  border-radius: $card-radius;
+  border: 1px solid #eef0f4;
+  box-shadow: $card-shadow;
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .875rem 1.25rem;
+    font-size: .9375rem;
+    font-weight: 600;
+    color: $primary;
+    border-bottom: 1px solid #f0f2f5;
+
+    i { font-size: .9rem; color: #647b87; }
+  }
+}
+
+.log-timeline {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.log-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+
+  &__line-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  &__icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .9rem;
+    flex-shrink: 0;
+  }
+
+  &__connector {
+    width: 2px;
+    flex: 1;
+    min-height: 1.5rem;
+    background: #eef0f4;
+    margin: .25rem 0;
+  }
+
+  &__info {
+    padding: .25rem 0 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+  }
+
+  &__event { font-size: .9375rem; font-weight: 600; color: $primary; }
+  &__date  { font-size: .8125rem; color: #647b87; }
+}

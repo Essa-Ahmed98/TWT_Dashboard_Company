@@ -1,0 +1,147 @@
+@use 'sass:color';
+
+$primary:     #0b405b;
+$primary-dark:#0a3550;
+$green:       #22c35d;
+$orange:      #fb8c00;
+$red:         #e53935;
+$border:      #eef0f4;
+$bg-page:     #f4f6f9;
+$bg-white:    #ffffff;
+$text-main:   #1a2e3b;
+$text-muted:  #647b87;
+$card-shadow: 0 4px 24px -4px hsla(200, 79%, 20%, .1);
+$card-radius: .75rem;
+
+// ── Page ─────────────────────────────────────────────────────────
+.cd {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+
+  // ── Page header ───────────────────────────────────────────────
+  &__page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  &__page-header-start { display: flex; align-items: center; gap: 14px; }
+
+  &__back-btn {
+    width: 36px; height: 36px;
+    border: 1px solid $border; border-radius: 10px;
+    background: $bg-white; color: $primary; font-size: 14px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; box-shadow: $card-shadow;
+    transition: background .15s;
+    &:hover { background: $bg-page; }
+  }
+
+  &__page-title    { font-size: 22px; font-weight: 700; color: $primary; margin: 0; line-height: 1.3; }
+  &__page-subtitle { font-size: 13px; color: $text-muted; margin: 2px 0 0; }
+
+  // ── Stat cards ────────────────────────────────────────────────
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 560px) { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  &__stat {
+    background: $bg-white;
+    border: 1px solid $border;
+    border-radius: $card-radius;
+    padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    box-shadow: $card-shadow;
+    &--primary { background: $primary;  border-color: $primary;  }
+    &--gold    { background: #c4920a;   border-color: #c4920a;   }
+  }
+
+  &__stat-body  { display: flex; flex-direction: column; gap: 5px; }
+  &__stat-label { font-size: 12.5px; color: $text-muted; font-weight: 500; }
+  &__stat-value { font-size: 28px; font-weight: 700; color: $text-main; line-height: 1; }
+
+  &__stat-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: rgba($primary, .08); color: $primary;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+
+  &__stat--primary &__stat-label { color: rgba(255,255,255,.75); }
+  &__stat--primary &__stat-value { color: #fff; }
+  &__stat--primary &__stat-icon  { background: rgba(255,255,255,.15); color: #fff; }
+  &__stat--gold    &__stat-label { color: rgba(255,255,255,.8); }
+  &__stat--gold    &__stat-value { color: #fff; }
+  &__stat--gold    &__stat-icon  { background: rgba(255,255,255,.15); color: #fff; }
+
+  // ── Tabs ──────────────────────────────────────────────────────
+  &__tabs {
+    display: flex; gap: 4px;
+    border: 1px solid $border; border-radius: $card-radius;
+    padding: 4px; background-color: #eef0f280;
+    overflow-x: auto; scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  &__tab {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px;
+    border: none; border-radius: 8px;
+    background: transparent; color: $text-muted;
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    font-family: inherit; white-space: nowrap;
+    transition: all .15s;
+    i { font-size: 13px; }
+
+    &--active {
+      background: $bg-page; color: $text-main;
+      font-weight: 600; box-shadow: $card-shadow;
+    }
+  }
+
+  // ── Loading / not-found ───────────────────────────────────────
+  &--loading {
+    align-items: center; justify-content: center;
+    padding: 100px; gap: 14px;
+    color: $text-muted; font-size: 14px;
+  }
+
+  &--not-found {
+    align-items: center; justify-content: center;
+    padding: 64px; color: $text-muted;
+    i { font-size: 48px; margin-bottom: 12px; }
+    p { font-size: 15px; margin: 0; }
+  }
+
+  &__spinner {
+    display: inline-block;
+    width: 32px; height: 32px;
+    border: 3px solid rgba($primary, .2);
+    border-top-color: $primary;
+    border-radius: 50%;
+    animation: cd-spin .7s linear infinite;
+    flex-shrink: 0;
+  }
+}
+
+@keyframes cd-spin { to { transform: rotate(360deg); } }
+
+// ── Status badge ──────────────────────────────────────────────────
+.status-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 12.5px; font-weight: 600; white-space: nowrap;
+
+  &__dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+  &--active { background: #edfaf3; color: color.adjust($green,  $lightness: -10%); .status-badge__dot { background: $green;   } }
+  &--urgent { background: #fff0f0; color: color.adjust($red,    $lightness:  -5%); .status-badge__dot { background: $red;     } }
+  &--done   { background: #eef4ff; color: #3b6fcf;                                 .status-badge__dot { background: #3b6fcf;  } }
+}

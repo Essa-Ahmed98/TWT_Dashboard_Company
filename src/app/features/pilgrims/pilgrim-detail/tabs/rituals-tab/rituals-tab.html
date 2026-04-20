@@ -1,0 +1,66 @@
+<div class="rt">
+  @if (loading()) {
+    <div class="empty-card">
+      <i class="pi pi-spin pi-spinner"></i>
+      <p>جاري تحميل بيانات المناسك...</p>
+    </div>
+  } @else if (!hasItems()) {
+    <div class="empty-card">
+      <i class="pi pi-map-marker"></i>
+      <p>لا توجد بيانات مناسك متاحة لهذا الحاج</p>
+    </div>
+  } @else {
+    <div class="summary-grid">
+      <div class="summary-card">
+        <span class="summary-card__label">المنسك الحالي</span>
+        <strong class="summary-card__value">{{ summary()?.currentRitualName }}</strong>
+      </div>
+      <div class="summary-card">
+        <span class="summary-card__label">نوع الحج</span>
+        <strong class="summary-card__value">{{ summary()?.hajjType }}</strong>
+      </div>
+      <div class="summary-card">
+        <span class="summary-card__label">نسبة الإنجاز</span>
+        <strong class="summary-card__value">{{ summary()?.progressText }}</strong>
+      </div>
+      <div class="summary-card">
+        <span class="summary-card__label">المناسك المكتملة</span>
+        <strong class="summary-card__value">{{ summary()?.completionText }}</strong>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card__header">
+        <i class="pi pi-map-marker"></i>
+        تقدم المناسك
+      </div>
+      <div class="rituals-timeline">
+        @for (r of rituals(); track r.id; let last = $last) {
+          <div class="ritual-item ritual-item--{{ r.status }}">
+            <div class="ritual-item__line-wrap">
+              <div class="ritual-item__icon">
+                @switch (r.status) {
+                  @case ('done')    { <i class="pi pi-check-circle"></i> }
+                  @case ('current') { <i class="pi pi-map-marker"></i> }
+                  @case ('pending') { <i class="pi pi-clock"></i> }
+                }
+              </div>
+              @if (!last) {
+                <div class="ritual-item__connector"></div>
+              }
+            </div>
+            <div class="ritual-item__info">
+              <span class="ritual-item__name">{{ r.name }}</span>
+              <span class="ritual-item__date">{{ r.date }}</span>
+              <p class="ritual-item__description">{{ r.description }}</p>
+              <div class="ritual-item__chips">
+                <span class="ritual-item__badge ritual-item__badge--{{ r.status }}">{{ statusLabel(r.status) }}</span>
+                <span class="ritual-item__meta">الحالة رقم {{ r.rawStatus }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

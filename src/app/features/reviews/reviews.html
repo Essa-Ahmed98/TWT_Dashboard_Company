@@ -1,0 +1,224 @@
+@if (hasAnyFilterDropdownOpen()) {
+  <div class="backdrop" (click)="closeAllDropdowns()"></div>
+}
+
+<div class="reviews">
+  <div class="reviews__header">
+    <div class="reviews__title">
+      <h1 class="reviews__title-text">التقييمات والآراء</h1>
+      <span class="reviews__title-count">{{ reviewsCountLabel() }}</span>
+    </div>
+  </div>
+
+  <div class="reviews__stats">
+    <article class="stat-card stat-card--negative">
+      <span class="stat-card__value">{{ summary().negative }}</span>
+      <span class="stat-card__label">تقييمات سلبية (1-2)</span>
+    </article>
+    <article class="stat-card stat-card--positive">
+      <span class="stat-card__value">{{ summary().positive }}</span>
+      <span class="stat-card__label">تقييمات إيجابية (4-5)</span>
+    </article>
+    <article class="stat-card stat-card--total">
+      <span class="stat-card__value">{{ summary().total }}</span>
+      <span class="stat-card__label">إجمالي التقييمات</span>
+    </article>
+    <article class="stat-card stat-card--rating">
+      <div class="stat-card__score">
+        <span class="stat-card__value">{{ summary().average || '—' }}</span>
+        <i class="pi pi-star-fill"></i>
+      </div>
+      <span class="stat-card__label">متوسط التقييم</span>
+      <div class="stars stars--center">
+        @for (star of stars(summary().average); track $index) {
+          <i class="pi pi-star-fill stars__icon stars__icon--filled"></i>
+        }
+        @for (star of emptyStars(summary().average); track $index) {
+          <i class="pi pi-star stars__icon"></i>
+        }
+      </div>
+    </article>
+  </div>
+
+  <div class="reviews__analytics" [class.reviews__analytics--single]="!hasCategoryCardsData()">
+    @if (hasCategoryCardsData()) {
+      <section class="panel">
+        <div class="panel__header">
+          <h2 class="panel__title">التقييم حسب الفئة</h2>
+          <i class="pi pi-filter panel__icon"></i>
+        </div>
+        <div class="categories-grid">
+          @for (category of categoryCards(); track category.label) {
+            <article class="category-card">
+              <div class="category-card__icon category-card__icon--{{ category.accent }}">
+                <i [class]="category.icon"></i>
+              </div>
+              <div class="category-card__label">{{ category.label }}</div>
+              <div class="category-card__score">
+                {{ category.average || '—' }}
+                <i class="pi pi-star-fill"></i>
+              </div>
+              <div class="category-card__count">{{ category.count }} تقييم</div>
+            </article>
+          }
+        </div>
+      </section>
+    }
+
+    <section class="panel panel--narrow">
+      <div class="panel__header">
+        <h2 class="panel__title">توزيع التقييمات</h2>
+        <i class="pi pi-chart-bar panel__icon"></i>
+      </div>
+      <div class="distribution">
+        @for (row of distribution(); track row.stars) {
+          <div class="distribution__row">
+            <span class="distribution__count">({{ row.percentage }}%) {{ row.count }}</span>
+            <div class="distribution__bar-wrap">
+              <div class="distribution__bar distribution__bar--{{ row.stars }}" [style.width.%]="row.percentage"></div>
+            </div>
+            <span class="distribution__stars">{{ row.stars }} <i class="pi pi-star-fill"></i></span>
+          </div>
+        }
+      </div>
+    </section>
+  </div>
+
+  <div class="reviews__filters">
+    <div class="reviews__search">
+      <i class="pi pi-search reviews__search-icon"></i>
+      <input class="reviews__search-input" type="text" placeholder="بحث في التعليقات..." [ngModel]="searchQuery()" (ngModelChange)="onSearch($event)" />
+    </div>
+
+    <div class="dropdown" [class.dropdown--open]="openCampaignDrop()">
+      <button class="dropdown__trigger" type="button" (click)="toggleCampaignDrop($event)">
+        <i class="pi pi-building"></i>
+        <span>{{ selectedCampaignId() ? campaignFilterLabel() : 'اختر حملة' }}</span>
+        @if (selectedCampaignId()) {
+          <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectCampaignFilter()"></i>
+        } @else {
+          <i class="pi pi-angle-down dropdown__arrow"></i>
+        }
+      </button>
+      @if (openCampaignDrop()) {
+        <ul class="dropdown__menu">
+          @if (campaignLoading()) {
+            <li class="dropdown__item dropdown__item--state"><span class="ss-spinner"></span></li>
+          } @else {
+            @for (campaign of campaignList(); track campaign.Id) {
+              <li class="dropdown__item" [class.dropdown__item--active]="selectedCampaignId() === campaign.Id" (click)="selectCampaignFilter(campaign)">
+                @if (selectedCampaignId() === campaign.Id) { <i class="pi pi-check"></i> }
+                {{ campaign.Name }}
+              </li>
+            }
+          }
+        </ul>
+      }
+    </div>
+
+    <div class="dropdown" [class.dropdown--open]="openGroupDrop()" [class.dropdown--disabled]="!selectedCampaignId()">
+      <button class="dropdown__trigger" type="button" [disabled]="!selectedCampaignId()" (click)="toggleGroupDrop($event)">
+        <i class="pi pi-users"></i>
+        <span>{{ selectedGroupId() ? groupFilterLabel() : 'اختر الحملة أولًا' }}</span>
+        @if (selectedGroupId()) {
+          <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectGroupFilter()"></i>
+        } @else {
+          <i class="pi pi-angle-down dropdown__arrow"></i>
+        }
+      </button>
+      @if (openGroupDrop()) {
+        <ul class="dropdown__menu">
+          @if (groupLoading()) {
+            <li class="dropdown__item dropdown__item--state"><span class="ss-spinner"></span></li>
+          } @else {
+            @for (group of groupList(); track group.Id) {
+              <li class="dropdown__item" [class.dropdown__item--active]="selectedGroupId() === group.Id" (click)="selectGroupFilter(group)">
+                @if (selectedGroupId() === group.Id) { <i class="pi pi-check"></i> }
+                {{ group.Name }}
+              </li>
+            }
+          }
+        </ul>
+      }
+    </div>
+  </div>
+
+  <section class="reviews-list panel">
+    <div class="panel__header">
+      <h2 class="panel__title">التقييمات ({{ summary().total }})</h2>
+    </div>
+
+    @if (loading()) {
+      <div class="reviews__spinner">
+        <p-progressSpinner strokeWidth="4" styleClass="reviews__progress-spinner" />
+      </div>
+    } @else if (reviews().length === 0) {
+      <div class="reviews-list__empty">
+        <i class="pi pi-inbox"></i>
+        <p>لا توجد تقييمات مطابقة للفلاتر الحالية</p>
+      </div>
+    } @else {
+      <div class="reviews-list__items">
+        @for (review of reviews(); track review.Id) {
+          <article class="review-card">
+            <div class="review-card__date">{{ formatDate(review.CreatedAt) }}</div>
+            <div class="review-card__body">
+              <div class="review-card__top">
+                <div class="review-card__meta">
+                  <div class="review-card__chips">
+                    <span class="chip">{{ review.GroupName }}</span>
+                    <span class="chip">{{ review.CampaignName }}</span>
+                    <span class="chip">بواسطة {{ review.DisplayName }}</span>
+                  </div>
+                  <div class="review-card__heading">
+                    <div class="review-card__title-wrap">
+                      <h3 class="review-card__title">{{ categoryLabel(review.Category) }}</h3>
+                    </div>
+                    <div class="review-card__rating">
+                      <span class="review-card__rating-label review-card__rating-label--{{ review.Rating }}">{{ ratingLabel(review.Rating) }}</span>
+                      <div class="stars">
+                        @for (star of stars(review.Rating); track $index) {
+                          <i class="pi pi-star-fill stars__icon stars__icon--filled"></i>
+                        }
+                        @for (star of emptyStars(review.Rating); track $index) {
+                          <i class="pi pi-star stars__icon"></i>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="review-card__category-icon review-card__category-icon--{{ categoryAccent(review.Category) }}">
+                  <i [class]="categoryIcon(review.Category)"></i>
+                </div>
+              </div>
+              <p class="review-card__comment">{{ review.Comment || 'لا يوجد تعليق' }}</p>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </section>
+
+  @if (totalCount() > 0) {
+    <div class="pagination-bar">
+      <div class="pagination-bar__controls">
+        <button class="pagination__btn" type="button" [disabled]="!hasPrevious()" (click)="prevPage()">
+          <i class="pi pi-angle-right"></i>
+        </button>
+        @for (p of visiblePages(); track $index) {
+          @if (p === '...') {
+            <span class="pagination__ellipsis">…</span>
+          } @else {
+            <button class="pagination__btn" type="button" [class.pagination__btn--active]="p === currentPage()" (click)="goToPage(p)">{{ p }}</button>
+          }
+        }
+        <button class="pagination__btn" type="button" [disabled]="!hasNext()" (click)="nextPage()">
+          <i class="pi pi-angle-left"></i>
+        </button>
+      </div>
+      <span class="pagination-bar__info">
+        {{ reviews().length }} من {{ totalCount() | number }}
+      </span>
+    </div>
+  }
+</div>

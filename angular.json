@@ -30,6 +30,9 @@
               }
             ],
             "styles": [
+              "node_modules/primeicons/primeicons.css",
+              "node_modules/primeflex/primeflex.css",
+"node_modules/leaflet/dist/leaflet.css",
               "src/styles.scss"
             ],
             "server": "src/main.server.ts",
@@ -43,6 +46,12 @@
           },
           "configurations": {
             "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
               "budgets": [
                 {
                   "type": "initial",
@@ -72,7 +81,8 @@
               "buildTarget": "dashboard-app:build:production"
             },
             "development": {
-              "buildTarget": "dashboard-app:build:development"
+              "buildTarget": "dashboard-app:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"

@@ -1,0 +1,33 @@
+<div class="ratt">
+  @if (loading()) {
+    <div class="empty-card">
+      <i class="pi pi-spin pi-spinner"></i>
+      <p>جاري تحميل التقييمات...</p>
+    </div>
+  } @else if (!hasItems()) {
+    <div class="empty-card">
+      <i class="pi pi-star"></i>
+      <p>لا توجد تقييمات مسجلة</p>
+    </div>
+  }
+
+  @for (r of ratings(); track r.id) {
+    <div class="rating-card">
+      <div class="rating-card__header">
+        <div class="rating-card__meta">
+          <span class="rating-card__category">{{ r.category }}</span>
+          <span class="rating-card__date">{{ r.date }}</span>
+        </div>
+        <div class="rating-card__stars">
+          @for (s of filledStars(r.stars); track $index) {
+            <i class="pi pi-star-fill rating-card__star rating-card__star--filled"></i>
+          }
+          @for (s of emptyStars(r.stars); track $index) {
+            <i class="pi pi-star rating-card__star"></i>
+          }
+        </div>
+      </div>
+      <p class="rating-card__comment">{{ r.comment || 'لا يوجد تعليق' }}</p>
+    </div>
+  }
+</div>

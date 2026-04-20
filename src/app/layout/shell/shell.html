@@ -1,0 +1,9 @@
+<div class="shell">
+  <app-sidenav [collapsed]="collapsed()" />
+  <div class="shell__content">
+    <app-header (toggleSidenav)="toggleSidenav()" />
+    <main class="shell__main">
+      <router-outlet />
+    </main>
+  </div>
+</div>

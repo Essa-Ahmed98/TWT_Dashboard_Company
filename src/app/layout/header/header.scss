@@ -1,0 +1,128 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  height: 60px;
+  background: #fff;
+  border-bottom: 1px solid #e9edf2;
+  flex-shrink: 0;
+  gap: 12px;
+
+  // ── Start (right in RTL): toggle + title ───────────
+  &__start {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a2e3b;
+  }
+
+  &__title-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #5a6a7a;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  // ── Actions (left in RTL) ──────────────────────────
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  // ── Icon button ────────────────────────────────────
+  &__icon-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    color: #6c7a89;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background 0.18s ease, color 0.18s ease;
+
+    &:hover {
+      background: #f1f4f8;
+      color: #1a2e3b;
+    }
+  }
+
+  // ── Logout button ─────────────────────────────────
+  &__logout {
+    color: #e53935;
+
+    &:hover {
+      background: #fdecea;
+      color: #c62828;
+    }
+  }
+
+  // ── Notification badge ─────────────────────────────
+  &__badge {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    background: #e53935;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    min-width: 15px;
+    height: 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 3px;
+    line-height: 1;
+  }
+
+  // ── User pill ──────────────────────────────────────
+  &__user {
+    display: flex;
+    align-items: center;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.18s ease;
+    margin-inline-end: 4px;
+    padding-top: .375rem;
+    padding-bottom: .375rem;
+    padding-left: .75rem;
+    padding-right: .75rem;
+    background-color: #0b405b1a;
+    border-radius: .75rem;
+    gap: .5rem;
+    &:hover {
+      background: #f1f4f8;
+    }
+
+    i {
+    font-weight: 600;
+    font-size: .875rem;
+    line-height: 1.25rem;
+    color: rgb(15, 46, 61);
+    }
+  }
+
+  &__user-name {
+   font-weight: 600;
+    font-size: .875rem;
+    line-height: 1.25rem;
+    color: rgb(15, 46, 61);
+  }
+}

@@ -1,0 +1,181 @@
+@use 'sass:color';
+@use './tab-shared' as ts;
+@include ts.styles();
+
+$primary:     #0b405b;
+$green:       #22c35d;
+$orange:      #fb8c00;
+$red:         #e53935;
+$border:      #eef0f4;
+$bg-page:     #f4f6f9;
+$bg-white:    #ffffff;
+$text-main:   #1a2e3b;
+$text-muted:  #647b87;
+$card-shadow: 0 4px 24px -4px hsla(200, 79%, 20%, .1);
+$card-radius: .75rem;
+
+// ── Group list ────────────────────────────────────────────────
+.cd__group-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+// ── Group card (accordion) ────────────────────────────────────
+.group-card {
+  background: $bg-white;
+  border: 1px solid $border;
+  border-radius: $card-radius;
+  overflow: hidden;
+  transition: box-shadow .2s;
+
+  &:hover  { box-shadow: $card-shadow; }
+  &--open  { box-shadow: $card-shadow; border-color: rgba($primary, .2); }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 14px 18px;
+    cursor: pointer;
+    user-select: none;
+    &:hover { background: rgba($bg-page, .5); }
+  }
+
+  &__row-start { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; }
+  &__row-end   { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+
+  &__icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: rgba($primary, .08);
+    color: $primary;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+
+  &__info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+
+  &__title-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+  &__name { font-size: 14px; font-weight: 700; color: $text-main; }
+
+  &__meta {
+    font-size: 12.5px; color: $text-muted;
+    display: flex; align-items: center; gap: 6px;
+    i { font-size: 11px; }
+  }
+
+  &__supervisors {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 13px; font-weight: 500; color: $text-muted;
+    i { font-size: 13px; }
+  }
+
+  &__chevron { color: $text-muted; font-size: 13px; transition: transform .25s; }
+
+  &__body {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .3s ease;
+  }
+
+  &--open &__body { grid-template-rows: 1fr; }
+
+  &__body-inner {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+// ── Group section ─────────────────────────────────────────────
+.group-section {
+  padding: 16px 18px;
+  border-top: 1px solid $border;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  &__title {
+    font-size: 13px; font-weight: 600; color: $text-main;
+    display: flex; align-items: center; gap: 6px;
+    i { color: $primary; font-size: 13px; }
+  }
+
+  &__chips  { display: flex; flex-wrap: wrap; gap: 8px; }
+  &__empty  { font-size: 13px; color: $text-muted; }
+
+  &--footer {
+    display: flex;
+    justify-content: center;
+    background: $bg-page;
+    padding: 12px 18px !important;
+    border-top: 1px solid $border;
+  }
+
+  &__more {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600; color: $primary;
+    background: none; border: none; padding: 0;
+    cursor: pointer; font-family: inherit;
+    transition: opacity .15s;
+    i { font-size: 12px; }
+    &:hover { opacity: .7; }
+  }
+}
+
+// ── Supervisor chip ───────────────────────────────────────────
+.supervisor-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 10px;
+  background: $bg-page; border: 1px solid $border; border-radius: 20px;
+  font-size: 13px;
+
+  i { color: $primary; font-size: 12px; flex-shrink: 0; }
+
+  &__name { font-weight: 600; color: $text-main; }
+}
+
+// ── Pilgrims table ────────────────────────────────────────────
+.group-table-wrap {
+  border: 1px solid $border;
+  border-radius: 8px;
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+.group-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  thead tr { background: $bg-page; border-bottom: 1px solid $border; }
+  th { padding: 9px 14px; text-align: start; font-size: 12px; font-weight: 600; color: $text-muted; white-space: nowrap; }
+
+  tbody tr {
+    border-bottom: 1px solid $border;
+    transition: background .12s;
+    &:last-child { border-bottom: none; }
+    &:hover      { background: rgba($bg-page, .6); }
+  }
+
+  td { padding: 9px 14px; color: $text-main; white-space: nowrap; }
+
+  &__empty { text-align: center; padding: 20px !important; color: $text-muted; font-size: 13px; }
+}
+
+// ── Icon button ───────────────────────────────────────────────
+.icon-btn {
+  border: none; background: transparent; color: $text-muted;
+  cursor: pointer; font-size: 14px; padding: 4px 6px; border-radius: 6px;
+  transition: background .15s, color .15s;
+  &:hover { background: $bg-page; color: $primary; }
+}

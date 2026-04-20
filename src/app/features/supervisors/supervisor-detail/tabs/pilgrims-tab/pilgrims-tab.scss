@@ -1,0 +1,212 @@
+$primary:     #0b405b;
+$card-radius: .75rem;
+$card-shadow: 0 4px 24px -4px hsla(200, 79%, 20%, .1);
+$safe:        #22c35d;
+$warning:     #fb8c00;
+$danger:      #e53935;
+
+.plt {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+
+    @media (max-width: 600px) { grid-template-columns: 1fr; }
+  }
+
+  &__stat {
+    background: #fff;
+    border-radius: $card-radius;
+    border: 1px solid #eef0f4;
+    border-top: 3px solid;
+    box-shadow: $card-shadow;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .375rem;
+    text-align: center;
+  }
+
+  &__stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  &__stat-label {
+    font-size: .8125rem;
+    color: #647b87;
+  }
+}
+
+.plt {
+  &__search {
+    display: flex;
+    align-items: center;
+    gap: .375rem;
+    background: #f5f7fa;
+    border: 1px solid #e8eaed;
+    border-radius: .5rem;
+    padding: .375rem .75rem;
+  }
+
+  &__search-icon { font-size: .8rem; color: #647b87; }
+
+  &__search-input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: .875rem;
+    color: #1a2d3a;
+    width: 180px;
+    direction: rtl;
+
+    &::placeholder { color: #9eadb8; }
+  }
+
+  &__spinner {
+    display: flex;
+    justify-content: center;
+    padding: 2.5rem;
+  }
+
+  &__progress-spinner { width: 2rem; height: 2rem; }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .75rem;
+    padding: 3rem 1rem;
+    color: #9eadb8;
+    font-size: .9rem;
+
+    i { font-size: 2rem; }
+    p { margin: 0; }
+  }
+
+  &__pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .375rem;
+    padding: .875rem 1.25rem;
+    border-top: 1px solid #f0f2f5;
+  }
+
+  &__pg-btn {
+    width: 2rem;
+    height: 2rem;
+    border-radius: .375rem;
+    border: 1px solid #e8eaed;
+    background: #fff;
+    color: #3d5263;
+    font-size: .8125rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s, color .15s;
+
+    &:hover:not(:disabled) { background: #f0f4f8; }
+    &:disabled { opacity: .4; cursor: default; }
+    &--active { background: $primary; color: #fff; border-color: $primary; }
+  }
+}
+
+.info-card {
+  background: #fff;
+  border-radius: $card-radius;
+  border: 1px solid #eef0f4;
+  box-shadow: $card-shadow;
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    padding: .875rem 1.25rem;
+    font-size: .9375rem;
+    font-weight: 600;
+    color: $primary;
+    border-bottom: 1px solid #f0f2f5;
+  }
+
+  &__header-right {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+
+    i { font-size: .9rem; color: #647b87; }
+  }
+}
+
+.pilgrim-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .875rem 1.25rem;
+  border-bottom: 1px solid #f8f9fb;
+  gap: 1rem;
+
+  &:last-child { border-bottom: none; }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: .875rem;
+  }
+}
+
+.pilgrim-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .8125rem;
+  font-weight: 700;
+  flex-shrink: 0;
+
+  &--safe    { background: #{$safe}1a;    color: $safe;    }
+  &--warning { background: #{$warning}1a; color: $warning; }
+  &--danger  { background: #{$danger}1a;  color: $danger;  }
+}
+
+.pilgrim-info {
+  display: flex;
+  flex-direction: column;
+  gap: .125rem;
+
+  &__name { font-size: .9375rem; font-weight: 600; color: $primary; }
+  &__meta { font-size: .8125rem; color: #647b87; }
+}
+
+.pilgrim-status {
+  display: inline-flex;
+  align-items: center;
+  gap: .375rem;
+  font-size: .75rem;
+  font-weight: 600;
+  padding: .25rem .75rem;
+  border-radius: 20px;
+  white-space: nowrap;
+
+  &__dot {
+    width: .4375rem;
+    height: .4375rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  &--safe    { background: #e8f5ee; color: #16a34a; .pilgrim-status__dot { background: $safe;    } }
+  &--warning { background: #fff8e1; color: #e65100; .pilgrim-status__dot { background: $warning; } }
+  &--danger  { background: #ffebee; color: #c62828; .pilgrim-status__dot { background: $danger;  } }
+}

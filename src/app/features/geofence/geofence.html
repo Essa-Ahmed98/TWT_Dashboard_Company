@@ -1,0 +1,462 @@
+<div class="gf">
+
+  <!-- ── Page Header ───────────────────────────────────────── -->
+  <div class="gf__header">
+    <div>
+      <div class="gf__header-right">
+        <i class="pi pi-shield"></i>
+         <h1 class="gf__title">غرفة المراقبة</h1>
+      </div>
+      <div>
+        <p class="gf__subtitle">إدارة ومراقبة المناطق الجغرافية وتنبيهات خروج الحجاج</p>
+      </div>
+    </div>
+    <button class="gf__add-btn" (click)="openModal()">
+      <i class="pi pi-plus"></i>
+      إضافة منطقة
+    </button>
+  </div>
+
+  <!-- ── Stats ─────────────────────────────────────────────── -->
+  <div class="gf__stats">
+    @for (s of stats(); track s.label) {
+      <div class="gf__stat">
+        <p class="gf__stat-value" [style.color]="s.color">{{ s.value }}</p>
+        <p class="gf__stat-label">{{ s.label }}</p>
+      </div>
+    }
+  </div>
+
+  <!-- ── Main Content ──────────────────────────────────────── -->
+  <div class="gf__content">
+
+    <!-- Zones Sidebar -->
+    <div class="gf__sidebar">
+
+      <!-- Tabs -->
+      <div class="gf__tabs">
+        <button
+          class="gf__tab"
+          [class.gf__tab--active]="activeTab() === 'zones'"
+          (click)="setActiveTab('zones')">
+          المناطق
+        </button>
+        <button
+          class="gf__tab"
+          [class.gf__tab--active]="activeTab() === 'campaigns'"
+          (click)="setActiveTab('campaigns')">
+          الحملات
+        </button>
+      </div>
+
+
+      <!-- ── Zones Tab ── -->
+      @if (activeTab() === 'zones') {
+
+        <!-- Search + Filter -->
+        <div class="gf__search-bar">
+          <!-- Filter Dropdown -->
+          <div class="gf__filter" (click)="showFilterDropdown.update(v => !v)">
+            <span>{{ filterType() }}</span>
+            <i class="pi pi-chevron-down gf__filter__arrow"
+               [class.gf__filter__arrow--open]="showFilterDropdown()"></i>
+            @if (showFilterDropdown()) {
+              <div class="gf__filter__menu">
+                @for (opt of filterOptions; track opt) {
+                  <div
+                    class="gf__filter__item"
+                    [class.gf__filter__item--active]="filterType() === opt"
+                    (click)="selectFilter(opt); $event.stopPropagation()">
+                    @if (filterType() === opt) {
+                      <i class="pi pi-check"></i>
+                    }
+                    {{ opt }}
+                  </div>
+                }
+              </div>
+            }
+          </div>
+          <!-- Search -->
+          <div class="gf__search">
+            <i class="pi pi-search gf__search__icon"></i>
+            <input
+              class="gf__search__input"
+              type="text"
+              placeholder="بحث..."
+              [value]="searchQuery()"
+              (input)="onSearch($any($event.target).value)"
+            />
+          </div>
+        </div>
+
+        <!-- Zone Cards -->
+        @if (loading()) {
+          <div class="gf__spinner">
+            <p-progressSpinner strokeWidth="4" styleClass="gf__progress-spinner" />
+          </div>
+        } @else {
+        <div class="gf__zones-list">
+          @for (zone of filteredZones(); track zone.id) {
+            <div
+              class="zone-card"
+              [class.zone-card--active]="selectedZoneId() === zone.id"
+              [class.zone-card--hidden]="!zone.visible"
+              (click)="flyToZone(zone)">
+
+              <!-- Top: dot + name + toggle -->
+              <div class="zone-card__top">
+                <div class="zone-card__dot" [style.background]="zone.color"></div>
+                <span class="zone-card__name">{{ zone.name }}</span>
+                <div
+                  class="zone-toggle"
+                  [class.zone-toggle--on]="zone.visible"
+                  [style.background]="zone.visible ? '#0b405b' : '#dde2e8'"
+                  (click)="toggleZone(zone, $event)">
+                  <div class="zone-toggle__thumb"></div>
+                </div>
+              </div>
+
+              <!-- Type Badge -->
+              <div class="zone-card__badge">
+                <i class="pi pi-map-marker"></i>
+                {{ zone.type }}
+              </div>
+
+              <!-- Stats -->
+              <div class="zone-card__stats">
+                <span class="zone-card__stat">
+                  <i class="pi pi-map-marker"></i>
+                  {{ zone.radius }}م
+                </span>
+                <span class="zone-card__stat">
+                  <i class="pi pi-users"></i>
+                  {{ zone.pilgrimsInside }}
+                </span>
+                <span class="zone-card__stat">
+                  <i class="pi pi-palette"></i>
+                  {{ opacityPercent(zone.opacity) }}%
+                </span>
+                @if (zone.alertType) {
+                  <span
+                    class="zone-card__alert"
+                    [class.zone-card__alert--exit]="zone.alertType === 'خروج'"
+                    [class.zone-card__alert--enter]="zone.alertType === 'دخول'">
+                    <i class="pi pi-bell"></i>
+                    {{ zone.alertType }}
+                  </span>
+                }
+              </div>
+
+              <!-- Actions -->
+              <div class="zone-card__actions">
+                <button class="zone-card__action zone-card__action--edit" (click)="openEditModal(zone, $event)">
+                  <i class="pi pi-pencil"></i>
+                  تعديل
+                </button>
+                <button class="zone-card__action zone-card__action--delete" (click)="deleteZone(zone, $event)">
+                  <i class="pi pi-trash"></i>
+                  حذف
+                </button>
+              </div>
+
+            </div>
+          }
+
+          @if (filteredZones().length === 0) {
+            <div class="gf__empty">
+              <i class="pi pi-search"></i>
+              <p>لا توجد نتائج للبحث</p>
+            </div>
+          }
+        </div>
+        @if (totalCount() > 0) {
+          <div class="pagination-bar">
+            <div class="pagination-bar__controls">
+              <button class="pagination__btn" [disabled]="!hasPrevious()" (click)="prevPage()">
+                <i class="pi pi-angle-right"></i>
+              </button>
+              @for (p of visiblePages(); track $index) {
+                @if (p === '...') {
+                  <span class="pagination__ellipsis">…</span>
+                } @else {
+                  <button class="pagination__btn"
+                          [class.pagination__btn--active]="p === currentPage()"
+                          (click)="goToPage(p)">{{ p }}</button>
+                }
+              }
+              <button class="pagination__btn" [disabled]="!hasNext()" (click)="nextPage()">
+                <i class="pi pi-angle-left"></i>
+              </button>
+            </div>
+            <span class="pagination-bar__info">
+              {{ zones().length }} من {{ totalCount() | number }}
+            </span>
+          </div>
+        }
+        }
+      }
+
+      <!-- ── Campaigns Tab ── -->
+      @if (activeTab() === 'campaigns') {
+        <div class="gf__campaigns-hint">
+          <i class="pi pi-map"></i>
+          اختر حملة ثم فعّل المجموعات لعرض حجاجها على الخريطة
+        </div>
+        @if (campaignsLoading()) {
+          <div class="gf__spinner">
+            <p-progressSpinner strokeWidth="4" styleClass="gf__progress-spinner" />
+          </div>
+        } @else {
+          <div class="gf__campaigns-list">
+            @for (campaign of campaigns(); track campaign.id) {
+              @let allVisible = allGroupsVisible(campaign);
+              <div class="campaign">
+
+                <!-- Campaign Header -->
+                <div class="campaign__header" (click)="toggleCampaign(campaign.id)">
+                  <div class="campaign__header-right">
+                    <i class="pi"
+                       [class.pi-chevron-down]="!campaign.expanded"
+                       [class.pi-chevron-up]="campaign.expanded"></i>
+                    <div>
+                      <span class="campaign__name">{{ campaign.name }}</span>
+                      <span class="campaign__meta">
+                        {{ campaign.groupsCount }} مجموعة • رقم الحملة {{ campaign.number }}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    class="campaign__show-btn"
+                    [class.campaign__show-btn--active]="allVisible"
+                    (click)="toggleAllGroups(campaign, $event)">
+                    <i class="pi"
+                       [class.pi-eye]="!allVisible"
+                       [class.pi-eye-slash]="allVisible"></i>
+                    {{ allVisible ? 'إخفاء الكل' : 'إظهار الكل' }}
+                  </button>
+                </div>
+
+                <!-- Groups accordion -->
+                <div class="campaign__groups" [class.campaign__groups--open]="campaign.expanded">
+                  @for (group of campaign.groups; track group.id) {
+                    <div class="campaign__group">
+                      <div class="campaign__group-right">
+                        <div class="campaign__group-check"
+                             [class.campaign__group-check--on]="group.visible"
+                             [style.border-color]="group.visible ? group.color : '#dce2e5'"
+                             [style.background]="group.visible ? group.color : 'transparent'">
+                          @if (group.visible) { <i class="pi pi-check"></i> }
+                        </div>
+                        <div>
+                          <span class="campaign__group-name">{{ group.name }}</span>
+                          <span class="campaign__group-meta">{{ group.pilgrimsCount }} حاج</span>
+                        </div>
+                      </div>
+                      <button
+                        class="campaign__group-btn"
+                        [class.campaign__group-btn--on]="group.visible"
+                        [disabled]="isGroupLoading(group.id)"
+                        (click)="toggleGroupVisibility(campaign.id, group.id, $event)">
+                        {{ isGroupLoading(group.id) ? 'جاري التحميل...' : (group.visible ? 'معروضة' : 'مخفية') }}
+                      </button>
+                    </div>
+                  }
+                </div>
+
+              </div>
+            }
+
+            @if (campaigns().length === 0) {
+              <div class="gf__empty">
+                <i class="pi pi-briefcase"></i>
+                <p>لا توجد حملات</p>
+              </div>
+            }
+          </div>
+
+          @if (campaignsTotalCount() > 0) {
+            <div class="pagination-bar">
+              <div class="pagination-bar__controls">
+                <button class="pagination__btn" [disabled]="!campaignsHasPrevious()" (click)="prevCampaignsPage()">
+                  <i class="pi pi-angle-right"></i>
+                </button>
+                @for (p of campaignVisiblePages(); track $index) {
+                  @if (p === '...') {
+                    <span class="pagination__ellipsis">…</span>
+                  } @else {
+                    <button class="pagination__btn"
+                            [class.pagination__btn--active]="p === campaignsCurrentPage()"
+                            (click)="goToCampaignsPage(p)">{{ p }}</button>
+                  }
+                }
+                <button class="pagination__btn" [disabled]="!campaignsHasNext()" (click)="nextCampaignsPage()">
+                  <i class="pi pi-angle-left"></i>
+                </button>
+              </div>
+              <span class="pagination-bar__info">
+                {{ campaigns().length }} من {{ campaignsTotalCount() | number }}
+              </span>
+            </div>
+          }
+        }
+      }
+
+
+    </div>
+
+    <!-- Leaflet Map -->
+    <div class="gf__map">
+      <div class="map-header">
+        <h2 class="map-header-title">الخريطة التفاعلية</h2>
+      </div>
+      @if (selectingLocation()) {
+        <div class="gf__map-picker">
+          <div class="gf__map-picker__content">
+            <span>اضغط على الخريطة لتحديد موقع المنطقة الجديدة</span>
+            <button class="gf__map-picker__cancel" type="button" (click)="cancelLocationSelection()">إلغاء</button>
+          </div>
+        </div>
+      }
+      <div #mapEl class="gf__map-inner"></div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ── Modal ─────────────────────────────────────────────────── -->
+@if (showModal()) {
+  <div class="modal-backdrop" (click)="closeModal()"></div>
+  <div class="modal">
+    <div class="modal__header">
+      <h2 class="modal__title">{{ modalTitle() }}</h2>
+      <button class="modal__close" (click)="closeModal()">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <div class="modal__body">
+
+      <!-- Row 1: اسم + نوع -->
+      <div class="modal__row">
+        <div class="modal__field modal__field--required">
+          <label class="modal__label">اسم المنطقة</label>
+          <input
+            class="modal__input"
+            type="text"
+            placeholder="مثال: مخيم حملة..."
+            [value]="form().name"
+            (input)="patchForm({ name: $any($event.target).value })"
+          />
+        </div>
+        <div class="modal__field">
+          <label class="modal__label">نوع المنطقة</label>
+          <select
+            class="modal__select"
+            [value]="form().type"
+            (change)="patchForm({ type: $any($event.target).value })"
+          >
+            @for (t of zoneTypes; track t) {
+              <option [value]="t">{{ t }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <!-- الوصف -->
+      <div class="modal__field">
+        <label class="modal__label">الوصف</label>
+        <textarea
+          class="modal__textarea"
+          placeholder="وصف المنطقة..."
+          rows="3"
+          [value]="form().description"
+          (input)="patchForm({ description: $any($event.target).value })"
+        ></textarea>
+      </div>
+
+      <!-- تحديد الموقع -->
+      <div class="modal__section-title">
+        <i class="pi pi-map-marker"></i>
+        تحديد الموقع
+      </div>
+      <div class="modal__location-row">
+        <button class="modal__map-btn" type="button" (click)="startLocationSelection()">
+          <i class="pi pi-map-marker"></i>
+          اختر من الخريطة
+        </button>
+        <div class="modal__field">
+          <label class="modal__label">خط العرض (lat)</label>
+          <input
+            class="modal__input"
+            type="number"
+            step="0.0001"
+            [value]="form().lat"
+            (input)="patchForm({ lat: +$any($event.target).value })"
+          />
+        </div>
+        <div class="modal__field">
+          <label class="modal__label">خط الطول (lng)</label>
+          <input
+            class="modal__input"
+            type="number"
+            step="0.0001"
+            [value]="form().lng"
+            (input)="patchForm({ lng: +$any($event.target).value })"
+          />
+        </div>
+      </div>
+
+      <!-- نصف القطر -->
+      <div class="modal__field">
+        <label class="modal__label">نصف القطر: {{ form().radius }} متر</label>
+        <input
+          class="modal__range"
+          type="range"
+          min="100"
+          max="3000"
+          step="50"
+          [value]="form().radius"
+          (input)="patchForm({ radius: +$any($event.target).value })"
+        />
+      </div>
+
+      <!-- Row: السعة + اللون -->
+      <div class="modal__row">
+        <div class="modal__field">
+          <label class="modal__label">شفافية اللون</label>
+          <input
+            class="modal__input"
+            type="number"
+            min="0"
+            max="1"
+            step="0.01"
+            [value]="form().opacity"
+            (input)="patchForm({ opacity: +$any($event.target).value })"
+          />
+        </div>
+        <div class="modal__field">
+          <label class="modal__label">اللون</label>
+          <input
+            class="modal__color"
+            type="color"
+            [value]="form().color"
+            (input)="patchForm({ color: $any($event.target).value })"
+          />
+        </div>
+      </div>
+
+    </div>
+
+    <div class="modal__footer">
+      <button class="modal__btn modal__btn--primary" [disabled]="submitting() || !formValid()" (click)="submitForm()">
+        <i class="pi pi-check"></i>
+        {{ editingZoneId() !== null ? 'حفظ التعديلات' : 'إنشاء المنطقة' }}
+      </button>
+      <button class="modal__btn modal__btn--secondary" (click)="closeModal()">
+        إلغاء
+      </button>
+    </div>
+
+  </div>
+}

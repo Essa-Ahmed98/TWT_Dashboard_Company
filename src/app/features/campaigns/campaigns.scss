@@ -1,0 +1,704 @@
+@use 'sass:color';
+// ── Design tokens ────────────────────────────────────────────────
+$primary:      #0b405b;
+$primary-dark: #0a3550;
+$green:        #22c35d;
+$orange:       #fb8c00;
+$red:          #e53935;
+$border:       #e9edf2;
+$bg-page:      #f4f6f9;
+$bg-white:     #ffffff;
+$text-main:    #1a2e3b;
+$text-muted:   #6c7a89;
+$text-label:   #374151;
+
+// ── Backdrops ─────────────────────────────────────────────────────
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .45);
+  z-index: 200;
+}
+
+// ── Page layout ───────────────────────────────────────────────────
+.campaigns {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  // ── Header ──────────────────────────────────────────────────────
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  &__title {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__title-text {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 700;
+    color: $text-main;
+    margin: 0;
+  }
+
+  &__title-count {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: $text-muted;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  // ── Search ───────────────────────────────────────────────────────
+  &__search {
+    position: relative;
+    min-width: 180px;
+  }
+
+  &__search-icon {
+    position: absolute;
+    inset-inline-start: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $text-muted;
+    font-size: 13px;
+    pointer-events: none;
+  }
+
+  &__search-input {
+    width: 100%;
+    height: 38px;
+    border: 1px solid $border;
+    border-radius: 8px;
+    padding: 0 38px 0 12px;
+    font-family: inherit;
+    font-size: 13.5px;
+    color: $text-main;
+    background: transparent;
+    outline: none;
+    transition: border-color .18s;
+
+    &::placeholder { color: $text-muted; }
+    &:focus        { border-color: $primary; }
+  }
+
+  // ── Company filter ────────────────────────────────────────────────
+  &__company-filter {
+    position: relative;
+    min-width: 160px;
+  }
+
+  &__company-icon {
+    position: absolute;
+    inset-inline-start: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $text-muted;
+    font-size: 13px;
+    pointer-events: none;
+  }
+
+  &__company-chevron {
+    position: absolute;
+    inset-inline-end: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $text-muted;
+    font-size: 11px;
+    pointer-events: none;
+  }
+
+  &__company-select {
+    width: 100%;
+    height: 38px;
+    border: 1px solid $border;
+    border-radius: 8px;
+    padding: 0 30px 0 36px;
+    font-family: inherit;
+    font-size: 13.5px;
+    color: $text-main;
+    background: transparent;
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+    transition: border-color .18s;
+
+    &:focus { border-color: $primary; }
+  }
+
+  // ── Loading spinner ───────────────────────────────────────────────
+  &__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 80px 0;
+    color: $text-muted;
+  }
+
+  &__spinner {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    border: 3px solid rgba($primary, .2);
+    border-top-color: $primary;
+    border-radius: 50%;
+    animation: campaigns-spin .7s linear infinite;
+    flex-shrink: 0;
+  }
+
+  &__loading-text {
+    font-size: 14px;
+    color: $text-muted;
+  }
+
+  // ── Grid ─────────────────────────────────────────────────────────
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+
+    @media (max-width: 1100px) { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 640px)  { grid-template-columns: 1fr; }
+  }
+
+  // ── Table ─────────────────────────────────────────────────────────
+  &__table-wrap {
+    background: $bg-white;
+    border-radius: 12px;
+    border: 1px solid $border;
+    overflow: hidden;
+    overflow-x: auto;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+
+    thead tr {
+      background: $bg-page;
+      border-bottom: 1px solid $border;
+    }
+
+    th {
+      padding: 12px 16px;
+      text-align: start;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: $text-muted;
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid $border;
+      transition: background .12s;
+
+      &:last-child { border-bottom: none; }
+      &:hover      { background: rgba($bg-page, .7); }
+    }
+
+    td {
+      padding: 14px 16px;
+      color: $text-main;
+      white-space: nowrap;
+    }
+  }
+
+  // ── Empty state ───────────────────────────────────────────────────
+  &__empty {
+    text-align: center;
+    padding: 56px !important;
+    color: $text-muted;
+    grid-column: 1 / -1;
+
+    i { font-size: 40px; display: block; margin-bottom: 10px; opacity: .3; }
+    p { font-size: 14px; }
+  }
+}
+
+// ── View toggle ───────────────────────────────────────────────────
+.view-toggle {
+  display: flex;
+  border: 1px solid $border;
+  border-radius: 8px;
+  overflow: hidden;
+  background: transparent;
+
+  &__btn {
+    width: 38px;
+    height: 38px;
+    border: none;
+    background: transparent;
+    color: $text-muted;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s, color .15s;
+
+    & + & {
+      border-inline-start: 1px solid $border;
+    }
+
+    &--active {
+      background: $primary;
+      color: #fff;
+    }
+
+    &:not(&--active):hover {
+      background: $bg-page;
+      color: $text-main;
+    }
+  }
+}
+
+// ── Campaign card ─────────────────────────────────────────────────
+.campaign-card {
+  background: $bg-white;
+  border: 1px solid $border;
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: box-shadow .2s;
+
+  &:hover { box-shadow: 0 4px 20px rgba(0,0,0,.07); }
+
+  &__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  &__name {
+    font-size: 16px;
+    font-weight: 700;
+    color: $text-main;
+  }
+
+  &__number {
+    font-size: 12px;
+    color: $text-muted;
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  &__footer {
+    border-top: 1px solid $border;
+    padding-top: 14px;
+  }
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: $primary;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity .15s;
+
+    i { font-size: 12px; }
+    &:hover { opacity: .75; }
+  }
+}
+
+// ── Campaign stat cell ────────────────────────────────────────────
+.cstat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: $bg-page;
+  border-radius: 10px;
+  padding: 10px 6px;
+
+  &__icon {
+    font-size: 16px;
+    color: $primary;
+    opacity: .7;
+  }
+
+  &__value {
+    font-size: 16px;
+    font-weight: 700;
+    color: $text-main;
+    line-height: 1;
+  }
+
+  &__label {
+    font-size: 11px;
+    color: $text-muted;
+  }
+}
+
+// ── Campaign name cell (table) ────────────────────────────────────
+.campaign-name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  &__text { font-weight: 700; color: $text-main; }
+  &__sub  { font-size: 12px; color: $text-muted; }
+}
+
+// ── Table link ────────────────────────────────────────────────────
+.table-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: $primary;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+
+  i { font-size: 12px; }
+  &:hover { opacity: .75; }
+}
+
+// ── Status badges ─────────────────────────────────────────────────
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  &--active {
+    background: #edfaf3;
+    color: color.adjust($green, $lightness: -10%);
+    .status-badge__dot { background: $green; }
+  }
+
+  &--urgent {
+    background: #fff0f0;
+    color: color.adjust($red, $lightness: -5%);
+    .status-badge__dot { background: $red; }
+  }
+
+  &--done {
+    background: #eef4ff;
+    color: #3b6fcf;
+    .status-badge__dot { background: #3b6fcf; }
+  }
+}
+
+// ── Buttons ───────────────────────────────────────────────────────
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background .18s, color .18s, border-color .18s;
+  white-space: nowrap;
+
+  i { font-size: 14px; }
+
+  &--primary {
+    background: $primary;
+    color: #fff;
+    &:hover { background: $primary-dark; }
+  }
+
+  &--outline {
+    background: transparent;
+    color: $text-main;
+    border-color: $border;
+    &:hover { background: $bg-page; }
+  }
+}
+
+// ── Centered dialog ───────────────────────────────────────────────
+.dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(560px, calc(100vw - 32px));
+  height: fit-content;
+  max-height: calc(100vh - 48px);
+  background: $bg-white;
+  z-index: 201;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .2);
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid $border;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-size: 18px;
+    font-weight: 700;
+    color: $text-main;
+    margin: 0 0 4px;
+  }
+
+  &__sub {
+    font-size: 13px;
+    color: $text-muted;
+    margin: 0;
+  }
+
+  &__close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: $text-muted;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background .15s, color .15s;
+
+    &:hover { background: $bg-page; color: $text-main; }
+  }
+
+  &__body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb { background: rgba(0,0,0,.1); border-radius: 2px; }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 16px 24px;
+    border-top: 1px solid $border;
+    flex-shrink: 0;
+
+    .btn--primary { padding: 0 24px; }
+  }
+}
+
+// ── Pagination ────────────────────────────────────────────────────
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 4px 0;
+
+  &__info {
+    font-size: 13px;
+    color: $text-muted;
+  }
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__btn {
+    min-width: 34px;
+    height: 34px;
+    padding: 0 6px;
+    border: 1px solid $border;
+    border-radius: 8px;
+    background: $bg-white;
+    color: $text-main;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s, color .15s, border-color .15s;
+
+    &:hover:not(:disabled):not(&--active) {
+      background: $bg-page;
+      border-color: color.adjust($border, $lightness: -8%);
+    }
+
+    &--active {
+      background: $primary;
+      border-color: $primary;
+      color: #fff;
+      cursor: default;
+    }
+
+    &:disabled {
+      opacity: .35;
+      cursor: not-allowed;
+    }
+
+    i { font-size: 13px; }
+  }
+
+  &__ellipsis {
+    min-width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: $text-muted;
+    letter-spacing: .5px;
+  }
+}
+
+// ── Page-size select ──────────────────────────────────────────────
+.page-size-select {
+  border: 1px solid $border;
+  border-radius: 8px;
+  background: transparent;
+  color: $text-main;
+  font-size: 13px;
+  font-family: inherit;
+  padding: 5px 10px;
+  height: 38px;
+  cursor: pointer;
+  outline: none;
+  flex-shrink: 0;
+
+  &:focus { border-color: $primary; }
+}
+
+// ── Pagination bar ────────────────────────────────────────────────
+.pagination-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__info {
+    position: absolute;
+    right: 0;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: $text-main;
+    white-space: nowrap;
+    background: $bg-white;
+    border: 1px solid $border;
+    border-radius: 8px;
+    padding: 4px 12px;
+  }
+}
+
+// ── Spinner keyframes ─────────────────────────────────────────────
+@keyframes campaigns-spin {
+  to { transform: rotate(360deg); }
+}
+
+// ── Form elements ─────────────────────────────────────────────────
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-label;
+}
+
+.form-req {
+  color: $red;
+  margin-inline-start: 2px;
+}
+
+.form-input {
+  height: 38px;
+  border: 1px solid $border;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: $text-main;
+  background: $bg-white;
+  outline: none;
+  transition: border-color .18s;
+  width: 100%;
+
+  &::placeholder { color: $text-muted; }
+  &:focus        { border-color: $primary; }
+
+  &--textarea {
+    height: auto;
+    padding: 10px 12px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+}

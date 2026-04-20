@@ -1,0 +1,102 @@
+<div class="pt">
+  <div class="pt__two-cols">
+    <div class="info-card">
+      <div class="info-card__header">
+        <i class="pi pi-id-card"></i>
+        البيانات الأساسية
+      </div>
+      <div class="info-card__body">
+        <div class="info-row">
+          <span class="info-row__label">الاسم الكامل</span>
+          <span class="info-row__value">{{ supervisor().name }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-row__label">رقم المستخدم</span>
+          <span class="info-row__value" dir="ltr">{{ supervisor().userId }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-row__label">رقم جواز السفر</span>
+          <span class="info-row__value" dir="ltr">{{ supervisor().passportNumber }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-row__label">تاريخ الميلاد</span>
+          <span class="info-row__value" dir="ltr">{{ supervisor().birthDate }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-row__label">الجنسية</span>
+          <span class="info-row__value">{{ supervisor().nationality }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-row__label">الجنس</span>
+          <span class="info-row__value">{{ supervisor().gender }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card__header">
+        <i class="pi pi-phone"></i>
+        بيانات التواصل
+      </div>
+      <div class="info-card__body">
+        <div class="info-row">
+          <span class="info-row__label">البريد الإلكتروني</span>
+          <span class="info-row__value" dir="ltr">{{ supervisor().email }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-row__label">رقم الهاتف</span>
+          <span class="info-row__value" dir="ltr">{{ supervisor().phone }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-row__label">اللغات</span>
+          <span class="info-row__value">{{ supervisor().languages }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pt__two-cols">
+    <div class="info-card">
+      <div class="info-card__header">
+        <i class="pi pi-briefcase"></i>
+        بيانات العمل
+      </div>
+      <div class="info-card__body">
+        <div class="info-row">
+          <span class="info-row__label">الحملة</span>
+          <span class="info-row__value">{{ supervisor().campaignName }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-row__label">المجموعة</span>
+          <span class="info-row__value">{{ supervisor().group }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-row__label">التخصص</span>
+          <span class="info-row__value">{{ supervisor().qualification }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-row__label">سنوات الخبرة</span>
+          <span class="info-row__value">{{ supervisor().yearsOfExperience }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-row__label">عدد الحجاج</span>
+          <span class="info-row__value">{{ supervisor().pilgrimsCount }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-row__label">تاريخ الانضمام</span>
+          <span class="info-row__value" dir="ltr">{{ supervisor().joinDate }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card__header">
+        <i class="pi pi-file-edit"></i>
+        ملاحظات
+      </div>
+      <div class="info-card__body">
+        <div class="notes-text">{{ supervisor().notes }}</div>
+      </div>
+    </div>
+  </div>
+</div>

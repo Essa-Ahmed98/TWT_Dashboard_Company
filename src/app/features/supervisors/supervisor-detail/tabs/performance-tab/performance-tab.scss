@@ -1,0 +1,259 @@
+$primary:     #0b405b;
+$card-radius: .75rem;
+$card-shadow: 0 4px 24px -4px hsla(200, 79%, 20%, .1);
+$safe:        #22c35d;
+$star-color:  #f59e0b;
+
+.perf {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &__two-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+
+    @media (max-width: 900px) { grid-template-columns: 1fr; }
+  }
+
+  &__overall {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem;
+    gap: .5rem;
+  }
+
+  &__stars {
+    display: flex;
+    gap: .25rem;
+  }
+
+  &__star {
+    font-size: 1.5rem;
+    color: $star-color;
+  }
+
+  &__rating-num {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: $primary;
+    line-height: 1;
+  }
+
+  &__overall-stats {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: .5rem;
+  }
+
+  &__overall-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .125rem;
+  }
+
+  &__overall-divider {
+    width: 1px;
+    height: 2rem;
+    background: #eef0f4;
+  }
+
+  &__stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $primary;
+    line-height: 1;
+  }
+
+  &__stat-label {
+    font-size: .8125rem;
+    color: #647b87;
+  }
+}
+
+.info-card {
+  background: #fff;
+  border-radius: $card-radius;
+  border: 1px solid #eef0f4;
+  box-shadow: $card-shadow;
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .875rem 1.25rem;
+    font-size: .9375rem;
+    font-weight: 600;
+    color: $primary;
+    border-bottom: 1px solid #f0f2f5;
+
+    i { font-size: .9rem; color: #647b87; }
+  }
+
+  &__body {
+    padding: .25rem 0;
+  }
+}
+
+// ── Tasks ─────────────────────────────────────────────────────────
+.task-row {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .625rem 1.25rem;
+  border-bottom: 1px solid #f8f9fb;
+
+  &:last-child { border-bottom: none; }
+
+  &__icon {
+    font-size: 1rem;
+    color: #c8d0d8;
+    flex-shrink: 0;
+
+    &--done { color: $safe; }
+  }
+
+  &__label {
+    flex: 1;
+    font-size: .875rem;
+    color: $primary;
+    font-weight: 500;
+  }
+
+  &__time {
+    font-size: .8125rem;
+    color: #647b87;
+    white-space: nowrap;
+  }
+
+  &--done .task-row__label {
+    color: #a0aab4;
+    text-decoration: line-through;
+  }
+}
+
+.task-progress {
+  padding: .875rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  border-top: 1px solid #f0f2f5;
+
+  &__bar-wrap {
+    height: .5rem;
+    background: #f0f2f5;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  &__bar {
+    height: 100%;
+    background: $primary;
+    border-radius: 20px;
+    transition: width .4s ease;
+  }
+
+  &__info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__label {
+    font-size: .75rem;
+    color: #647b87;
+  }
+
+  &__pct {
+    font-size: .8125rem;
+    font-weight: 700;
+    color: $primary;
+  }
+}
+
+// ── Metrics ───────────────────────────────────────────────────────
+.metric-row {
+  padding: .875rem 1.25rem;
+  border-bottom: 1px solid #f8f9fb;
+
+  &:last-child { border-bottom: none; }
+
+  &__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: .5rem;
+  }
+
+  &__label {
+    font-size: .875rem;
+    color: #647b87;
+  }
+
+  &__value {
+    font-size: .875rem;
+    font-weight: 700;
+  }
+}
+
+.metric-bar-wrap {
+  height: .5rem;
+  background: #f0f2f5;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.metric-bar {
+  height: 100%;
+  border-radius: 20px;
+  transition: width .4s ease;
+}
+
+// ── Reports ───────────────────────────────────────────────────────
+.report-row {
+  display: flex;
+  align-items: center;
+  gap: .875rem;
+  padding: .875rem 1.25rem;
+  border-bottom: 1px solid #f8f9fb;
+
+  &:last-child { border-bottom: none; }
+
+  &__icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: .5rem;
+    background: #eef0f4;
+    color: $primary;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .9rem;
+    flex-shrink: 0;
+  }
+
+  &__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: .125rem;
+  }
+
+  &__title { font-size: .9375rem; font-weight: 600; color: $primary; }
+  &__date  { font-size: .8125rem; color: #647b87; }
+
+  &__badge {
+    font-size: .75rem;
+    font-weight: 600;
+    padding: .25rem .75rem;
+    border-radius: 20px;
+    background: #e8f5ee;
+    color: #16a34a;
+    white-space: nowrap;
+  }
+}

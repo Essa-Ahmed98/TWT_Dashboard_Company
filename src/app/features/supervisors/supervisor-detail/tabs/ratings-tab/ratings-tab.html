@@ -1,0 +1,88 @@
+<div class="ratt">
+  @if (loading()) {
+    <div class="empty-msg">
+      <i class="pi pi-spin pi-spinner"></i>
+      <p>جاري تحميل التقييمات...</p>
+    </div>
+  } @else {
+    <div class="ratt__summary">
+      <div class="ratt__summary-card">
+        <span class="ratt__big-num">{{ summary().totalReviews }}</span>
+        <span class="ratt__big-label">عدد التقييمات</span>
+      </div>
+      <div class="ratt__summary-card">
+        <span class="ratt__big-num">{{ summary().positiveCount }}</span>
+        <span class="ratt__big-label">التقييمات الإيجابية</span>
+      </div>
+      <div class="ratt__summary-card ratt__summary-card--star">
+        <div class="ratt__avg-row">
+          <span class="ratt__big-num">{{ summary().averageRating > 0 ? summary().averageRating : '—' }}</span>
+          <i class="pi pi-star-fill ratt__avg-star"></i>
+        </div>
+        <span class="ratt__big-label">متوسط التقييم</span>
+        <div class="ratt__stars">
+          @for (s of filledStars(summary().averageRating); track $index) {
+            <i class="pi pi-star-fill ratt__star ratt__star--filled"></i>
+          }
+          @for (s of emptyStars(summary().averageRating); track $index) {
+            <i class="pi pi-star ratt__star"></i>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card__header">
+        <i class="pi pi-chart-bar"></i>
+        توزيع التقييمات
+      </div>
+      <div class="ratt__dist">
+        @for (d of summary().distribution; track d.stars) {
+          <div class="ratt__dist-row">
+            <span class="ratt__dist-star">
+              <i class="pi pi-star-fill"></i> {{ d.stars }}
+            </span>
+            <div class="ratt__dist-bar-wrap">
+              <div class="ratt__dist-bar" [style.width.%]="d.pct"></div>
+            </div>
+            <span class="ratt__dist-count">({{ d.pct }}%) {{ d.count }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card__header">
+        <i class="pi pi-comments"></i>
+        آراء الحجاج
+      </div>
+      @if (!hasItems()) {
+        <div class="empty-msg">
+          <i class="pi pi-star"></i>
+          <p>لا توجد تقييمات تفصيلية متاحة لهذا المشرف حاليًا</p>
+        </div>
+      }
+      @for (r of ratings(); track r.id) {
+        <div class="review">
+          <div class="review__header">
+            <div class="review__avatar">{{ r.pilgrimInitials }}</div>
+            <div class="review__meta">
+              <span class="review__name">{{ r.pilgrimName }}</span>
+              <span class="review__label">{{ r.label }}</span>
+            </div>
+            <div class="review__stars-wrap">
+              @for (s of filledStars(r.stars); track $index) {
+                <i class="pi pi-star-fill review__star review__star--filled"></i>
+              }
+              @for (s of emptyStars(r.stars); track $index) {
+                <i class="pi pi-star review__star"></i>
+              }
+            </div>
+            <span class="review__date">{{ r.date }}</span>
+          </div>
+          <p class="review__comment">{{ r.comment }}</p>
+        </div>
+      }
+    </div>
+  }
+</div>

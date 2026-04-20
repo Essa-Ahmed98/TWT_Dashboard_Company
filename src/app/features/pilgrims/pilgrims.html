@@ -1,0 +1,547 @@
+@if (openFilterDrop()) {
+  <div class="backdrop" (click)="closeFilterDrop()"></div>
+}
+@if (showCampDrop() || showGrpDrop() || showImportCampDrop() || showImportGrpDrop()) {
+  <div class="backdrop" (click)="showCampDrop.set(false); showGrpDrop.set(false); showImportCampDrop.set(false); showImportGrpDrop.set(false)"></div>
+}
+@if (showModal() || showImportModal()) {
+  <div class="modal-backdrop" (click)="showModal() ? closeModal() : closeImportModal()"></div>
+}
+
+<div class="pilgrims">
+  <div class="pilgrims__header">
+    <div class="pilgrims__title">
+      <h1 class="pilgrims__title-text">إدارة الحجاج</h1>
+      <span class="pilgrims__title-count">{{ total() }} حاج مسجل</span>
+    </div>
+    <div class="pilgrims__actions">
+      <button class="btn btn--ghost" (click)="openImportModal()">
+        <i class="pi pi-file-excel"></i><span>استيراد من Excel</span>
+      </button>
+      <button class="btn btn--secondary" (click)="exportCurrentList()"><i class="pi pi-download"></i><span>تصدير</span></button>
+      <button class="btn btn--primary" (click)="openModal()">
+        <i class="pi pi-user-plus"></i><span>إضافة حاج</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="pilgrims__filters">
+    <div class="dropdown" [class.dropdown--open]="openFilterDrop()">
+      <button class="dropdown__trigger" (click)="toggleFilterDrop($event)">
+        <i class="pi pi-building"></i>
+        <span>{{ filterCampaignLabel() }}</span>
+        @if (selectedCampaign()) {
+          <i class="pi pi-times dropdown__clear"
+             (click)="$event.stopPropagation(); selectFilterCampaign('')"></i>
+        } @else {
+          <i class="pi pi-angle-down dropdown__arrow"></i>
+        }
+      </button>
+      @if (openFilterDrop()) {
+        <ul class="dropdown__menu">
+          @if (filterCampLoading()) {
+            <li class="dropdown__item" style="justify-content:center">
+              <span class="ss-spinner"></span>
+            </li>
+          }
+          @for (c of filterCampList(); track c.Id) {
+            <li class="dropdown__item"
+                [class.dropdown__item--active]="selectedCampaign() === c.Id"
+                (click)="selectFilterCampaign(c.Id)">
+              @if (selectedCampaign() === c.Id) { <i class="pi pi-check"></i> }{{ c.Name }}
+            </li>
+          }
+        </ul>
+      }
+    </div>
+
+    <div class="pilgrims__search">
+      <i class="pi pi-search pilgrims__search-icon"></i>
+      <input class="pilgrims__search-input" type="text" placeholder="بحث بالاسم أو رقم الجواز..."
+        [value]="searchQuery()"
+        (input)="searchQuery.set($any($event.target).value)" />
+    </div>
+    <select class="page-size-select" (change)="onPageSizeChange(+$any($event.target).value)">
+      <option [value]="10" [selected]="pageSize() === 10">10</option>
+      <option [value]="20" [selected]="pageSize() === 20">20</option>
+      <option [value]="30" [selected]="pageSize() === 30">30</option>
+      <option [value]="40" [selected]="pageSize() === 40">40</option>
+      <option [value]="50" [selected]="pageSize() === 50">50</option>
+    </select>
+  </div>
+
+  <div class="pilgrims__table-wrap">
+    @if (loading()) {
+      <div class="pilgrims__spinner-wrap"><span class="pilgrims__spinner"></span></div>
+    }
+    <table class="pilgrims__table">
+      <thead>
+        <tr>
+          <th>الحاج</th>
+          <th>الحملة</th>
+          <th>المجموعة</th>
+          <th>رقم الجواز</th>
+          <th>الجنسية</th>
+          <th>الجنس</th>
+          <th>إجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (p of list(); track p.Id) {
+          <tr>
+            <td><span class="pilgrim-name__text">{{ p.DisplayName }}</span></td>
+            <td>{{ p.CampaignName }}</td>
+            <td>{{ p.GroupName }}</td>
+            <td class="pilgrims__id">{{ p.PassportNumber }}</td>
+            <td>{{ p.Nationality }}</td>
+            <td>{{ genderLabel(p.Gender) }}</td>
+            <td>
+              <div class="row-actions">
+                <button class="row-actions__btn" title="فتح المحادثة" (click)="openChat(p.UserId, p.DisplayName)">
+                  <i class="pi pi-comment"></i>
+                </button>
+                <button class="row-actions__btn" title="عرض التفاصيل" (click)="openDetail(p.Id)">
+                  <i class="pi pi-eye"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+        @if (!loading() && list().length === 0) {
+          <tr><td colspan="7" class="pilgrims__empty"><i class="pi pi-inbox"></i><p>لا توجد نتائج</p></td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (!loading() && total() > 0) {
+    <div class="pagination-bar">
+      <div class="pagination-bar__controls">
+        <button class="pagination__btn" [disabled]="page() <= 1" (click)="goToPage(page() - 1)">
+          <i class="pi pi-angle-right"></i>
+        </button>
+
+        @for (p of visiblePages(); track $index) {
+          @if (p === '...') {
+            <span class="pagination__ellipsis">…</span>
+          } @else {
+            <button class="pagination__btn"
+                    [class.pagination__btn--active]="p === page()"
+                    (click)="goToPage(p)">
+              {{ p }}
+            </button>
+          }
+        }
+
+        <button class="pagination__btn" [disabled]="page() >= totalPages()" (click)="goToPage(page() + 1)">
+          <i class="pi pi-angle-left"></i>
+        </button>
+      </div>
+
+      <span class="pagination-bar__info">
+        {{ list().length }} من {{ total() | number }}
+      </span>
+    </div>
+  }
+</div>
+
+@if (showImportModal()) {
+  <div class="dialog dialog--import" (click)="$event.stopPropagation()">
+    <div class="dialog__header">
+      <div>
+        <h2 class="dialog__title">استيراد الحجاج من ملف Excel</h2>
+        <p class="dialog__sub">حمّل النموذج، ثم ارفع الملف لإضافتهم دفعة واحدة.</p>
+      </div>
+      <button class="dialog__close" (click)="closeImportModal()" [disabled]="uploadingImportFile()">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <div class="dialog__body dialog__body--import">
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">الحملة <span class="form-req">*</span></label>
+          <div class="ss">
+            <button type="button" class="ss__trigger" (click)="toggleImportCampDrop()">
+              <span [class.ss__placeholder]="!selectedImportCampName()">
+                {{ selectedImportCampName() || 'اختر الحملة' }}
+              </span>
+              @if (selectedImportCampName()) {
+                <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearImportCamp()"></i>
+              } @else {
+                <i class="pi pi-angle-down"></i>
+              }
+            </button>
+            @if (showImportCampDrop()) {
+              <div class="ss__dropdown">
+                @if (importCampLoading()) {
+                  <div class="ss__state"><span class="ss-spinner"></span></div>
+                } @else if (importCampList().length === 0) {
+                  <div class="ss__state">لا توجد حملات</div>
+                } @else {
+                  <ul class="ss__list">
+                    @for (c of importCampList(); track c.Id) {
+                      <li class="ss__item"
+                          [class.ss__item--active]="selectedImportCampId() === c.Id"
+                          (click)="selectImportCamp(c)">{{ c.Name }}</li>
+                    }
+                  </ul>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">المجموعة <span class="form-req">*</span></label>
+          <div class="ss" [class.ss--disabled]="!selectedImportCampId()">
+            <button type="button" class="ss__trigger"
+              [disabled]="!selectedImportCampId()"
+              (click)="toggleImportGrpDrop()">
+              <span [class.ss__placeholder]="!selectedImportGrpName()">
+                {{ selectedImportGrpName() || (selectedImportCampId() ? 'اختر المجموعة' : 'اختر الحملة أولاً') }}
+              </span>
+              @if (selectedImportGrpName()) {
+                <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearImportGrp()"></i>
+              } @else {
+                <i class="pi pi-angle-down"></i>
+              }
+            </button>
+            @if (showImportGrpDrop()) {
+              <div class="ss__dropdown">
+                @if (importGrpLoading()) {
+                  <div class="ss__state"><span class="ss-spinner"></span></div>
+                } @else if (importGrpList().length === 0) {
+                  <div class="ss__state">لا توجد مجموعات</div>
+                } @else {
+                  <ul class="ss__list">
+                    @for (g of importGrpList(); track g.Id) {
+                      <li class="ss__item"
+                          [class.ss__item--active]="selectedImportGrpId() === g.Id"
+                          (click)="selectImportGrp(g)">{{ g.Name }}</li>
+                    }
+                  </ul>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <section class="import-card">
+        <div class="import-card__head">
+          <div class="import-card__icon"><i class="pi pi-info-circle"></i></div>
+          <div>
+            <h3 class="import-card__title">تحميل النموذج</h3>
+            <p class="import-card__text">حمّل ملف الإكسل الذي يحتوي على الأعمدة المطلوبة وبيانات توضيحية.</p>
+          </div>
+        </div>
+        <button type="button" class="btn import-card__action"
+          [disabled]="downloadingTemplate() || !selectedImportCampId() || !selectedImportGrpId()"
+          (click)="downloadImportTemplate()">
+          @if (downloadingTemplate()) {
+            <span class="btn-spinner import-card__spinner"></span>
+            <span>جاري تحميل النموذج...</span>
+          } @else {
+            <i class="pi pi-download"></i>
+            <span>تحميل نموذج Excel</span>
+          }
+        </button>
+      </section>
+
+      <section class="import-hints">
+        <div class="import-hints__head">
+          <div class="import-hints__icon"><i class="pi pi-exclamation-circle"></i></div>
+          <div>
+            <h3 class="import-hints__title">ملحوظة مهمة قبل رفع الملف</h3>
+            <p class="import-hints__text">بعض الحقول داخل ملف Excel تعتمد على قيم رقمية ثابتة كما يلي:</p>
+          </div>
+        </div>
+
+        <div class="import-hints__grid">
+          <article class="hint-item">
+            <h4 class="hint-item__label">الجنس</h4>
+            <div class="hint-item__list">
+              <div class="hint-item__row">
+                <span class="hint-item__code">0</span>
+                <span class="hint-item__text">ذكر</span>
+              </div>
+              <div class="hint-item__row">
+                <span class="hint-item__code">1</span>
+                <span class="hint-item__text">أنثى</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="hint-item">
+            <h4 class="hint-item__label">فصيلة الدم</h4>
+            <div class="hint-item__list hint-item__list--blood">
+              <div class="hint-item__row"><span class="hint-item__code">0</span><span class="hint-item__text">A+</span></div>
+              <div class="hint-item__row"><span class="hint-item__code">1</span><span class="hint-item__text">A-</span></div>
+              <div class="hint-item__row"><span class="hint-item__code">2</span><span class="hint-item__text">B+</span></div>
+              <div class="hint-item__row"><span class="hint-item__code">3</span><span class="hint-item__text">B-</span></div>
+              <div class="hint-item__row"><span class="hint-item__code">4</span><span class="hint-item__text">AB+</span></div>
+              <div class="hint-item__row"><span class="hint-item__code">5</span><span class="hint-item__text">AB-</span></div>
+              <div class="hint-item__row"><span class="hint-item__code">6</span><span class="hint-item__text">O+</span></div>
+              <div class="hint-item__row"><span class="hint-item__code">7</span><span class="hint-item__text">O-</span></div>
+            </div>
+          </article>
+
+          <article class="hint-item">
+            <h4 class="hint-item__label">تاريخ الميلاد</h4>
+            <p class="hint-item__value"><strong>YYYY-MM-DD</strong> مثل <strong>1990-08-25</strong></p>
+          </article>
+
+          <article class="hint-item">
+            <h4 class="hint-item__label">ملاحظات مهمة</h4>
+            <p class="hint-item__value">بدون فراغات في الحقول المطلوبة، وبدون تغيير أسماء الأعمدة داخل النموذج.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="import-card">
+        <div class="import-card__head">
+          <div class="import-card__icon"><i class="pi pi-upload"></i></div>
+          <div>
+            <h3 class="import-card__title">رفع الملف</h3>
+            <p class="import-card__text">بعد ملء البيانات، ارفع الملف هنا لإضافة الحجاج تلقائيًا.</p>
+          </div>
+        </div>
+
+        <input #importFileInput type="file" accept=".xlsx,.xls,.csv" class="import-file-input" (change)="onImportFileSelected($event)" />
+
+        <button type="button" class="btn btn--primary import-card__upload"
+          [disabled]="uploadingImportFile()"
+          (click)="handleImportUpload(importFileInput)">
+          @if (uploadingImportFile()) {
+            <span class="btn-spinner"></span>
+            <span>جاري رفع الملف...</span>
+          } @else {
+            <i class="pi pi-upload"></i>
+            <span>{{ importSelectedFileName() || 'رفع ملف Excel' }}</span>
+          }
+        </button>
+      </section>
+    </div>
+  </div>
+}
+
+@if (showModal()) {
+  <div class="dialog" (click)="$event.stopPropagation()">
+    <div class="dialog__header">
+      <div>
+        <h2 class="dialog__title">إضافة حاج جديد</h2>
+        <p class="dialog__sub">أدخل بيانات الحاج لإنشاء حسابه على النظام</p>
+      </div>
+      <button class="dialog__close" (click)="closeModal()" [disabled]="submitting()">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <div class="dialog__body">
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">الاسم الكامل <span class="form-req">*</span></label>
+          <input class="form-input" type="text" placeholder="أدخل اسم الحاج"
+            [value]="formData().displayName"
+            [disabled]="submitting()"
+            (input)="patchForm({ displayName: $any($event.target).value })" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">البريد الإلكتروني <span class="form-req">*</span></label>
+          <input class="form-input" type="email" placeholder="example@gmail.com"
+            [value]="formData().email"
+            [disabled]="submitting()"
+            (input)="patchForm({ email: $any($event.target).value })" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">رقم الهاتف <span class="form-req">*</span></label>
+          <input class="form-input" type="tel" placeholder="+966"
+            [value]="formData().phone"
+            [disabled]="submitting()"
+            (input)="patchForm({ phone: $any($event.target).value })" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">رقم الهوية <span class="form-req">*</span></label>
+          <input class="form-input" type="text" placeholder="رقم الهوية"
+            [value]="formData().idNumber"
+            [disabled]="submitting()"
+            (input)="patchForm({ idNumber: $any($event.target).value })" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">رقم جواز السفر <span class="form-req">*</span></label>
+          <input class="form-input" type="text" placeholder="رقم الجواز"
+            [value]="formData().passportNumber"
+            [disabled]="submitting()"
+            (input)="patchForm({ passportNumber: $any($event.target).value })" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">الجنسية <span class="form-req">*</span></label>
+          <input class="form-input" type="text" placeholder="الجنسية"
+            [value]="formData().nationality"
+            [disabled]="submitting()"
+            (input)="patchForm({ nationality: $any($event.target).value })" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">تاريخ الميلاد <span class="form-req">*</span></label>
+          <p-datepicker
+            [ngModel]="formData().dateOfBirth"
+            (ngModelChange)="patchForm({ dateOfBirth: $event })"
+            (onSelect)="patchForm({ dateOfBirth: $event })"
+            dateFormat="yy-mm-dd"
+            [disabled]="submitting()"
+            placeholder="اختر التاريخ"
+            [showIcon]="true"
+            [inline]="false"
+            appendTo="body"
+            [baseZIndex]="3000">
+          </p-datepicker>
+        </div>
+        <div class="form-field">
+          <label class="form-label">الجنس <span class="form-req">*</span></label>
+          <select class="form-select" [disabled]="submitting()"
+            (change)="patchForm({ gender: $any($event.target).value })">
+            <option value="" [selected]="formData().gender === ''">اختر الجنس</option>
+            <option value="0" [selected]="formData().gender === '0'">ذكر</option>
+            <option value="1" [selected]="formData().gender === '1'">أنثى</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">فصيلة الدم <span class="form-req">*</span></label>
+          <select class="form-select" [disabled]="submitting()"
+            (change)="patchForm({ bloodType: $any($event.target).value })">
+            <option value="" [selected]="formData().bloodType === ''">اختر فصيلة الدم</option>
+            @for (bt of bloodTypeOptions; track bt.value) {
+              <option [value]="bt.value"
+                      [selected]="formData().bloodType === bt.value.toString()">
+                {{ bt.label }}
+              </option>
+            }
+          </select>
+        </div>
+        <div class="form-field">
+          <label class="form-label">السكن <span class="form-req">*</span></label>
+          <input class="form-input" type="text" placeholder="مثال: فندق الصفا"
+            [value]="formData().accommodation"
+            [disabled]="submitting()"
+            (input)="patchForm({ accommodation: $any($event.target).value })" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">الحملة <span class="form-req">*</span></label>
+          <div class="ss" [class.ss--disabled]="submitting()">
+            <button type="button" class="ss__trigger" [disabled]="submitting()" (click)="toggleCampDrop()">
+              <span [class.ss__placeholder]="!selectedCampName()">
+                {{ selectedCampName() || 'اختر الحملة' }}
+              </span>
+              @if (selectedCampName()) {
+                <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearCamp()"></i>
+              } @else {
+                <i class="pi pi-angle-down"></i>
+              }
+            </button>
+            @if (showCampDrop()) {
+              <div class="ss__dropdown">
+                @if (campLoading()) {
+                  <div class="ss__state"><span class="ss-spinner"></span></div>
+                } @else if (campList().length === 0) {
+                  <div class="ss__state">لا توجد حملات</div>
+                } @else {
+                  <ul class="ss__list">
+                    @for (c of campList(); track c.Id) {
+                      <li class="ss__item"
+                          [class.ss__item--active]="formData().campaignId === c.Id"
+                          (click)="selectCamp(c)">{{ c.Name }}</li>
+                    }
+                  </ul>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">المجموعة <span class="form-req">*</span></label>
+          <div class="ss" [class.ss--disabled]="!formData().campaignId || submitting()">
+            <button type="button" class="ss__trigger"
+              [disabled]="!formData().campaignId || submitting()"
+              (click)="toggleGrpDrop()">
+              <span [class.ss__placeholder]="!selectedGrpName()">
+                {{ selectedGrpName() || (formData().campaignId ? 'اختر المجموعة' : 'اختر الحملة أولاً') }}
+              </span>
+              @if (selectedGrpName()) {
+                <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearGrp()"></i>
+              } @else {
+                <i class="pi pi-angle-down"></i>
+              }
+            </button>
+            @if (showGrpDrop()) {
+              <div class="ss__dropdown">
+                @if (grpLoading()) {
+                  <div class="ss__state"><span class="ss-spinner"></span></div>
+                } @else if (grpList().length === 0) {
+                  <div class="ss__state">لا توجد مجموعات</div>
+                } @else {
+                  <ul class="ss__list">
+                    @for (g of grpList(); track g.Id) {
+                      <li class="ss__item"
+                          [class.ss__item--active]="formData().groupId === g.Id"
+                          (click)="selectGrp(g)">{{ g.Name }}</li>
+                    }
+                  </ul>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">رقم بطاقة المناسك <span class="form-req">*</span></label>
+          <input class="form-input" type="text" placeholder="رقم البطاقة"
+            [value]="formData().ritualCardNumber"
+            [disabled]="submitting()"
+            (input)="patchForm({ ritualCardNumber: $any($event.target).value })" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">رقم التصريح <span class="form-req">*</span></label>
+          <input class="form-input" type="text" placeholder="رقم التصريح"
+            [value]="formData().permitNumber"
+            [disabled]="submitting()"
+            (input)="patchForm({ permitNumber: $any($event.target).value })" />
+        </div>
+      </div>
+
+      @if (submitError()) {
+        <p class="form-error">{{ submitError() }}</p>
+      }
+    </div>
+
+    <div class="dialog__footer">
+      <button class="btn btn--outline" (click)="closeModal()" [disabled]="submitting()">إلغاء</button>
+      <button class="btn btn--primary" (click)="submitForm()"
+        [disabled]="submitting() || !isFormValid()">
+        @if (submitting()) {
+          <span class="btn-spinner"></span>جاري الإضافة...
+        } @else {
+          <i class="pi pi-user-plus"></i>إضافة الحاج
+        }
+      </button>
+    </div>
+  </div>
+}

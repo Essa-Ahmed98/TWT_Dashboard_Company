@@ -1,0 +1,68 @@
+<div class="plt">
+
+  <div class="info-card">
+    <div class="info-card__header">
+      <div class="info-card__header-right">
+        <i class="pi pi-users"></i>
+        الحجاج التابعون ({{ totalCount() }})
+      </div>
+      <div class="plt__search">
+        <i class="pi pi-search plt__search-icon"></i>
+        <input
+          class="plt__search-input"
+          type="text"
+          placeholder="بحث عن حاج..."
+          [value]="searchQuery()"
+          (input)="onSearch($any($event.target).value)"
+        />
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="plt__spinner">
+        <p-progressSpinner strokeWidth="4" styleClass="plt__progress-spinner" />
+      </div>
+    } @else if (!supervisor().groupId) {
+      <div class="plt__empty">
+        <i class="pi pi-info-circle"></i>
+        <p>المشرف غير مرتبط بمجموعة</p>
+      </div>
+    } @else if (pilgrims().length === 0) {
+      <div class="plt__empty">
+        <i class="pi pi-users"></i>
+        <p>لا يوجد حجاج مرتبطون بهذا المشرف</p>
+      </div>
+    } @else {
+      @for (p of pilgrims(); track p.Id) {
+        <div class="pilgrim-row">
+          <div class="pilgrim-row__right">
+            <div class="pilgrim-avatar pilgrim-avatar--safe">
+              {{ getInitials(p.DisplayName) }}
+            </div>
+            <div class="pilgrim-info">
+              <span class="pilgrim-info__name">{{ p.DisplayName || '—' }}</span>
+              <span class="pilgrim-info__meta">
+                {{ p.Nationality || '—' }} &bull; {{ genderLabel(p.Gender) }} &bull; {{ getAge(p.DateOfBirth) }}
+              </span>
+            </div>
+          </div>
+        </div>
+      }
+
+      @if (totalPages() > 1) {
+        <div class="plt__pagination">
+          <button class="plt__pg-btn" [disabled]="!hasPrevious()" (click)="prevPage()">
+            <i class="pi pi-angle-right"></i>
+          </button>
+          @for (p of pageNumbers(); track p) {
+            <button class="plt__pg-btn" [class.plt__pg-btn--active]="p === currentPage()" (click)="goToPage(p)">{{ p }}</button>
+          }
+          <button class="plt__pg-btn" [disabled]="!hasNext()" (click)="nextPage()">
+            <i class="pi pi-angle-left"></i>
+          </button>
+        </div>
+      }
+    }
+  </div>
+
+</div>

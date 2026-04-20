@@ -1,0 +1,37 @@
+<div class="ft">
+  @if (loading()) {
+    <div class="empty-card">
+      <i class="pi pi-spin pi-spinner"></i>
+      <p>جاري تحميل بيانات العائلة...</p>
+    </div>
+  } @else if (!hasItems()) {
+    <div class="empty-card">
+      <i class="pi pi-users"></i>
+      <p>لا توجد بيانات عائلة مسجلة</p>
+    </div>
+  }
+
+  @for (f of family(); track f.name) {
+    <div class="family-card">
+      <div class="family-card__avatar">
+        <i class="pi pi-user"></i>
+      </div>
+      <div class="family-card__info">
+        <div class="family-card__name-row">
+          <span class="family-card__name">{{ f.name }}</span>
+          @if (f.relation) {
+            <span class="family-card__relation">{{ f.relation }}</span>
+          }
+        </div>
+        <div class="family-card__contacts">
+          @if (f.email) {
+            <span dir="ltr"><i class="pi pi-envelope"></i> {{ f.email }}</span>
+          }
+          @if (f.phone) {
+            <span dir="ltr"><i class="pi pi-phone"></i> {{ f.phone }}</span>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>
