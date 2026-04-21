@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, map, of, startWith, switchMap } from 'rxjs';
 import { MessageService } from 'primeng/api';
+import { ApiResult } from '../../../core/models/api.models';
 import { PilgrimsService } from '../pilgrims.service';
 import { PilgrimDetailData, PilgrimTab, STATUS_LABEL, pilgrimApiToDetailData } from './pilgrim-detail.model';
 import { PersonalTab } from './tabs/personal-tab/personal-tab';
@@ -151,17 +152,18 @@ export class PilgrimDetail {
             this.toast.add({
               severity: 'error',
               summary: 'خطأ',
-              detail: 'تعذر تحديث بيانات الحاج',
+              detail: res.Error?.MessageKey || res.Error?.message || res.ValidationErrors?.[0]?.ErrorMessage || 'تعذر تحديث بيانات الحاج',
               life: 4000,
             });
           }
         },
-        error: () => {
+        error: err => {
           this.saving.set(false);
+          const body = err?.error as ApiResult<unknown> | undefined;
           this.toast.add({
             severity: 'error',
             summary: 'خطأ',
-            detail: 'حدث خطأ أثناء تحديث بيانات الحاج',
+            detail: body?.Error?.MessageKey || body?.Error?.message || body?.ValidationErrors?.[0]?.ErrorMessage || 'حدث خطأ أثناء تحديث بيانات الحاج',
             life: 4000,
           });
         },

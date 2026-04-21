@@ -310,17 +310,24 @@
 
         <input #importFileInput type="file" accept=".xlsx,.xls,.csv" class="import-file-input" (change)="onImportFileSelected($event)" />
 
-        <button type="button" class="btn btn--primary import-card__upload"
-          [disabled]="uploadingImportFile()"
-          (click)="handleImportUpload(importFileInput)">
-          @if (uploadingImportFile()) {
-            <span class="btn-spinner"></span>
-            <span>جاري رفع الملف...</span>
-          } @else {
-            <i class="pi pi-upload"></i>
-            <span>{{ importSelectedFileName() || 'رفع ملف Excel' }}</span>
+        <div class="import-card__upload-row">
+          <button type="button" class="btn btn--primary import-card__upload"
+            [disabled]="uploadingImportFile()"
+            (click)="handleImportUpload(importFileInput)">
+            @if (uploadingImportFile()) {
+              <span class="btn-spinner"></span>
+              <span>جاري رفع الملف...</span>
+            } @else {
+              <i class="pi pi-upload"></i>
+              <span>{{ importSelectedFileName() || 'رفع ملف Excel' }}</span>
+            }
+          </button>
+          @if (importSelectedFile() && !uploadingImportFile()) {
+            <button type="button" class="btn import-card__clear-file" (click)="clearImportFile(importFileInput)" title="إزالة الملف">
+              <i class="pi pi-times"></i>
+            </button>
           }
-        </button>
+        </div>
       </section>
     </div>
   </div>
@@ -361,8 +368,13 @@
           <label class="form-label">رقم الهاتف <span class="form-req">*</span></label>
           <input class="form-input" type="tel" placeholder="+966"
             [value]="formData().phone"
+            [class.form-input--error]="phoneInvalid()"
             [disabled]="submitting()"
-            (input)="patchForm({ phone: $any($event.target).value })" />
+            (input)="patchForm({ phone: $any($event.target).value })"
+            (blur)="phoneTouched.set(true)" />
+          @if (phoneInvalid()) {
+            <span class="form-hint form-hint--error">يجب أن يكون رقم جوال سعودي صالح</span>
+          }
         </div>
         <div class="form-field">
           <label class="form-label">رقم الهوية <span class="form-req">*</span></label>
@@ -382,7 +394,7 @@
             (input)="patchForm({ passportNumber: $any($event.target).value })" />
         </div>
         <div class="form-field">
-          <label class="form-label">الجنسية <span class="form-req">*</span></label>
+          <label class="form-label">الجنسية</label>
           <input class="form-input" type="text" placeholder="الجنسية"
             [value]="formData().nationality"
             [disabled]="submitting()"
@@ -407,7 +419,7 @@
           </p-datepicker>
         </div>
         <div class="form-field">
-          <label class="form-label">الجنس <span class="form-req">*</span></label>
+          <label class="form-label">الجنس</label>
           <select class="form-select" [disabled]="submitting()"
             (change)="patchForm({ gender: $any($event.target).value })">
             <option value="" [selected]="formData().gender === ''">اختر الجنس</option>
@@ -419,7 +431,7 @@
 
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">فصيلة الدم <span class="form-req">*</span></label>
+          <label class="form-label">فصيلة الدم</label>
           <select class="form-select" [disabled]="submitting()"
             (change)="patchForm({ bloodType: $any($event.target).value })">
             <option value="" [selected]="formData().bloodType === ''">اختر فصيلة الدم</option>
@@ -432,7 +444,7 @@
           </select>
         </div>
         <div class="form-field">
-          <label class="form-label">السكن <span class="form-req">*</span></label>
+          <label class="form-label">السكن</label>
           <input class="form-input" type="text" placeholder="مثال: فندق الصفا"
             [value]="formData().accommodation"
             [disabled]="submitting()"
@@ -519,7 +531,7 @@
             (input)="patchForm({ ritualCardNumber: $any($event.target).value })" />
         </div>
         <div class="form-field">
-          <label class="form-label">رقم التصريح <span class="form-req">*</span></label>
+          <label class="form-label">رقم التصريح</label>
           <input class="form-input" type="text" placeholder="رقم التصريح"
             [value]="formData().permitNumber"
             [disabled]="submitting()"

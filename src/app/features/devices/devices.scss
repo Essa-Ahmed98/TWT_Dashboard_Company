@@ -166,7 +166,7 @@ $text-label:   #374151;
   }
 
   &__serial {
-    font-family: monospace;
+    font-family: cairo;
     font-size: 13px;
     font-weight: 600;
     color: $primary;
@@ -258,7 +258,7 @@ $text-label:   #374151;
   gap: 5px;
   font-size: 13px;
   color: $primary;
-  font-family: monospace;
+  font-family: cairo;
 
   i { font-size: 12px; }
 }
@@ -561,15 +561,41 @@ $text-label:   #374151;
     }
   }
 
+  &__upload-row {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+  }
+
   &__upload {
     justify-content: center;
-    width: 100%;
+    flex: 1;
     min-height: 44px;
 
     span {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+  }
+
+  &__clear-file {
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid $border;
+    border-radius: 10px;
+    background: #fff;
+    color: $text-muted;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+    &:hover {
+      background: #fff0f0;
+      color: #e53e3e;
+      border-color: #feb2b2;
     }
   }
 

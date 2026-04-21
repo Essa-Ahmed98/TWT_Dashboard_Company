@@ -172,6 +172,12 @@ export class Devices implements OnInit {
     this.importSelectedName.set(file?.name ?? '');
   }
 
+  clearImportFile(fileInput: HTMLInputElement): void {
+    this.importSelectedFile.set(null);
+    this.importSelectedName.set('');
+    fileInput.value = '';
+  }
+
   downloadImportTemplate(): void {
     if (this.downloadingTemplate()) return;
 
@@ -233,11 +239,24 @@ export class Devices implements OnInit {
             return;
           }
 
-          this.showImportError();
+          const res = response as ApiResult<unknown>;
+          const errorMsg =
+            res?.Error?.MessageKey ||
+            res?.Error?.message ||
+            res?.ValidationErrors?.[0]?.ErrorMessage ||
+            null;
+
+          this.showImportError(errorMsg);
         },
-        error: () => {
+        error: err => {
           this.uploadingImportFile.set(false);
-          this.showImportError();
+          const body = err?.error as ApiResult<unknown> | undefined;
+          const errorMsg =
+            body?.Error?.MessageKey ||
+            body?.Error?.message ||
+            body?.ValidationErrors?.[0]?.ErrorMessage ||
+            null;
+          this.showImportError(errorMsg);
         },
       });
   }
@@ -252,11 +271,11 @@ export class Devices implements OnInit {
     return plainMatch?.[1] ?? null;
   }
 
-  private showImportError(): void {
+  private showImportError(message?: string | null): void {
     this.toast.add({
       severity: 'error',
       summary: 'خطأ',
-      detail: 'فيه مشكلة ولم نتمكن من تنفيذ العملية',
+      detail: message || 'فيه مشكلة ولم نتمكن من تنفيذ العملية',
     });
   }
 
@@ -329,7 +348,7 @@ export class Devices implements OnInit {
   togglePilgrimDrop(): void { this.showPilgrimDrop.update(v => !v); }
 
   selectPilgrim(p: PilgrimOption): void {
-    this.selectedPilgrimId.set(p.Id);
+    this.selectedPilgrimId.set(p.UserId);
     this.selectedPilgrimName.set(p.Name);
     this.showPilgrimDrop.set(false);
   }

@@ -68,7 +68,7 @@ export interface CreatePilgrimRequest {
   Gender:           number;
   IDNumber:         string;
   Accommodation:    string;
-  RitualCardNumber: string;
+  NuskCardNumber:   string;
   PermitNumber:     string;
   BloodType:        number;
 }
@@ -128,6 +128,7 @@ export interface PilgrimApiItem {
   HajjType:            number;
   CurrentRitualStatus: number;
   DisplayName:         string;
+  Phone:               string;
 }
 
 export interface PilgrimDetailApiItem {
@@ -149,7 +150,7 @@ export interface PilgrimDetailApiItem {
   Phone:                    string;
   IDNumber:                 string;
   Accommodation:            string;
-  RitualCardNumber:         string;
+  NuskCardNumber:           string;
   PermitNumber:             string;
   BloodType:                number;
 }

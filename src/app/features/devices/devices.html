@@ -81,7 +81,6 @@
               <td>
                 @if (d.UserId) {
                   <span class="assigned-user">
-                    @if (d.UserName) { <i class="pi pi-user"></i> }
                     {{ d.UserName || '—' }}
                   </span>
                 } @else {
@@ -221,17 +220,24 @@
 
         <input #importDevicesFileInput type="file" accept=".xlsx,.xls,.csv" class="import-file-input" (change)="onImportFileSelected($event)" />
 
-        <button type="button" class="btn btn--primary import-card__upload"
-          [disabled]="uploadingImportFile()"
-          (click)="handleImportUpload(importDevicesFileInput)">
-          @if (uploadingImportFile()) {
-            <span class="btn-spinner"></span>
-            <span>جاري رفع الملف...</span>
-          } @else {
-            <i class="pi pi-upload"></i>
-            <span>{{ importSelectedName() || 'رفع ملف Excel' }}</span>
+        <div class="import-card__upload-row">
+          <button type="button" class="btn btn--primary import-card__upload"
+            [disabled]="uploadingImportFile()"
+            (click)="handleImportUpload(importDevicesFileInput)">
+            @if (uploadingImportFile()) {
+              <span class="btn-spinner"></span>
+              <span>جاري رفع الملف...</span>
+            } @else {
+              <i class="pi pi-upload"></i>
+              <span>{{ importSelectedName() || 'رفع ملف Excel' }}</span>
+            }
+          </button>
+          @if (importSelectedFile() && !uploadingImportFile()) {
+            <button type="button" class="btn import-card__clear-file" (click)="clearImportFile(importDevicesFileInput)" title="إزالة الملف">
+              <i class="pi pi-times"></i>
+            </button>
           }
-        </button>
+        </div>
       </section>
     </div>
   </div>

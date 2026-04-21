@@ -145,7 +145,7 @@ export function pilgrimApiToDetailData(pilgrim: PilgrimDetailApiItem): PilgrimDe
     group: pilgrim.GroupName,
     supervisor: 'غير متوفر',
     accommodation: pilgrim.Accommodation,
-    nusukCard: pilgrim.RitualCardNumber,
+    nusukCard: pilgrim.NuskCardNumber,
     permitNumber: pilgrim.PermitNumber,
     hajjYear: '1447',
     hajjType: pilgrim.HajjType,

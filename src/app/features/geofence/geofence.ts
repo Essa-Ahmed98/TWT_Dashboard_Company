@@ -250,7 +250,8 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
   private async initMap(): Promise<void> {
     if (!this.mapEl?.nativeElement) return;
 
-    this.L = await import('leaflet');
+    const leafletModule = await import('leaflet');
+    this.L = (leafletModule as unknown as { default: unknown }).default ?? leafletModule;
     const L = this.L;
 
     delete (L.Icon.Default.prototype as { _getIconUrl?: unknown })._getIconUrl;

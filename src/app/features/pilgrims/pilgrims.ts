@@ -87,6 +87,16 @@ export class Pilgrims implements OnInit {
   submitError = signal<string | null>(null);
   formData = signal<PilgrimForm>({ ...EMPTY_FORM });
 
+  phoneTouched = signal(false);
+
+  private readonly saudiPhoneRegex = /^(?:\+966|00966|966|0)?5\d{8}$/;
+
+  readonly phoneInvalid = computed(() => {
+    if (!this.phoneTouched()) return false;
+    const phone = this.formData().phone.trim();
+    return phone.length > 0 && !this.saudiPhoneRegex.test(phone);
+  });
+
   showImportModal = signal(false);
   importSelectedFileName = signal('');
   importCampList = signal<CampaignApiItem[]>([]);
@@ -186,6 +196,7 @@ export class Pilgrims implements OnInit {
   openModal(): void {
     this.formData.set({ ...EMPTY_FORM });
     this.submitError.set(null);
+    this.phoneTouched.set(false);
     this.selectedCampName.set('');
     this.selectedGrpName.set('');
     this.campList.set([]);
@@ -372,6 +383,12 @@ export class Pilgrims implements OnInit {
     this.importSelectedFileName.set(file?.name ?? '');
   }
 
+  clearImportFile(fileInput: HTMLInputElement): void {
+    this.importSelectedFile.set(null);
+    this.importSelectedFileName.set('');
+    fileInput.value = '';
+  }
+
   handleImportUpload(fileInput: HTMLInputElement): void {
     if (this.uploadingImportFile()) return;
 
@@ -387,16 +404,31 @@ export class Pilgrims implements OnInit {
       .pipe(finalize(() => this.uploadingImportFile.set(false)), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: response => {
-          const isSuccess = (response as ApiResult<unknown>)?.IsSuccess ?? (response as { issuccess?: boolean; IsSuccess?: boolean })?.issuccess ?? false;
+          const res = response as ApiResult<unknown>;
+          const isSuccess = res?.IsSuccess ?? (response as { issuccess?: boolean })?.issuccess ?? false;
 
           if (isSuccess) {
             this.closeImportModalAfterSuccess(fileInput);
             return;
           }
 
-          this.showImportError();
+          const errorMsg =
+            res?.Error?.MessageKey ||
+            res?.Error?.message ||
+            res?.ValidationErrors?.[0]?.ErrorMessage ||
+            null;
+
+          this.showImportError(errorMsg);
         },
-        error: () => this.showImportError(),
+        error: err => {
+          const body = err?.error as ApiResult<unknown> | undefined;
+          const errorMsg =
+            body?.Error?.MessageKey ||
+            body?.Error?.message ||
+            body?.ValidationErrors?.[0]?.ErrorMessage ||
+            null;
+          this.showImportError(errorMsg);
+        },
       });
   }
 
@@ -408,11 +440,11 @@ export class Pilgrims implements OnInit {
     this.loadPilgrims(1);
   }
 
-  private showImportError(): void {
+  private showImportError(message?: string | null): void {
     this.toast.add({
       severity: 'error',
       summary: 'خطأ',
-      detail: 'فيه مشكلة ولم نتمكن من تنفيذ العملية',
+      detail: message || 'فيه مشكلة ولم نتمكن من تنفيذ العملية',
     });
   }
 
@@ -490,7 +522,7 @@ export class Pilgrims implements OnInit {
       Gender: f.gender !== '' ? +f.gender : 0,
       IDNumber: f.idNumber,
       Accommodation: f.accommodation,
-      RitualCardNumber: f.ritualCardNumber,
+      NuskCardNumber: f.ritualCardNumber,
       PermitNumber: f.permitNumber,
       BloodType: f.bloodType !== '' ? +f.bloodType : 0,
     };
@@ -506,10 +538,17 @@ export class Pilgrims implements OnInit {
             this.showModal.set(false);
             this.loadPilgrims(1);
           } else {
-            this.submitError.set('حدث خطأ أثناء إضافة الحاج');
+            this.submitError.set(
+              res.Error?.MessageKey || res.Error?.message || res.ValidationErrors?.[0]?.ErrorMessage || 'حدث خطأ أثناء إضافة الحاج'
+            );
           }
         },
-        error: () => this.submitError.set('حدث خطأ أثناء إضافة الحاج'),
+        error: err => {
+          const body = err?.error as ApiResult<unknown> | undefined;
+          this.submitError.set(
+            body?.Error?.MessageKey || body?.Error?.message || body?.ValidationErrors?.[0]?.ErrorMessage || 'حدث خطأ أثناء إضافة الحاج'
+          );
+        },
       });
   }
 
@@ -517,19 +556,14 @@ export class Pilgrims implements OnInit {
     const f = this.formData();
     return !!(
       f.displayName.trim() &&
-      f.email.trim() &&
-      f.phone.trim() &&
-      f.campaignId &&
-      f.groupId &&
       f.passportNumber.trim() &&
-      f.nationality.trim() &&
-      f.dateOfBirth &&
-      f.gender !== '' &&
       f.idNumber.trim() &&
-      f.accommodation.trim() &&
       f.ritualCardNumber.trim() &&
-      f.permitNumber.trim() &&
-      f.bloodType !== ''
+      f.email.trim() &&
+      f.phone.trim() && !this.phoneInvalid() &&
+      f.dateOfBirth &&
+      f.campaignId &&
+      f.groupId
     );
   }
 

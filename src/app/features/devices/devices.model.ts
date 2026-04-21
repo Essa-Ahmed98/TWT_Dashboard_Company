@@ -32,6 +32,7 @@ export interface UpdateDeviceConnectionRequest {
 }
 
 export interface PilgrimOption {
-  Id:   string;
-  Name: string;
+  Id:     string;
+  UserId: string;
+  Name:   string;
 }
