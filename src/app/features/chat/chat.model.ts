@@ -1,3 +1,9 @@
+export enum MessageType {
+  Text  = 0,
+  Audio = 1,
+  Image = 2,
+}
+
 export enum UserRole {
   Pilgrim    = 0,
   Family     = 1,
@@ -51,9 +57,18 @@ export interface MessageResult {
   ConversationId: string;
   SenderId: string;
   Content: string;
+  MessageType: MessageType;
+  AudioUrl: string | null;
+  ImageUrl: string | null;
   SentAt: string;
   IsRead: boolean;
 }
+
+/** Returned by POST /api/chat/upload-audio */
+export interface UploadAudioResult { AudioUrl: string; }
+
+/** Returned by POST /api/chat/upload-image */
+export interface UploadImageResult { ImageUrl: string; }
 
 /** Returned by GET /api/chat/search-pilgrims */
 export interface PilgrimSearchResult {

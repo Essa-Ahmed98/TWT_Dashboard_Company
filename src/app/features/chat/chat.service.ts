@@ -8,11 +8,14 @@ import { ApiResult } from '../../core/models/api.models';
 import {
   ConversationResult,
   MessageResult,
+  MessageType,
   MessagesPageResult,
   MessagesReadNotification,
   OpenConversationResult,
   PilgrimSearchResult,
   UnreadCountResult,
+  UploadAudioResult,
+  UploadImageResult,
 } from './chat.model';
 
 @Injectable({ providedIn: 'root' })
@@ -86,7 +89,10 @@ export class ChatService implements OnDestroy {
         Id:             raw.id             ?? raw.Id,
         ConversationId: raw.conversationId ?? raw.ConversationId,
         SenderId:       raw.senderId       ?? raw.SenderId,
-        Content:        raw.content        ?? raw.Content,
+        Content:        raw.content     ?? raw.Content     ?? '',
+        MessageType:    raw.messageType ?? raw.MessageType ?? MessageType.Text,
+        AudioUrl:       raw.audioUrl    ?? raw.AudioUrl    ?? null,
+        ImageUrl:       raw.imageUrl    ?? raw.ImageUrl    ?? null,
         SentAt:         raw.sentAt         ?? raw.SentAt,
         IsRead:         raw.isRead         ?? raw.IsRead,
       };
@@ -120,9 +126,35 @@ export class ChatService implements OnDestroy {
     }
   }
 
+  uploadAudio(file: File) {
+    const form = new FormData();
+    form.append('audioFile', file);
+    return this.http.post<ApiResult<UploadAudioResult>>(
+      `${environment.chatApiBase}/chat/upload-audio`, form,
+    );
+  }
+
+  uploadImage(file: File) {
+    const form = new FormData();
+    form.append('imageFile', file);
+    return this.http.post<ApiResult<UploadImageResult>>(
+      `${environment.chatApiBase}/chat/upload-image`, form,
+    );
+  }
+
   sendMessage(receiverUserId: string, content: string): Promise<void> {
     if (!this.hub) return Promise.reject(new Error('Not connected'));
     return this.hub.invoke('SendMessage', receiverUserId, content);
+  }
+
+  sendAudioMessage(receiverUserId: string, audioUrl: string): Promise<void> {
+    if (!this.hub) return Promise.reject(new Error('Not connected'));
+    return this.hub.invoke('SendAudioMessage', receiverUserId, audioUrl);
+  }
+
+  sendImageMessage(receiverUserId: string, imageUrl: string): Promise<void> {
+    if (!this.hub) return Promise.reject(new Error('Not connected'));
+    return this.hub.invoke('SendImageMessage', receiverUserId, imageUrl);
   }
 
   markAsRead(conversationId: string): Promise<void> {

@@ -132,7 +132,17 @@
               }
               <div class="chat__msg-wrap">
                 <div class="chat__bubble" [class.chat__bubble--mine]="mine">
-                  {{ msg.Content }}
+                  @switch (msg.MessageType) {
+                    @case (MessageType.Image) {
+                      <img class="chat__bubble-img" [src]="msg.ImageUrl" alt="صورة" />
+                    }
+                    @case (MessageType.Audio) {
+                      <audio class="chat__bubble-audio" controls [src]="msg.AudioUrl"></audio>
+                    }
+                    @default {
+                      {{ msg.Content }}
+                    }
+                  }
                 </div>
                 <span class="chat__msg-time">
                   {{ formatTime(msg.SentAt) }}
@@ -164,22 +174,94 @@
 
         <!-- Input area -->
         <div class="chat__input-area">
-          <input
-            class="chat__input"
-            type="text"
-            placeholder="اكتب رسالة..."
-            [value]="newMessage()"
-            (input)="newMessage.set($any($event.target).value)"
-            (keydown)="onKeydown($event)"
-          />
-          <button
-            class="chat__send-btn"
-            [class.chat__send-btn--active]="newMessage().trim().length > 0"
-            (click)="sendMessage()"
-            title="إرسال"
-          >
-            <i class="pi pi-send"></i>
-          </button>
+
+          @if (imagePreviewUrl()) {
+
+            <!-- ── State 4: Image preview ── -->
+            <button class="chat__input-btn chat__input-btn--danger"
+                    (click)="discardImagePreview()" title="حذف الصورة">
+              <i class="pi pi-trash"></i>
+            </button>
+            <img class="chat__img-preview" [src]="imagePreviewUrl()" alt="معاينة" />
+            <button class="chat__send-btn chat__send-btn--active"
+                    (click)="sendImage()" [disabled]="uploadingMedia()" title="إرسال">
+              @if (uploadingMedia()) {
+                <i class="pi pi-spin pi-spinner"></i>
+              } @else {
+                <i class="pi pi-send"></i>
+              }
+            </button>
+
+          } @else if (recordingPreviewUrl()) {
+
+            <!-- ── State 3: Audio preview ── -->
+            <button class="chat__input-btn chat__input-btn--danger"
+                    (click)="discardPreview()" title="حذف التسجيل">
+              <i class="pi pi-trash"></i>
+            </button>
+            <audio class="chat__rec-preview-audio" controls [src]="recordingPreviewUrl()"></audio>
+            <button class="chat__send-btn chat__send-btn--active"
+                    (click)="sendRecording()" [disabled]="uploadingMedia()" title="إرسال">
+              @if (uploadingMedia()) {
+                <i class="pi pi-spin pi-spinner"></i>
+              } @else {
+                <i class="pi pi-send"></i>
+              }
+            </button>
+
+          } @else if (isRecording()) {
+
+            <!-- ── State 2: Recording ── -->
+            <button class="chat__input-btn chat__input-btn--danger"
+                    (click)="cancelRecording()" title="إلغاء التسجيل">
+              <i class="pi pi-trash"></i>
+            </button>
+            <div class="chat__recording">
+              <span class="chat__recording-dot"></span>
+              <span class="chat__recording-timer">{{ recordingLabel() }}</span>
+            </div>
+            <button class="chat__input-btn chat__input-btn--danger"
+                    (click)="toggleRecording()" title="إيقاف التسجيل">
+              <i class="pi pi-stop-circle"></i>
+            </button>
+
+          } @else {
+
+            <!-- ── State 1: Normal ── -->
+            <label class="chat__input-btn"
+                   [class.chat__input-btn--disabled]="uploadingMedia()"
+                   title="إرسال صورة">
+              <input type="file" accept="image/*" class="chat__file-input"
+                     [disabled]="uploadingMedia()"
+                     (change)="onImageFileSelected($event)" />
+              @if (uploadingMedia()) {
+                <i class="pi pi-spin pi-spinner"></i>
+              } @else {
+                <i class="pi pi-image"></i>
+              }
+            </label>
+            <button class="chat__input-btn" (click)="toggleRecording()"
+                    [disabled]="uploadingMedia()" title="تسجيل رسالة صوتية">
+              <i class="pi pi-microphone"></i>
+            </button>
+            <input
+              class="chat__input"
+              type="text"
+              placeholder="اكتب رسالة..."
+              [value]="newMessage()"
+              (input)="newMessage.set($any($event.target).value)"
+              (keydown)="onKeydown($event)"
+            />
+            <button
+              class="chat__send-btn"
+              [class.chat__send-btn--active]="newMessage().trim().length > 0"
+              (click)="sendMessage()"
+              title="إرسال"
+            >
+              <i class="pi pi-send"></i>
+            </button>
+
+          }
         </div>
 
       }

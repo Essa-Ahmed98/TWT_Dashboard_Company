@@ -436,6 +436,84 @@ $shell-padding:  24px;   // shell__main padding
     }
   }
 
+  &__bubble-img {
+    display: block;
+    max-width: 240px;
+    max-height: 300px;
+    border-radius: 8px;
+    object-fit: cover;
+    cursor: pointer;
+  }
+
+  &__bubble-audio {
+    display: block;
+    min-width: 220px;
+    max-width: 280px;
+    height: 36px;
+    border-radius: 8px;
+  }
+
+  &__file-input {
+    display: none;
+  }
+
+  // ── Recording indicator ──────────────────────────────────────
+  &__recording {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;          // stretches to fill space between trash and stop buttons
+    justify-content: center;
+  }
+
+  &__rec-preview-audio {
+    flex: 1;
+    min-width: 0;
+    height: 36px;
+    border-radius: 8px;
+  }
+
+  &__img-preview {
+    flex: 1;
+    min-width: 0;
+    max-width: 200px;
+    max-height: 56px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid $border;
+  }
+
+  &__recording-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: $red;
+    flex-shrink: 0;
+    animation: pulse-rec 1s ease-in-out infinite;
+  }
+
+  &__recording-timer {
+    font-size: 13px;
+    font-weight: 600;
+    color: $red;
+    font-variant-numeric: tabular-nums;
+    min-width: 38px;
+  }
+
+  &__input-btn--danger {
+    color: $red !important;
+
+    &:hover {
+      background: rgba($red, .1) !important;
+      color: $red !important;
+    }
+  }
+
+  @keyframes pulse-rec {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: .25; }
+  }
+
   &__msg-time {
     font-size: 11px;
     color: $text-muted;
@@ -479,6 +557,12 @@ $shell-padding:  24px;   // shell__main padding
     &:hover {
       background: $bg-page;
       color: $primary;
+    }
+
+    &--disabled {
+      opacity: .45;
+      cursor: not-allowed;
+      pointer-events: none;
     }
   }
 

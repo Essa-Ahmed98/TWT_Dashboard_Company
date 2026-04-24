@@ -21,6 +21,7 @@ import {
   ChatTab,
   ConversationResult,
   MessageResult,
+  MessageType,
   ROLE_LABELS,
   UserRole,
 } from './chat.model';
@@ -34,6 +35,8 @@ import {
 })
 export class Chat implements OnInit, OnDestroy {
   @ViewChild('msgsEl') msgsEl!: ElementRef<HTMLDivElement>;
+
+  readonly MessageType = MessageType;
 
   private readonly chatService = inject(ChatService);
   private readonly auth        = inject(AuthService);
@@ -54,10 +57,27 @@ export class Chat implements OnInit, OnDestroy {
   searchQuery  = signal('');
   sendError    = signal<string | null>(null);
 
-  loadingConvs = signal(false);
-  loadingMsgs  = signal(false);
-  loadingMore  = signal(false);
-  isConnected  = signal(false);
+  loadingConvs   = signal(false);
+  loadingMsgs    = signal(false);
+  loadingMore    = signal(false);
+  isConnected    = signal(false);
+  uploadingMedia      = signal(false);
+  isRecording         = signal(false);
+  recordingSeconds    = signal(0);
+  recordingBlob       = signal<Blob | null>(null);
+  recordingPreviewUrl = signal<string | null>(null);
+  imagePreviewFile    = signal<File | null>(null);
+  imagePreviewUrl     = signal<string | null>(null);
+
+  recordingLabel = computed(() => {
+    const s = this.recordingSeconds();
+    return `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
+  });
+
+  private mediaRecorder:     MediaRecorder | null = null;
+  private audioChunks:       Blob[]               = [];
+  private recordingInterval: ReturnType<typeof setInterval> | null = null;
+  private discardOnStop      = false;
 
   // ── Computed ───────────────────────────────────────────────────
   filteredConversations = computed(() => {
@@ -101,6 +121,10 @@ export class Chat implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.discardOnStop = true;
+    this.stopRecording();
+    this.discardPreview();
+    this.discardImagePreview();
     this.chatService.disconnect();
   }
 
@@ -276,6 +300,148 @@ export class Chat implements OnInit, OnDestroy {
     }
   }
 
+
+  async toggleRecording(): Promise<void> {
+    if (this.isRecording()) {
+      this.stopRecording();
+    } else {
+      await this.startRecording();
+    }
+  }
+
+  private async startRecording(): Promise<void> {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      this.audioChunks = [];
+
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+        ? 'audio/webm;codecs=opus'
+        : 'audio/webm';
+      this.mediaRecorder = new MediaRecorder(stream, { mimeType });
+
+      this.mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) this.audioChunks.push(e.data);
+      };
+
+      this.mediaRecorder.onstop = () => {
+        stream.getTracks().forEach(t => t.stop());
+        if (this.discardOnStop) {
+          this.discardOnStop = false;
+          this.audioChunks = [];
+          return;
+        }
+        const blob = new Blob(this.audioChunks, { type: 'audio/webm' });
+        this.audioChunks = [];
+        this.recordingBlob.set(blob);
+        this.recordingPreviewUrl.set(URL.createObjectURL(blob));
+      };
+
+      this.mediaRecorder.start();
+      this.isRecording.set(true);
+      this.recordingSeconds.set(0);
+      this.recordingInterval = setInterval(
+        () => this.recordingSeconds.update(s => s + 1),
+        1000,
+      );
+    } catch {
+      this.sendError.set('لم يتم السماح بالوصول للميكروفون');
+    }
+  }
+
+  private stopRecording(): void {
+    if (this.recordingInterval) {
+      clearInterval(this.recordingInterval);
+      this.recordingInterval = null;
+    }
+    this.isRecording.set(false);
+    this.mediaRecorder?.stop();
+    this.mediaRecorder = null;
+  }
+
+  cancelRecording(): void {
+    this.discardOnStop = true;
+    this.stopRecording();
+  }
+
+  discardPreview(): void {
+    const url = this.recordingPreviewUrl();
+    if (url) URL.revokeObjectURL(url);
+    this.recordingBlob.set(null);
+    this.recordingPreviewUrl.set(null);
+  }
+
+  sendRecording(): void {
+    const blob     = this.recordingBlob();
+    const friendId = this.activeFriendId();
+    if (!blob || !friendId) return;
+
+    this.discardPreview();
+
+    const file = new File([blob], `voice-${Date.now()}.webm`, { type: 'audio/webm' });
+    this.uploadingMedia.set(true);
+    this.sendError.set(null);
+
+    this.chatService.uploadAudio(file)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: res => {
+          if (!res.IsSuccess) {
+            this.sendError.set('فشل رفع الرسالة الصوتية');
+            this.uploadingMedia.set(false);
+            return;
+          }
+          this.chatService.sendAudioMessage(friendId, res.Data.AudioUrl)
+            .catch(err => this.sendError.set(err?.message ?? 'فشل إرسال الرسالة الصوتية'))
+            .finally(() => this.uploadingMedia.set(false));
+        },
+        error: () => { this.sendError.set('فشل رفع الرسالة الصوتية'); this.uploadingMedia.set(false); },
+      });
+  }
+
+  onImageFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file  = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+
+    this.discardImagePreview();
+    this.imagePreviewFile.set(file);
+    this.imagePreviewUrl.set(URL.createObjectURL(file));
+  }
+
+  discardImagePreview(): void {
+    const url = this.imagePreviewUrl();
+    if (url) URL.revokeObjectURL(url);
+    this.imagePreviewFile.set(null);
+    this.imagePreviewUrl.set(null);
+  }
+
+  sendImage(): void {
+    const file     = this.imagePreviewFile();
+    const friendId = this.activeFriendId();
+    if (!file || !friendId) return;
+
+    this.discardImagePreview();
+    this.uploadingMedia.set(true);
+    this.sendError.set(null);
+
+    this.chatService.uploadImage(file)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: res => {
+          if (!res.IsSuccess) {
+            this.sendError.set('فشل رفع الصورة');
+            this.uploadingMedia.set(false);
+            return;
+          }
+          this.chatService.sendImageMessage(friendId, res.Data.ImageUrl)
+            .catch(err => this.sendError.set(err?.message ?? 'فشل إرسال الصورة'))
+            .finally(() => this.uploadingMedia.set(false));
+        },
+        error: () => { this.sendError.set('فشل رفع الصورة'); this.uploadingMedia.set(false); },
+      });
+  }
+
   onMessagesScroll(event: Event): void {
     const el = event.target as HTMLDivElement;
     if (el.scrollTop === 0 && this.nextCursor() && !this.loadingMore()) {
@@ -316,12 +482,16 @@ export class Chat implements OnInit, OnDestroy {
         } else {
           // update sidebar: bump unread + preview
           this.conversations.update(list => {
+            const preview =
+              msg.MessageType === MessageType.Image ? '[صورة]'
+            : msg.MessageType === MessageType.Audio ? '[رسالة صوتية]'
+            : msg.Content;
             const updated = list.map(c =>
               c.ConversationId === msg.ConversationId
                 ? {
                     ...c,
                     UnreadCount:         c.UnreadCount + 1,
-                    LastMessagePreview:  msg.Content,
+                    LastMessagePreview:  preview,
                     LastMessageAt:       msg.SentAt,
                     LastMessageSenderId: msg.SenderId,
                   }
