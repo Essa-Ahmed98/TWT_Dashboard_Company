@@ -1,0 +1,184 @@
+@if (hasAnyFilterDropdownOpen()) {
+  <div class="backdrop" (click)="closeAllDropdowns()"></div>
+}
+
+<div class="complaints">
+  <div class="complaints__header">
+    <div class="complaints__title">
+      <h1 class="complaints__title-text">الشكاوى</h1>
+      <span class="complaints__title-sub">متابعة شكاوى الحجاج داخل حملات الشركة</span>
+    </div>
+  </div>
+
+  <div class="complaints__stats">
+    <article class="stat-card stat-card--primary">
+      <div class="stat-card__info">
+        <span class="stat-card__label">إجمالي الشكاوى</span>
+        <span class="stat-card__value">{{ totalCount() }}</span>
+      </div>
+      <div class="stat-card__icon-wrap">
+        <i class="pi pi-comment"></i>
+      </div>
+    </article>
+    <article class="stat-card stat-card--amber">
+      <div class="stat-card__info">
+        <span class="stat-card__label">الحملات المتأثرة</span>
+        <span class="stat-card__value">{{ affectedCampaignsCount() }}</span>
+      </div>
+      <div class="stat-card__icon-wrap">
+        <i class="pi pi-flag"></i>
+      </div>
+    </article>
+    <article class="stat-card stat-card--light">
+      <div class="stat-card__info">
+        <span class="stat-card__label">المجموعات المتأثرة</span>
+        <span class="stat-card__value">{{ affectedGroupsCount() }}</span>
+      </div>
+      <div class="stat-card__icon-wrap">
+        <i class="pi pi-users"></i>
+      </div>
+    </article>
+  </div>
+
+  <div class="complaints__filters">
+    <div class="dropdown" [class.dropdown--open]="openCampaignDrop()">
+      <button class="dropdown__trigger" type="button" (click)="toggleCampaignDrop($event)">
+        <i class="pi pi-building"></i>
+        <span>{{ selectedCampaignId() ? campaignFilterLabel() : 'جميع الحملات' }}</span>
+        @if (selectedCampaignId()) {
+          <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectCampaignFilter()"></i>
+        } @else {
+          <i class="pi pi-angle-down dropdown__arrow"></i>
+        }
+      </button>
+      @if (openCampaignDrop()) {
+        <ul class="dropdown__menu">
+          @if (campaignLoading()) {
+            <li class="dropdown__item dropdown__item--state"><span class="ss-spinner"></span></li>
+          } @else {
+            @for (campaign of campaignList(); track campaign.Id) {
+              <li
+                class="dropdown__item"
+                [class.dropdown__item--active]="selectedCampaignId() === campaign.Id"
+                (click)="selectCampaignFilter(campaign)"
+              >
+                @if (selectedCampaignId() === campaign.Id) { <i class="pi pi-check"></i> }
+                {{ campaign.Name }}
+              </li>
+            }
+          }
+        </ul>
+      }
+    </div>
+
+    <div class="dropdown" [class.dropdown--open]="openGroupDrop()" [class.dropdown--disabled]="!selectedCampaignId()">
+      <button class="dropdown__trigger" type="button" [disabled]="!selectedCampaignId()" (click)="toggleGroupDrop($event)">
+        <i class="pi pi-users"></i>
+        <span>{{ selectedGroupId() ? groupFilterLabel() : (selectedCampaignId() ? 'جميع المجموعات' : 'اختر الحملة أولًا') }}</span>
+        @if (selectedGroupId()) {
+          <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectGroupFilter()"></i>
+        } @else {
+          <i class="pi pi-angle-down dropdown__arrow"></i>
+        }
+      </button>
+      @if (openGroupDrop()) {
+        <ul class="dropdown__menu">
+          @if (groupLoading()) {
+            <li class="dropdown__item dropdown__item--state"><span class="ss-spinner"></span></li>
+          } @else {
+            @for (group of groupList(); track group.Id) {
+              <li
+                class="dropdown__item"
+                [class.dropdown__item--active]="selectedGroupId() === group.Id"
+                (click)="selectGroupFilter(group)"
+              >
+                @if (selectedGroupId() === group.Id) { <i class="pi pi-check"></i> }
+                {{ group.Name }}
+              </li>
+            }
+          }
+        </ul>
+      }
+    </div>
+  </div>
+
+  <section class="complaints-list panel">
+    <div class="panel__header">
+      <h2 class="panel__title">قائمة الشكاوى ({{ totalCount() }})</h2>
+    </div>
+
+    @if (loading()) {
+      <div class="complaints__spinner">
+        <p-progressSpinner strokeWidth="4" styleClass="complaints__progress-spinner" />
+      </div>
+    } @else if (complaints().length === 0) {
+      <div class="complaints-list__empty">
+        <i class="pi pi-inbox"></i>
+        <p>لا توجد شكاوى مطابقة للفلاتر الحالية</p>
+      </div>
+    } @else {
+      <div class="complaints-table">
+        <div class="complaints-table__head">
+          <span class="complaints-table__col-label">الشكوى</span>
+          <span class="complaints-table__col-label">معلومات الحاج</span>
+          <span class="complaints-table__col-label">الحملة / المجموعة</span>
+          <span class="complaints-table__col-label">التاريخ</span>
+        </div>
+        @for (complaint of complaints(); track complaint.Id) {
+          <div class="complaints-table__row">
+            <div class="complaint-content">
+              <p class="complaint-content__title">{{ complaint.Title }}</p>
+              @if (complaint.Description) {
+                <p class="complaint-content__desc">{{ complaint.Description }}</p>
+              }
+            </div>
+            <div class="complaint-pilgrim">
+              <span class="complaint-pilgrim__name">{{ complaint.DisplayName }}</span>
+              @if (complaint.Phone) {
+                <span class="complaint-pilgrim__phone">
+                  <i class="pi pi-phone"></i>
+                  {{ complaint.Phone }}
+                </span>
+              }
+            </div>
+            <div class="complaint-campaign">
+              <span class="chip">{{ complaint.CampaignName }}</span>
+              <span class="chip">{{ complaint.GroupName }}</span>
+            </div>
+            <div class="complaint-date">
+              {{ formatDate(complaint.CreatedAt) }}
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </section>
+
+  @if (totalCount() > 0) {
+    <div class="pagination-bar">
+      <div class="pagination-bar__controls">
+        <button class="pagination__btn" type="button" [disabled]="!hasPrevious()" (click)="prevPage()">
+          <i class="pi pi-angle-right"></i>
+        </button>
+        @for (p of visiblePages(); track $index) {
+          @if (p === '...') {
+            <span class="pagination__ellipsis">…</span>
+          } @else {
+            <button
+              class="pagination__btn"
+              type="button"
+              [class.pagination__btn--active]="p === currentPage()"
+              (click)="goToPage(p)"
+            >{{ p }}</button>
+          }
+        }
+        <button class="pagination__btn" type="button" [disabled]="!hasNext()" (click)="nextPage()">
+          <i class="pi pi-angle-left"></i>
+        </button>
+      </div>
+      <span class="pagination-bar__info">
+        {{ complaints().length }} من {{ totalCount() | number }}
+      </span>
+    </div>
+  }
+</div>

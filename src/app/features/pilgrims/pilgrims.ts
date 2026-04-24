@@ -58,7 +58,7 @@ export class Pilgrims implements OnInit {
   readonly totalPages = this.service.totalPages;
   readonly page = this.service.page;
 
-  pageSize = signal(20);
+  pageSize = signal(10);
 
   lastItem = computed(() =>
     Math.min(this.page() * this.pageSize(), this.total())

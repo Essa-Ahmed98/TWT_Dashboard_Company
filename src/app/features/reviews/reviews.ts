@@ -69,7 +69,7 @@ export class Reviews {
   readonly selectedCampaignName = signal('');
   readonly selectedGroupId = signal('');
   readonly selectedGroupName = signal('');
-  readonly selectedCategory = signal(0);
+  readonly selectedCategory = signal<number | undefined>(undefined);
   readonly selectedSortBy = signal(0);
 
   readonly campaignList = signal<CampaignApiItem[]>([]);
@@ -222,7 +222,6 @@ export class Reviews {
   }
 
   selectCategoryFilter(value?: number): void {
-    if (value === undefined) return;
     this.selectedCategory.set(value);
     this.openCategoryDrop.set(false);
     this.currentPage.set(1);
@@ -275,7 +274,9 @@ export class Reviews {
   }
 
   categoryFilterLabel(): string {
-    return this.categoryOptions.find((item) => item.value === this.selectedCategory())?.label ?? 'اختر الفئة';
+    const cat = this.selectedCategory();
+    if (cat === undefined) return 'جميع الفئات';
+    return this.categoryOptions.find((item) => item.value === cat)?.label ?? 'اختر الفئة';
   }
 
   categoryLabel(category: number): string {

@@ -75,6 +75,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/reviews/reviews').then((m) => m.Reviews),
       },
+      {
+        path: 'complaints',
+        loadComponent: () =>
+          import('./features/complaints/complaints').then((m) => m.Complaints),
+      },
       { path: '', redirectTo: 'campaigns', pathMatch: 'full' },
     ],
   },

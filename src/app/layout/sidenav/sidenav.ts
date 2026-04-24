@@ -47,6 +47,7 @@ export class Sidenav {
       items: [
         { label: 'الدردشة', icon: 'pi pi-comments', route: '/chat' },
         { label: 'التقييمات', icon: 'pi pi-star', route: '/reviews' },
+        { label: 'الشكاوى', icon: 'pi pi-exclamation-circle', route: '/complaints' },
       ],
     },
   ];
