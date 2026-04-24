@@ -628,6 +628,10 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
       });
   }
 
+  isOwnZone(zone: GeofenceZone): boolean {
+    return !!zone.companyId;
+  }
+
   private mapApiZone(item: GeoZoneApiItem): GeofenceZone {
     return {
       id: item.Id,
@@ -642,6 +646,7 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
       color: item.Color,
       status: 'active',
       visible: true,
+      companyId: item.CompanyId,
     };
   }
 

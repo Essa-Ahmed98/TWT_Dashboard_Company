@@ -148,16 +148,18 @@
               </div>
 
               <!-- Actions -->
-              <div class="zone-card__actions">
-                <button class="zone-card__action zone-card__action--edit" (click)="openEditModal(zone, $event)">
-                  <i class="pi pi-pencil"></i>
-                  تعديل
-                </button>
-                <button class="zone-card__action zone-card__action--delete" (click)="deleteZone(zone, $event)">
-                  <i class="pi pi-trash"></i>
-                  حذف
-                </button>
-              </div>
+              @if (isOwnZone(zone)) {
+                <div class="zone-card__actions">
+                  <button class="zone-card__action zone-card__action--edit" (click)="openEditModal(zone, $event)">
+                    <i class="pi pi-pencil"></i>
+                    تعديل
+                  </button>
+                  <button class="zone-card__action zone-card__action--delete" (click)="deleteZone(zone, $event)">
+                    <i class="pi pi-trash"></i>
+                    حذف
+                  </button>
+                </div>
+              }
 
             </div>
           }
