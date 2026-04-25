@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+﻿import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../core/auth/services/auth';
 
@@ -29,7 +29,7 @@ export class Sidenav {
       label: 'القائمة الرئيسية',
       items: [
         { label: 'لوحة التحكم', icon: 'pi pi-th-large', route: '/dashboard' },
-        { label: 'إدارة الحملات', icon: 'pi pi-globe', route: '/campaigns' },
+        { label: 'إدارة المراكز', icon: 'pi pi-globe', route: '/campaigns' },
         { label: 'إدارة التفويج والنقل', icon: 'pi pi-car', route: '/dispatch' },
         { label: 'غرفة المراقبة', icon: 'pi pi-map-marker', route: '/geo-fence' },
       ],

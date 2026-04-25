@@ -190,6 +190,11 @@
     padding-left: 50px;
   }
 
+  &--error {
+    border-color: #e53935;
+    &:focus { border-color: #e53935; box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.12); }
+  }
+
   &::placeholder { color: rgb(100, 123, 135); font-size: .875rem;
         line-height: 1.25rem; }
 

@@ -1,4 +1,4 @@
-@if (hasAnyFilterDropdownOpen()) {
+﻿@if (hasAnyFilterDropdownOpen()) {
   <div class="backdrop" (click)="closeAllDropdowns()"></div>
 }
 
@@ -6,7 +6,7 @@
   <div class="complaints__header">
     <div class="complaints__title">
       <h1 class="complaints__title-text">الشكاوى</h1>
-      <span class="complaints__title-sub">متابعة شكاوى الحجاج داخل حملات الشركة</span>
+      <span class="complaints__title-sub">متابعة شكاوى الحجاج داخل مراكز الشركة</span>
     </div>
   </div>
 
@@ -22,7 +22,7 @@
     </article>
     <article class="stat-card stat-card--amber">
       <div class="stat-card__info">
-        <span class="stat-card__label">الحملات المتأثرة</span>
+        <span class="stat-card__label">المراكز المتأثرة</span>
         <span class="stat-card__value">{{ affectedCampaignsCount() }}</span>
       </div>
       <div class="stat-card__icon-wrap">
@@ -31,7 +31,7 @@
     </article>
     <article class="stat-card stat-card--light">
       <div class="stat-card__info">
-        <span class="stat-card__label">المجموعات المتأثرة</span>
+        <span class="stat-card__label">الأفواج المتأثرة</span>
         <span class="stat-card__value">{{ affectedGroupsCount() }}</span>
       </div>
       <div class="stat-card__icon-wrap">
@@ -44,7 +44,7 @@
     <div class="dropdown" [class.dropdown--open]="openCampaignDrop()">
       <button class="dropdown__trigger" type="button" (click)="toggleCampaignDrop($event)">
         <i class="pi pi-building"></i>
-        <span>{{ selectedCampaignId() ? campaignFilterLabel() : 'جميع الحملات' }}</span>
+        <span>{{ selectedCampaignId() ? campaignFilterLabel() : 'جميع المراكز' }}</span>
         @if (selectedCampaignId()) {
           <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectCampaignFilter()"></i>
         } @else {
@@ -74,7 +74,7 @@
     <div class="dropdown" [class.dropdown--open]="openGroupDrop()" [class.dropdown--disabled]="!selectedCampaignId()">
       <button class="dropdown__trigger" type="button" [disabled]="!selectedCampaignId()" (click)="toggleGroupDrop($event)">
         <i class="pi pi-users"></i>
-        <span>{{ selectedGroupId() ? groupFilterLabel() : (selectedCampaignId() ? 'جميع المجموعات' : 'اختر الحملة أولًا') }}</span>
+        <span>{{ selectedGroupId() ? groupFilterLabel() : (selectedCampaignId() ? 'جميع الأفواج' : 'اختر المركز أولًا') }}</span>
         @if (selectedGroupId()) {
           <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectGroupFilter()"></i>
         } @else {
@@ -121,7 +121,7 @@
         <div class="complaints-table__head">
           <span class="complaints-table__col-label">الشكوى</span>
           <span class="complaints-table__col-label">معلومات الحاج</span>
-          <span class="complaints-table__col-label">الحملة / المجموعة</span>
+          <span class="complaints-table__col-label">المركز / الفوج</span>
           <span class="complaints-table__col-label">التاريخ</span>
         </div>
         @for (complaint of complaints(); track complaint.Id) {

@@ -1,4 +1,4 @@
-import {
+﻿import {
   ChangeDetectionStrategy,
   Component, computed, signal, inject, PLATFORM_ID, DestroyRef,
   ViewChild, ElementRef, AfterViewInit, OnDestroy, effect, OnInit,
@@ -112,12 +112,12 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
 
   campaigns = signal<Campaign[]>([]);
 
-  readonly filterOptions = ['الكل', 'مشعر مقدس', 'مخيم حملة'];
+  readonly filterOptions = ['الكل', 'مشعر مقدس', 'مخيم مركز'];
 
   private readonly TYPE_FILTER_MAP: Record<string, ZoneType | null> = {
     'الكل': null,
     'مشعر مقدس': 'مشعر مقدس',
-    'مخيم حملة': 'مخيم حملة',
+    'مخيم مركز': 'مخيم مركز',
   };
 
   private readonly LOCATION_COORDS: Record<string, [number, number]> = {
@@ -140,18 +140,18 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
   };
 
   private readonly MOCK_PILGRIMS = [
-    { id: 1,  name: 'عبدالرحمن أحمد',  location: 'منى',    status: 'safe',    campaign: 'حملة الراجحي الأولى'   },
-    { id: 2,  name: 'محمد حسن علي',    location: 'عرفات',  status: 'warning', campaign: 'حملة مصر الرسمية'      },
-    { id: 3,  name: 'خالد بن سعود',    location: 'مكة',    status: 'safe',    campaign: 'حملة النور المباركة'   },
-    { id: 4,  name: 'أحمد الأردني',    location: 'منى',    status: 'safe',    campaign: 'حملة الأردن الرسمية'   },
-    { id: 5,  name: 'عمر الفاروق',     location: 'مزدلفة', status: 'danger',  campaign: 'حملة الفرقان الذهبية'  },
-    { id: 6,  name: 'يوسف العلي',      location: 'عرفات',  status: 'safe',    campaign: 'حملة الهدى الأولى'     },
-    { id: 7,  name: 'إبراهيم محمود',   location: 'مكة',    status: 'safe',    campaign: 'حملة مصر الرسمية'      },
-    { id: 8,  name: 'سعد الحربي',      location: 'منى',    status: 'warning', campaign: 'حملة الراجحي الثانية'  },
-    { id: 9,  name: 'فيصل التركي',     location: 'عرفات',  status: 'safe',    campaign: 'حملة تركيا الكبرى'     },
-    { id: 10, name: 'محمد الشمري',     location: 'مكة',    status: 'safe',    campaign: 'حملة البركة الأولى'    },
-    { id: 11, name: 'عبدالله الغامدي', location: 'مزدلفة', status: 'warning', campaign: 'حملة الراجحي الثالثة' },
-    { id: 12, name: 'كريم الأنصاري',   location: 'منى',    status: 'safe',    campaign: 'حملة المغرب الرسمية'   },
+    { id: 1,  name: 'عبدالرحمن أحمد',  location: 'منى',    status: 'safe',    campaign: 'مركز الراجحي الأولى'   },
+    { id: 2,  name: 'محمد حسن علي',    location: 'عرفات',  status: 'warning', campaign: 'مركز مصر الرسمية'      },
+    { id: 3,  name: 'خالد بن سعود',    location: 'مكة',    status: 'safe',    campaign: 'مركز النور المباركة'   },
+    { id: 4,  name: 'أحمد الأردني',    location: 'منى',    status: 'safe',    campaign: 'مركز الأردن الرسمية'   },
+    { id: 5,  name: 'عمر الفاروق',     location: 'مزدلفة', status: 'danger',  campaign: 'مركز الفرقان الذهبية'  },
+    { id: 6,  name: 'يوسف العلي',      location: 'عرفات',  status: 'safe',    campaign: 'مركز الهدى الأولى'     },
+    { id: 7,  name: 'إبراهيم محمود',   location: 'مكة',    status: 'safe',    campaign: 'مركز مصر الرسمية'      },
+    { id: 8,  name: 'سعد الحربي',      location: 'منى',    status: 'warning', campaign: 'مركز الراجحي الثانية'  },
+    { id: 9,  name: 'فيصل التركي',     location: 'عرفات',  status: 'safe',    campaign: 'مركز تركيا الكبرى'     },
+    { id: 10, name: 'محمد الشمري',     location: 'مكة',    status: 'safe',    campaign: 'مركز البركة الأولى'    },
+    { id: 11, name: 'عبدالله الغامدي', location: 'مزدلفة', status: 'warning', campaign: 'مركز الراجحي الثالثة' },
+    { id: 12, name: 'كريم الأنصاري',   location: 'منى',    status: 'safe',    campaign: 'مركز المغرب الرسمية'   },
   ];
 
   form = signal<AddZoneForm>({
@@ -169,7 +169,7 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
       { label: 'إجمالي المناطق', value: this.totalCount(),                          color: '#0b405b' },
       { label: 'منطقة نشطة',    value: z.filter(x => x.status === 'active').length, color: '#22c35d' },
       { label: 'حاج معروض',     value: visHajj,                                     color: '#fb8c00' },
-      { label: 'مجموعة مفعلة',  value: visGroups.length,                            color: '#e53935' },
+      { label: 'فوج مفعلة',  value: visGroups.length,                            color: '#e53935' },
     ];
   });
 
@@ -636,7 +636,7 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
     return {
       id: item.Id,
       name: item.Name,
-      type: item.GeofenceType === 0 ? 'مشعر مقدس' : 'مخيم حملة',
+      type: item.GeofenceType === 0 ? 'مشعر مقدس' : 'مخيم مركز',
       description: item.Description,
       lat: item.Latitude,
       lng: item.Longitude,
@@ -902,7 +902,7 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
     return `
       <div style="direction:rtl;font-family:inherit;min-width:180px">
         <div style="font-weight:700;color:#0b405b;margin-bottom:4px">${pilgrim.DisplayName}</div>
-        <div style="font-size:.8rem;color:#647b87;margin-bottom:4px">المجموعة: ${group.name}</div>
+        <div style="font-size:.8rem;color:#647b87;margin-bottom:4px">الفوج: ${group.name}</div>
       </div>`;
   }
 

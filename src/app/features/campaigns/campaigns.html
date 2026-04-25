@@ -1,4 +1,4 @@
-<!-- Modal backdrop -->
+﻿<!-- Modal backdrop -->
 @if (showModal()) {
   <div class="modal-backdrop" (click)="closeModal()"></div>
 }
@@ -10,9 +10,9 @@
   ══════════════════════════════════════════ -->
   <div class="campaigns__header">
     <div class="campaigns__title">
-      <h1 class="campaigns__title-text">إدارة الحملات</h1>
+      <h1 class="campaigns__title-text">إدارة المراكز</h1>
       <span class="campaigns__title-count">
-        {{ campaigns().length }} حملة مسجلة &bull; {{ totalGroups() }} مجموعة
+        {{ campaigns().length }} مركز مسجلة &bull; {{ totalGroups() }} فوج
       </span>
     </div>
     <div class="campaigns__actions">
@@ -51,7 +51,7 @@
 
       <button class="btn btn--primary" (click)="openModal()">
         <i class="pi pi-plus"></i>
-        <span>إضافة حملة</span>
+        <span>إضافة مركز</span>
       </button>
     </div>
   </div>
@@ -76,7 +76,7 @@
           <div class="campaign-card__head">
             <div class="campaign-card__info">
               <span class="campaign-card__name">{{ c.name }}</span>
-              <span class="campaign-card__number">رقم الحملة: {{ c.number }}</span>
+              <span class="campaign-card__number">رقم المركز: {{ c.number }}</span>
             </div>
             <span class="status-badge status-badge--{{ statusClass(c.status) }}">
               <span class="status-badge__dot"></span>
@@ -93,7 +93,7 @@
             <div class="cstat">
               <i class="pi pi-sitemap cstat__icon"></i>
               <span class="cstat__value">{{ c.groupsCount }}</span>
-              <span class="cstat__label">مجموعة</span>
+              <span class="cstat__label">فوج</span>
             </div>
             <div class="cstat">
               <i class="pi pi-user cstat__icon"></i>
@@ -109,7 +109,7 @@
 
           <div class="campaign-card__footer">
             <a class="campaign-card__link" (click)="openDetail(c.id)">
-              عرض التفاصيل والمجموعات
+              عرض التفاصيل والأفواج
               <i class="pi pi-angle-left"></i>
             </a>
           </div>
@@ -133,9 +133,9 @@
       <table class="campaigns__table">
         <thead>
           <tr>
-            <th>الحملة</th>
+            <th>المركز</th>
             <th>الحجاج</th>
-            <th>المجموعات</th>
+            <th>الأفواج</th>
             <th>المشرفين</th>
             <th>الحافلات</th>
             <th>الحالة</th>
@@ -148,7 +148,7 @@
               <td>
                 <div class="campaign-name">
                   <span class="campaign-name__text">{{ c.name }}</span>
-                  <span class="campaign-name__sub">رقم الحملة {{ c.number }}</span>
+                  <span class="campaign-name__sub">رقم المركز {{ c.number }}</span>
                 </div>
               </td>
               <td>{{ c.pilgrimsCount | number }}</td>
@@ -163,7 +163,7 @@
               </td>
               <td>
                 <a class="table-link" (click)="openDetail(c.id)">
-                  عرض التفاصيل والمجموعات
+                  عرض التفاصيل والأفواج
                   <i class="pi pi-angle-left"></i>
                 </a>
               </td>
@@ -230,8 +230,8 @@
 
     <div class="dialog__header">
       <div>
-        <h2 class="dialog__title">إضافة حملة جديدة</h2>
-        <p class="dialog__sub">أدخل بيانات الحملة لإنشائها</p>
+        <h2 class="dialog__title">إضافة مركز جديدة</h2>
+        <p class="dialog__sub">أدخل بيانات المركز لإنشائها</p>
       </div>
       <button class="dialog__close" (click)="closeModal()">
         <i class="pi pi-times"></i>
@@ -242,14 +242,14 @@
 
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">اسم الحملة <span class="form-req">*</span></label>
-          <input class="form-input" type="text" placeholder="مثال: حملة الراجحي"
+          <label class="form-label">اسم المركز <span class="form-req">*</span></label>
+          <input class="form-input" type="text" placeholder="مثال: مركز الراجحي"
             [value]="formData().name"
             (input)="patchForm({ name: $any($event.target).value })" />
         </div>
         <div class="form-field">
-          <label class="form-label">رقم الحملة <span class="form-req">*</span></label>
-          <input class="form-input" type="text" placeholder="رقم الحملة"
+          <label class="form-label">رقم المركز <span class="form-req">*</span></label>
+          <input class="form-input" type="text" placeholder="رقم المركز"
             [value]="formData().number"
             (input)="patchForm({ number: $any($event.target).value })" />
         </div>
@@ -259,8 +259,8 @@
 
     <div class="dialog__footer">
       <button class="btn btn--outline" (click)="closeModal()">إلغاء</button>
-      <button class="btn btn--primary" (click)="submitForm()" [disabled]="submitting()">
-        @if (submitting()) { <i class="pi pi-spin pi-spinner"></i> } @else { إنشاء حملة }
+      <button class="btn btn--primary" (click)="submitForm()" [disabled]="submitting() || !formData().name.trim() || !formData().number.trim()">
+        @if (submitting()) { <i class="pi pi-spin pi-spinner"></i> } @else { إنشاء مركز }
       </button>
     </div>
 

@@ -1,4 +1,4 @@
-import {
+﻿import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
@@ -66,11 +66,20 @@ export class Supervisors implements OnInit {
 
   private readonly search$ = new Subject<string>();
 
+  private readonly saudiPhoneRegex = /^(?:\+966|00966|966|0)?5\d{8}$/;
+
   // ── Modal state ──────────────────────────────────────────────────
-  showModal   = signal(false);
-  submitting  = signal(false);
-  submitError = signal<string | null>(null);
-  formData    = signal<SupervisorForm>({ ...EMPTY_FORM });
+  showModal    = signal(false);
+  submitting   = signal(false);
+  submitError  = signal<string | null>(null);
+  formData     = signal<SupervisorForm>({ ...EMPTY_FORM });
+  phoneTouched = signal(false);
+
+  readonly phoneInvalid = computed(() => {
+    const phone = this.formData().phone.trim();
+    if (!this.phoneTouched() || !phone) return false;
+    return !this.saudiPhoneRegex.test(phone);
+  });
 
   // Campaigns dropdown
   campList         = signal<CampaignApiItem[]>([]);
@@ -158,6 +167,7 @@ export class Supervisors implements OnInit {
   openModal(): void {
     this.formData.set({ ...EMPTY_FORM, languages: [] });
     this.submitError.set(null);
+    this.phoneTouched.set(false);
     this.selectedCampName.set('');
     this.selectedGrpName.set('');
     this.campList.set([]);
@@ -308,7 +318,7 @@ export class Supervisors implements OnInit {
     return !!(
       f.displayName.trim() &&
       f.email.trim()       &&
-      f.phone.trim()       &&
+      f.phone.trim()       && !this.phoneInvalid() &&
       f.password.trim()    &&
       f.campaignId         &&
       f.groupId            &&
@@ -333,7 +343,7 @@ export class Supervisors implements OnInit {
 
     exportRowsToExcel(
       'supervisors-list',
-      ['المشرف', 'الحملة', 'المجموعة', 'رقم الجواز', 'الجنسية', 'اللغات', 'الحالة'],
+      ['المشرف', 'المركز', 'الفوج', 'رقم الجواز', 'الجنسية', 'اللغات', 'الحالة'],
       items.map(s => [
         s.DisplayName || s.UserId,
         s.CampaignName || s.CampaignId || '—',

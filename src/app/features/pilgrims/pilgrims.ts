@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+﻿import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -15,6 +15,15 @@ import { PilgrimsService } from './pilgrims.service';
 import { AuthService } from '../../core/auth/services/auth';
 import { CampaignsService } from '../campaigns/campaigns.service';
 import { exportRowsToExcel } from '../../core/utils/excel-export';
+
+const API_ERRORS: Record<string, string> = {
+  'This username is already taken.': 'البريد الإلكتروني أو رقم الهاتف مستخدم بالفعل',
+};
+
+function translateError(key?: string | null): string | null {
+  if (!key) return null;
+  return API_ERRORS[key] ?? key;
+}
 
 const EMPTY_FORM: PilgrimForm = {
   displayName: '',
@@ -177,7 +186,7 @@ export class Pilgrims implements OnInit {
 
   filterCampaignLabel(): string {
     const c = this.filterCampList().find(x => x.Id === this.selectedCampaign());
-    return c ? c.Name : 'كل الحملات';
+    return c ? c.Name : 'كل المراكز';
   }
 
   private fetchFilterCampaigns(): void {
@@ -453,7 +462,7 @@ export class Pilgrims implements OnInit {
       this.toast.add({
         severity: 'warn',
         summary: 'بيانات ناقصة',
-        detail: 'اختر الحملة والمجموعة أولاً لتحميل النموذج.',
+        detail: 'اختر المركز والفوج أولاً لتحميل النموذج.',
       });
       return;
     }
@@ -539,14 +548,14 @@ export class Pilgrims implements OnInit {
             this.loadPilgrims(1);
           } else {
             this.submitError.set(
-              res.Error?.MessageKey || res.Error?.message || res.ValidationErrors?.[0]?.ErrorMessage || 'حدث خطأ أثناء إضافة الحاج'
+              translateError(res.Error?.MessageKey) || translateError(res.Error?.message) || res.ValidationErrors?.[0]?.ErrorMessage || 'حدث خطأ أثناء إضافة الحاج'
             );
           }
         },
         error: err => {
           const body = err?.error as ApiResult<unknown> | undefined;
           this.submitError.set(
-            body?.Error?.MessageKey || body?.Error?.message || body?.ValidationErrors?.[0]?.ErrorMessage || 'حدث خطأ أثناء إضافة الحاج'
+            translateError(body?.Error?.MessageKey) || translateError(body?.Error?.message) || body?.ValidationErrors?.[0]?.ErrorMessage || 'حدث خطأ أثناء إضافة الحاج'
           );
         },
       });
@@ -580,7 +589,7 @@ export class Pilgrims implements OnInit {
 
     exportRowsToExcel(
       'pilgrims-list',
-      ['الحاج', 'الحملة', 'المجموعة', 'رقم الجواز', 'الجنسية', 'الجنس'],
+      ['الحاج', 'المركز', 'الفوج', 'رقم الجواز', 'الجنسية', 'الجنس'],
       items.map(p => [
         p.DisplayName,
         p.CampaignName,

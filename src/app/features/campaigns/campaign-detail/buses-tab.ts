@@ -44,18 +44,27 @@ export class CampaignBusesTab {
     afterNextRender(() => this.service.loadBuses(this.campaignId()));
   }
 
-  // ── Modal ─────────────────────────────────────────────────────
-  showModal  = signal(false);
-  form       = signal<BusForm>({ ...EMPTY_FORM });
-  submitting = signal(false);
+  private readonly saudiPhoneRegex = /^(?:\+966|00966|966|0)?5\d{8}$/;
 
-  openModal(): void  { this.form.set({ ...EMPTY_FORM }); this.showModal.set(true); }
+  // ── Modal ─────────────────────────────────────────────────────
+  showModal    = signal(false);
+  form         = signal<BusForm>({ ...EMPTY_FORM });
+  submitting   = signal(false);
+  phoneTouched = signal(false);
+
+  readonly phoneInvalid = computed(() => {
+    const phone = this.form().driverPhone.trim();
+    if (!this.phoneTouched() || !phone) return false;
+    return !this.saudiPhoneRegex.test(phone);
+  });
+
+  openModal(): void  { this.form.set({ ...EMPTY_FORM }); this.phoneTouched.set(false); this.showModal.set(true); }
   closeModal(): void { this.showModal.set(false); }
   patchForm(patch: Partial<BusForm>): void { this.form.update(f => ({ ...f, ...patch })); }
 
   submit(): void {
     const f = this.form();
-    if (!f.number.trim() || !f.driverName.trim() || !f.type || !f.plateNumber.trim() || this.submitting()) return;
+    if (!f.number.trim() || !f.driverName.trim() || !f.type || !f.plateNumber.trim() || this.phoneInvalid() || !f.driverPhone.trim() || this.submitting()) return;
     this.submitting.set(true);
     this.service.createBus(this.campaignId(), f);
     this.submitting.set(false);

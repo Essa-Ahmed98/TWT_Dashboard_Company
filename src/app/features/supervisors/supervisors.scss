@@ -484,6 +484,12 @@ $text-label:   #374151;
 }
 
 // ── Centered dialog ───────────────────────────────────────────────
+.dialog__drop-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 202;
+}
+
 .dialog {
   position: fixed;
   inset: 0;
@@ -588,6 +594,13 @@ $text-label:   #374151;
   margin-inline-start: 2px;
 }
 
+.form-hint {
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+  &--error { color: $red; }
+}
+
 .form-input,
 .form-select {
   height: 38px;
@@ -604,6 +617,7 @@ $text-label:   #374151;
 
   &::placeholder { color: $text-muted; }
   &:focus        { border-color: $primary; }
+  &--error       { border-color: $red; &:focus { border-color: $red; } }
 
   &--textarea {
     height: auto;
@@ -813,6 +827,7 @@ button[disabled] { opacity: .5; cursor: not-allowed; }
   transition: border-color .18s; width: 100%;
   &::placeholder { color: $text-muted; }
   &:focus { border-color: $primary; }
+  &--error { border-color: $red; &:focus { border-color: $red; } }
   &--textarea { height: auto; padding: 10px 12px; resize: vertical; line-height: 1.5; }
 }
 

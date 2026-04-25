@@ -68,6 +68,12 @@ body {
   }
 }
 
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: auto;
+}
+
 // ── PrimeNG DatePicker RTL icon fix ─────────────────────────────
 .p-datepicker-prev-button svg,
 .p-datepicker-next-button svg {

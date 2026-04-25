@@ -26,12 +26,14 @@ export class Login {
   loading      = signal(false);
   showPassword = signal(false);
   rememberMe   = signal(false);
+  hasError     = signal(false);
 
   submit() {
     if (this.form.invalid) return;
     this.loading.set(true);
     const { emailOrPhone, password } = this.form.getRawValue();
 
+    this.hasError.set(false);
     this.auth.login(emailOrPhone, password).subscribe({
       next: () => {
         this.router.navigate(['/campaigns']).then(() => {
@@ -43,11 +45,12 @@ export class Login {
           });
         });
       },
-      error: (err: Error) => {
+      error: () => {
+        this.hasError.set(true);
         this.message.add({
           severity: 'error',
           summary: 'خطأ في تسجيل الدخول',
-          detail: err.message || 'بيانات الدخول غير صحيحة',
+          detail: 'من فضلك تأكد من البريد الإلكتروني أو رقم الهاتف وكلمة السر',
           life: 4000,
         });
         this.loading.set(false);

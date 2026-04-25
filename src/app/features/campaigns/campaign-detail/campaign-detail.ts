@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal, afterNextRender, OnDestroy } from '@angular/core';
+﻿import { ChangeDetectionStrategy, Component, inject, signal, afterNextRender, OnDestroy } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CampaignStatus, CampaignTab } from '../campaigns.model';
@@ -34,7 +34,7 @@ export class CampaignDetail implements OnDestroy {
   activeTab = signal<CampaignTab>('groups');
 
   readonly tabs: { key: CampaignTab; label: string; icon: string }[] = [
-    { key: 'groups', label: 'المجموعات', icon: 'pi pi-sitemap' },
+    { key: 'groups', label: 'الأفواج', icon: 'pi pi-sitemap' },
     { key: 'buses',  label: 'الحافلات',  icon: 'pi pi-car'     },
   ];
 

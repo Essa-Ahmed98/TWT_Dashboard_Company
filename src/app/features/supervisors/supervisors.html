@@ -1,4 +1,4 @@
-@if (showCampDrop() || showGrpDrop() || showLangDrop()) {
+﻿@if (showCampDrop() || showGrpDrop() || showLangDrop()) {
   <div class="backdrop" (click)="closeAllDrops()"></div>
 }
 @if (showModal()) {
@@ -82,8 +82,8 @@
         <thead>
           <tr>
             <th>المشرف</th>
-            <th>الحملة</th>
-            <th>المجموعة</th>
+            <th>المركز</th>
+            <th>الفوج</th>
             <th>رقم الجواز</th>
             <th>الجنسية</th>
             <th>اللغات</th>
@@ -176,6 +176,9 @@
 <!-- ══════════════════════════════════════════ MODAL -->
 @if (showModal()) {
   <div class="dialog" (click)="$event.stopPropagation()">
+    @if (showCampDrop() || showGrpDrop() || showLangDrop()) {
+      <div class="dialog__drop-backdrop" (click)="closeAllDrops()"></div>
+    }
 
     <div class="dialog__header">
       <div>
@@ -211,7 +214,11 @@
           <label class="form-label">رقم الهاتف <span class="form-req">*</span></label>
           <input class="form-input" type="tel" placeholder="+966"
             [value]="formData().phone" [disabled]="submitting()"
-            (input)="patchForm({ phone: $any($event.target).value })" />
+            [class.form-input--error]="phoneInvalid()"
+            (input)="phoneTouched.set(true); patchForm({ phone: $any($event.target).value })" />
+          @if (phoneInvalid()) {
+            <span class="form-hint form-hint--error">يجب أن يكون رقم جوال سعودي صالح</span>
+          }
         </div>
         <div class="form-field">
           <label class="form-label">كلمة المرور <span class="form-req">*</span></label>
@@ -221,14 +228,14 @@
         </div>
       </div>
 
-      <!-- الحملة + المجموعة -->
+      <!-- المركز + الفوج -->
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">الحملة <span class="form-req">*</span></label>
+          <label class="form-label">المركز <span class="form-req">*</span></label>
           <div class="ss" [class.ss--disabled]="submitting()">
             <button type="button" class="ss__trigger" [disabled]="submitting()" (click)="toggleCampDrop()">
               <span [class.ss__placeholder]="!selectedCampName()">
-                {{ selectedCampName() || 'اختر الحملة' }}
+                {{ selectedCampName() || 'اختر المركز' }}
               </span>
               @if (selectedCampName()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearCamp()"></i>
@@ -241,7 +248,7 @@
                 @if (campLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (campList().length === 0) {
-                  <div class="ss__state">لا توجد حملات</div>
+                  <div class="ss__state">لا توجد مراكز</div>
                 } @else {
                   <ul class="ss__list">
                     @for (c of campList(); track c.Id) {
@@ -256,13 +263,13 @@
         </div>
 
         <div class="form-field">
-          <label class="form-label">المجموعة <span class="form-req">*</span></label>
+          <label class="form-label">الفوج <span class="form-req">*</span></label>
           <div class="ss" [class.ss--disabled]="!formData().campaignId || submitting()">
             <button type="button" class="ss__trigger"
               [disabled]="!formData().campaignId || submitting()"
               (click)="toggleGrpDrop()">
               <span [class.ss__placeholder]="!selectedGrpName()">
-                {{ selectedGrpName() || (formData().campaignId ? 'اختر المجموعة' : 'اختر الحملة أولاً') }}
+                {{ selectedGrpName() || (formData().campaignId ? 'اختر الفوج' : 'اختر المركز أولاً') }}
               </span>
               @if (selectedGrpName()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearGrp()"></i>
@@ -275,7 +282,7 @@
                 @if (grpLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (grpList().length === 0) {
-                  <div class="ss__state">لا توجد مجموعات</div>
+                  <div class="ss__state">لا توجد أفواج</div>
                 } @else {
                   <ul class="ss__list">
                     @for (g of grpList(); track g.Id) {

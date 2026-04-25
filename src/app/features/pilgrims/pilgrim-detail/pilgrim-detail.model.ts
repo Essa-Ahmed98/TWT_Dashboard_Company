@@ -1,4 +1,4 @@
-import { BLOOD_TYPE_OPTIONS, PilgrimDetailApiItem } from '../pilgrims.model';
+﻿import { BLOOD_TYPE_OPTIONS, PilgrimDetailApiItem } from '../pilgrims.model';
 
 export type PilgrimDetailStatus = 'safe' | 'warning' | 'danger';
 export type PilgrimTab = 'personal' | 'health' | 'rituals' | 'family' | 'ratings';
@@ -167,7 +167,7 @@ export function pilgrimApiToDetailData(pilgrim: PilgrimDetailApiItem): PilgrimDe
     ratings: [],
     log: [
       { event: 'تم جلب بيانات الحاج من النظام', date: 'الآن', icon: 'pi pi-download', iconColor: '#0b405b' },
-      { event: `الانضمام إلى ${pilgrim.CampaignName}`, date: 'بيانات الحملة', icon: 'pi pi-building', iconColor: '#2563eb' },
+      { event: `الانضمام إلى ${pilgrim.CampaignName}`, date: 'بيانات المركز', icon: 'pi pi-building', iconColor: '#2563eb' },
     ],
   };
 }

@@ -4,17 +4,24 @@ import { catchError, throwError } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { ApiResult } from '../models/api.models';
 
+const API_ERRORS: Record<string, string> = {
+  'This username is already taken.': 'البريد الإلكتروني أو رقم الهاتف مستخدم بالفعل',
+};
+
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const message = inject(MessageService);
+  const isLoginRequest = req.url.includes('/Users/login');
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
+      if (isLoginRequest) return throwError(() => error);
       let detail = 'حدث خطأ غير متوقع';
 
       if (error.error) {
         const body = error.error as ApiResult<unknown>;
-        if (body?.Error?.message) {
-          detail = body.Error.message;
+        const rawKey = body?.Error?.MessageKey || body?.Error?.message;
+        if (rawKey) {
+          detail = API_ERRORS[rawKey] ?? rawKey;
         } else if (body?.ValidationErrors?.length) {
           detail = body.ValidationErrors.map((v) => v.ErrorMessage).join('\n');
         } else if (typeof error.error === 'string') {

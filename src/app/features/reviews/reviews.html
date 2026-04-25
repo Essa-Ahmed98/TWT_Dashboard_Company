@@ -1,4 +1,4 @@
-@if (hasAnyFilterDropdownOpen()) {
+﻿@if (hasAnyFilterDropdownOpen()) {
   <div class="backdrop" (click)="closeAllDropdowns()"></div>
 }
 
@@ -93,7 +93,7 @@
     <div class="dropdown" [class.dropdown--open]="openCampaignDrop()">
       <button class="dropdown__trigger" type="button" (click)="toggleCampaignDrop($event)">
         <i class="pi pi-building"></i>
-        <span>{{ selectedCampaignId() ? campaignFilterLabel() : 'اختر حملة' }}</span>
+        <span>{{ selectedCampaignId() ? campaignFilterLabel() : 'اختر مركز' }}</span>
         @if (selectedCampaignId()) {
           <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectCampaignFilter()"></i>
         } @else {
@@ -119,7 +119,7 @@
     <div class="dropdown" [class.dropdown--open]="openGroupDrop()" [class.dropdown--disabled]="!selectedCampaignId()">
       <button class="dropdown__trigger" type="button" [disabled]="!selectedCampaignId()" (click)="toggleGroupDrop($event)">
         <i class="pi pi-users"></i>
-        <span>{{ selectedGroupId() ? groupFilterLabel() : 'اختر الحملة أولًا' }}</span>
+        <span>{{ selectedGroupId() ? groupFilterLabel() : 'اختر المركز أولًا' }}</span>
         @if (selectedGroupId()) {
           <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectGroupFilter()"></i>
         } @else {

@@ -24,6 +24,7 @@
           type="text"
           placeholder="البريد الإلكتروني أو رقم الهاتف"
           class="login-input"
+          [class.login-input--error]="hasError()"
           autocomplete="username"
         />
         <i class="pi pi-envelope login-field__icon"></i>
@@ -36,6 +37,7 @@
           [type]="showPassword() ? 'text' : 'password'"
           placeholder="كلمة المرور"
           class="login-input login-input--password"
+          [class.login-input--error]="hasError()"
           autocomplete="current-password"
         />
         <i class="pi pi-lock login-field__icon"></i>

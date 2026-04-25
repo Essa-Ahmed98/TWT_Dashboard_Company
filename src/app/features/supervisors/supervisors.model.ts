@@ -29,6 +29,7 @@ export interface SupervisorDetailApiItem {
   Iq?: string;
   Email?: string;
   Phone?: string;
+  PhoneNumber?: string;
   PassportNumber: string;
   DateOfBirth?: string;
   Nationality: string;

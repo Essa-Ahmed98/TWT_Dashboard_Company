@@ -201,7 +201,7 @@ export function supervisorApiToDetailData(api: SupervisorDetailApiItem): Supervi
     campaignName: displayValue(api.CampaignName ?? api.CampaignId),
     group: displayValue(api.GroupName ?? api.GroupId),
     email: displayValue(api.Email),
-    phone: displayValue(api.Phone),
+    phone: displayValue(api.PhoneNumber ?? api.Phone),
     languages: languagesLabel(api.Languages),
     passportNumber: displayValue(api.PassportNumber),
     birthDate: formatDate(api.DateOfBirth),

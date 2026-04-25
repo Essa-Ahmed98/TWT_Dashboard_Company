@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+﻿import { HttpClient } from '@angular/common/http';
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -145,11 +145,11 @@ export class Complaints {
   }
 
   campaignFilterLabel(): string {
-    return this.selectedCampaignName() || 'جميع الحملات';
+    return this.selectedCampaignName() || 'جميع المراكز';
   }
 
   groupFilterLabel(): string {
-    return this.selectedGroupName() || (this.selectedCampaignId() ? 'جميع المجموعات' : 'اختر الحملة أولًا');
+    return this.selectedGroupName() || (this.selectedCampaignId() ? 'جميع الأفواج' : 'اختر المركز أولًا');
   }
 
   formatDate(value: string): string {

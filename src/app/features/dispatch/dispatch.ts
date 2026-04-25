@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+﻿import { HttpClient, HttpParams } from '@angular/common/http';
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -205,7 +205,7 @@ export class Dispatch {
   }
 
   campaignFilterLabel(): string {
-    return this.selectedCampaignName() || 'اختر حملة';
+    return this.selectedCampaignName() || 'اختر مركز';
   }
 
   onSearch(value: string): void {

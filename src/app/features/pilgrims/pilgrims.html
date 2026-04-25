@@ -1,4 +1,4 @@
-@if (openFilterDrop()) {
+﻿@if (openFilterDrop()) {
   <div class="backdrop" (click)="closeFilterDrop()"></div>
 }
 @if (showCampDrop() || showGrpDrop() || showImportCampDrop() || showImportGrpDrop()) {
@@ -78,8 +78,8 @@
       <thead>
         <tr>
           <th>الحاج</th>
-          <th>الحملة</th>
-          <th>المجموعة</th>
+          <th>المركز</th>
+          <th>الفوج</th>
           <th>رقم الجواز</th>
           <th>الجنسية</th>
           <th>الجنس</th>
@@ -160,11 +160,11 @@
     <div class="dialog__body dialog__body--import">
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">الحملة <span class="form-req">*</span></label>
+          <label class="form-label">المركز <span class="form-req">*</span></label>
           <div class="ss">
             <button type="button" class="ss__trigger" (click)="toggleImportCampDrop()">
               <span [class.ss__placeholder]="!selectedImportCampName()">
-                {{ selectedImportCampName() || 'اختر الحملة' }}
+                {{ selectedImportCampName() || 'اختر المركز' }}
               </span>
               @if (selectedImportCampName()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearImportCamp()"></i>
@@ -177,7 +177,7 @@
                 @if (importCampLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (importCampList().length === 0) {
-                  <div class="ss__state">لا توجد حملات</div>
+                  <div class="ss__state">لا توجد مراكز</div>
                 } @else {
                   <ul class="ss__list">
                     @for (c of importCampList(); track c.Id) {
@@ -193,13 +193,13 @@
         </div>
 
         <div class="form-field">
-          <label class="form-label">المجموعة <span class="form-req">*</span></label>
+          <label class="form-label">الفوج <span class="form-req">*</span></label>
           <div class="ss" [class.ss--disabled]="!selectedImportCampId()">
             <button type="button" class="ss__trigger"
               [disabled]="!selectedImportCampId()"
               (click)="toggleImportGrpDrop()">
               <span [class.ss__placeholder]="!selectedImportGrpName()">
-                {{ selectedImportGrpName() || (selectedImportCampId() ? 'اختر المجموعة' : 'اختر الحملة أولاً') }}
+                {{ selectedImportGrpName() || (selectedImportCampId() ? 'اختر الفوج' : 'اختر المركز أولاً') }}
               </span>
               @if (selectedImportGrpName()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearImportGrp()"></i>
@@ -212,7 +212,7 @@
                 @if (importGrpLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (importGrpList().length === 0) {
-                  <div class="ss__state">لا توجد مجموعات</div>
+                  <div class="ss__state">لا توجد أفواج</div>
                 } @else {
                   <ul class="ss__list">
                     @for (g of importGrpList(); track g.Id) {
@@ -358,8 +358,9 @@
           <label class="form-label">البريد الإلكتروني <span class="form-req">*</span></label>
           <input class="form-input" type="email" placeholder="example@gmail.com"
             [value]="formData().email"
+            [class.form-input--error]="!!submitError()"
             [disabled]="submitting()"
-            (input)="patchForm({ email: $any($event.target).value })" />
+            (input)="submitError.set(null); patchForm({ email: $any($event.target).value })" />
         </div>
       </div>
 
@@ -368,9 +369,9 @@
           <label class="form-label">رقم الهاتف <span class="form-req">*</span></label>
           <input class="form-input" type="tel" placeholder="+966"
             [value]="formData().phone"
-            [class.form-input--error]="phoneInvalid()"
+            [class.form-input--error]="phoneInvalid() || !!submitError()"
             [disabled]="submitting()"
-            (input)="patchForm({ phone: $any($event.target).value })"
+            (input)="submitError.set(null); patchForm({ phone: $any($event.target).value })"
             (blur)="phoneTouched.set(true)" />
           @if (phoneInvalid()) {
             <span class="form-hint form-hint--error">يجب أن يكون رقم جوال سعودي صالح</span>
@@ -454,11 +455,11 @@
 
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">الحملة <span class="form-req">*</span></label>
+          <label class="form-label">المركز <span class="form-req">*</span></label>
           <div class="ss" [class.ss--disabled]="submitting()">
             <button type="button" class="ss__trigger" [disabled]="submitting()" (click)="toggleCampDrop()">
               <span [class.ss__placeholder]="!selectedCampName()">
-                {{ selectedCampName() || 'اختر الحملة' }}
+                {{ selectedCampName() || 'اختر المركز' }}
               </span>
               @if (selectedCampName()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearCamp()"></i>
@@ -471,7 +472,7 @@
                 @if (campLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (campList().length === 0) {
-                  <div class="ss__state">لا توجد حملات</div>
+                  <div class="ss__state">لا توجد مراكز</div>
                 } @else {
                   <ul class="ss__list">
                     @for (c of campList(); track c.Id) {
@@ -487,13 +488,13 @@
         </div>
 
         <div class="form-field">
-          <label class="form-label">المجموعة <span class="form-req">*</span></label>
+          <label class="form-label">الفوج <span class="form-req">*</span></label>
           <div class="ss" [class.ss--disabled]="!formData().campaignId || submitting()">
             <button type="button" class="ss__trigger"
               [disabled]="!formData().campaignId || submitting()"
               (click)="toggleGrpDrop()">
               <span [class.ss__placeholder]="!selectedGrpName()">
-                {{ selectedGrpName() || (formData().campaignId ? 'اختر المجموعة' : 'اختر الحملة أولاً') }}
+                {{ selectedGrpName() || (formData().campaignId ? 'اختر الفوج' : 'اختر المركز أولاً') }}
               </span>
               @if (selectedGrpName()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearGrp()"></i>
@@ -506,7 +507,7 @@
                 @if (grpLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (grpList().length === 0) {
-                  <div class="ss__state">لا توجد مجموعات</div>
+                  <div class="ss__state">لا توجد أفواج</div>
                 } @else {
                   <ul class="ss__list">
                     @for (g of grpList(); track g.Id) {

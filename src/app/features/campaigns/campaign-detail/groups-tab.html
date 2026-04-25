@@ -1,4 +1,4 @@
-@if (showModal()) {
+﻿@if (showModal()) {
   <div class="modal-backdrop" (click)="closeModal()"></div>
 }
 
@@ -6,25 +6,25 @@
 
   <div class="cd__tab-panel-header">
     <span class="cd__tab-panel-count">
-      {{ totalCount() | number }} مجموعة
+      {{ totalCount() | number }} فوج
     </span>
     <button class="btn btn--primary" (click)="openModal()">
       <i class="pi pi-plus"></i>
-      إضافة مجموعة
+      إضافة فوج
     </button>
   </div>
 
   @if (loading()) {
     <div class="cd__tab-loading">
       <span class="cd__spinner--sm"></span>
-      <span>جاري تحميل المجموعات...</span>
+      <span>جاري تحميل الأفواج...</span>
     </div>
   }
 
   @if (!loading() && groups().length === 0) {
     <div class="cd__empty">
       <i class="pi pi-inbox"></i>
-      <p>لا توجد مجموعات بعد</p>
+      <p>لا توجد أفواج بعد</p>
     </div>
   }
 
@@ -65,7 +65,7 @@
                 <div class="group-section__header">
                   <span class="group-section__title">
                     <i class="pi pi-user-edit"></i>
-                    مشرفو المجموعة ({{ g.SupervisorsCount }})
+                    مشرفو الفوج ({{ g.SupervisorsCount }})
                   </span>
                 </div>
                 <div class="group-section__chips">
@@ -116,7 +116,7 @@
               @if (g.PilgrimsCount > 0) {
                 <div class="group-section group-section--footer">
                   <button class="group-section__more" (click)="viewGroupPilgrims()">
-                    عرض كل حجاج المجموعة ({{ g.PilgrimsCount }})
+                    عرض كل حجاج الفوج ({{ g.PilgrimsCount }})
                     <i class="pi pi-arrow-left"></i>
                   </button>
                 </div>
@@ -130,7 +130,7 @@
 
     @if (totalPages() > 1) {
       <div class="pagination pagination--inner">
-        <span class="pagination__info">{{ totalCount() | number }} مجموعة</span>
+        <span class="pagination__info">{{ totalCount() | number }} فوج</span>
         <div class="pagination__controls">
           <button class="pagination__btn"
                   [disabled]="currentPage() === 1"
@@ -162,8 +162,8 @@
   <div class="dialog" (click)="$event.stopPropagation()">
     <div class="dialog__header">
       <div>
-        <h2 class="dialog__title">إضافة مجموعة جديدة</h2>
-        <p class="dialog__sub">أدخل بيانات المجموعة لإنشائها داخل الحملة</p>
+        <h2 class="dialog__title">إضافة فوج جديدة</h2>
+        <p class="dialog__sub">أدخل بيانات الفوج لإنشائها داخل المركز</p>
       </div>
       <button class="dialog__close" (click)="closeModal()">
         <i class="pi pi-times"></i>
@@ -172,8 +172,8 @@
 
     <div class="dialog__body">
       <div class="form-field">
-        <label class="form-label">اسم المجموعة <span class="form-req">*</span></label>
-        <input class="form-input" type="text" placeholder="مثال: المجموعة أ"
+        <label class="form-label">اسم الفوج <span class="form-req">*</span></label>
+        <input class="form-input" type="text" placeholder="مثال: الفوج أ"
           [value]="form().name"
           (input)="patchForm({ name: $any($event.target).value })" />
       </div>
@@ -187,8 +187,8 @@
 
     <div class="dialog__footer">
       <button class="btn btn--outline" (click)="closeModal()">إلغاء</button>
-      <button class="btn btn--primary" (click)="submit()" [disabled]="submitting()">
-        @if (submitting()) { <i class="pi pi-spin pi-spinner"></i> } @else { إنشاء مجموعة }
+      <button class="btn btn--primary" (click)="submit()" [disabled]="submitting() || !form().name.trim()">
+        @if (submitting()) { <i class="pi pi-spin pi-spinner"></i> } @else { إنشاء فوج }
       </button>
     </div>
   </div>

@@ -1,4 +1,4 @@
-export type ZoneType   = 'مشعر مقدس' | 'مخيم حملة';
+﻿export type ZoneType   = 'مشعر مقدس' | 'مخيم مركز';
 export type ZoneStatus = 'active' | 'inactive';
 export type AlertType  = 'خروج' | 'دخول';
 
@@ -20,7 +20,7 @@ export interface GeofenceZone {
 }
 
 export const ZONE_TYPES: ZoneType[] = [
-  'مشعر مقدس', 'مخيم حملة',
+  'مشعر مقدس', 'مخيم مركز',
 ];
 
 export interface CreateGeoZoneRequest {
@@ -40,7 +40,7 @@ export interface UpdateGeoZoneRequest extends CreateGeoZoneRequest {
 
 export const ZONE_TYPE_API_MAP: Record<ZoneType, number> = {
   'مشعر مقدس': 0,
-  'مخيم حملة': 1,
+  'مخيم مركز': 1,
 };
 
 export interface GeoZoneApiItem {
@@ -111,8 +111,8 @@ export const MOCK_ZONES: GeofenceZone[] = [
     color: '#e65100', visible: true, companyId: '', alertType: 'دخول',
   },
   {
-    id: '6', name: 'مخيم حملة الولادة', type: 'مخيم حملة', status: 'active',
-    description: 'مخيم حملة الولادة والطوارئ',
+    id: '6', name: 'مخيم مركز الولادة', type: 'مخيم مركز', status: 'active',
+    description: 'مخيم مركز الولادة والطوارئ',
     lat: 21.4050, lng: 39.8450, radius: 300, opacity: 0.3, pilgrimsInside: 0,
     color: '#e53935', visible: true, companyId: '',
   },

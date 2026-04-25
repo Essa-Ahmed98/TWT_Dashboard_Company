@@ -1,4 +1,4 @@
-export type PilgrimStatus = 'آمن' | 'تحذير' | 'خطر';
+﻿export type PilgrimStatus = 'آمن' | 'تحذير' | 'خطر';
 export type Gender       = 'ذكر' | 'أنثى';
 
 export interface Campaign {
@@ -92,15 +92,15 @@ export interface UpdatePilgrimRequest {
 
 // ── Lookup data ─────────────────────────────────────────────────
 export const CAMPAIGNS: Campaign[] = [
-  { id: '1', name: 'حملة الراجحي' },
-  { id: '2', name: 'حملة النور'    },
-  { id: '3', name: 'حملة الفرقان' },
-  { id: '4', name: 'حملة البيمان' },
-  { id: '5', name: 'حملة البركة'  },
-  { id: '6', name: 'حملة الهدى'   },
+  { id: '1', name: 'مركز الراجحي' },
+  { id: '2', name: 'مركز النور'    },
+  { id: '3', name: 'مركز الفرقان' },
+  { id: '4', name: 'مركز البيمان' },
+  { id: '5', name: 'مركز البركة'  },
+  { id: '6', name: 'مركز الهدى'   },
 ];
 
-export const GROUPS = ['مجموعة ١', 'مجموعة ٢', 'مجموعة ٣', 'مجموعة أ', 'مجموعة ب', 'مجموعة ج'];
+export const GROUPS = ['فوج ١', 'فوج ٢', 'فوج ٣', 'فوج أ', 'فوج ب', 'فوج ج'];
 
 export const BLOOD_TYPE_OPTIONS: { label: string; value: number }[] = [
   { label: 'A+',  value: 0 },

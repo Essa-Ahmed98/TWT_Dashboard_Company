@@ -1,4 +1,4 @@
-@if (showModal()) {
+﻿@if (showModal()) {
   <div class="modal-backdrop" (click)="closeModal()"></div>
 }
 
@@ -6,7 +6,7 @@
 
   <div class="cd__tab-panel-header">
     <span class="cd__tab-panel-count">
-      {{ totalCount() | number }} حافلة مسجلة في الحملة
+      {{ totalCount() | number }} حافلة مسجلة في المركز
     </span>
     <button class="btn btn--primary" (click)="openModal()">
       <i class="pi pi-plus"></i>
@@ -145,10 +145,14 @@
 
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">رقم هاتف السائق</label>
+          <label class="form-label">رقم هاتف السائق <span class="form-req">*</span></label>
           <input class="form-input" type="tel" placeholder="+966 5x xxx xxxx"
+            [class.form-input--error]="phoneInvalid()"
             [value]="form().driverPhone"
-            (input)="patchForm({ driverPhone: $any($event.target).value })" />
+            (input)="phoneTouched.set(true); patchForm({ driverPhone: $any($event.target).value })" />
+          @if (phoneInvalid()) {
+            <span class="form-error">رقم الهاتف غير صحيح، يجب أن يكون سعودياً</span>
+          }
         </div>
         <div class="form-field">
           <label class="form-label">رقم اللوحة <span class="form-req">*</span></label>
@@ -168,7 +172,7 @@
 
     <div class="dialog__footer">
       <button class="btn btn--outline" (click)="closeModal()">إلغاء</button>
-      <button class="btn btn--primary" (click)="submit()" [disabled]="submitting() || !form().number.trim() || !form().driverName.trim() || !form().type || !form().plateNumber.trim()">
+      <button class="btn btn--primary" (click)="submit()" [disabled]="submitting() || !form().number.trim() || !form().driverName.trim() || !form().type || !form().plateNumber.trim() || !form().driverPhone.trim() || phoneInvalid()">
         @if (submitting()) { <i class="pi pi-spin pi-spinner"></i> } @else { إضافة الحافلة }
       </button>
     </div>
