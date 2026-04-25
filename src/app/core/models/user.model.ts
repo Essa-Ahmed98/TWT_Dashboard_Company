@@ -5,6 +5,7 @@ export interface UserLoginResult {
   Email: string;
   Role: string;
   Status: string;
+  CompanyId?: string;
 }
 
 /** Stored in localStorage after login */

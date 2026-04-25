@@ -18,7 +18,6 @@ export class CampaignGroupsTab {
   private readonly router  = inject(Router);
 
   readonly campaignId = input.required<string>();
-  readonly companyId  = input.required<string>();
 
   readonly groups      = this.service.groups;
   readonly loading     = this.service.groupsLoading;
@@ -55,7 +54,7 @@ export class CampaignGroupsTab {
     const f = this.form();
     if (!f.name.trim() || this.submitting()) return;
     this.submitting.set(true);
-    this.service.createGroup(f.name.trim(), f.notes.trim(), this.campaignId(), this.companyId());
+    this.service.createGroup(f.name.trim(), f.notes.trim(), this.campaignId());
     this.submitting.set(false);
     this.closeModal();
   }

@@ -19,7 +19,6 @@ export class CampaignBusesTab {
   private readonly service = inject(CampaignsService);
 
   readonly campaignId = input.required<string>();
-  readonly companyId  = input.required<string>();
 
   readonly buses       = this.service.buses;
   readonly loading     = this.service.busesLoading;
@@ -56,9 +55,9 @@ export class CampaignBusesTab {
 
   submit(): void {
     const f = this.form();
-    if (!f.number.trim() || !f.driverName.trim() || this.submitting()) return;
+    if (!f.number.trim() || !f.driverName.trim() || !f.type || !f.plateNumber.trim() || this.submitting()) return;
     this.submitting.set(true);
-    this.service.createBus(this.campaignId(), this.companyId(), f);
+    this.service.createBus(this.campaignId(), f);
     this.submitting.set(false);
     this.closeModal();
   }

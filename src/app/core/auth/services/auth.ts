@@ -47,7 +47,7 @@ export class AuthService {
             displayName: value.DisplayName,
             email:       value.Email,
             role:        value.Role,
-            companyId:   String(claims['CompanyId'] ?? claims['companyId'] ?? claims['company_id'] ?? ''),
+            companyId:   String(value.CompanyId ?? claims['CompanyId'] ?? claims['companyId'] ?? claims['company_id'] ?? ''),
           };
           if (this.isBrowser) {
             localStorage.setItem(this.TOKEN_KEY, value.Token);

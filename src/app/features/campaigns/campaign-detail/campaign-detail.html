@@ -93,14 +93,12 @@
   ══════════════════════════════════════════ -->
   @if (activeTab() === 'groups') {
     <app-campaign-groups-tab
-      [campaignId]="c.id"
-      [companyId]="c.companyId" />
+      [campaignId]="c.id" />
   }
 
   @if (activeTab() === 'buses') {
     <app-campaign-buses-tab
-      [campaignId]="c.id"
-      [companyId]="c.companyId" />
+      [campaignId]="c.id" />
   }
 
 </div>

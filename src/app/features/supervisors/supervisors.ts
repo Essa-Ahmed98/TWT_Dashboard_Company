@@ -315,7 +315,8 @@ export class Supervisors implements OnInit {
       f.passportNumber.trim() &&
       f.nationality.trim() &&
       f.dateOfBirth        &&
-      f.gender !== ''
+      f.gender !== ''      &&
+      f.languages.length > 0
     );
   }
 

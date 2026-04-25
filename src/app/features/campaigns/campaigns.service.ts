@@ -90,6 +90,9 @@ export class CampaignsService {
 
     if (query.Search) params = params.set('Search', query.Search);
 
+    const companyId = this.auth.currentUser()?.companyId;
+    if (companyId) params = params.set('CompanyId', companyId);
+
     this._loading.set(true);
     this.http
       .get<ApiResult<CampaignsApiData>>(`${environment.apiBase}/Campaigns/for-admin`, { params })
@@ -160,8 +163,8 @@ export class CampaignsService {
       });
   }
 
-  createGroup(name: string, notes: string, campaignId: string, companyId: string): void {
-    const body = { Name: name, Notes: notes, CampaignId: campaignId, CompanyId: companyId };
+  createGroup(name: string, notes: string, campaignId: string): void {
+    const body = { Name: name, Notes: notes, CampaignId: campaignId, CompanyId: this.auth.currentUser()?.companyId ?? '' };
     this.http
       .post<ApiResult<unknown>>(`${environment.apiBase}/Groups`, body)
       .pipe(take(1))
@@ -194,7 +197,7 @@ export class CampaignsService {
       });
   }
 
-  createBus(campaignId: string, companyId: string, form: BusForm): void {
+  createBus(campaignId: string, form: BusForm): void {
     const body = {
       BusNumber:   form.number.trim(),
       DriverName:  form.driverName.trim(),
@@ -204,7 +207,7 @@ export class CampaignsService {
       PlateNumber: form.plateNumber.trim(),
       Notes:       form.notes.trim(),
       CampaignId:  campaignId,
-      CompanyId:   companyId,
+      CompanyId:   this.auth.currentUser()?.companyId ?? '',
     };
     this.http
       .post<ApiResult<unknown>>(`${environment.apiBase}/Buses`, body)

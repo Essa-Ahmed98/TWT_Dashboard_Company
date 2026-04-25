@@ -464,6 +464,7 @@ export class Dispatch {
             return;
           }
 
+          this.saving.set(false);
           this.closeModal();
           this.currentPage.set(1);
           this.loadSchedules();

@@ -131,7 +131,7 @@
             (input)="patchForm({ capacity: $any($event.target).value })" />
         </div>
         <div class="form-field">
-          <label class="form-label">نوع الحافلة</label>
+          <label class="form-label">نوع الحافلة <span class="form-req">*</span></label>
           <select class="form-select"
             [value]="form().type"
             (change)="patchForm({ type: $any($event.target).value })">
@@ -151,7 +151,7 @@
             (input)="patchForm({ driverPhone: $any($event.target).value })" />
         </div>
         <div class="form-field">
-          <label class="form-label">رقم اللوحة</label>
+          <label class="form-label">رقم اللوحة <span class="form-req">*</span></label>
           <input class="form-input" type="text" placeholder="رقم لوحة الحافلة"
             [value]="form().plateNumber"
             (input)="patchForm({ plateNumber: $any($event.target).value })" />
@@ -168,7 +168,7 @@
 
     <div class="dialog__footer">
       <button class="btn btn--outline" (click)="closeModal()">إلغاء</button>
-      <button class="btn btn--primary" (click)="submit()" [disabled]="submitting()">
+      <button class="btn btn--primary" (click)="submit()" [disabled]="submitting() || !form().number.trim() || !form().driverName.trim() || !form().type || !form().plateNumber.trim()">
         @if (submitting()) { <i class="pi pi-spin pi-spinner"></i> } @else { إضافة الحافلة }
       </button>
     </div>
