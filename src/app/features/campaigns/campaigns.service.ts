@@ -135,6 +135,7 @@ export class CampaignsService {
         take(1),
         tap(res => {
           if (res.IsSuccess) {
+            this._allCampaignsCache = null;
             this.loadCampaigns({ PageNumber: this._currentPage(), PageSize: 10 });
           }
         }),
