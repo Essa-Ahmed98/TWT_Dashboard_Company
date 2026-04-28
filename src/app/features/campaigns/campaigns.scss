@@ -277,6 +277,7 @@ $text-label:   #374151;
   flex-direction: column;
   gap: 16px;
   transition: box-shadow .2s;
+  border-right-width: 6px;
 
   &:hover { box-shadow: 0 4px 20px rgba(0,0,0,.07); }
 
@@ -700,5 +701,31 @@ $text-label:   #374151;
     padding: 10px 12px;
     resize: vertical;
     line-height: 1.5;
+  }
+}
+
+// ── Color picker bar ──────────────────────────────────────────────
+.color-picker-bar {
+  display: block;
+  width: 50%;
+  height: 38px;
+  border-radius: 8px;
+  border: 1px solid $border;
+  cursor: pointer;
+  transition: border-color .18s, box-shadow .18s;
+  overflow: hidden;
+
+  &:hover { border-color: $primary; }
+  &:focus-within {
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, .15);
+  }
+
+  input[type="color"] {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+    pointer-events: none;
   }
 }

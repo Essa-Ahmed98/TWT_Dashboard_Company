@@ -72,7 +72,7 @@
   @if (!loading() && viewMode() === 'grid') {
     <div class="campaigns__grid">
       @for (c of filteredCampaigns(); track c.id) {
-        <div class="campaign-card">
+        <div class="campaign-card" [style.border-right-color]="c.color || null">
           <div class="campaign-card__head">
             <div class="campaign-card__info">
               <span class="campaign-card__name">{{ c.name }}</span>
@@ -86,22 +86,22 @@
 
           <div class="campaign-card__stats">
             <div class="cstat">
-              <i class="pi pi-users cstat__icon"></i>
+              <i class="pi pi-users cstat__icon" [style.color]="c.color || null"></i>
               <span class="cstat__value">{{ c.pilgrimsCount | number }}</span>
               <span class="cstat__label">حاج</span>
             </div>
             <div class="cstat">
-              <i class="pi pi-sitemap cstat__icon"></i>
+              <i class="pi pi-sitemap cstat__icon" [style.color]="c.color || null"></i>
               <span class="cstat__value">{{ c.groupsCount }}</span>
               <span class="cstat__label">فوج</span>
             </div>
             <div class="cstat">
-              <i class="pi pi-user cstat__icon"></i>
+              <i class="pi pi-user cstat__icon" [style.color]="c.color || null"></i>
               <span class="cstat__value">{{ c.supervisorsCount }}</span>
               <span class="cstat__label">مشرف</span>
             </div>
             <div class="cstat">
-              <i class="pi pi-car cstat__icon"></i>
+              <i class="pi pi-car cstat__icon" [style.color]="c.color || null"></i>
               <span class="cstat__value">{{ c.busesCount }}</span>
               <span class="cstat__label">حافلة</span>
             </div>
@@ -144,7 +144,7 @@
         </thead>
         <tbody>
           @for (c of filteredCampaigns(); track c.id) {
-            <tr>
+            <tr [style.border-right]="c.color ? '7px solid ' + c.color : null">
               <td>
                 <div class="campaign-name">
                   <span class="campaign-name__text">{{ c.name }}</span>
@@ -255,11 +255,20 @@
         </div>
       </div>
 
+      <div class="form-field">
+        <label class="form-label" for="centerColor">اللون <span class="form-req">*</span></label>
+        <label class="color-picker-bar" [style.background]="formData().color || '#e9edf2'">
+          <input id="centerColor" type="color"
+            [value]="formData().color || '#22c35d'"
+            (input)="patchForm({ color: $any($event.target).value })" />
+        </label>
+      </div>
+
     </div>
 
     <div class="dialog__footer">
       <button class="btn btn--outline" (click)="closeModal()">إلغاء</button>
-      <button class="btn btn--primary" (click)="submitForm()" [disabled]="submitting() || !formData().name.trim() || !formData().number.trim()">
+      <button class="btn btn--primary" (click)="submitForm()" [disabled]="submitting() || !formData().name.trim() || !formData().number.trim() || !formData().color">
         @if (submitting()) { <i class="pi pi-spin pi-spinner"></i> } @else { إنشاء مركز }
       </button>
     </div>

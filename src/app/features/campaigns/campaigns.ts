@@ -6,7 +6,7 @@ import { debounceTime } from 'rxjs/operators';
 import { CampaignForm, CampaignStatus } from './campaigns.model';
 import { CampaignsService } from './campaigns.service';
 
-const EMPTY_FORM: CampaignForm = { name: '', number: '' };
+const EMPTY_FORM: CampaignForm = { name: '', number: '', color: '' };
 
 @Component({
   selector: 'app-campaigns',
@@ -122,11 +122,11 @@ export class Campaigns implements OnDestroy {
 
   submitForm(): void {
     const f = this.formData();
-    if (!f.name.trim() || !f.number.trim() || this.submitting()) return;
+    if (!f.name.trim() || !f.number.trim() || !f.color || this.submitting()) return;
 
     this.submitting.set(true);
     this.subs.add(
-      this.service.createCampaign(f.name.trim(), f.number.trim()).subscribe({
+      this.service.createCampaign(f.name.trim(), f.number.trim(), f.color).subscribe({
         next: () => { this.submitting.set(false); this.closeModal(); },
         error: () => { this.submitting.set(false); },
       })

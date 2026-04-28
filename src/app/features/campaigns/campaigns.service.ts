@@ -123,11 +123,12 @@ export class CampaignsService {
       });
   }
 
-  createCampaign(name: string, number: string): Observable<boolean> {
+  createCampaign(name: string, number: string, color: string): Observable<boolean> {
     const body = {
       Name:      name,
       Number:    number,
       CompanyId: this.auth.currentUser()?.companyId ?? '',
+      Color:     color,
     };
     return this.http
       .post<ApiResult<unknown>>(`${environment.apiBase}/Campaigns`, body)
@@ -228,6 +229,7 @@ export class CampaignsService {
       number:           item.Number,
       name:             item.Name,
       status:           'نشطة' as CampaignStatus,
+      color:            item.Color ?? '',
       companyId:        item.CompanyId,
       pilgrimsCount:    item.PilgrimsCount,
       groupsCount:      item.GroupsCount,
