@@ -15,27 +15,33 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       if (isLoginRequest) return throwError(() => error);
+
       let detail = 'حدث خطأ غير متوقع';
+      let hasApiMessage = false;
 
       if (error.error) {
         const body = error.error as ApiResult<unknown>;
         const rawKey = body?.Error?.MessageKey || body?.Error?.message;
+
         if (rawKey) {
           detail = API_ERRORS[rawKey] ?? rawKey;
+          hasApiMessage = true;
         } else if (body?.ValidationErrors?.length) {
           detail = body.ValidationErrors.map((v) => v.ErrorMessage).join('\n');
+          hasApiMessage = true;
         } else if (typeof error.error === 'string') {
           detail = error.error;
+          hasApiMessage = true;
         }
       }
 
       if (error.status === 0) {
-        detail = 'تعذّر الاتصال بالخادم';
-      } else if (error.status === 401) {
+        detail = 'تعذر الاتصال بالخادم';
+      } else if (error.status === 401 && !hasApiMessage) {
         detail = 'غير مصرح لك بهذا الإجراء';
-      } else if (error.status === 403) {
+      } else if (error.status === 403 && !hasApiMessage) {
         detail = 'ليس لديك صلاحية للوصول';
-      } else if (error.status === 404) {
+      } else if (error.status === 404 && !hasApiMessage) {
         detail = 'المورد المطلوب غير موجود';
       }
 

@@ -1,0 +1,81 @@
+@if (detailState().loading) {
+  <div class="pp pp--state">
+    <i class="pi pi-spin pi-spinner"></i>
+    <p>جاري تحميل بيانات الحاج...</p>
+  </div>
+} @else if (pilgrim(); as p) {
+  <div class="pp-shell">
+    <div class="pp">
+      <div class="pp__page-header">
+        <div class="pp__page-header-content">
+          <div>
+            <h1 class="pp__page-title">ملف الحاج</h1>
+            <p class="pp__page-subtitle">بيانات تفاصيل الحاج</p>
+          </div>
+
+          <button class="pp__action-btn" type="button" [disabled]="showAccommodationLoading()" (click)="showAccommodation()">
+            <i class="pi" [class.pi-spin]="showAccommodationLoading()" [class.pi-map-marker]="!showAccommodationLoading()" [class.pi-spinner]="showAccommodationLoading()"></i>
+            إظهار السكن
+          </button>
+        </div>
+      </div>
+
+      <div class="pp__profile-card">
+        <div class="pp__profile-top">
+          <div class="pp__avatar pp__avatar--{{ p.status }}">
+            <i class="pi pi-user"></i>
+          </div>
+
+          <div class="pp__info">
+            <div class="pp__name-row">
+              <h2 class="pp__name">{{ p.name }}</h2>
+              <span class="status-badge status-badge--{{ p.status }}">
+                <span class="status-badge__dot"></span>
+                {{ statusLabel[p.status] }}
+              </span>
+            </div>
+
+            <div class="pp__meta-row">
+              <span><i class="pi pi-calendar"></i> {{ p.age }} سنة</span>
+              <span><i class="pi pi-globe"></i> {{ p.nationality }}</span>
+            </div>
+
+            <div class="pp__tags-row">
+              <span class="pp__tag">{{ p.campaign }}</span>
+              <span class="pp__tag">{{ p.group }}</span>
+              <span class="pp__tag">{{ p.accommodation }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pp__profile-divider"></div>
+
+        <div class="pp__vitals-row">
+          @for (v of p.vitals; track v.label) {
+            <div class="pp__vital">
+              <div class="pp__vital-icon" [style.color]="v.color">
+                <i [class]="v.icon"></i>
+              </div>
+              <span class="pp__vital-value">{{ v.value }}</span>
+              <span class="pp__vital-label">{{ v.label }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="pp__tabs">
+        <span class="pp__tab pp__tab--active">
+          <i class="pi pi-user"></i>
+          البيانات الشخصية
+        </span>
+      </div>
+
+      <app-personal-tab [pilgrim]="p" />
+    </div>
+  </div>
+} @else {
+  <div class="pp pp--state">
+    <i class="pi pi-exclamation-circle"></i>
+    <p>لم يتم العثور على بيانات الحاج</p>
+  </div>
+}

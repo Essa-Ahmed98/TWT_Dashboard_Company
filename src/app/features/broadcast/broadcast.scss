@@ -1,0 +1,543 @@
+@use 'sass:color';
+
+// ── Design tokens ─────────────────────────────────────────────────
+$primary:      #0b405b;
+$primary-dark: #0a3550;
+$green:        #22c35d;
+$orange:       #fb8c00;
+$red:          #e53935;
+$border:       #e9edf2;
+$bg-page:      #f4f6f9;
+$bg-white:     #ffffff;
+$text-main:    #1a2e3b;
+$text-muted:   #6c7a89;
+$text-label:   #374151;
+
+// ── Backdrop ──────────────────────────────────────────────────────
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+}
+
+// ── Page layout ───────────────────────────────────────────────────
+.broadcast {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  &__title-text {
+    font-size: 22px;
+    font-weight: 700;
+    color: $text-main;
+    margin: 0 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    i { font-size: 18px; color: $primary; }
+  }
+
+  &__title-sub {
+    font-size: 13px;
+    color: $text-muted;
+    margin: 0;
+  }
+
+  // ── Two-panel grid (RTL: right = first child, left = second child) ─
+  &__panels {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 16px;
+    align-items: start;
+
+    @media (max-width: 900px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // ── Panel shell ───────────────────────────────────────────────────
+  &__panel {
+    background: $bg-white;
+    border-radius: 14px;
+    border: 1px solid $border;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__panel-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 20px;
+    border-bottom: 1px solid $border;
+    border-radius: 14px 14px 0 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: $text-main;
+
+    i { color: $primary; font-size: 16px; }
+  }
+
+  &__panel-body {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  &__panel-footer {
+    padding: 14px 20px;
+    border-top: 1px solid $border;
+    border-radius: 0 0 14px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  // ── Audience indicator ────────────────────────────────────────────
+  &__audience {
+    padding: 12px 16px;
+    background: rgba($primary, .04);
+    border: 1px solid rgba($primary, .12);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__audience-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: $text-muted;
+  }
+
+  &__audience-value {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: $primary;
+  }
+
+  // ── Textarea ──────────────────────────────────────────────────────
+  &__textarea-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-label;
+  }
+
+  &__textarea {
+    width: 100%;
+    border: 1px solid $border;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    color: $text-main;
+    background: $bg-white;
+    resize: vertical;
+    outline: none;
+    min-height: 180px;
+    line-height: 1.6;
+    box-sizing: border-box;
+    transition: border-color .18s;
+
+    &::placeholder { color: $text-muted; }
+    &:focus        { border-color: $primary; }
+    &:disabled     { background: $bg-page; cursor: not-allowed; opacity: .7; }
+  }
+
+  // ── Media buttons row ─────────────────────────────────────────────
+  &__media-btns {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  &__media-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    padding: 0 14px;
+    border: 1px solid $border;
+    border-radius: 8px;
+    background: transparent;
+    color: $text-muted;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+    white-space: nowrap;
+
+    i { font-size: 13px; }
+
+    &:hover:not(:disabled):not(.broadcast__media-btn--disabled) {
+      background: $bg-page;
+      color: $text-main;
+      border-color: color.adjust($border, $lightness: -8%);
+    }
+
+    &--disabled {
+      opacity: .5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    &:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    &--stop {
+      color: $primary;
+      border-color: rgba($primary, .3);
+      background: rgba($primary, .05);
+      &:hover { background: rgba($primary, .1); }
+    }
+
+    &--danger {
+      color: $red;
+      border-color: rgba($red, .3);
+      background: rgba($red, .04);
+      &:hover { background: rgba($red, .08); }
+    }
+  }
+
+  &__file-input {
+    display: none;
+  }
+
+  // ── Media preview ─────────────────────────────────────────────────
+  &__media-preview {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid $border;
+    background: $bg-page;
+
+    &--audio {
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow: visible;
+    }
+  }
+
+  &__img-preview {
+    width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    display: block;
+  }
+
+  &__audio-preview {
+    flex: 1;
+    height: 36px;
+    min-width: 0;
+  }
+
+  &__discard-btn {
+    position: absolute;
+    top: 8px;
+    inset-inline-end: 8px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, .5);
+    color: #fff;
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s;
+
+    &:hover { background: rgba(0, 0, 0, .7); }
+
+    &--inline {
+      position: static;
+      background: rgba($red, .1);
+      color: $red;
+      border: 1px solid rgba($red, .2);
+      flex-shrink: 0;
+      &:hover { background: rgba($red, .2); }
+    }
+  }
+
+  // ── Recording indicator ───────────────────────────────────────────
+  &__recording {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: rgba($red, .05);
+    border: 1px solid rgba($red, .15);
+    border-radius: 10px;
+  }
+
+  &__recording-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: $red;
+    flex-shrink: 0;
+    animation: bc-pulse 1.2s ease-in-out infinite;
+  }
+
+  &__recording-timer {
+    font-size: 14px;
+    font-weight: 700;
+    color: $red;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__recording-hint {
+    font-size: 13px;
+    color: $text-muted;
+    margin-inline-start: 4px;
+  }
+
+  // ── Error message ─────────────────────────────────────────────────
+  &__error {
+    margin: 0 20px 16px;
+    padding: 10px 14px;
+    background: #fff0f0;
+    border: 1px solid #ffd6d6;
+    border-radius: 8px;
+    font-size: 13px;
+    color: $red;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    i { font-size: 14px; flex-shrink: 0; }
+  }
+}
+
+// ── Buttons ───────────────────────────────────────────────────────
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 20px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background .18s, color .18s;
+  white-space: nowrap;
+
+  i { font-size: 14px; }
+
+  &--primary {
+    background: $primary;
+    color: #fff;
+    &:hover:not(:disabled) { background: $primary-dark; }
+  }
+
+  &:disabled { opacity: .5; cursor: not-allowed; }
+}
+
+.btn-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, .35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: bc-spin .7s linear infinite;
+  flex-shrink: 0;
+}
+
+// ── Smart-select (ss) ─────────────────────────────────────────────
+.ss {
+  position: relative;
+
+  &__trigger {
+    width: 100%;
+    height: 38px;
+    border: 1px solid $border;
+    border-radius: 8px;
+    padding: 0 10px 0 12px;
+    font-family: inherit;
+    font-size: 13.5px;
+    color: $text-main;
+    background: $bg-white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    transition: border-color .18s;
+    box-sizing: border-box;
+    text-align: start;
+
+    &:hover:not(:disabled) { border-color: color.adjust($border, $lightness: -10%); }
+    &:disabled             { background: $bg-page; cursor: not-allowed; opacity: .65; }
+
+    span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  }
+
+  &__placeholder { color: $text-muted !important; }
+
+  &__clear {
+    color: $text-muted;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    transition: background .12s, color .12s;
+    &:hover { background: rgba(0, 0, 0, .07); color: $text-main; }
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    inset-inline-start: 0;
+    inset-inline-end: 0;
+    background: $bg-white;
+    border: 1px solid $border;
+    border-radius: 10px;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, .11);
+    z-index: 300;
+    overflow: hidden;
+  }
+
+  &__state {
+    padding: 16px;
+    text-align: center;
+    color: $text-muted;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &--sub {
+      padding: 8px 12px;
+      border-top: 1px solid $border;
+      font-size: 12px;
+    }
+  }
+
+  &__list {
+    list-style: none;
+    padding: 4px;
+    margin: 0;
+    max-height: 220px;
+    overflow-y: auto;
+  }
+
+  &__item {
+    padding: 9px 12px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    color: $text-main;
+    cursor: pointer;
+    transition: background .12s;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    i { font-size: 13px; color: $primary; flex-shrink: 0; }
+
+    &:hover { background: $bg-page; }
+    &--active { background: rgba($primary, .08); color: $primary; font-weight: 500; }
+
+    &--all {
+      font-weight: 600;
+      border-bottom: 1px solid $border;
+      margin-bottom: 4px;
+      border-radius: 6px 6px 0 0;
+    }
+  }
+
+  &--disabled .ss__trigger {
+    opacity: .6;
+    pointer-events: none;
+  }
+}
+
+.ss-spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba($primary, .2);
+  border-top-color: $primary;
+  border-radius: 50%;
+  animation: bc-spin .7s linear infinite;
+}
+
+// ── Target type tabs ──────────────────────────────────────────────
+.target-tabs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.target-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 10px 6px;
+  border: 1px solid $border;
+  border-radius: 10px;
+  background: transparent;
+  color: $text-muted;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+  white-space: nowrap;
+  line-height: 1.2;
+
+  i { font-size: 15px; }
+
+  &:hover:not(.target-tab--active) {
+    background: $bg-page;
+    color: $text-main;
+    border-color: color.adjust($border, $lightness: -8%);
+  }
+
+  &--active {
+    background: rgba($primary, .08);
+    color: $primary;
+    border-color: rgba($primary, .3);
+    font-weight: 600;
+  }
+}
+
+// ── Form helpers ──────────────────────────────────────────────────
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-label;
+}
+
+// ── Animations ────────────────────────────────────────────────────
+@keyframes bc-spin  { to { transform: rotate(360deg); } }
+@keyframes bc-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }

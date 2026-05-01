@@ -95,6 +95,10 @@ export class Pilgrims implements OnInit {
   submitting = signal(false);
   submitError = signal<string | null>(null);
   formData = signal<PilgrimForm>({ ...EMPTY_FORM });
+  showQrDialog = signal(false);
+  qrLoading = signal(false);
+  qrCodeImage = signal<string | null>(null);
+  qrPilgrimName = signal('');
 
   phoneTouched = signal(false);
 
@@ -121,6 +125,18 @@ export class Pilgrims implements OnInit {
   downloadingTemplate = signal(false);
   importSelectedFile = signal<File | null>(null);
   uploadingImportFile = signal(false);
+  showQrDownloadModal = signal(false);
+  qrDownloadCampList = signal<CampaignApiItem[]>([]);
+  qrDownloadCampLoading = signal(false);
+  showQrDownloadCampDrop = signal(false);
+  selectedQrDownloadCampId = signal('');
+  selectedQrDownloadCampName = signal('');
+  qrDownloadGrpList = signal<GroupApiItem[]>([]);
+  qrDownloadGrpLoading = signal(false);
+  showQrDownloadGrpDrop = signal(false);
+  selectedQrDownloadGrpId = signal('');
+  selectedQrDownloadGrpName = signal('');
+  downloadingQrCodes = signal(false);
 
   campList = signal<CampaignApiItem[]>([]);
   campLoading = signal(false);
@@ -163,6 +179,51 @@ export class Pilgrims implements OnInit {
 
   openChat(userId: string, displayName?: string): void {
     this.router.navigate(['/chat'], { queryParams: { userId }, state: { displayName } });
+  }
+
+  openQrCode(id: string, displayName: string): void {
+    if (this.qrLoading()) return;
+
+    this.qrPilgrimName.set(displayName);
+    this.qrCodeImage.set(null);
+    this.showQrDialog.set(true);
+    this.qrLoading.set(true);
+
+    this.service.getPilgrimQrCode(id, 'ar')
+      .pipe(finalize(() => this.qrLoading.set(false)), takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: res => {
+          const base64 = res.Data?.QrCodeImageBase64?.trim() ?? '';
+          if (res.IsSuccess && base64) {
+            const src = base64.startsWith('data:') ? base64 : `data:image/png;base64,${base64}`;
+            this.qrCodeImage.set(src);
+            return;
+          }
+
+          this.showQrDialog.set(false);
+          this.toast.add({
+            severity: 'warn',
+            summary: 'تنبيه',
+            detail: 'لم نتمكن من تحميل رمز QR لهذا الحاج.',
+          });
+        },
+        error: err => {
+          this.showQrDialog.set(false);
+          const body = err?.error as ApiResult<unknown> | undefined;
+          this.toast.add({
+            severity: 'error',
+            summary: 'خطأ',
+            detail: body?.Error?.MessageKey || body?.Error?.message || body?.ValidationErrors?.[0]?.ErrorMessage || 'حدث خطأ أثناء تحميل رمز QR.',
+          });
+        },
+      });
+  }
+
+  closeQrDialog(): void {
+    if (this.qrLoading()) return;
+    this.showQrDialog.set(false);
+    this.qrCodeImage.set(null);
+    this.qrPilgrimName.set('');
   }
 
   goToPage(p: number): void {
@@ -236,9 +297,28 @@ export class Pilgrims implements OnInit {
     this.selectedImportGrpName.set('');
   }
 
+  openQrDownloadModal(): void {
+    this.showQrDownloadModal.set(true);
+    this.qrDownloadCampList.set([]);
+    this.qrDownloadGrpList.set([]);
+    this.qrDownloadCampLoading.set(false);
+    this.qrDownloadGrpLoading.set(false);
+    this.showQrDownloadCampDrop.set(false);
+    this.showQrDownloadGrpDrop.set(false);
+    this.selectedQrDownloadCampId.set('');
+    this.selectedQrDownloadCampName.set('');
+    this.selectedQrDownloadGrpId.set('');
+    this.selectedQrDownloadGrpName.set('');
+  }
+
   closeImportModal(): void {
     if (this.uploadingImportFile()) return;
     this.showImportModal.set(false);
+  }
+
+  closeQrDownloadModal(): void {
+    if (this.downloadingQrCodes()) return;
+    this.showQrDownloadModal.set(false);
   }
 
   patchForm(patch: Partial<PilgrimForm>): void {
@@ -268,6 +348,19 @@ export class Pilgrims implements OnInit {
       .subscribe(data => {
         this.importCampList.set(data);
         this.importCampLoading.set(false);
+      });
+  }
+
+  private fetchQrDownloadCampaigns(): void {
+    const companyId = this.auth.currentUser()?.companyId;
+    if (!companyId) return;
+
+    this.qrDownloadCampLoading.set(true);
+    this.campaignsService.getAllCampaigns(companyId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(data => {
+        this.qrDownloadCampList.set(data);
+        this.qrDownloadCampLoading.set(false);
       });
   }
 
@@ -321,6 +414,32 @@ export class Pilgrims implements OnInit {
     this.importGrpList.set([]);
   }
 
+  toggleQrDownloadCampDrop(): void {
+    if (this.showQrDownloadCampDrop()) {
+      this.showQrDownloadCampDrop.set(false);
+    } else {
+      this.showQrDownloadCampDrop.set(true);
+      if (this.qrDownloadCampList().length === 0) this.fetchQrDownloadCampaigns();
+    }
+  }
+
+  selectQrDownloadCamp(c: CampaignApiItem): void {
+    this.selectedQrDownloadCampId.set(c.Id);
+    this.selectedQrDownloadCampName.set(c.Name);
+    this.selectedQrDownloadGrpId.set('');
+    this.selectedQrDownloadGrpName.set('');
+    this.qrDownloadGrpList.set([]);
+    this.showQrDownloadCampDrop.set(false);
+  }
+
+  clearQrDownloadCamp(): void {
+    this.selectedQrDownloadCampId.set('');
+    this.selectedQrDownloadCampName.set('');
+    this.selectedQrDownloadGrpId.set('');
+    this.selectedQrDownloadGrpName.set('');
+    this.qrDownloadGrpList.set([]);
+  }
+
   private fetchGroups(campaignId: string): void {
     this.grpLoading.set(true);
     this.http
@@ -338,6 +457,16 @@ export class Pilgrims implements OnInit {
       .pipe(finalize(() => this.importGrpLoading.set(false)), takeUntilDestroyed(this.destroyRef))
       .subscribe(res => {
         if (res.IsSuccess) this.importGrpList.set(res.Data);
+      });
+  }
+
+  private fetchQrDownloadGroups(campaignId: string): void {
+    this.qrDownloadGrpLoading.set(true);
+    this.http
+      .get<ApiResult<GroupApiItem[]>>(`${environment.apiBase}/Groups/all/${campaignId}`)
+      .pipe(finalize(() => this.qrDownloadGrpLoading.set(false)), takeUntilDestroyed(this.destroyRef))
+      .subscribe(res => {
+        if (res.IsSuccess) this.qrDownloadGrpList.set(res.Data);
       });
   }
 
@@ -383,6 +512,28 @@ export class Pilgrims implements OnInit {
   clearImportGrp(): void {
     this.selectedImportGrpId.set('');
     this.selectedImportGrpName.set('');
+  }
+
+  toggleQrDownloadGrpDrop(): void {
+    if (!this.selectedQrDownloadCampId()) return;
+
+    if (this.showQrDownloadGrpDrop()) {
+      this.showQrDownloadGrpDrop.set(false);
+    } else {
+      this.showQrDownloadGrpDrop.set(true);
+      if (this.qrDownloadGrpList().length === 0) this.fetchQrDownloadGroups(this.selectedQrDownloadCampId());
+    }
+  }
+
+  selectQrDownloadGrp(g: GroupApiItem): void {
+    this.selectedQrDownloadGrpId.set(g.Id);
+    this.selectedQrDownloadGrpName.set(g.Name);
+    this.showQrDownloadGrpDrop.set(false);
+  }
+
+  clearQrDownloadGrp(): void {
+    this.selectedQrDownloadGrpId.set('');
+    this.selectedQrDownloadGrpName.set('');
   }
 
   onImportFileSelected(event: Event): void {
@@ -462,7 +613,7 @@ export class Pilgrims implements OnInit {
       this.toast.add({
         severity: 'warn',
         summary: 'بيانات ناقصة',
-        detail: 'اختر المركز والفوج أولاً لتحميل النموذج.',
+        detail: 'اختر المركز والمجموعة أولاً لتحميل النموذج.',
       });
       return;
     }
@@ -499,6 +650,54 @@ export class Pilgrims implements OnInit {
             severity: 'error',
             summary: 'فشل التحميل',
             detail: 'حدث خطأ أثناء تحميل نموذج Excel.',
+          });
+        },
+      });
+  }
+
+  downloadPilgrimsQrCodes(): void {
+    if (!this.selectedQrDownloadCampId() || !this.selectedQrDownloadGrpId()) {
+      this.toast.add({
+        severity: 'warn',
+        summary: 'بيانات ناقصة',
+        detail: 'اختر المركز والمجموعة أولاً لتحميل رموز QR.',
+      });
+      return;
+    }
+
+    this.downloadingQrCodes.set(true);
+
+    this.service.downloadQrCodes(this.selectedQrDownloadCampId(), this.selectedQrDownloadGrpId(), 'ar')
+      .pipe(finalize(() => this.downloadingQrCodes.set(false)), takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: response => {
+          const blob = response.body;
+          if (!blob) {
+            this.toast.add({
+              severity: 'error',
+              summary: 'تعذر التحميل',
+              detail: 'لم يتم استلام ملف رموز QR من الخادم.',
+            });
+            return;
+          }
+
+          const fileName = this.extractFileName(response.headers.get('content-disposition'))
+            || `pilgrims-qrcodes-${this.selectedQrDownloadGrpId()}.zip`;
+
+          const url = window.URL.createObjectURL(blob);
+          const anchor = document.createElement('a');
+          anchor.href = url;
+          anchor.download = fileName;
+          anchor.click();
+          anchor.remove();
+          window.URL.revokeObjectURL(url);
+          this.showQrDownloadModal.set(false);
+        },
+        error: () => {
+          this.toast.add({
+            severity: 'error',
+            summary: 'فشل التحميل',
+            detail: 'حدث خطأ أثناء تحميل ملف رموز QR.',
           });
         },
       });
@@ -589,7 +788,7 @@ export class Pilgrims implements OnInit {
 
     exportRowsToExcel(
       'pilgrims-list',
-      ['الحاج', 'المركز', 'الفوج', 'رقم الجواز', 'الجنسية', 'الجنس'],
+      ['الحاج', 'المركز', 'المجموعة', 'رقم الجواز', 'الجنسية', 'الجنس'],
       items.map(p => [
         p.DisplayName,
         p.CampaignName,

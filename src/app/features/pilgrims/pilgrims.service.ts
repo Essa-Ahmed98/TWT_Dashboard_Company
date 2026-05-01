@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { ApiResult, PaginatedResult } from '../../core/models/api.models';
-import { CreatePilgrimRequest, DrugApiItem, PilgrimApiItem, PilgrimDetailApiItem, PilgrimFamilyApiItem, PilgrimRitualsApiItem, PilgrimsQuery, ReviewApiItem, UpdatePilgrimRequest } from './pilgrims.model';
+import { CreatePilgrimRequest, DrugApiItem, PilgrimApiItem, PilgrimDetailApiItem, PilgrimFamilyApiItem, PilgrimQrCodeApiItem, PilgrimRitualsApiItem, PilgrimsQuery, ReviewApiItem, UpdatePilgrimRequest } from './pilgrims.model';
 
 @Injectable({ providedIn: 'root' })
 export class PilgrimsService {
@@ -34,8 +34,21 @@ export class PilgrimsService {
     return this.http.get<ApiResult<PilgrimDetailApiItem>>(`${environment.apiBase}/Pilgrims/${id}`);
   }
 
+  getPilgrimQrCode(id: string, language = 'ar'): Observable<ApiResult<PilgrimQrCodeApiItem>> {
+    const headers = new HttpHeaders({
+      'Accept-Language': language,
+    });
+
+    return this.http.post<ApiResult<PilgrimQrCodeApiItem>>(`${environment.apiBase}/Pilgrims/${id}/qrcode`, {}, { headers });
+  }
+
   getPilgrimFamily(id: string): Observable<ApiResult<PilgrimFamilyApiItem[]>> {
     return this.http.get<ApiResult<PilgrimFamilyApiItem[]>>(`${environment.apiBase}/Pilgrims/${id}/family`);
+  }
+
+  getAccommodationMapUrl(id: string): Observable<ApiResult<string>> {
+    const params = new HttpParams().set('id', id);
+    return this.http.get<ApiResult<string>>(`${environment.apiBase}/Pilgrims/accommodation-map-url`, { params });
   }
 
   getReviewsByUserId(userId: string, language = 'ar'): Observable<ApiResult<ReviewApiItem[]>> {
@@ -74,6 +87,23 @@ export class PilgrimsService {
     });
 
     return this.http.get(`${environment.apiBase}/Pilgrims/template`, {
+      params,
+      headers,
+      responseType: 'blob',
+      observe: 'response',
+    });
+  }
+
+  downloadQrCodes(campaignId: string, groupId: string, language = 'ar'): Observable<HttpResponse<Blob>> {
+    const params = new HttpParams()
+      .set('campaignId', campaignId)
+      .set('groupId', groupId);
+
+    const headers = new HttpHeaders({
+      'Accept-Language': language,
+    });
+
+    return this.http.get(`${environment.apiBase}/Pilgrims/qrcodes/download`, {
       params,
       headers,
       responseType: 'blob',

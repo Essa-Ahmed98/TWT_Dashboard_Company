@@ -169,7 +169,7 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
       { label: 'إجمالي المناطق', value: this.totalCount(),                          color: '#0b405b' },
       { label: 'منطقة نشطة',    value: z.filter(x => x.status === 'active').length, color: '#22c35d' },
       { label: 'حاج معروض',     value: visHajj,                                     color: '#fb8c00' },
-      { label: 'فوج مفعلة',  value: visGroups.length,                            color: '#e53935' },
+      { label: 'مجموعات مفعلة',  value: visGroups.length,                            color: '#e53935' },
     ];
   });
 
@@ -902,7 +902,7 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
     return `
       <div style="direction:rtl;font-family:inherit;min-width:180px">
         <div style="font-weight:700;color:#0b405b;margin-bottom:4px">${pilgrim.DisplayName}</div>
-        <div style="font-size:.8rem;color:#647b87;margin-bottom:4px">الفوج: ${group.name}</div>
+        <div style="font-size:.8rem;color:#647b87;margin-bottom:4px">المجموعة: ${group.name}</div>
       </div>`;
   }
 

@@ -343,7 +343,7 @@ export class Supervisors implements OnInit {
 
     exportRowsToExcel(
       'supervisors-list',
-      ['المشرف', 'المركز', 'الفوج', 'رقم الجواز', 'الجنسية', 'اللغات', 'الحالة'],
+      ['المشرف', 'المركز', 'المجموعة', 'رقم الجواز', 'الجنسية', 'اللغات', 'الحالة'],
       items.map(s => [
         s.DisplayName || s.UserId,
         s.CampaignName || s.CampaignId || '—',

@@ -100,7 +100,7 @@ export const CAMPAIGNS: Campaign[] = [
   { id: '6', name: 'مركز الهدى'   },
 ];
 
-export const GROUPS = ['فوج ١', 'فوج ٢', 'فوج ٣', 'فوج أ', 'فوج ب', 'فوج ج'];
+export const GROUPS = ['مجموعة ١', 'مجموعة ٢', 'مجموعة ٣', 'مجموعة أ', 'مجموعة ب', 'مجموعة ج'];
 
 export const BLOOD_TYPE_OPTIONS: { label: string; value: number }[] = [
   { label: 'A+',  value: 0 },
@@ -200,6 +200,12 @@ export interface DrugApiItem {
   IsActive:          boolean;
   Notes:             string;
   CreatedAt:         string;
+}
+
+export interface PilgrimQrCodeApiItem {
+  PilgrimId: string;
+  QrCodeUrl: string;
+  QrCodeImageBase64: string;
 }
 
 export interface PilgrimsQuery {

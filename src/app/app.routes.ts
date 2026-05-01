@@ -4,6 +4,11 @@ import { noAuthGuard } from './core/auth/guards/no-auth-guard';
 
 export const routes: Routes = [
   {
+    path: 'pilgrims/profile/:id',
+    loadComponent: () =>
+      import('./features/pilgrims/pilgrim-profile/pilgrim-profile').then((m) => m.PilgrimProfile),
+  },
+  {
     path: 'auth',
     children: [
       {
@@ -79,6 +84,21 @@ export const routes: Routes = [
         path: 'complaints',
         loadComponent: () =>
           import('./features/complaints/complaints').then((m) => m.Complaints),
+      },
+      {
+        path: 'broadcast',
+        loadComponent: () =>
+          import('./features/broadcast/broadcast').then((m) => m.Broadcast),
+      },
+      {
+        path: 'accommodation-location',
+        loadComponent: () =>
+          import('./features/accommodation-location/accommodation-location').then((m) => m.AccommodationLocation),
+      },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import('./features/settings/settings').then((m) => m.Settings),
       },
       { path: '', redirectTo: 'campaigns', pathMatch: 'full' },
     ],

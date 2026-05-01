@@ -34,7 +34,7 @@ export class CampaignDetail implements OnDestroy {
   activeTab = signal<CampaignTab>('groups');
 
   readonly tabs: { key: CampaignTab; label: string; icon: string }[] = [
-    { key: 'groups', label: 'الأفواج', icon: 'pi pi-sitemap' },
+    { key: 'groups', label: 'المجموعات', icon: 'pi pi-sitemap' },
     { key: 'buses',  label: 'الحافلات',  icon: 'pi pi-car'     },
   ];
 

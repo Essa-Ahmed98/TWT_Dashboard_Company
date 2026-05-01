@@ -1,11 +1,11 @@
 ﻿@if (openFilterDrop()) {
   <div class="backdrop" (click)="closeFilterDrop()"></div>
 }
-@if (showCampDrop() || showGrpDrop() || showImportCampDrop() || showImportGrpDrop()) {
-  <div class="backdrop" (click)="showCampDrop.set(false); showGrpDrop.set(false); showImportCampDrop.set(false); showImportGrpDrop.set(false)"></div>
+@if (showCampDrop() || showGrpDrop() || showImportCampDrop() || showImportGrpDrop() || showQrDownloadCampDrop() || showQrDownloadGrpDrop()) {
+  <div class="backdrop" (click)="showCampDrop.set(false); showGrpDrop.set(false); showImportCampDrop.set(false); showImportGrpDrop.set(false); showQrDownloadCampDrop.set(false); showQrDownloadGrpDrop.set(false)"></div>
 }
-@if (showModal() || showImportModal()) {
-  <div class="modal-backdrop" (click)="showModal() ? closeModal() : closeImportModal()"></div>
+@if (showModal() || showImportModal() || showQrDialog() || showQrDownloadModal()) {
+  <div class="modal-backdrop" (click)="showQrDialog() ? closeQrDialog() : (showQrDownloadModal() ? closeQrDownloadModal() : (showModal() ? closeModal() : closeImportModal()))"></div>
 }
 
 <div class="pilgrims">
@@ -15,6 +15,9 @@
       <span class="pilgrims__title-count">{{ total() }} حاج مسجل</span>
     </div>
     <div class="pilgrims__actions">
+      <button class="btn btn--ghost" (click)="openQrDownloadModal()">
+        <i class="pi pi-qrcode"></i><span>تحميل QR Codes</span>
+      </button>
       <button class="btn btn--ghost" (click)="openImportModal()">
         <i class="pi pi-file-excel"></i><span>استيراد من Excel</span>
       </button>
@@ -79,7 +82,7 @@
         <tr>
           <th>الحاج</th>
           <th>المركز</th>
-          <th>الفوج</th>
+          <th>المجموعة</th>
           <th>رقم الجواز</th>
           <th>الجنسية</th>
           <th>الجنس</th>
@@ -97,6 +100,9 @@
             <td>{{ genderLabel(p.Gender) }}</td>
             <td>
               <div class="row-actions">
+                <button class="row-actions__btn" title="عرض رمز QR" (click)="openQrCode(p.Id, p.DisplayName)">
+                  <i class="pi pi-qrcode"></i>
+                </button>
                 <button class="row-actions__btn" title="فتح المحادثة" (click)="openChat(p.UserId, p.DisplayName)">
                   <i class="pi pi-comment"></i>
                 </button>
@@ -144,6 +150,150 @@
     </div>
   }
 </div>
+
+@if (showQrDialog()) {
+  <div class="dialog dialog--qr" (click)="$event.stopPropagation()">
+    <div class="dialog__header">
+      <div>
+        <h2 class="dialog__title">رمز QR للحاج</h2>
+        <p class="dialog__sub">{{ qrPilgrimName() || 'عرض رمز الاستجابة السريعة' }}</p>
+      </div>
+      <button class="dialog__close" (click)="closeQrDialog()" [disabled]="qrLoading()">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <div class="dialog__body dialog__body--qr">
+      @if (qrLoading()) {
+        <div class="qr-dialog__state">
+          <span class="pilgrims__spinner"></span>
+          <p>جاري تحميل رمز QR...</p>
+        </div>
+      } @else if (qrCodeImage(); as image) {
+        <div class="qr-dialog">
+          <div class="qr-dialog__content">
+            <div class="qr-dialog__image-wrap">
+              <img class="qr-dialog__image" [src]="image" alt="Pilgrim QR Code" />
+            </div>
+            <p class="qr-dialog__hint">يرجى عمل مسح لهذا الرمز باستخدام تطبيق الكاميرا أو قارئ QR.</p>
+          </div>
+        </div>
+      } @else {
+        <div class="qr-dialog__state">
+          <i class="pi pi-exclamation-circle"></i>
+          <p>لا توجد صورة QR متاحة حالياً.</p>
+        </div>
+      }
+    </div>
+  </div>
+}
+
+@if (showQrDownloadModal()) {
+  <div class="dialog dialog--import" (click)="$event.stopPropagation()">
+    <div class="dialog__header">
+      <div>
+        <h2 class="dialog__title">تحميل رموز QR للحجاج</h2>
+        <p class="dialog__sub">اختر المركز والمجموعة لتحميل ملف يحتوي على رموز QR الخاصة بالحجاج.</p>
+      </div>
+      <button class="dialog__close" (click)="closeQrDownloadModal()" [disabled]="downloadingQrCodes()">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <div class="dialog__body dialog__body--import">
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">المركز <span class="form-req">*</span></label>
+          <div class="ss">
+            <button type="button" class="ss__trigger" (click)="toggleQrDownloadCampDrop()">
+              <span [class.ss__placeholder]="!selectedQrDownloadCampName()">
+                {{ selectedQrDownloadCampName() || 'اختر المركز' }}
+              </span>
+              @if (selectedQrDownloadCampName()) {
+                <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearQrDownloadCamp()"></i>
+              } @else {
+                <i class="pi pi-angle-down"></i>
+              }
+            </button>
+            @if (showQrDownloadCampDrop()) {
+              <div class="ss__dropdown">
+                @if (qrDownloadCampLoading()) {
+                  <div class="ss__state"><span class="ss-spinner"></span></div>
+                } @else if (qrDownloadCampList().length === 0) {
+                  <div class="ss__state">لا توجد مراكز</div>
+                } @else {
+                  <ul class="ss__list">
+                    @for (c of qrDownloadCampList(); track c.Id) {
+                      <li class="ss__item"
+                          [class.ss__item--active]="selectedQrDownloadCampId() === c.Id"
+                          (click)="selectQrDownloadCamp(c)">{{ c.Name }}</li>
+                    }
+                  </ul>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">المجموعة <span class="form-req">*</span></label>
+          <div class="ss" [class.ss--disabled]="!selectedQrDownloadCampId()">
+            <button type="button" class="ss__trigger"
+              [disabled]="!selectedQrDownloadCampId()"
+              (click)="toggleQrDownloadGrpDrop()">
+              <span [class.ss__placeholder]="!selectedQrDownloadGrpName()">
+                {{ selectedQrDownloadGrpName() || (selectedQrDownloadCampId() ? 'اختر المجموعة' : 'اختر المركز أولاً') }}
+              </span>
+              @if (selectedQrDownloadGrpName()) {
+                <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearQrDownloadGrp()"></i>
+              } @else {
+                <i class="pi pi-angle-down"></i>
+              }
+            </button>
+            @if (showQrDownloadGrpDrop()) {
+              <div class="ss__dropdown">
+                @if (qrDownloadGrpLoading()) {
+                  <div class="ss__state"><span class="ss-spinner"></span></div>
+                } @else if (qrDownloadGrpList().length === 0) {
+                  <div class="ss__state">لا توجد مجموعات</div>
+                } @else {
+                  <ul class="ss__list">
+                    @for (g of qrDownloadGrpList(); track g.Id) {
+                      <li class="ss__item"
+                          [class.ss__item--active]="selectedQrDownloadGrpId() === g.Id"
+                          (click)="selectQrDownloadGrp(g)">{{ g.Name }}</li>
+                    }
+                  </ul>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <section class="import-card">
+        <div class="import-card__head">
+          <div class="import-card__icon"><i class="pi pi-info-circle"></i></div>
+          <div>
+            <h3 class="import-card__title">تحميل الملف</h3>
+            <p class="import-card__text">سيتم تنزيل ملف يحتوي على رموز QR لجميع الحجاج داخل المركز والمجموعة المحددين.</p>
+          </div>
+        </div>
+        <button type="button" class="btn import-card__action"
+          [disabled]="downloadingQrCodes() || !selectedQrDownloadCampId() || !selectedQrDownloadGrpId()"
+          (click)="downloadPilgrimsQrCodes()">
+          @if (downloadingQrCodes()) {
+            <span class="btn-spinner import-card__spinner"></span>
+            <span>جاري تحميل الملف...</span>
+          } @else {
+            <i class="pi pi-download"></i>
+            <span>تحميل ملف QR Codes</span>
+          }
+        </button>
+      </section>
+    </div>
+  </div>
+}
 
 @if (showImportModal()) {
   <div class="dialog dialog--import" (click)="$event.stopPropagation()">
@@ -193,13 +343,13 @@
         </div>
 
         <div class="form-field">
-          <label class="form-label">الفوج <span class="form-req">*</span></label>
+          <label class="form-label">المجموعة <span class="form-req">*</span></label>
           <div class="ss" [class.ss--disabled]="!selectedImportCampId()">
             <button type="button" class="ss__trigger"
               [disabled]="!selectedImportCampId()"
               (click)="toggleImportGrpDrop()">
               <span [class.ss__placeholder]="!selectedImportGrpName()">
-                {{ selectedImportGrpName() || (selectedImportCampId() ? 'اختر الفوج' : 'اختر المركز أولاً') }}
+                {{ selectedImportGrpName() || (selectedImportCampId() ? 'اختر المجموعة' : 'اختر المركز أولاً') }}
               </span>
               @if (selectedImportGrpName()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearImportGrp()"></i>
@@ -212,7 +362,7 @@
                 @if (importGrpLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (importGrpList().length === 0) {
-                  <div class="ss__state">لا توجد أفواج</div>
+                  <div class="ss__state">لا توجد مجموعات</div>
                 } @else {
                   <ul class="ss__list">
                     @for (g of importGrpList(); track g.Id) {
@@ -488,13 +638,13 @@
         </div>
 
         <div class="form-field">
-          <label class="form-label">الفوج <span class="form-req">*</span></label>
+          <label class="form-label">المجموعة <span class="form-req">*</span></label>
           <div class="ss" [class.ss--disabled]="!formData().campaignId || submitting()">
             <button type="button" class="ss__trigger"
               [disabled]="!formData().campaignId || submitting()"
               (click)="toggleGrpDrop()">
               <span [class.ss__placeholder]="!selectedGrpName()">
-                {{ selectedGrpName() || (formData().campaignId ? 'اختر الفوج' : 'اختر المركز أولاً') }}
+                {{ selectedGrpName() || (formData().campaignId ? 'اختر المجموعة' : 'اختر المركز أولاً') }}
               </span>
               @if (selectedGrpName()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearGrp()"></i>
@@ -507,7 +657,7 @@
                 @if (grpLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (grpList().length === 0) {
-                  <div class="ss__state">لا توجد أفواج</div>
+                  <div class="ss__state">لا توجد مجموعات</div>
                 } @else {
                   <ul class="ss__list">
                     @for (g of grpList(); track g.Id) {

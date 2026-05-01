@@ -1,0 +1,224 @@
+@use 'sass:color';
+
+// ── Design tokens ─────────────────────────────────────────────────
+$primary:      #0b405b;
+$primary-dark: #0a3550;
+$border:       #e9edf2;
+$bg-page:      #f4f6f9;
+$bg-white:     #ffffff;
+$text-main:    #1a2e3b;
+$text-muted:   #6c7a89;
+$text-label:   #374151;
+$green:        #22c35d;
+
+// ── Page layout ───────────────────────────────────────────────────
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  &__title-text {
+    font-size: 22px;
+    font-weight: 700;
+    color: $text-main;
+    margin: 0 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    i { font-size: 18px; color: $primary; }
+  }
+
+  &__title-sub {
+    font-size: 13px;
+    color: $text-muted;
+    margin: 0;
+  }
+
+  // ── Card ──────────────────────────────────────────────────────
+  &__card {
+    background: $bg-white;
+    border-radius: 14px;
+    border: 1px solid $border;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  // ── Card header ───────────────────────────────────────────────
+  &__card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 20px;
+    border-bottom: 1px solid $border;
+    font-size: 15px;
+    font-weight: 700;
+    color: $text-main;
+
+    i { color: $primary; font-size: 16px; }
+  }
+
+  // ── Panel ─────────────────────────────────────────────────────
+  &__panel {
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  // ── Skeleton row ──────────────────────────────────────────────
+  &__skeleton-row {
+    height: 62px;
+    border-bottom: 1px solid $border;
+    background: linear-gradient(90deg, #f0f2f5 25%, #e8eaed 50%, #f0f2f5 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+
+    &:last-child { border-bottom: none; }
+  }
+
+  // ── Settings list ─────────────────────────────────────────────
+  &__notif-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid $border;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  &__notif-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 20px;
+    background: $bg-white;
+    border-bottom: 1px solid $border;
+    transition: background .15s;
+
+    &:last-child { border-bottom: none; }
+    &:hover      { background: rgba($primary, .015); }
+  }
+
+  &__notif-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+  }
+
+  &__notif-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: $text-main;
+  }
+
+  &__notif-desc {
+    font-size: 12.5px;
+    color: $text-muted;
+  }
+
+  // ── Empty state ───────────────────────────────────────────────
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 48px 20px;
+    color: $text-muted;
+  }
+
+  &__empty-icon {
+    font-size: 36px;
+    color: $border;
+  }
+
+  &__empty-text {
+    font-size: 14px;
+    color: $text-muted;
+    margin: 0;
+  }
+
+  // ── Panel footer ──────────────────────────────────────────────
+  &__panel-footer {
+    display: flex;
+    justify-content: flex-start;
+    padding-top: 4px;
+  }
+}
+
+// ── Toggle switch ─────────────────────────────────────────────────
+.toggle {
+  position: relative;
+  width: 46px;
+  height: 26px;
+  border-radius: 100px;
+  border: none;
+  background: #d1d5db;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background .2s;
+  padding: 0;
+  outline: none;
+
+  &--on {
+    background: $green;
+  }
+
+  &__thumb {
+    position: absolute;
+    top: 3px;
+    inset-inline-start: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .18);
+    transition: inset-inline-start .2s;
+  }
+
+  &--on &__thumb {
+    inset-inline-start: calc(100% - 23px);
+  }
+}
+
+// ── Button ────────────────────────────────────────────────────────
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 24px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background .18s;
+  white-space: nowrap;
+
+  i { font-size: 14px; }
+
+  &--primary {
+    background: $primary;
+    color: #fff;
+    &:hover:not(:disabled) { background: $primary-dark; }
+  }
+
+  &:disabled { opacity: .5; cursor: not-allowed; }
+}
+
+// ── Shimmer animation ─────────────────────────────────────────────
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

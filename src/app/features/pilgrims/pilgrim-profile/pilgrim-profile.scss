@@ -1,0 +1,377 @@
+@use 'sass:color';
+
+$primary: #0b405b;
+$card-radius: 0.75rem;
+$card-shadow: 0 4px 24px -4px hsla(200, 79%, 20%, 0.1);
+$safe: #22c35d;
+$warning: #fb8c00;
+$danger: #e53935;
+
+.pp-shell {
+  min-height: 100vh;
+  padding: 1.5rem;
+  background: linear-gradient(180deg, #f6f8fb 0%, #eef3f8 100%);
+}
+
+.pp {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  direction: rtl;
+
+  &__page-header {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  &__page-header-content {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  &__action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0.7rem 1rem;
+    border: 1px solid $primary;
+    border-radius: 0.8rem;
+    background: $primary;
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease, opacity 0.15s ease;
+
+    &:hover:not(:disabled) {
+      background: color.adjust($primary, $lightness: -5%);
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: wait;
+    }
+  }
+
+  &__page-title {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: $primary;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  &__page-subtitle {
+    font-size: 0.8125rem;
+    color: #647b87;
+    margin: 2px 0 0;
+  }
+
+  &__profile-card {
+    background: #fff;
+    border-radius: $card-radius;
+    border: 1px solid #eef0f4;
+    box-shadow: $card-shadow;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  &__profile-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    direction: rtl;
+  }
+
+  &__avatar {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    i {
+      font-size: 30px;
+    }
+
+    &--safe {
+      background: #{$safe}1a;
+      color: $safe;
+    }
+
+    &--warning {
+      background: #{$warning}1a;
+      color: $warning;
+    }
+
+    &--danger {
+      background: #{$danger}1a;
+      color: $danger;
+    }
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  &__name-row {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    flex-wrap: wrap;
+  }
+
+  &__name {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: $primary;
+    margin: 0;
+  }
+
+  &__meta-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.8125rem;
+    color: #647b87;
+    flex-wrap: wrap;
+
+    i {
+      font-size: 0.8rem;
+      margin-left: 0.25rem;
+    }
+  }
+
+  &__tags-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  &__tag {
+    display: inline-block;
+    padding: 0.2rem 0.75rem;
+    border-radius: 20px;
+    background: #eef0f4;
+    font-size: 0.8125rem;
+    color: $primary;
+    font-weight: 500;
+  }
+
+  &__profile-divider {
+    height: 1px;
+    background: #f0f2f5;
+  }
+
+  &__vitals-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+  }
+
+  &__vital {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.75rem;
+    background: #f9fafb;
+    border-radius: 0.75rem;
+    text-align: center;
+  }
+
+  &__vital-icon {
+    font-size: 1.25rem;
+  }
+
+  &__vital-value {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: $primary;
+    line-height: 1.2;
+    word-break: break-word;
+  }
+
+  &__vital-label {
+    font-size: 0.75rem;
+    color: #647b87;
+  }
+
+  &__tabs {
+    display: flex;
+    border: 1px solid #eef0f4;
+    border-radius: $card-radius;
+    padding: 0.25rem;
+    box-shadow: $card-shadow;
+    background: #fff;
+  }
+
+  &__tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.5rem 0.875rem;
+    border-radius: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    white-space: nowrap;
+
+    &--active {
+      background: #f6f8f8;
+      color: #0f2e3d;
+      box-shadow: $card-shadow;
+    }
+
+    i {
+      font-size: 0.8rem;
+    }
+  }
+
+  &--state {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 2rem;
+    color: #647b87;
+
+    i {
+      font-size: 3rem;
+    }
+
+    p {
+      margin: 0;
+      font-size: 1rem;
+    }
+  }
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  white-space: nowrap;
+
+  &__dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  &--safe {
+    background: #e8f5ee;
+    color: $safe;
+
+    .status-badge__dot {
+      background: $safe;
+    }
+  }
+
+  &--warning {
+    background: #fff8e1;
+    color: #e65100;
+
+    .status-badge__dot {
+      background: $warning;
+    }
+  }
+
+  &--danger {
+    background: #ffebee;
+    color: #c62828;
+
+    .status-badge__dot {
+      background: $danger;
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .pp {
+    gap: 14px;
+
+    &__vitals-row {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .pp-shell {
+    padding: 0.875rem;
+  }
+
+  .pp {
+    gap: 12px;
+
+    &__page-title {
+      font-size: 1.2rem;
+    }
+
+    &__page-subtitle {
+      word-break: break-all;
+    }
+
+    &__page-header-content {
+      align-items: stretch;
+    }
+
+    &__action-btn {
+      width: 100%;
+    }
+
+    &__profile-card {
+      padding: 1rem;
+    }
+
+    &__profile-top {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 1rem;
+    }
+
+    &__name-row,
+    &__meta-row,
+    &__tags-row {
+      justify-content: center;
+    }
+
+    &__vitals-row {
+      grid-template-columns: 1fr;
+    }
+
+    &__tabs {
+      padding: 0.2rem;
+    }
+
+    &__tab {
+      width: 100%;
+      justify-content: center;
+      padding: 0.625rem 0.875rem;
+    }
+  }
+}

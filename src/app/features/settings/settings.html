@@ -1,0 +1,60 @@
+<div class="settings">
+  <div class="settings__header">
+    <div class="settings__title">
+      <h1 class="settings__title-text">
+        <i class="pi pi-cog"></i>
+        الإعدادات
+      </h1>
+      <p class="settings__title-sub">إعدادات النظام والشركة</p>
+    </div>
+  </div>
+
+  <div class="settings__card">
+    <div class="settings__card-header">
+      <i class="pi pi-cog"></i>
+      <span>الإعدادات</span>
+    </div>
+
+    <div class="settings__panel">
+      @if (loading()) {
+        <div class="settings__notif-list">
+          @for (i of [1,2,3,4,5,6,7,8]; track i) {
+            <div class="settings__skeleton-row"></div>
+          }
+        </div>
+      } @else if (features().length) {
+        <div class="settings__notif-list">
+          @for (item of features(); track item.key) {
+            <div class="settings__notif-item">
+              <div class="settings__notif-info">
+                <span class="settings__notif-title">{{ item.title }}</span>
+                <span class="settings__notif-desc">{{ item.description }}</span>
+              </div>
+              <button
+                class="toggle"
+                [class.toggle--on]="item.enabled"
+                (click)="toggleFeature(item.key)"
+                [attr.aria-checked]="item.enabled"
+                role="switch"
+                type="button">
+                <span class="toggle__thumb"></span>
+              </button>
+            </div>
+          }
+        </div>
+
+        <div class="settings__panel-footer">
+          <button class="btn btn--primary" (click)="saveSettings()" [disabled]="saving()">
+            <i class="pi pi-save"></i>
+            {{ saving() ? 'جارٍ الحفظ...' : 'حفظ' }}
+          </button>
+        </div>
+      } @else {
+        <div class="settings__empty">
+          <i class="pi pi-inbox settings__empty-icon"></i>
+          <p class="settings__empty-text">لا توجد بيانات</p>
+        </div>
+      }
+    </div>
+  </div>
+</div>

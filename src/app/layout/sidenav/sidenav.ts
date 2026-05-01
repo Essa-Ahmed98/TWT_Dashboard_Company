@@ -32,6 +32,7 @@ export class Sidenav {
         { label: 'إدارة المراكز', icon: 'pi pi-globe', route: '/campaigns' },
         { label: 'إدارة التفويج والنقل', icon: 'pi pi-car', route: '/dispatch' },
         { label: 'غرفة المراقبة', icon: 'pi pi-map-marker', route: '/geo-fence' },
+        { label: 'موقع السكن',    icon: 'pi pi-home',       route: '/accommodation-location' },
       ],
     },
     {
@@ -46,8 +47,10 @@ export class Sidenav {
       label: 'أدوات',
       items: [
         { label: 'الدردشة', icon: 'pi pi-comments', route: '/chat' },
+        { label: 'الرسائل الجماعية', icon: 'pi pi-send', route: '/broadcast' },
         { label: 'التقييمات', icon: 'pi pi-star', route: '/reviews' },
-        { label: 'الشكاوى', icon: 'pi pi-exclamation-circle', route: '/complaints' },
+        { label: 'الشكاوى',    icon: 'pi pi-exclamation-circle', route: '/complaints' },
+        { label: 'الإعدادات', icon: 'pi pi-cog',               route: '/settings'   },
       ],
     },
   ];

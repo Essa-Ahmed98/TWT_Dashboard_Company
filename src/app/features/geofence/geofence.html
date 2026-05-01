@@ -202,7 +202,7 @@
       @if (activeTab() === 'campaigns') {
         <div class="gf__campaigns-hint">
           <i class="pi pi-map"></i>
-          اختر مركز ثم فعّل الأفواج لعرض حجاجها على الخريطة
+          اختر مركز ثم فعّل المجموعات لعرض حجاجها على الخريطة
         </div>
         @if (campaignsLoading()) {
           <div class="gf__spinner">
@@ -223,7 +223,7 @@
                     <div>
                       <span class="campaign__name">{{ campaign.name }}</span>
                       <span class="campaign__meta">
-                        {{ campaign.groupsCount }} فوج • رقم المركز {{ campaign.number }}
+                        {{ campaign.groupsCount }} مجموعة • رقم المركز {{ campaign.number }}
                       </span>
                     </div>
                   </div>

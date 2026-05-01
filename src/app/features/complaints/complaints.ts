@@ -149,7 +149,7 @@ export class Complaints {
   }
 
   groupFilterLabel(): string {
-    return this.selectedGroupName() || (this.selectedCampaignId() ? 'جميع الأفواج' : 'اختر المركز أولًا');
+    return this.selectedGroupName() || (this.selectedCampaignId() ? 'جميع المجموعات' : 'اختر المركز أولًا');
   }
 
   formatDate(value: string): string {

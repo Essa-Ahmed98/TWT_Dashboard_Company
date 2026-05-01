@@ -53,7 +53,7 @@
         </div>
 
         <div class="form-field">
-          <label class="form-label">الفوج <span class="form-req">*</span></label>
+          <label class="form-label">المجموعة <span class="form-req">*</span></label>
           <div class="ss" [class.ss--disabled]="!form().campaignId || saving()">
             <button
               class="ss__trigger"
@@ -62,7 +62,7 @@
               (click)="toggleModalGroupDrop($event)"
             >
               <span [class.ss__placeholder]="!form().groupName">
-                {{ form().groupName || (form().campaignId ? 'اختر الفوج' : 'اختر المركز أولًا') }}
+                {{ form().groupName || (form().campaignId ? 'اختر المجموعة' : 'اختر المركز أولًا') }}
               </span>
               @if (form().groupId) {
                 <i class="pi pi-times ss__clear" (click)="clearModalGroup($event)"></i>
@@ -75,7 +75,7 @@
                 @if (modalGroupLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (modalGroupList().length === 0) {
-                  <div class="ss__state">لا توجد أفواج متاحة</div>
+                  <div class="ss__state">لا توجد مجموعات متاحة</div>
                 } @else {
                   <ul class="ss__list">
                     @for (group of modalGroupList(); track group.Id) {
@@ -293,7 +293,7 @@
     <div class="dropdown" [class.dropdown--open]="openGroupDrop()" [class.dropdown--disabled]="!selectedCampaignId()">
       <button class="dropdown__trigger" type="button" [disabled]="!selectedCampaignId()" (click)="toggleGroupDrop($event)">
         <i class="pi pi-users"></i>
-        <span>{{ selectedGroupName() || (selectedCampaignId() ? 'اختر الفوج' : 'اختر المركز أولًا') }}</span>
+        <span>{{ selectedGroupName() || (selectedCampaignId() ? 'اختر المجموعة' : 'اختر المركز أولًا') }}</span>
         @if (selectedGroupId()) {
           <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectGroupFilter()"></i>
         } @else {

@@ -1,0 +1,180 @@
+@if (showCampDrop() || showGrpDrop()) {
+  <div class="backdrop" (click)="closeAllDrops()"></div>
+}
+
+<div class="accom">
+
+  <!-- ══════════════════════════════════════════
+       PAGE HEADER
+  ══════════════════════════════════════════ -->
+  <div class="accom__header">
+    <div class="accom__title">
+      <h1 class="accom__title-text">
+        <i class="pi pi-map-marker"></i>
+        تحديث موقع السكن
+      </h1>
+      <p class="accom__title-sub">اختر المركز والمجموعة، ثم حدد السكن وموقعه على الخريطة</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       CARD
+  ══════════════════════════════════════════ -->
+  <div class="accom__card">
+
+    <div class="accom__card-header">
+      <i class="pi pi-home"></i>
+      <span>بيانات السكن</span>
+    </div>
+
+    <div class="accom__card-body">
+
+      <!-- Row 1: Campaign + Group -->
+      <div class="accom__row">
+
+        <!-- Campaign dropdown -->
+        <div class="form-field">
+          <label class="form-label">المركز</label>
+          <div class="ss">
+            <button type="button" class="ss__trigger" (click)="toggleCampDrop()">
+              <span [class.ss__placeholder]="!selectedCampName()">
+                {{ selectedCampName() || 'اختر المركز' }}
+              </span>
+              @if (selectedCampName()) {
+                <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearCamp()"></i>
+              } @else {
+                <i class="pi pi-angle-down"></i>
+              }
+            </button>
+            @if (showCampDrop()) {
+              <div class="ss__dropdown">
+                @if (campLoading()) {
+                  <div class="ss__state"><span class="ss-spinner"></span></div>
+                } @else if (campList().length === 0) {
+                  <div class="ss__state">لا توجد مراكز</div>
+                } @else {
+                  <ul class="ss__list">
+                    @for (c of campList(); track c.Id) {
+                      <li class="ss__item" [class.ss__item--active]="selectedCampId() === c.Id"
+                          (click)="selectCamp(c)">{{ c.Name }}</li>
+                    }
+                  </ul>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Group dropdown -->
+        <div class="form-field">
+          <label class="form-label">المجموعة</label>
+          <div class="ss" [class.ss--disabled]="!selectedCampId()">
+            <button type="button" class="ss__trigger"
+                    [disabled]="!selectedCampId()"
+                    (click)="toggleGrpDrop()">
+              <span [class.ss__placeholder]="!selectedGroupName()">
+                {{ selectedGroupName() || (selectedCampId() ? 'اختر المجموعة' : 'اختر المركز أولاً') }}
+              </span>
+              @if (selectedGroupName()) {
+                <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearGrp()"></i>
+              } @else {
+                <i class="pi pi-angle-down"></i>
+              }
+            </button>
+            @if (showGrpDrop()) {
+              <div class="ss__dropdown">
+                @if (grpLoading()) {
+                  <div class="ss__state"><span class="ss-spinner"></span></div>
+                } @else if (grpList().length === 0) {
+                  <div class="ss__state">لا توجد مجموعات</div>
+                } @else {
+                  <ul class="ss__list">
+                    @for (g of grpList(); track g.Id) {
+                      <li class="ss__item" [class.ss__item--active]="selectedGroupId() === g.Id"
+                          (click)="selectGrp(g)">{{ g.Name }}</li>
+                    }
+                  </ul>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Row 2: Accommodation name -->
+      <div class="form-field">
+        <label class="form-label">السكن</label>
+        <input
+          type="text"
+          class="form-input"
+          placeholder="أدخل السكن"
+          [value]="accommodationName()"
+          (input)="accommodationName.set($any($event.target).value)"
+          [disabled]="submitting()"
+        />
+      </div>
+
+      <!-- Row 3: Lat + Lng -->
+      <div class="accom__row">
+        <div class="form-field">
+          <label class="form-label">خط العرض (Latitude)</label>
+          <input
+            type="number"
+            class="form-input"
+            step="0.000001"
+            [value]="lat()"
+            (change)="onLatChange($any($event.target).value)"
+            [disabled]="submitting()"
+          />
+        </div>
+        <div class="form-field">
+          <label class="form-label">خط الطول (Longitude)</label>
+          <input
+            type="number"
+            class="form-input"
+            step="0.000001"
+            [value]="lng()"
+            (change)="onLngChange($any($event.target).value)"
+            [disabled]="submitting()"
+          />
+        </div>
+      </div>
+
+      <!-- Map -->
+      <div class="form-field">
+        <div class="accom__map-label">
+          <i class="pi pi-map-marker"></i>
+          <span>الموقع على الخريطة (يمكن سحب الدبوس)</span>
+        </div>
+        <div class="accom__map-wrap">
+          <div #mapEl class="accom__map"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="accom__card-footer">
+      <button class="btn btn--primary"
+              [disabled]="!canSubmit()"
+              (click)="submit()">
+        @if (submitting()) {
+          <span class="btn-spinner"></span>
+          جاري التحديث...
+        } @else {
+          تحديث السكن
+        }
+      </button>
+
+      @if (submitError()) {
+        <div class="accom__error">
+          <i class="pi pi-exclamation-circle"></i>
+          {{ submitError() }}
+        </div>
+      }
+    </div>
+
+  </div>
+
+</div>

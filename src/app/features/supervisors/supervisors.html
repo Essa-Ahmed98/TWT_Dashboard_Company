@@ -83,7 +83,7 @@
           <tr>
             <th>المشرف</th>
             <th>المركز</th>
-            <th>الفوج</th>
+            <th>المجموعة</th>
             <th>رقم الجواز</th>
             <th>الجنسية</th>
             <th>اللغات</th>
@@ -228,7 +228,7 @@
         </div>
       </div>
 
-      <!-- المركز + الفوج -->
+      <!-- المركز + المجموعة -->
       <div class="form-row">
         <div class="form-field">
           <label class="form-label">المركز <span class="form-req">*</span></label>
@@ -263,13 +263,13 @@
         </div>
 
         <div class="form-field">
-          <label class="form-label">الفوج <span class="form-req">*</span></label>
+          <label class="form-label">المجموعة <span class="form-req">*</span></label>
           <div class="ss" [class.ss--disabled]="!formData().campaignId || submitting()">
             <button type="button" class="ss__trigger"
               [disabled]="!formData().campaignId || submitting()"
               (click)="toggleGrpDrop()">
               <span [class.ss__placeholder]="!selectedGrpName()">
-                {{ selectedGrpName() || (formData().campaignId ? 'اختر الفوج' : 'اختر المركز أولاً') }}
+                {{ selectedGrpName() || (formData().campaignId ? 'اختر المجموعة' : 'اختر المركز أولاً') }}
               </span>
               @if (selectedGrpName()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearGrp()"></i>
@@ -282,7 +282,7 @@
                 @if (grpLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (grpList().length === 0) {
-                  <div class="ss__state">لا توجد أفواج</div>
+                  <div class="ss__state">لا توجد مجموعات</div>
                 } @else {
                   <ul class="ss__list">
                     @for (g of grpList(); track g.Id) {

@@ -1,0 +1,311 @@
+@use 'sass:color';
+
+// ── Design tokens ─────────────────────────────────────────────────
+$primary:      #0b405b;
+$primary-dark: #0a3550;
+$border:       #e9edf2;
+$bg-page:      #f4f6f9;
+$bg-white:     #ffffff;
+$text-main:    #1a2e3b;
+$text-muted:   #6c7a89;
+$text-label:   #374151;
+
+// ── Backdrop ──────────────────────────────────────────────────────
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+}
+
+// ── Page layout ───────────────────────────────────────────────────
+.accom {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  &__title-text {
+    font-size: 22px;
+    font-weight: 700;
+    color: $text-main;
+    margin: 0 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    i { font-size: 18px; color: $primary; }
+  }
+
+  &__title-sub {
+    font-size: 13px;
+    color: $text-muted;
+    margin: 0;
+  }
+
+  // ── Card ──────────────────────────────────────────────────────
+  &__card {
+    background: $bg-white;
+    border-radius: 14px;
+    border: 1px solid $border;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 20px;
+    border-bottom: 1px solid $border;
+    border-radius: 14px 14px 0 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: $text-main;
+
+    i { color: $primary; font-size: 16px; }
+  }
+
+  &__card-body {
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  &__card-footer {
+    padding: 14px 20px;
+    border-top: 1px solid $border;
+    border-radius: 0 0 14px 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  // ── Two-column row ────────────────────────────────────────────
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // ── Map ───────────────────────────────────────────────────────
+  &__map-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-label;
+    margin-bottom: 8px;
+
+    i { color: $primary; font-size: 13px; }
+  }
+
+  &__map-wrap {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid $border;
+  }
+
+  &__map {
+    width: 100%;
+    height: 380px;
+  }
+}
+
+// ── Form helpers ──────────────────────────────────────────────────
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-label;
+}
+
+.form-input {
+  width: 100%;
+  height: 38px;
+  border: 1px solid $border;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: $text-main;
+  background: $bg-white;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color .18s;
+
+  &::placeholder { color: $text-muted; }
+  &:focus        { border-color: $primary; }
+  &:disabled     { background: $bg-page; cursor: not-allowed; opacity: .7; }
+
+  /* hide number spinners */
+  &[type='number']::-webkit-inner-spin-button,
+  &[type='number']::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  &[type='number'] { -moz-appearance: textfield; }
+}
+
+// ── Smart-select (ss) ─────────────────────────────────────────────
+.ss {
+  position: relative;
+
+  &__trigger {
+    width: 100%;
+    height: 38px;
+    border: 1px solid $border;
+    border-radius: 8px;
+    padding: 0 10px 0 12px;
+    font-family: inherit;
+    font-size: 13.5px;
+    color: $text-main;
+    background: $bg-white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    transition: border-color .18s;
+    box-sizing: border-box;
+    text-align: start;
+
+    &:hover:not(:disabled) { border-color: color.adjust($border, $lightness: -10%); }
+    &:disabled             { background: $bg-page; cursor: not-allowed; opacity: .65; }
+
+    span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  }
+
+  &__placeholder { color: $text-muted !important; }
+
+  &__clear {
+    color: $text-muted;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    transition: background .12s, color .12s;
+    &:hover { background: rgba(0, 0, 0, .07); color: $text-main; }
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    inset-inline-start: 0;
+    inset-inline-end: 0;
+    background: $bg-white;
+    border: 1px solid $border;
+    border-radius: 10px;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, .11);
+    z-index: 300;
+    overflow: hidden;
+  }
+
+  &__state {
+    padding: 16px;
+    text-align: center;
+    color: $text-muted;
+    font-size: 13px;
+  }
+
+  &__list {
+    list-style: none;
+    padding: 4px;
+    margin: 0;
+    max-height: 220px;
+    overflow-y: auto;
+  }
+
+  &__item {
+    padding: 9px 12px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    color: $text-main;
+    cursor: pointer;
+    transition: background .12s;
+
+    &:hover    { background: $bg-page; }
+    &--active  { background: rgba($primary, .08); color: $primary; font-weight: 500; }
+  }
+
+  &--disabled .ss__trigger {
+    opacity: .6;
+    pointer-events: none;
+  }
+}
+
+// ── Error message ─────────────────────────────────────────────────
+.accom__error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: 2px;
+
+  i { font-size: 13px; }
+}
+
+// ── Spinners ──────────────────────────────────────────────────────
+@keyframes ac-spin { to { transform: rotate(360deg); } }
+
+.btn-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, .35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: ac-spin .7s linear infinite;
+  flex-shrink: 0;
+}
+
+.ss-spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba($primary, .2);
+  border-top-color: $primary;
+  border-radius: 50%;
+  animation: ac-spin .7s linear infinite;
+}
+
+// ── Button ────────────────────────────────────────────────────────
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 20px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background .18s;
+  white-space: nowrap;
+
+  i { font-size: 14px; }
+
+  &--primary {
+    background: $primary;
+    color: #fff;
+    &:hover:not(:disabled) { background: $primary-dark; }
+  }
+
+  &:disabled { opacity: .5; cursor: not-allowed; }
+}

@@ -12,7 +12,7 @@
     <div class="campaigns__title">
       <h1 class="campaigns__title-text">إدارة المراكز</h1>
       <span class="campaigns__title-count">
-        {{ campaigns().length }} مركز مسجلة &bull; {{ totalGroups() }} فوج
+        {{ campaigns().length }} مركز مسجلة &bull; {{ totalGroups() }} مجموعة
       </span>
     </div>
     <div class="campaigns__actions">
@@ -93,7 +93,7 @@
             <div class="cstat">
               <i class="pi pi-sitemap cstat__icon" [style.color]="c.color || null"></i>
               <span class="cstat__value">{{ c.groupsCount }}</span>
-              <span class="cstat__label">فوج</span>
+              <span class="cstat__label">مجموعة</span>
             </div>
             <div class="cstat">
               <i class="pi pi-user cstat__icon" [style.color]="c.color || null"></i>
@@ -109,7 +109,7 @@
 
           <div class="campaign-card__footer">
             <a class="campaign-card__link" (click)="openDetail(c.id)">
-              عرض التفاصيل والأفواج
+              عرض التفاصيل والمجموعات
               <i class="pi pi-angle-left"></i>
             </a>
           </div>
@@ -135,7 +135,7 @@
           <tr>
             <th>المركز</th>
             <th>الحجاج</th>
-            <th>الأفواج</th>
+            <th>المجموعات</th>
             <th>المشرفين</th>
             <th>الحافلات</th>
             <th>الحالة</th>
@@ -163,7 +163,7 @@
               </td>
               <td>
                 <a class="table-link" (click)="openDetail(c.id)">
-                  عرض التفاصيل والأفواج
+                  عرض التفاصيل والمجموعات
                   <i class="pi pi-angle-left"></i>
                 </a>
               </td>
