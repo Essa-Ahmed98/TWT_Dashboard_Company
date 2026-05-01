@@ -372,7 +372,6 @@ export class Broadcast implements OnInit, OnDestroy {
       .subscribe({
         next: res => {
           if (res.IsSuccess) {
-            this.content.set('');
             this.showSuccess();
           } else {
             this.showError(res);
@@ -409,7 +408,6 @@ export class Broadcast implements OnInit, OnDestroy {
             .subscribe({
               next: r => {
                 if (r.IsSuccess) {
-                  this.content.set('');
                   this.showSuccess();
                 } else {
                   this.showError(r);
@@ -468,7 +466,21 @@ export class Broadcast implements OnInit, OnDestroy {
       });
   }
 
+  private resetForm(): void {
+    this.content.set('');
+    this.selectedTargetType.set(TargetType.Company);
+    this.selectedCampId.set('');
+    this.selectedCampName.set('');
+    this.selectedGroupId.set('');
+    this.selectedGrpName.set('');
+    this.grpList.set([]);
+    this.discardImagePreview();
+    this.discardAudioPreview();
+    this.submitError.set(null);
+  }
+
   private showSuccess(): void {
+    this.resetForm();
     this.toast.add({
       severity: 'success',
       summary: 'تم الإرسال',

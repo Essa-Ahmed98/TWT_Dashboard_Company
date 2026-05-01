@@ -127,14 +127,17 @@
   <div class="pt__two-cols">
     <div class="info-card">
       <div class="info-card__header">
-        <i class="pi pi-map-marker"></i>
-        الموقع الحالي
+        <i class="pi pi-home"></i>
+        موقع السكن
       </div>
-      <div class="map-placeholder">
-        <i class="pi pi-map-marker map-placeholder__pin"></i>
-        <span class="map-placeholder__location">{{ pilgrim().location || 'غير متوفر' }}</span>
-        <span class="map-placeholder__updated">آخر تحديث: منذ 3 دقائق</span>
-      </div>
+      @if (pilgrim().accommodationLat != null && pilgrim().accommodationLng != null) {
+        <div #accommodationMapEl class="accommodation-map"></div>
+      } @else {
+        <div class="map-placeholder">
+          <i class="pi pi-home map-placeholder__pin"></i>
+          <span class="map-placeholder__location">{{ pilgrim().accommodation || 'لم يتم تحديد موقع السكن' }}</span>
+        </div>
+      }
     </div>
 
     <div class="info-card">

@@ -26,6 +26,8 @@ export interface PilgrimDetailData {
   group: string;
   supervisor: string;
   accommodation: string;
+  accommodationLat: number | null;
+  accommodationLng: number | null;
   nusukCard: string;
   permitNumber: string;
   hajjYear: string;
@@ -145,6 +147,8 @@ export function pilgrimApiToDetailData(pilgrim: PilgrimDetailApiItem): PilgrimDe
     group: pilgrim.GroupName,
     supervisor: 'غير متوفر',
     accommodation: pilgrim.Accommodation,
+    accommodationLat: pilgrim.AccommodationLat ?? null,
+    accommodationLng: pilgrim.AccommodationLong ?? null,
     nusukCard: pilgrim.NuskCardNumber,
     permitNumber: pilgrim.PermitNumber,
     hajjYear: '1447',

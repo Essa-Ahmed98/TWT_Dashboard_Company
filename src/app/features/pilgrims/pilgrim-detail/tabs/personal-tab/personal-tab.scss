@@ -102,6 +102,12 @@ $card-shadow: 0 4px 24px -4px hsla(200, 79%, 20%, .1);
   &:is(select)   { cursor: pointer; padding-left: .25rem; }
 }
 
+// ── Accommodation Map ─────────────────────────────────────────
+.accommodation-map {
+  height: 13rem;
+  width: 100%;
+}
+
 // ── Map Placeholder ───────────────────────────────────────────
 .map-placeholder {
   height: 13rem;

@@ -150,6 +150,8 @@ export interface PilgrimDetailApiItem {
   Phone:                    string;
   IDNumber:                 string;
   Accommodation:            string;
+  AccommodationLat:         number | null;
+  AccommodationLong:        number | null;
   NuskCardNumber:           string;
   PermitNumber:             string;
   BloodType:                number;
