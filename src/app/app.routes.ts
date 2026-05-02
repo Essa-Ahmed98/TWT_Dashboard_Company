@@ -26,6 +26,11 @@ export const routes: Routes = [
       import('./layout/shell/shell').then((m) => m.Shell),
     children: [
       {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/dashboard/dashboard').then((m) => m.Dashboard),
+      },
+      {
         path: 'campaigns',
         loadComponent: () =>
           import('./features/campaigns/campaigns').then((m) => m.Campaigns),
@@ -100,7 +105,7 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/settings/settings').then((m) => m.Settings),
       },
-      { path: '', redirectTo: 'campaigns', pathMatch: 'full' },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
   { path: '**', redirectTo: '/auth/login' },

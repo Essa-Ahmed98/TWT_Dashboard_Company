@@ -1,0 +1,248 @@
+<div class="dashboard">
+
+  <!-- ══════════════════════════════════════════
+       HEADER
+  ══════════════════════════════════════════ -->
+  <div class="dashboard__header">
+    <div class="dashboard__title">
+      <h1 class="dashboard__title-text">لوحة التحكم الرئيسية</h1>
+      <span class="dashboard__title-sub">لوحة التحكم الإدارية &bull; موسم حج {{ hijriYear }}</span>
+    </div>
+    <div class="dashboard__actions">
+      <span class="system-badge">
+        <span class="system-badge__dot"></span>
+        النظام يعمل
+      </span>
+      <a class="btn-monitor" routerLink="/geo-fence">
+        <i class="pi pi-eye"></i>
+        غرفة المراقبة
+      </a>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       LOADING
+  ══════════════════════════════════════════ -->
+  @if (svc.loading()) {
+    <div class="dashboard__loading">
+      <span class="dashboard__spinner"></span>
+      <span>جاري التحميل...</span>
+    </div>
+  }
+
+  @if (!svc.loading() && svc.stats(); as s) {
+
+    <!-- ══════════════════════════════════════════
+         PRIMARY STAT CARDS
+    ══════════════════════════════════════════ -->
+    <div class="stat-grid">
+
+      <div class="stat-card stat-card--navy">
+        <div class="stat-card__icon-wrap">
+          <i class="pi pi-users"></i>
+        </div>
+        <div class="stat-card__body">
+          <span class="stat-card__label">إجمالي الحجاج</span>
+          <span class="stat-card__value">{{ s.PilgrimsCount | number }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card stat-card--gold">
+        <div class="stat-card__icon-wrap">
+          <i class="pi pi-map"></i>
+        </div>
+        <div class="stat-card__body">
+          <span class="stat-card__label">الحملات النشطة</span>
+          <span class="stat-card__value">{{ s.CampaignsCount }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card stat-card--light">
+        <div class="stat-card__icon-wrap stat-card__icon-wrap--muted">
+          <i class="pi pi-user-check"></i>
+        </div>
+        <div class="stat-card__body">
+          <span class="stat-card__label stat-card__label--dark">المشرفين النشطين</span>
+          <span class="stat-card__value stat-card__value--dark">{{ s.SupervisorsCount | number }}</span>
+          <span class="stat-card__sub stat-card__sub--muted">{{ s.OnlineSupervisorsCount }} متصل</span>
+        </div>
+      </div>
+
+      <div class="stat-card stat-card--light">
+        <div class="stat-card__icon-wrap stat-card__icon-wrap--muted">
+          <i class="pi pi-sitemap"></i>
+        </div>
+        <div class="stat-card__body">
+          <span class="stat-card__label stat-card__label--dark">المجموعات</span>
+          <span class="stat-card__value stat-card__value--dark">{{ s.GroupsCount | number }}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         SECONDARY STAT CARDS
+    ══════════════════════════════════════════ -->
+    <div class="mini-grid">
+
+      <div class="mini-card">
+        <div class="mini-card__icon mini-card__icon--blue">
+          <i class="pi pi-car"></i>
+        </div>
+        <div class="mini-card__body">
+          <span class="mini-card__label">الحافلات النشطة</span>
+          <span class="mini-card__value">{{ s.BusesCount }}</span>
+        </div>
+      </div>
+
+      <div class="mini-card">
+        <div class="mini-card__icon mini-card__icon--green">
+          <i class="pi pi-user"></i>
+        </div>
+        <div class="mini-card__body">
+          <span class="mini-card__label">إجمالي المشرفين</span>
+          <span class="mini-card__value">{{ s.SupervisorsCount }}</span>
+        </div>
+      </div>
+
+      <div class="mini-card">
+        <div class="mini-card__icon mini-card__icon--orange">
+          <i class="pi pi-wifi"></i>
+        </div>
+        <div class="mini-card__body">
+          <span class="mini-card__label">المشرفين المتصلين</span>
+          <span class="mini-card__value">{{ s.OnlineSupervisorsCount }}</span>
+        </div>
+      </div>
+
+      <div class="mini-card">
+        <div class="mini-card__icon mini-card__icon--red">
+          <i class="pi pi-sitemap"></i>
+        </div>
+        <div class="mini-card__body">
+          <span class="mini-card__label">إجمالي المجموعات</span>
+          <span class="mini-card__value">{{ s.GroupsCount }}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         CHARTS ROW
+    ══════════════════════════════════════════ -->
+    <div class="charts-row">
+
+      <!-- Activity Line Chart (static) -->
+      <div class="chart-card">
+        <div class="chart-card__head">
+          <h3 class="chart-card__title">نشاط الحجاج والتنبيهات خلال اليوم</h3>
+          <span class="chart-card__badge">آخر تحديث: الآن</span>
+        </div>
+        <svg class="area-chart" viewBox="0 0 560 175" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="actGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="#22c35d" stop-opacity="0.22"/>
+              <stop offset="100%" stop-color="#22c35d" stop-opacity="0.02"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Grid lines -->
+          <line x1="55" y1="15"    x2="545" y2="15"    stroke="#f0f3f7" stroke-width="1"/>
+          <line x1="55" y1="47"    x2="545" y2="47"    stroke="#f0f3f7" stroke-width="1"/>
+          <line x1="55" y1="80"    x2="545" y2="80"    stroke="#f0f3f7" stroke-width="1"/>
+          <line x1="55" y1="112"   x2="545" y2="112"   stroke="#f0f3f7" stroke-width="1"/>
+          <line x1="55" y1="145"   x2="545" y2="145"   stroke="#f0f3f7" stroke-width="1"/>
+
+          <!-- Y-axis labels -->
+          <text x="48" y="19"  text-anchor="end" font-size="9" fill="#9aa5b1">١٤٠٠٠</text>
+          <text x="48" y="51"  text-anchor="end" font-size="9" fill="#9aa5b1">١٠٥٠٠</text>
+          <text x="48" y="84"  text-anchor="end" font-size="9" fill="#9aa5b1">٧٠٠٠</text>
+          <text x="48" y="116" text-anchor="end" font-size="9" fill="#9aa5b1">٣٥٠٠</text>
+          <text x="48" y="149" text-anchor="end" font-size="9" fill="#9aa5b1">٠</text>
+
+          <!-- Area fill -->
+          <path
+            d="M 55,145 L 55,45 C 95,45 108,44 153,44 C 198,44 210,42 251,42 C 292,42 305,38 349,37 C 393,36 400,34 447,34 C 494,34 520,30 545,30 L 545,145 Z"
+            fill="url(#actGrad)"/>
+
+          <!-- Line -->
+          <path
+            d="M 55,45 C 95,45 108,44 153,44 C 198,44 210,42 251,42 C 292,42 305,38 349,37 C 393,36 400,34 447,34 C 494,34 520,30 545,30"
+            fill="none" stroke="#22c35d" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round"/>
+
+          <!-- X-axis labels -->
+          <text x="55"  y="162" text-anchor="middle" font-size="9" fill="#9aa5b1">١ص</text>
+          <text x="153" y="162" text-anchor="middle" font-size="9" fill="#9aa5b1">٨ص</text>
+          <text x="251" y="162" text-anchor="middle" font-size="9" fill="#9aa5b1">١٢ظ</text>
+          <text x="349" y="162" text-anchor="middle" font-size="9" fill="#9aa5b1">٢م</text>
+          <text x="447" y="162" text-anchor="middle" font-size="9" fill="#9aa5b1">٤م</text>
+          <text x="545" y="162" text-anchor="middle" font-size="9" fill="#9aa5b1">٦م</text>
+        </svg>
+      </div>
+
+      <!-- Health Donut Chart (API) -->
+      <div class="chart-card chart-card--donut">
+        <h3 class="chart-card__title">توزيع الحالات الصحية</h3>
+
+        @if (svc.healthLoading()) {
+          <div class="chart-card__loading">
+            <span class="chart-card__spinner"></span>
+          </div>
+        }
+
+        @if (!svc.healthLoading() && donutData(); as d) {
+          <div class="donut-wrap">
+            <svg viewBox="0 0 120 120" class="donut-svg">
+              <!-- Background ring -->
+              <circle cx="60" cy="60" r="47" fill="none" stroke="#f0f3f7" stroke-width="14"/>
+
+              <!-- Arc segments -->
+              @for (seg of d.segments; track seg.label) {
+                @if (seg.path) {
+                  <path
+                    [attr.d]="seg.path"
+                    [attr.fill]="seg.color"
+                    class="donut-seg"
+                    [class.donut-seg--hovered]="hoveredSegment()?.label === seg.label"
+                    (mouseenter)="hoveredSegment.set(seg)"
+                    (mouseleave)="hoveredSegment.set(null)"/>
+                }
+              }
+
+              <!-- Center: hover info or total -->
+              @if (hoveredSegment(); as seg) {
+                <text x="60" y="54" text-anchor="middle" font-size="17" font-weight="800" [attr.fill]="seg.color">{{ seg.count }}</text>
+                <text x="60" y="65" text-anchor="middle" font-size="7.5" fill="#6c7a89">{{ seg.label }}</text>
+                <text x="60" y="76" text-anchor="middle" font-size="8" fill="#9aa5b1">{{ seg.pct }}%</text>
+              } @else {
+                <text x="60" y="56" text-anchor="middle" font-size="17" font-weight="800" fill="#1a2e3b">{{ d.pilgrims | number }}</text>
+                <text x="60" y="68" text-anchor="middle" font-size="7.5" fill="#6c7a89">إجمالي الحجاج</text>
+              }
+            </svg>
+          </div>
+
+          <div class="donut-legend">
+            @for (seg of d.segments; track seg.label) {
+              <div class="donut-legend__item"
+                   (mouseenter)="hoveredSegment.set(seg)"
+                   (mouseleave)="hoveredSegment.set(null)">
+                <span class="donut-legend__dot" [style.background]="seg.color"></span>
+                <span class="donut-legend__label">{{ seg.label }}</span>
+                <span class="donut-legend__count">{{ seg.count | number }}</span>
+              </div>
+            }
+            <div class="donut-legend__divider"></div>
+            <div class="donut-legend__item donut-legend__item--total">
+              <span class="donut-legend__label">إجمالي الحجاج</span>
+              <span class="donut-legend__count">{{ d.pilgrims | number }}</span>
+            </div>
+          </div>
+        }
+      </div>
+
+    </div>
+
+  }
+
+</div>

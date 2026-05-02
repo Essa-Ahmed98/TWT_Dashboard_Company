@@ -1,0 +1,432 @@
+// ── Design tokens ─────────────────────────────────────────────────
+$primary:    #0b405b;
+$border:     #e9edf2;
+$bg-page:    #f4f6f9;
+$bg-white:   #ffffff;
+$text-main:  #1a2e3b;
+$text-muted: #6c7a89;
+$green:      #22c35d;
+$gold:       #b99000;
+$gold-bg:    #c8a400;
+
+// ── Page layout ───────────────────────────────────────────────────
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  // ── Header ──────────────────────────────────────────────────────
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  &__title {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__title-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $text-main;
+    margin: 0;
+  }
+
+  &__title-sub {
+    font-size: 0.875rem;
+    color: $text-muted;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  // ── Loading ──────────────────────────────────────────────────────
+  &__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 100px 0;
+    color: $text-muted;
+    font-size: 14px;
+  }
+
+  &__spinner {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    border: 3px solid rgba($primary, .2);
+    border-top-color: $primary;
+    border-radius: 50%;
+    animation: dash-spin .7s linear infinite;
+    flex-shrink: 0;
+  }
+}
+
+@keyframes dash-spin { to { transform: rotate(360deg); } }
+
+// ── Charts row ────────────────────────────────────────────────────
+.charts-row {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 16px;
+  min-height: 320px;
+
+  @media (max-width: 960px) { grid-template-columns: 1fr; }
+}
+
+// ── Chart card ────────────────────────────────────────────────────
+.chart-card {
+  background: $bg-white;
+  border: 1px solid $border;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-size: 14px;
+    font-weight: 700;
+    color: $text-main;
+    margin: 0 0 16px;
+    flex-shrink: 0;
+  }
+
+  &__badge {
+    font-size: 11px;
+    color: $text-muted;
+  }
+
+  &__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+  }
+
+  &__spinner {
+    width: 26px;
+    height: 26px;
+    border: 3px solid rgba($primary, .2);
+    border-top-color: $primary;
+    border-radius: 50%;
+    animation: dash-spin .7s linear infinite;
+  }
+
+  &--donut {
+    flex-direction: column;
+  }
+}
+
+// ── SVG area chart ────────────────────────────────────────────────
+.area-chart {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: block;
+  overflow: visible;
+}
+
+// ── Donut chart ───────────────────────────────────────────────────
+.donut-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+  flex: 1;
+  align-items: center;
+}
+
+.donut-svg {
+  width: 155px;
+  height: 155px;
+  overflow: visible;
+}
+
+.donut-seg {
+  cursor: pointer;
+  transition: filter .18s, transform .18s;
+  transform-origin: 60px 60px;
+
+  &--hovered {
+    filter: brightness(.88);
+    transform: scale(1.04);
+  }
+}
+
+// ── Donut legend ──────────────────────────────────────────────────
+.donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background .14s;
+
+    &:hover { background: $bg-page; }
+
+    &--total {
+      cursor: default;
+      &:hover { background: transparent; }
+    }
+  }
+
+  &__divider {
+    height: 1px;
+    background: $border;
+    margin: 2px 0;
+  }
+
+  &__dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  &__label {
+    flex: 1;
+    font-size: 12.5px;
+    color: $text-muted;
+  }
+
+  &__count {
+    font-size: 13px;
+    font-weight: 700;
+    color: $text-main;
+  }
+}
+
+// ── System badge ──────────────────────────────────────────────────
+.system-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: #edfaf3;
+  color: #1a9652;
+  font-size: 13px;
+  font-weight: 600;
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: $green;
+    animation: pulse-green 2s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse-green {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: .55; transform: scale(.85); }
+}
+
+// ── Monitor button ────────────────────────────────────────────────
+.btn-monitor {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: 1.5px solid $border;
+  background: transparent;
+  color: $text-main;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color .15s, background .15s;
+
+  i { font-size: 14px; color: $text-muted; }
+
+  &:hover {
+    border-color: $primary;
+    background: rgba($primary, .05);
+    i { color: $primary; }
+  }
+}
+
+// ── Primary stat grid ─────────────────────────────────────────────
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+
+  @media (max-width: 1100px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 600px)  { grid-template-columns: 1fr; }
+}
+
+// ── Stat card ─────────────────────────────────────────────────────
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-radius: 16px;
+  padding: 22px 20px;
+
+  &--navy {
+    background: $primary;
+    color: #fff;
+    .stat-card__icon-wrap { background: rgba(#fff, .15); color: #fff; }
+  }
+
+  &--gold {
+    background: $gold-bg;
+    color: #fff;
+    .stat-card__icon-wrap { background: rgba(#fff, .2); color: #fff; }
+  }
+
+  &--light {
+    background: $bg-white;
+    border: 1px solid $border;
+    color: $text-main;
+  }
+
+  &--red {
+    background: #fff5f5;
+    border: 1px solid #fecaca;
+    color: $text-main;
+    .stat-card__icon-wrap { background: #fee2e2; color: #dc2626; }
+  }
+
+  &__icon-wrap {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: rgba(#fff, .15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    i { font-size: 22px; }
+
+    &--muted {
+      background: $bg-page;
+      color: $text-muted;
+    }
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  &__label {
+    font-size: 13px;
+    font-weight: 500;
+    opacity: .85;
+    white-space: nowrap;
+
+    &--dark { color: $text-muted; opacity: 1; }
+  }
+
+  &__value {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -.5px;
+
+    &--dark { color: $text-main; }
+  }
+
+  &__sub {
+    font-size: 12px;
+    opacity: .75;
+
+    &--muted { color: $text-muted; opacity: 1; }
+  }
+}
+
+// ── Secondary mini grid ───────────────────────────────────────────
+.mini-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+
+  @media (max-width: 1100px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 600px)  { grid-template-columns: 1fr; }
+}
+
+// ── Mini card ─────────────────────────────────────────────────────
+.mini-card {
+  background: $bg-white;
+  border: 1px solid $border;
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: box-shadow .2s;
+
+  &:hover { box-shadow: 0 4px 16px rgba(0,0,0,.06); }
+
+  &__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    i { font-size: 18px; }
+
+    &--red    { background: #fee2e2; color: #dc2626; }
+    &--blue   { background: #dbeafe; color: #2563eb; }
+    &--green  { background: #dcfce7; color: #16a34a; }
+    &--orange { background: #ffedd5; color: #ea580c; }
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__label {
+    font-size: 12.5px;
+    color: $text-muted;
+    white-space: nowrap;
+  }
+
+  &__value {
+    font-size: 22px;
+    font-weight: 800;
+    color: $text-main;
+    line-height: 1.1;
+  }
+
+  &__sub {
+    font-size: 11.5px;
+    color: $text-muted;
+  }
+}
