@@ -6,6 +6,7 @@ import { MessageService } from 'primeng/api';
 import { PilgrimsService } from '../pilgrims.service';
 import { PilgrimDetailData, STATUS_LABEL, pilgrimApiToDetailData } from '../pilgrim-detail/pilgrim-detail.model';
 import { PersonalTab } from '../pilgrim-detail/tabs/personal-tab/personal-tab';
+import { SupervisorsTab } from '../pilgrim-detail/tabs/supervisors-tab/supervisors-tab';
 
 interface PilgrimProfileState {
   loading: boolean;
@@ -20,7 +21,7 @@ const INITIAL_PROFILE_STATE: PilgrimProfileState = {
 @Component({
   selector: 'app-pilgrim-profile',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PersonalTab],
+  imports: [PersonalTab, SupervisorsTab],
   templateUrl: './pilgrim-profile.html',
   styleUrl: './pilgrim-profile.scss',
 })
@@ -34,6 +35,12 @@ export class PilgrimProfile {
   readonly detailState = signal<PilgrimProfileState>(INITIAL_PROFILE_STATE);
   readonly pilgrim = computed(() => this.detailState().data);
   readonly showAccommodationLoading = signal(false);
+  readonly activeTab = signal<'personal' | 'supervisors'>('personal');
+
+  readonly tabs: { key: 'personal' | 'supervisors'; label: string; icon: string }[] = [
+    { key: 'personal', label: 'البيانات الشخصية', icon: 'pi pi-user' },
+    { key: 'supervisors', label: 'بيانات المشرفين', icon: 'pi pi-user-edit' },
+  ];
 
   constructor() {
     this.route.paramMap

@@ -10,6 +10,7 @@ import { PersonalTab } from './tabs/personal-tab/personal-tab';
 import { HealthTab } from './tabs/health-tab/health-tab';
 import { RitualsTab } from './tabs/rituals-tab/rituals-tab';
 import { FamilyTab } from './tabs/family-tab/family-tab';
+import { SupervisorsTab } from './tabs/supervisors-tab/supervisors-tab';
 import { RatingsTab } from './tabs/ratings-tab/ratings-tab';
 
 interface PilgrimDetailState {
@@ -24,7 +25,7 @@ const INITIAL_DETAIL_STATE: PilgrimDetailState = {
 
 @Component({
   selector: 'app-pilgrim-detail',
-  imports: [PersonalTab, HealthTab, RitualsTab, FamilyTab, RatingsTab],
+  imports: [PersonalTab, HealthTab, RitualsTab, FamilyTab, SupervisorsTab, RatingsTab],
   templateUrl: './pilgrim-detail.html',
   styleUrl: './pilgrim-detail.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,6 +47,7 @@ export class PilgrimDetail {
 
   tabs: { key: PilgrimTab; label: string; icon: string }[] = [
     { key: 'personal', label: 'البيانات الشخصية', icon: 'pi pi-user' },
+    { key: 'supervisors', label: 'بيانات المشرفين', icon: 'pi pi-user-edit' },
     { key: 'health', label: 'الصحة والأدوية', icon: 'pi pi-heart' },
     { key: 'rituals', label: 'المناسك', icon: 'pi pi-map-marker' },
     { key: 'family', label: 'العائلة', icon: 'pi pi-users' },

@@ -1,34 +1,81 @@
 <div class="settings">
   <div class="settings__header">
     <div class="settings__title">
-      <h1 class="settings__title-text">
-        <i class="pi pi-cog"></i>
-        الإعدادات
-      </h1>
+      <h1 class="settings__title-text">الإعدادات</h1>
       <p class="settings__title-sub">إعدادات النظام والشركة</p>
     </div>
   </div>
 
+  <div class="settings__tabs" role="tablist" aria-label="تبويبات الإعدادات">
+    <button class="settings__tab settings__tab--active" type="button" role="tab" aria-selected="true">
+      <i class="pi pi-mobile"></i>
+      <span>إعدادات الموبايل</span>
+    </button>
+  </div>
+
   <div class="settings__card">
     <div class="settings__card-header">
-      <i class="pi pi-cog"></i>
-      <span>الإعدادات</span>
+      <h2>إعدادات الموبايل</h2>
+      <button class="btn btn--primary" (click)="saveSettings()" [disabled]="saving() || loading()">
+        <i class="pi pi-save"></i>
+        {{ saving() ? 'جاري الحفظ...' : 'حفظ' }}
+      </button>
     </div>
 
-    <div class="settings__panel">
+    <div class="settings__panel" role="tabpanel">
       @if (loading()) {
-        <div class="settings__notif-list">
+        <div class="settings__profile-skeleton"></div>
+        <div class="settings__feature-list">
           @for (i of [1,2,3,4,5,6,7,8]; track i) {
             <div class="settings__skeleton-row"></div>
           }
         </div>
       } @else if (features().length) {
-        <div class="settings__notif-list">
+        <section class="settings__profile-row" aria-labelledby="mobile-icon-title">
+          <div class="settings__profile-main">
+                 <div class="settings__avatar">
+              @if (iconPreviewUrl()) {
+                <img [src]="iconPreviewUrl()" alt="أيقونة تطبيق الموبايل" />
+              } @else {
+                <i class="pi pi-user"></i>
+              }
+            </div>
+            <div class="settings__profile-copy">
+              <span id="mobile-icon-title" class="settings__profile-title">أيقونة الشركة</span>
+              <span class="settings__profile-desc">ارفع صورة جديدة لاستخدامها كأيقونة للشركة.</span>
+            </div>
+
+          </div>
+
+          <div class="settings__profile-actions">
+            <input
+              #iconInput
+              class="settings__file-input"
+              type="file"
+              accept="image/*"
+              (change)="onIconSelected($event)" />
+
+            <button class="btn btn--secondary" type="button" (click)="iconInput.click()">
+              <i class="pi pi-upload"></i>
+              رفع صورة
+            </button>
+
+            @if (iconFileName()) {
+              <button class="btn btn--ghost" type="button" (click)="clearSelectedIcon(iconInput)">
+                <i class="pi pi-times"></i>
+                إلغاء
+              </button>
+              <span class="settings__file-name">{{ iconFileName() }}</span>
+            }
+          </div>
+        </section>
+
+        <div class="settings__feature-list">
           @for (item of features(); track item.key) {
-            <div class="settings__notif-item">
-              <div class="settings__notif-info">
-                <span class="settings__notif-title">{{ item.title }}</span>
-                <span class="settings__notif-desc">{{ item.description }}</span>
+            <div class="settings__feature-row">
+              <div class="settings__feature-info">
+                <span class="settings__feature-title">{{ item.title }}</span>
+                <span class="settings__feature-desc">{{ item.description }}</span>
               </div>
               <button
                 class="toggle"
@@ -41,13 +88,6 @@
               </button>
             </div>
           }
-        </div>
-
-        <div class="settings__panel-footer">
-          <button class="btn btn--primary" (click)="saveSettings()" [disabled]="saving()">
-            <i class="pi pi-save"></i>
-            {{ saving() ? 'جارٍ الحفظ...' : 'حفظ' }}
-          </button>
         </div>
       } @else {
         <div class="settings__empty">

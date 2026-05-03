@@ -155,10 +155,6 @@
           <span class="info-row__value">{{ pilgrim().group }}</span>
         </div>
         <div class="info-row">
-          <span class="info-row__label">المشرف</span>
-          <span class="info-row__value">{{ pilgrim().supervisor }}</span>
-        </div>
-        <div class="info-row">
           <span class="info-row__label">السكن</span>
           @if (isEditing()) {
             <input class="info-edit-input" type="text" [value]="editData()!.accommodation"

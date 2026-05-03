@@ -1,0 +1,27 @@
+<div class="st">
+  @for (supervisor of pilgrim().supervisors; track supervisor.userId) {
+    <div class="supervisor-card">
+      <div class="supervisor-card__top">
+        <span class="supervisor-card__avatar">
+          <i class="pi pi-user"></i>
+        </span>
+        <div class="supervisor-card__main">
+          <span class="supervisor-card__name">{{ supervisor.displayName }}</span>
+        </div>
+      </div>
+
+      <div class="supervisor-card__details">
+        <span>
+          <i class="pi pi-envelope"></i>
+          <span dir="ltr">{{ supervisor.email }}</span>
+        </span>
+        <span>
+          <i class="pi pi-phone"></i>
+          <span dir="ltr">{{ supervisor.phone }}</span>
+        </span>
+      </div>
+    </div>
+  } @empty {
+    <div class="st__empty">لا يوجد مشرفون مرتبطون بهذا الحاج</div>
+  }
+</div>

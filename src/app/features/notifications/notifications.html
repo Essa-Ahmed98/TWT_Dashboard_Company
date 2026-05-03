@@ -1,0 +1,351 @@
+@if (showAudienceDrop() || showCampDrop() || showGrpDrop()) {
+  <div class="backdrop" (click)="closeAllDrops()"></div>
+}
+
+<div class="notifications">
+  <div class="notifications__header">
+    <div>
+      <h1 class="notifications__title">
+        <i class="pi pi-bell"></i>
+        الإشعارات الجماعية
+      </h1>
+      <p class="notifications__subtitle">إرسال إشعار بعنوان ومحتوى للحجاج والمشرفين والعائلات</p>
+    </div>
+  </div>
+
+  <div class="notifications__tabs">
+    <button class="notifications__tab"
+            [class.notifications__tab--active]="activeTab() === 'send'"
+            type="button"
+            (click)="setTab('send')">
+      <i class="pi pi-send"></i>
+      إرسال إشعار
+    </button>
+    <button class="notifications__tab"
+            [class.notifications__tab--active]="activeTab() === 'templates'"
+            type="button"
+            (click)="setTab('templates')">
+      <i class="pi pi-sparkles"></i>
+      قوالب جاهزة
+    </button>
+    <button class="notifications__tab"
+            [class.notifications__tab--active]="activeTab() === 'sent'"
+            type="button"
+            (click)="setTab('sent')">
+      <i class="pi pi-clock"></i>
+      الإشعارات المرسلة
+    </button>
+  </div>
+
+  @if (activeTab() === 'send') {
+  <div class="notifications__grid">
+    <aside class="notifications__panel">
+      <div class="notifications__panel-header">
+        <i class="pi pi-users"></i>
+        <span>تحديد الجمهور المستهدف</span>
+      </div>
+
+      <div class="notifications__panel-body">
+        <div class="form-field">
+          <label class="form-label">نوع الجمهور</label>
+          <div class="ss">
+            <button class="ss__trigger" type="button" (click)="toggleAudienceDrop()">
+              <span>{{ selectedAudienceLabel() }}</span>
+              <i class="pi pi-angle-down"></i>
+            </button>
+            @if (showAudienceDrop()) {
+              <div class="ss__dropdown">
+                <ul class="ss__list">
+                  @for (option of audienceOptions; track option.role) {
+                    <li class="ss__item"
+                        [class.ss__item--active]="selectedAudienceRole() === option.role"
+                        (click)="selectAudience(option.role)">
+                      @if (selectedAudienceRole() === option.role) {
+                        <i class="pi pi-check"></i>
+                      }
+                      <span>{{ option.label }}</span>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">الحملة</label>
+          <div class="ss">
+            <button class="ss__trigger" type="button" (click)="toggleCampDrop()">
+              <span [class.ss__placeholder]="!selectedCampName()">{{ selectedCampName() || 'كل الحملات' }}</span>
+              @if (selectedCampName()) {
+                <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearCamp()"></i>
+              } @else {
+                <i class="pi pi-angle-down"></i>
+              }
+            </button>
+            @if (showCampDrop()) {
+              <div class="ss__dropdown">
+                @if (campLoading()) {
+                  <div class="ss__state"><span class="ss-spinner"></span></div>
+                } @else if (campList().length === 0) {
+                  <div class="ss__state">لا توجد حملات</div>
+                } @else {
+                  <ul class="ss__list">
+                    @for (campaign of campList(); track campaign.Id) {
+                      <li class="ss__item"
+                          [class.ss__item--active]="selectedCampId() === campaign.Id"
+                          (click)="selectCamp(campaign)">
+                        {{ campaign.Name }}
+                      </li>
+                    }
+                  </ul>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">المجموعة / الفوج</label>
+          <div class="ss" [class.ss--disabled]="!selectedCampId()">
+            <button class="ss__trigger" type="button" [disabled]="!selectedCampId()" (click)="toggleGrpDrop()">
+              <span [class.ss__placeholder]="!selectedGrpName()">
+                {{ selectedGrpName() || (selectedCampId() ? 'كل المجموعات' : 'اختر الحملة أولاً') }}
+              </span>
+              @if (selectedGrpName()) {
+                <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearGrp()"></i>
+              } @else {
+                <i class="pi pi-angle-down"></i>
+              }
+            </button>
+            @if (showGrpDrop()) {
+              <div class="ss__dropdown">
+                @if (grpLoading()) {
+                  <div class="ss__state"><span class="ss-spinner"></span></div>
+                } @else if (grpList().length === 0) {
+                  <div class="ss__state">لا توجد مجموعات</div>
+                } @else {
+                  <ul class="ss__list">
+                    @for (group of grpList(); track group.Id) {
+                      <li class="ss__item"
+                          [class.ss__item--active]="selectedGroupId() === group.Id"
+                          (click)="selectGrp(group)">
+                        {{ group.Name }}
+                      </li>
+                    }
+                  </ul>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="notifications__audience">
+          <span class="notifications__audience-label">الجمهور المحدد</span>
+          <span class="notifications__audience-value">{{ audienceSummary() }}</span>
+        </div>
+      </div>
+    </aside>
+
+    <section class="notifications__panel notifications__panel--compose">
+      <div class="notifications__panel-header">
+        <i class="pi pi-bell"></i>
+        <span>صياغة الإشعار</span>
+      </div>
+
+      <div class="notifications__panel-body">
+        <div class="form-field">
+          <label class="form-label">نوع الإشعار</label>
+          <div class="type-grid">
+            @for (option of typeOptions; track option.type) {
+              <button class="type-card"
+                      type="button"
+                      [class]="'type-card type-card--' + option.tone"
+                      [class.type-card--active]="selectedType() === option.type"
+                      (click)="setType(option.type)">
+                <i class="pi {{ option.icon }}"></i>
+                <span>{{ option.label }}</span>
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">عنوان الإشعار *</label>
+          <input class="form-control"
+                 type="text"
+                 maxlength="100"
+                 placeholder="مثال: تنبيه عاجل - تغيير موعد التفويج"
+                 [value]="title()"
+                 (input)="title.set($any($event.target).value)" />
+          <span class="form-hint">{{ titleCount() }}/100</span>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">محتوى الإشعار *</label>
+          <textarea class="form-control form-control--textarea"
+                    rows="7"
+                    maxlength="500"
+                    placeholder="اكتب تفاصيل الإشعار هنا..."
+                    [value]="body()"
+                    (input)="body.set($any($event.target).value)"></textarea>
+          <span class="form-hint">{{ bodyCount() }}/500</span>
+        </div>
+
+        @if (title().trim() || body().trim()) {
+          <div class="form-field">
+            <label class="form-label">معاينة</label>
+            <div class="notification-preview" [class]="'notification-preview notification-preview--' + selectedTypeOption().tone">
+              <div class="notification-preview__icon">
+                <i class="pi {{ selectedTypeOption().icon }}"></i>
+              </div>
+              <div class="notification-preview__content">
+                <strong>{{ title().trim() || 'عنوان الإشعار' }}</strong>
+                <span>{{ body().trim() || 'محتوى الإشعار' }}</span>
+              </div>
+            </div>
+          </div>
+        }
+
+      </div>
+
+      <div class="notifications__footer">
+        <button class="btn btn--primary" type="button" [disabled]="!canSend()" (click)="send()">
+          @if (submitting()) {
+            <span class="btn-spinner"></span>
+            جاري الإرسال...
+          } @else {
+            <i class="pi pi-send"></i>
+            إرسال الإشعار
+          }
+        </button>
+      </div>
+
+      @if (submitError()) {
+        <div class="notifications__error">
+          <i class="pi pi-exclamation-circle"></i>
+          {{ submitError() }}
+        </div>
+      }
+    </section>
+  </div>
+  }
+
+  @if (activeTab() === 'templates') {
+    <section class="templates-grid">
+      @for (template of templates; track template.title) {
+        <article class="template-card">
+          <div [class]="templateIconClass(template)">
+            <i class="pi {{ notificationTypeOption(template.type).icon }}"></i>
+          </div>
+
+          <div class="template-card__content">
+            <h3 class="template-card__title">{{ template.title }}</h3>
+            <p class="template-card__body">{{ template.body }}</p>
+            <div class="template-card__pills">
+              <span class="sent-card__pill" [class]="'sent-card__pill sent-card__pill--' + notificationTypeOption(template.type).tone">
+                {{ notificationTypeOption(template.type).label }}
+              </span>
+              <span class="sent-card__pill">{{ template.audience }}</span>
+            </div>
+          </div>
+
+          <button class="template-card__btn" type="button" (click)="useTemplate(template)">
+            <i class="pi pi-send"></i>
+            استخدام القالب
+          </button>
+        </article>
+      }
+    </section>
+  }
+
+  @if (activeTab() === 'sent') {
+    <section class="sent-view">
+      @if (sentLoading()) {
+        <div class="sent-state">
+          <span class="ss-spinner"></span>
+        </div>
+      } @else if (sentError()) {
+        <div class="sent-state sent-state--error">
+          <i class="pi pi-exclamation-circle"></i>
+          {{ sentError() }}
+        </div>
+      } @else if (sentItems().length === 0) {
+        <div class="sent-state">
+          لا توجد إشعارات مرسلة
+        </div>
+      } @else {
+        <div class="sent-list">
+          @for (item of sentItems(); track item.Id) {
+            <article class="sent-card">
+              <div [class]="sentCardClass(item)">
+                <i class="pi {{ notificationTypeOption(item.Type).icon }}"></i>
+              </div>
+
+              <div class="sent-card__content">
+                <div class="sent-card__header">
+                  <h3 class="sent-card__title">{{ item.Title }}</h3>
+                  <span class="sent-card__pill" [class]="'sent-card__pill sent-card__pill--' + notificationTypeOption(item.Type).tone">
+                    {{ notificationTypeOption(item.Type).label }}
+                  </span>
+                  <span class="sent-card__pill">الجميع</span>
+                </div>
+
+                <p class="sent-card__body">{{ item.Body }}</p>
+
+                <div class="sent-card__meta">
+                  <span>
+                    <i class="pi pi-clock"></i>
+                    {{ formatCreatedAt(item.CreatedAt) }}
+                  </span>
+                  <span>
+                    <i class="pi pi-check-circle"></i>
+                    مستلم {{ item.RecipientCount }}
+                  </span>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+
+        @if (sentTotalPages() > 1) {
+          <div class="pagination-bar">
+            <div class="pagination-bar__controls">
+              <button class="pagination__btn"
+                      type="button"
+                      [disabled]="!sentHasPrevious() || sentLoading()"
+                      (click)="prevSentPage()">
+                <i class="pi pi-angle-right"></i>
+              </button>
+
+              @for (page of sentPageNumbers(); track page) {
+                @if (page === '...') {
+                  <span class="pagination__ellipsis">…</span>
+                } @else {
+                  <button class="pagination__btn"
+                          type="button"
+                          [class.pagination__btn--active]="page === sentPage()"
+                          [disabled]="sentLoading()"
+                          (click)="goToSentPage(page)">
+                    {{ page }}
+                  </button>
+                }
+              }
+
+              <button class="pagination__btn"
+                      type="button"
+                      [disabled]="!sentHasNext() || sentLoading()"
+                      (click)="nextSentPage()">
+                <i class="pi pi-angle-left"></i>
+              </button>
+            </div>
+
+            <span class="pagination-bar__info">
+              {{ sentTotalCount() }} إشعار
+            </span>
+          </div>
+        }
+      }
+    </section>
+  }
+</div>

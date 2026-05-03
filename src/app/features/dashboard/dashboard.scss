@@ -8,12 +8,14 @@ $text-muted: #6c7a89;
 $green:      #22c35d;
 $gold:       #b99000;
 $gold-bg:    #c8a400;
+$shadow-sm:  0 8px 22px rgba(15, 23, 42, .045);
+$shadow-md:  0 12px 28px rgba(15, 23, 42, .07);
 
 // ── Page layout ───────────────────────────────────────────────────
 .dashboard {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 
   // ── Header ──────────────────────────────────────────────────────
   &__header {
@@ -76,35 +78,37 @@ $gold-bg:    #c8a400;
 // ── Charts row ────────────────────────────────────────────────────
 .charts-row {
   display: grid;
-  grid-template-columns: 1fr 300px;
+  grid-template-columns: 1fr;
   gap: 16px;
-  min-height: 320px;
-
-  @media (max-width: 960px) { grid-template-columns: 1fr; }
 }
 
 // ── Chart card ────────────────────────────────────────────────────
 .chart-card {
   background: $bg-white;
   border: 1px solid $border;
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: 14px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
+  box-shadow: $shadow-sm;
 
   &__head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 12px;
+    margin-bottom: 18px;
     flex-shrink: 0;
+
+    &--compact {
+      margin-bottom: 0;
+    }
   }
 
   &__title {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 700;
     color: $text-main;
-    margin: 0 0 16px;
+    margin: 0;
     flex-shrink: 0;
   }
 
@@ -130,31 +134,51 @@ $gold-bg:    #c8a400;
   }
 
   &--donut {
-    flex-direction: column;
+    min-height: 280px;
+    overflow: hidden;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset-inline-start: 0;
+      top: 0;
+      width: 5px;
+      height: 100%;
+      background: linear-gradient(180deg, $green, #fb8c00, #e53935);
+    }
   }
 }
 
-// ── SVG area chart ────────────────────────────────────────────────
-.area-chart {
-  width: 100%;
+// ── Donut chart ───────────────────────────────────────────────────
+.donut-panel {
+  display: grid;
+  grid-template-columns: minmax(180px, 240px) minmax(280px, 400px) minmax(260px, 1fr);
+  align-items: center;
+  gap: 24px;
   flex: 1;
-  min-height: 0;
-  display: block;
-  overflow: visible;
+  margin-top: 20px;
+
+  @media (max-width: 980px) {
+    grid-template-columns: minmax(180px, 240px) 1fr;
+  }
+
+  @media (max-width: 720px) {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    margin-top: 18px;
+  }
 }
 
-// ── Donut chart ───────────────────────────────────────────────────
 .donut-wrap {
   display: flex;
   justify-content: center;
-  margin-bottom: 16px;
-  flex: 1;
   align-items: center;
 }
 
 .donut-svg {
-  width: 155px;
-  height: 155px;
+  width: clamp(170px, 22vw, 220px);
+  height: clamp(170px, 22vw, 220px);
   overflow: visible;
 }
 
@@ -173,22 +197,24 @@ $gold-bg:    #c8a400;
 .donut-legend {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 
   &__item {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 4px 6px;
-    border-radius: 6px;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
     cursor: pointer;
     transition: background .14s;
+    background: #fafbfc;
 
     &:hover { background: $bg-page; }
 
     &--total {
+      background: #f8fafc;
       cursor: default;
-      &:hover { background: transparent; }
+      &:hover { background: #f8fafc; }
     }
   }
 
@@ -199,22 +225,115 @@ $gold-bg:    #c8a400;
   }
 
   &__dot {
-    width: 9px;
-    height: 9px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     flex-shrink: 0;
   }
 
   &__label {
     flex: 1;
-    font-size: 12.5px;
+    font-size: 13px;
     color: $text-muted;
   }
 
   &__count {
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 700;
     color: $text-main;
+  }
+}
+
+.health-overview {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid #eaf0f5;
+  border-radius: 14px;
+  background:
+    linear-gradient(135deg, rgba($primary, .055), rgba($green, .055)),
+    #fbfcfd;
+
+  @media (max-width: 980px) {
+    grid-column: 1 / -1;
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  &__eyebrow {
+    font-size: 13px;
+    font-weight: 700;
+    color: $text-muted;
+  }
+
+  &__score {
+    color: $text-main;
+    font-size: 34px;
+    font-weight: 850;
+    line-height: 1;
+  }
+
+  &__bar {
+    display: flex;
+    height: 12px;
+    padding: 2px;
+    border-radius: 999px;
+    background: #eef3f7;
+    overflow: hidden;
+  }
+
+  &__bar-seg {
+    min-width: 10px;
+    border-radius: 999px;
+
+    &:empty {
+      display: block;
+    }
+  }
+
+  &__tiles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+
+    @media (max-width: 520px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__tile {
+    min-height: 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 10px;
+    border: 1px solid #edf2f7;
+    border-radius: 12px;
+    background: rgba(#fff, .78);
+    min-width: 0;
+  }
+
+  &__tile-label {
+    color: $text-muted;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  &__tile-value {
+    color: $text-main;
+    font-size: 18px;
+    font-weight: 800;
   }
 }
 
@@ -275,7 +394,7 @@ $gold-bg:    #c8a400;
 .stat-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap: 14px;
 
   @media (max-width: 1100px) { grid-template-columns: repeat(2, 1fr); }
   @media (max-width: 600px)  { grid-template-columns: 1fr; }
@@ -286,18 +405,28 @@ $gold-bg:    #c8a400;
   display: flex;
   align-items: center;
   gap: 16px;
-  border-radius: 16px;
-  padding: 22px 20px;
+  border-radius: 14px;
+  min-height: 116px;
+  padding: 22px;
+  box-shadow: $shadow-sm;
+  transition: transform .18s ease, box-shadow .18s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
 
   &--navy {
     background: $primary;
     color: #fff;
+    border: 1px solid rgba(#fff, .08);
     .stat-card__icon-wrap { background: rgba(#fff, .15); color: #fff; }
   }
 
   &--gold {
     background: $gold-bg;
     color: #fff;
+    border: 1px solid rgba(#fff, .1);
     .stat-card__icon-wrap { background: rgba(#fff, .2); color: #fff; }
   }
 
@@ -317,7 +446,7 @@ $gold-bg:    #c8a400;
   &__icon-wrap {
     width: 52px;
     height: 52px;
-    border-radius: 14px;
+    border-radius: 13px;
     background: rgba(#fff, .15);
     display: flex;
     align-items: center;
@@ -341,7 +470,7 @@ $gold-bg:    #c8a400;
 
   &__label {
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     opacity: .85;
     white-space: nowrap;
 
@@ -369,7 +498,7 @@ $gold-bg:    #c8a400;
 .mini-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap: 14px;
 
   @media (max-width: 1100px) { grid-template-columns: repeat(2, 1fr); }
   @media (max-width: 600px)  { grid-template-columns: 1fr; }
@@ -380,13 +509,18 @@ $gold-bg:    #c8a400;
   background: $bg-white;
   border: 1px solid $border;
   border-radius: 14px;
+  min-height: 82px;
   padding: 18px 20px;
   display: flex;
   align-items: center;
   gap: 14px;
-  transition: box-shadow .2s;
+  box-shadow: $shadow-sm;
+  transition: transform .18s ease, box-shadow .18s ease;
 
-  &:hover { box-shadow: 0 4px 16px rgba(0,0,0,.06); }
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
 
   &__icon {
     width: 44px;

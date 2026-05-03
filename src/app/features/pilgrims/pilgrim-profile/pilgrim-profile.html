@@ -64,13 +64,26 @@
       </div>
 
       <div class="pp__tabs">
-        <span class="pp__tab pp__tab--active">
-          <i class="pi pi-user"></i>
-          البيانات الشخصية
-        </span>
+        @for (tab of tabs; track tab.key) {
+          <button
+            class="pp__tab"
+            type="button"
+            [class.pp__tab--active]="activeTab() === tab.key"
+            (click)="activeTab.set(tab.key)">
+            <i [class]="tab.icon"></i>
+            {{ tab.label }}
+          </button>
+        }
       </div>
 
-      <app-personal-tab [pilgrim]="p" />
+      @switch (activeTab()) {
+        @case ('personal') {
+          <app-personal-tab [pilgrim]="p" />
+        }
+        @case ('supervisors') {
+          <app-supervisors-tab [pilgrim]="p" />
+        }
+      }
     </div>
   </div>
 } @else {

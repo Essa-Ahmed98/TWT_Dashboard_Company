@@ -3,6 +3,7 @@ import {
   Component,
   DestroyRef,
   OnInit,
+  computed,
   effect,
   inject,
   signal,
@@ -37,6 +38,7 @@ const FEATURE_KEYS = Object.keys(FEATURE_META) as FeatureKey[];
 
 @Component({
   selector: 'app-settings',
+  host: { 'data-component': 'settings-page' },
   imports: [],
   templateUrl: './settings.html',
   styleUrl: './settings.scss',
@@ -48,9 +50,13 @@ export class Settings implements OnInit {
   private readonly toast = inject(MessageService);
 
   readonly loading = this.settingsService.loading;
-
   readonly features = signal<FeatureRow[]>([]);
   readonly saving = signal(false);
+  readonly selectedIcon = signal<File | null>(null);
+  readonly iconPreviewUrl = signal('');
+  readonly iconFileName = computed(() => this.selectedIcon()?.name ?? '');
+
+  private objectIconUrl: string | null = null;
 
   constructor() {
     effect(() => {
@@ -65,7 +71,13 @@ export class Settings implements OnInit {
           enabled: settings[key],
         }))
       );
+
+      if (!this.selectedIcon()) {
+        this.iconPreviewUrl.set(this.resolveIconUrl(settings.IconPath));
+      }
     });
+
+    this.destroyRef.onDestroy(() => this.revokeObjectIconUrl());
   }
 
   ngOnInit(): void {
@@ -78,6 +90,34 @@ export class Settings implements OnInit {
     );
   }
 
+  onIconSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      this.toast.add({
+        severity: 'warn',
+        summary: 'ملف غير مناسب',
+        detail: 'من فضلك اختر صورة صالحة',
+      });
+      input.value = '';
+      return;
+    }
+
+    this.revokeObjectIconUrl();
+    this.objectIconUrl = URL.createObjectURL(file);
+    this.selectedIcon.set(file);
+    this.iconPreviewUrl.set(this.objectIconUrl);
+  }
+
+  clearSelectedIcon(input?: HTMLInputElement): void {
+    this.selectedIcon.set(null);
+    this.revokeObjectIconUrl();
+    this.iconPreviewUrl.set(this.resolveIconUrl(this.settingsService.settings()?.IconPath));
+    if (input) input.value = '';
+  }
+
   saveSettings(): void {
     const payload = this.features().reduce((acc, feature) => {
       acc[feature.key] = feature.enabled;
@@ -85,7 +125,10 @@ export class Settings implements OnInit {
     }, {} as Omit<UpdateCompanySettingsRequest, 'Icon'>);
     const currentSettings = this.settingsService.settings();
 
-    const request = this.settingsService.updateSettings(payload);
+    const request = this.settingsService.updateSettings({
+      ...payload,
+      Icon: this.selectedIcon(),
+    });
     if (!request) {
       this.toast.add({
         severity: 'error',
@@ -118,7 +161,11 @@ export class Settings implements OnInit {
             detail: 'تم حفظ الإعدادات بنجاح',
           });
 
+          this.selectedIcon.set(null);
+          this.revokeObjectIconUrl();
+
           if (res.Data) {
+            this.iconPreviewUrl.set(this.resolveIconUrl(res.Data.IconPath));
             this.settingsService.setSettings(res.Data);
             return;
           }
@@ -131,5 +178,15 @@ export class Settings implements OnInit {
           }
         },
       });
+  }
+
+  private resolveIconUrl(path?: string | null): string {
+    return path?.trim() ?? '';
+  }
+
+  private revokeObjectIconUrl(): void {
+    if (!this.objectIconUrl) return;
+    URL.revokeObjectURL(this.objectIconUrl);
+    this.objectIconUrl = null;
   }
 }

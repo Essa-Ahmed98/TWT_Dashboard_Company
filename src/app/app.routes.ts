@@ -96,6 +96,11 @@ export const routes: Routes = [
           import('./features/broadcast/broadcast').then((m) => m.Broadcast),
       },
       {
+        path: 'notifications',
+        loadComponent: () =>
+          import('./features/notifications/notifications').then((m) => m.Notifications),
+      },
+      {
         path: 'accommodation-location',
         loadComponent: () =>
           import('./features/accommodation-location/accommodation-location').then((m) => m.AccommodationLocation),

@@ -1,8 +1,16 @@
 ﻿import { BLOOD_TYPE_OPTIONS, PilgrimDetailApiItem } from '../pilgrims.model';
 
 export type PilgrimDetailStatus = 'safe' | 'warning' | 'danger';
-export type PilgrimTab = 'personal' | 'health' | 'rituals' | 'family' | 'ratings';
+export type PilgrimTab = 'personal' | 'health' | 'rituals' | 'family' | 'supervisors' | 'ratings';
 export type RitualStatus = 'done' | 'current' | 'pending';
+
+export interface PilgrimSupervisorData {
+  id: string;
+  userId: string;
+  displayName: string;
+  email: string;
+  phone: string;
+}
 
 export interface PilgrimDetailData {
   id: string;
@@ -25,6 +33,7 @@ export interface PilgrimDetailData {
   campaign: string;
   group: string;
   supervisor: string;
+  supervisors: PilgrimSupervisorData[];
   accommodation: string;
   accommodationLat: number | null;
   accommodationLng: number | null;
@@ -110,6 +119,10 @@ function ritualStatusText(pilgrim: PilgrimDetailApiItem): string {
   return pilgrim.CurrentRitualStatusText?.trim() || '';
 }
 
+function displayValue(value: string | null | undefined): string {
+  return value?.trim() || 'غير متوفر';
+}
+
 function buildRitualTimeline(currentStatus: number): { name: string; date: string; status: RitualStatus }[] {
   const currentIndex = Math.min(Math.max(currentStatus, 0), DEFAULT_RITUALS.length - 1);
 
@@ -124,6 +137,13 @@ export function pilgrimApiToDetailData(pilgrim: PilgrimDetailApiItem): PilgrimDe
   const color = STATUS_COLOR[status];
   const bloodType = bloodTypeLabel(pilgrim.BloodType);
   const currentRitual = ritualStatusText(pilgrim);
+  const supervisors = (pilgrim.Supervisors ?? []).map(supervisor => ({
+    id: displayValue(supervisor.Id),
+    userId: displayValue(supervisor.UserId),
+    displayName: displayValue(supervisor.DisplayName),
+    email: displayValue(supervisor.Email),
+    phone: displayValue(supervisor.Phone),
+  }));
 
   return {
     id: pilgrim.Id,
@@ -145,7 +165,8 @@ export function pilgrimApiToDetailData(pilgrim: PilgrimDetailApiItem): PilgrimDe
     company: `نوع الحج: ${hajjTypeLabel(pilgrim.HajjType)}`,
     campaign: pilgrim.CampaignName,
     group: pilgrim.GroupName,
-    supervisor: 'غير متوفر',
+    supervisor: supervisors.map(supervisor => supervisor.displayName).join('، ') || 'غير متوفر',
+    supervisors,
     accommodation: pilgrim.Accommodation,
     accommodationLat: pilgrim.AccommodationLat ?? null,
     accommodationLng: pilgrim.AccommodationLong ?? null,

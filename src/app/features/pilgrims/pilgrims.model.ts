@@ -155,6 +155,15 @@ export interface PilgrimDetailApiItem {
   NuskCardNumber:           string;
   PermitNumber:             string;
   BloodType:                number;
+  Supervisors?:             PilgrimSupervisorApiItem[];
+}
+
+export interface PilgrimSupervisorApiItem {
+  Id:          string;
+  UserId:      string;
+  DisplayName: string;
+  Email:       string;
+  Phone:       string;
 }
 
 export interface PilgrimFamilyApiItem {

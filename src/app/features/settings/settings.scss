@@ -1,17 +1,15 @@
 @use 'sass:color';
 
-// ── Design tokens ─────────────────────────────────────────────────
-$primary:      #0b405b;
-$primary-dark: #0a3550;
+$primary:      #0b4d6b;
+$primary-dark: #073f59;
 $border:       #e9edf2;
-$bg-page:      #f4f6f9;
-$bg-white:     #ffffff;
+$row-bg:       #ffffff;
+$white:        #ffffff;
 $text-main:    #1a2e3b;
 $text-muted:   #6c7a89;
-$text-label:   #374151;
 $green:        #22c35d;
+$card-shadow:  0 4px 24px -4px hsla(200, 79%, 20%, .1);
 
-// ── Page layout ───────────────────────────────────────────────────
 .settings {
   display: flex;
   flex-direction: column;
@@ -19,155 +17,294 @@ $green:        #22c35d;
 
   &__header {
     display: flex;
-    align-items: flex-start;
+    justify-content: flex-start;
   }
 
   &__title-text {
-    font-size: 22px;
-    font-weight: 700;
-    color: $text-main;
-    margin: 0 0 4px;
     display: flex;
     align-items: center;
     gap: 10px;
-
-    i { font-size: 18px; color: $primary; }
+    margin: 0 0 4px;
+    color: $text-main;
+    font-size: 22px;
+    font-weight: 700;
   }
 
   &__title-sub {
-    font-size: 13px;
-    color: $text-muted;
     margin: 0;
+    color: $text-muted;
+    font-size: 13px;
   }
 
-  // ── Card ──────────────────────────────────────────────────────
-  &__card {
-    background: $bg-white;
-    border-radius: 14px;
-    border: 1px solid $border;
+  &__tabs {
     display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    gap: 4px;
+    overflow-x: auto;
+    padding: 4px;
+    border: 1px solid #eef0f4;
+    border-radius: .75rem;
+    background-color: #eef0f280;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 
-  // ── Card header ───────────────────────────────────────────────
-  &__card-header {
-    display: flex;
+  &__tab {
+    display: inline-flex;
     align-items: center;
-    gap: 10px;
-    padding: 16px 20px;
-    border-bottom: 1px solid $border;
-    font-size: 15px;
-    font-weight: 700;
-    color: $text-main;
+    gap: 6px;
+    padding: 6px 14px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: $text-muted;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all .15s;
 
-    i { color: $primary; font-size: 16px; }
+    i {
+      color: inherit;
+      font-size: 13px;
+    }
+
+    &--active {
+      background: #f4f6f9;
+      color: $text-main;
+      font-weight: 600;
+      box-shadow: $card-shadow;
+    }
   }
 
-  // ── Panel ─────────────────────────────────────────────────────
-  &__panel {
-    padding: 24px 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  // ── Skeleton row ──────────────────────────────────────────────
-  &__skeleton-row {
-    height: 62px;
-    border-bottom: 1px solid $border;
-    background: linear-gradient(90deg, #f0f2f5 25%, #e8eaed 50%, #f0f2f5 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.4s infinite;
-
-    &:last-child { border-bottom: none; }
-  }
-
-  // ── Settings list ─────────────────────────────────────────────
-  &__notif-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    border: 1px solid $border;
-    border-radius: 12px;
+  &__card {
     overflow: hidden;
+    border: 1px solid $border;
+    border-radius: 14px;
+    background: $white;
   }
 
-  &__notif-item {
+  &__card-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    padding: 18px 20px;
-    background: $bg-white;
+    padding: 16px 20px;
     border-bottom: 1px solid $border;
-    transition: background .15s;
 
-    &:last-child { border-bottom: none; }
-    &:hover      { background: rgba($primary, .015); }
+    h2 {
+      margin: 0;
+      color: $text-main;
+      font-size: 15px;
+      font-weight: 700;
+    }
   }
 
-  &__notif-info {
+  &__panel {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 20px;
+    padding: 24px 20px;
+  }
+
+  &__profile-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 92px;
+    padding: 18px 20px;
+    border: 1px solid $border;
+    border-radius: 12px;
+    background: $white;
+  }
+
+  &__profile-main {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 14px;
+    min-width: 0;
     flex: 1;
   }
 
-  &__notif-title {
+  &__profile-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  &__profile-title {
+    color: $text-main;
     font-size: 14px;
     font-weight: 600;
-    color: $text-main;
   }
 
-  &__notif-desc {
-    font-size: 12.5px;
+  &__profile-desc {
     color: $text-muted;
+    font-size: 12.5px;
+    line-height: 1.6;
   }
 
-  // ── Empty state ───────────────────────────────────────────────
+  &__profile-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    min-width: 0;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+
+  &__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    flex: 0 0 64px;
+    overflow: hidden;
+    border: 2px solid $white;
+    border-radius: 50%;
+    background: #f4f6f9;
+    color: $text-muted;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, .08);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    i {
+      font-size: 18px;
+    }
+  }
+
+  &__file-input {
+    display: none;
+  }
+
+  &__file-name {
+    max-width: 170px;
+    overflow: hidden;
+    color: $text-muted;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow: hidden;
+    border: 1px solid $border;
+    border-radius: 12px;
+  }
+
+  &__feature-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 78px;
+    padding: 18px 20px;
+    border-bottom: 1px solid $border;
+    background: $white;
+    transition: background .15s;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background: rgba($primary, .015);
+    }
+  }
+
+  &__feature-info {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__feature-title {
+    color: $text-main;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  &__feature-desc {
+    max-width: 100%;
+    color: $text-muted;
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+
   &__empty {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 12px;
-    padding: 48px 20px;
+    padding: 54px 20px;
     color: $text-muted;
   }
 
   &__empty-icon {
+    color: color.adjust($border, $lightness: -6%);
     font-size: 36px;
-    color: $border;
   }
 
   &__empty-text {
-    font-size: 14px;
-    color: $text-muted;
     margin: 0;
+    color: $text-muted;
+    font-size: 14px;
   }
 
-  // ── Panel footer ──────────────────────────────────────────────
-  &__panel-footer {
-    display: flex;
-    justify-content: flex-start;
-    padding-top: 4px;
+  &__profile-skeleton,
+  &__skeleton-row {
+    background: linear-gradient(90deg, #f0f2f5 25%, #e6ebef 50%, #f0f2f5 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+  }
+
+  &__profile-skeleton {
+    height: 92px;
+    border-radius: 12px;
+  }
+
+  &__skeleton-row {
+    height: 78px;
+    border-bottom: 1px solid $border;
+
+    &:last-child {
+      border-bottom: none;
+    }
   }
 }
 
-// ── Toggle switch ─────────────────────────────────────────────────
 .toggle {
   position: relative;
   width: 46px;
   height: 26px;
-  border-radius: 100px;
-  border: none;
-  background: #d1d5db;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: background .2s;
+  flex: 0 0 46px;
   padding: 0;
+  border: none;
+  border-radius: 100px;
   outline: none;
+  background: #dfe6ea;
+  cursor: pointer;
+  transition: background .2s;
 
   &--on {
     background: $green;
@@ -180,8 +317,8 @@ $green:        #22c35d;
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, .18);
+    background: $white;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, .22);
     transition: inset-inline-start .2s;
   }
 
@@ -190,35 +327,104 @@ $green:        #22c35d;
   }
 }
 
-// ── Button ────────────────────────────────────────────────────────
 .btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
+  min-width: 0;
   height: 38px;
   padding: 0 24px;
+  border: 1px solid transparent;
   border-radius: 8px;
+  cursor: pointer;
   font-family: inherit;
   font-size: 13.5px;
   font-weight: 600;
-  cursor: pointer;
-  border: 1px solid transparent;
-  transition: background .18s;
+  line-height: 1;
   white-space: nowrap;
+  transition: background .18s, border-color .18s, color .18s;
 
-  i { font-size: 14px; }
-
-  &--primary {
-    background: $primary;
-    color: #fff;
-    &:hover:not(:disabled) { background: $primary-dark; }
+  i {
+    font-size: 13px;
   }
 
-  &:disabled { opacity: .5; cursor: not-allowed; }
+  &--primary {
+    min-width: 72px;
+    background: $primary;
+    color: $white;
+
+    &:hover:not(:disabled) {
+      background: $primary-dark;
+    }
+  }
+
+  &--secondary {
+    border-color: rgba($primary, .2);
+    background: transparent;
+    color: $primary;
+
+    &:hover:not(:disabled) {
+      background: rgba($primary, .06);
+    }
+  }
+
+  &--ghost {
+    height: 34px;
+    padding: 0 10px;
+    background: transparent;
+    color: $text-muted;
+
+    &:hover:not(:disabled) {
+      background: rgba($text-muted, .08);
+      color: $text-main;
+    }
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: .55;
+  }
 }
 
-// ── Shimmer animation ─────────────────────────────────────────────
 @keyframes shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .settings {
+    &__tabs {
+      justify-content: stretch;
+    }
+
+    &__tab {
+      width: 100%;
+    }
+
+    &__tab {
+      justify-content: center;
+    }
+
+    &__profile-row,
+    &__profile-main,
+    &__profile-actions {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    &__profile-copy {
+      align-items: flex-start;
+      text-align: start;
+    }
+
+    &__avatar {
+      align-self: flex-start;
+    }
+  }
 }
