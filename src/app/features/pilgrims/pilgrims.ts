@@ -28,7 +28,7 @@ function translateError(key?: string | null): string | null {
 const EMPTY_FORM: PilgrimForm = {
   displayName: '',
   email: '',
-  phone: '+966',
+  phone: '',
   campaignId: '',
   groupId: '',
   passportNumber: '',
@@ -718,9 +718,9 @@ export class Pilgrims implements OnInit {
     if (!f.displayName.trim() || !f.campaignId) return;
 
     const req: CreatePilgrimRequest = {
-      Email: f.email,
+      Email: f.email.trim(),
       DisplayName: f.displayName.trim(),
-      Phone: f.phone,
+      Phone: f.phone.trim(),
       CompanyId: this.auth.currentUser()?.companyId ?? '',
       CampaignId: f.campaignId,
       GroupId: f.groupId,
@@ -767,8 +767,7 @@ export class Pilgrims implements OnInit {
       f.passportNumber.trim() &&
       f.idNumber.trim() &&
       f.ritualCardNumber.trim() &&
-      f.email.trim() &&
-      f.phone.trim() && !this.phoneInvalid() &&
+      !this.phoneInvalid() &&
       f.dateOfBirth &&
       f.campaignId &&
       f.groupId

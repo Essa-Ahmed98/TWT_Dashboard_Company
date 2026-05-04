@@ -87,6 +87,13 @@
               (input)="onSearch($any($event.target).value)"
             />
           </div>
+          <select class="page-size-select" (change)="onPageSizeChange(+$any($event.target).value)">
+            <option [value]="10" [selected]="pageSize() === 10">10</option>
+            <option [value]="20" [selected]="pageSize() === 20">20</option>
+            <option [value]="30" [selected]="pageSize() === 30">30</option>
+            <option [value]="40" [selected]="pageSize() === 40">40</option>
+            <option [value]="50" [selected]="pageSize() === 50">50</option>
+          </select>
         </div>
 
         <!-- Zone Cards -->
@@ -200,9 +207,18 @@
 
       <!-- ── Campaigns Tab ── -->
       @if (activeTab() === 'campaigns') {
-        <div class="gf__campaigns-hint">
-          <i class="pi pi-map"></i>
-          اختر مركز ثم فعّل المجموعات لعرض حجاجها على الخريطة
+        <div class="gf__campaigns-toolbar">
+          <div class="gf__campaigns-hint">
+            <i class="pi pi-map"></i>
+            اختر مركز ثم فعّل المجموعات لعرض حجاجها على الخريطة
+          </div>
+          <select class="page-size-select" (change)="onPageSizeChange(+$any($event.target).value)">
+            <option [value]="10" [selected]="pageSize() === 10">10</option>
+            <option [value]="20" [selected]="pageSize() === 20">20</option>
+            <option [value]="30" [selected]="pageSize() === 30">30</option>
+            <option [value]="40" [selected]="pageSize() === 40">40</option>
+            <option [value]="50" [selected]="pageSize() === 50">50</option>
+          </select>
         </div>
         @if (campaignsLoading()) {
           <div class="gf__spinner">

@@ -282,16 +282,24 @@ $danger:      #e53935;
 
   // ── Campaigns hint + list ────────────────────────────────────
   &__campaigns-hint {
-    padding: .75rem 1rem;
     font-size: .8125rem;
     color: #647b87;
     display: flex;
     align-items: center;
     gap: .5rem;
-    border-bottom: 1px solid #f0f2f5;
-    flex-shrink: 0;
+    min-width: 0;
 
     i { font-size: .85rem; }
+  }
+
+  &__campaigns-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    padding: .625rem .75rem;
+    border-bottom: 1px solid #f0f2f5;
+    flex-shrink: 0;
   }
 
   &__campaigns-list {

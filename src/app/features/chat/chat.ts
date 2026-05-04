@@ -15,6 +15,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { isPlatformBrowser, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { environment } from '../../../environments/environment';
 import { AuthService } from '../../core/auth/services/auth';
 import { ChatService } from './chat.service';
 import {
@@ -535,6 +536,12 @@ export class Chat implements OnInit, OnDestroy {
   }
 
   // ── Helpers ───────────────────────────────────────────────────
+  resolveMediaUrl(url: string | null): string | null {
+    if (!url) return null;
+    if (url.startsWith('http')) return url;
+    return environment.chatMediaBase + url;
+  }
+
   isMine(msg: MessageResult): boolean {
     return msg.SenderId === this.auth.currentUser()?.userId;
   }

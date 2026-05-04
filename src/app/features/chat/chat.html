@@ -134,10 +134,10 @@
                 <div class="chat__bubble" [class.chat__bubble--mine]="mine">
                   @switch (msg.MessageType) {
                     @case (MessageType.Image) {
-                      <img class="chat__bubble-img" [src]="msg.ImageUrl" alt="صورة" />
+                      <img class="chat__bubble-img" [src]="resolveMediaUrl(msg.ImageUrl)" alt="صورة" />
                     }
                     @case (MessageType.Audio) {
-                      <audio class="chat__bubble-audio" controls [src]="msg.AudioUrl"></audio>
+                      <audio class="chat__bubble-audio" controls [src]="resolveMediaUrl(msg.AudioUrl)"></audio>
                     }
                     @default {
                       {{ msg.Content }}

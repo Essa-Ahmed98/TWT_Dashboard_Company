@@ -505,7 +505,7 @@
             (input)="patchForm({ displayName: $any($event.target).value })" />
         </div>
         <div class="form-field">
-          <label class="form-label">البريد الإلكتروني <span class="form-req">*</span></label>
+          <label class="form-label">البريد الإلكتروني</label>
           <input class="form-input" type="email" placeholder="example@gmail.com"
             [value]="formData().email"
             [class.form-input--error]="!!submitError()"
@@ -516,7 +516,7 @@
 
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">رقم الهاتف <span class="form-req">*</span></label>
+          <label class="form-label">رقم الهاتف</label>
           <input class="form-input" type="tel" placeholder="+966"
             [value]="formData().phone"
             [class.form-input--error]="phoneInvalid() || !!submitError()"

@@ -3,5 +3,6 @@ export const environment = {
   apiBase: '/api',
   chatApiBase: '/api',
   hubUrl: '/api/chat/chatHub',
+  chatMediaBase: '',
 };
 
