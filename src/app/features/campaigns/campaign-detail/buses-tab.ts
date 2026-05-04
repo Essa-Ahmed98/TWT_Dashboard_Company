@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal, afterNextRender } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { BusForm, BUS_TYPES } from '../campaigns.model';
+import { finalize } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { BusApiItem, BusForm, BUS_TYPES } from '../campaigns.model';
 import { CampaignsService } from '../campaigns.service';
 
 const EMPTY_FORM: BusForm = {
@@ -17,6 +19,7 @@ const EMPTY_FORM: BusForm = {
 })
 export class CampaignBusesTab {
   private readonly service = inject(CampaignsService);
+  private readonly toast   = inject(MessageService);
 
   readonly campaignId = input.required<string>();
 
@@ -51,6 +54,15 @@ export class CampaignBusesTab {
   form         = signal<BusForm>({ ...EMPTY_FORM });
   submitting   = signal(false);
   phoneTouched = signal(false);
+  editingBus   = signal<BusApiItem | null>(null);
+
+  modalTitle = computed(() =>
+    this.editingBus() ? 'تعديل الحافلة' : 'إضافة حافلة جديدة'
+  );
+
+  modalSubtitle = computed(() =>
+    this.editingBus() ? 'عدّل بيانات الحافلة والسائق' : 'أدخل بيانات الحافلة والسائق'
+  );
 
   readonly phoneInvalid = computed(() => {
     const phone = this.form().driverPhone.trim();
@@ -58,17 +70,56 @@ export class CampaignBusesTab {
     return !this.saudiPhoneRegex.test(phone);
   });
 
-  openModal(): void  { this.form.set({ ...EMPTY_FORM }); this.phoneTouched.set(false); this.showModal.set(true); }
-  closeModal(): void { this.showModal.set(false); }
+  openModal(): void  {
+    this.editingBus.set(null);
+    this.form.set({ ...EMPTY_FORM });
+    this.phoneTouched.set(false);
+    this.showModal.set(true);
+  }
+
+  openEditModal(bus: BusApiItem): void {
+    this.editingBus.set(bus);
+    this.form.set({
+      number: bus.BusNumber,
+      driverName: bus.DriverName,
+      driverPhone: bus.DriverPhone,
+      capacity: String(bus.SeatsCount ?? 45),
+      type: bus.BusType,
+      plateNumber: bus.PlateNumber,
+      notes: bus.Notes ?? '',
+    });
+    this.phoneTouched.set(false);
+    this.showModal.set(true);
+  }
+
+  closeModal(): void {
+    if (this.submitting()) return;
+    this.showModal.set(false);
+  }
+
   patchForm(patch: Partial<BusForm>): void { this.form.update(f => ({ ...f, ...patch })); }
 
   submit(): void {
     const f = this.form();
     if (!f.number.trim() || !f.driverName.trim() || !f.type || !f.plateNumber.trim() || this.phoneInvalid() || !f.driverPhone.trim() || this.submitting()) return;
+
     this.submitting.set(true);
-    this.service.createBus(this.campaignId(), f);
-    this.submitting.set(false);
-    this.closeModal();
+    const editingBus = this.editingBus();
+    const request$ = editingBus
+      ? this.service.updateBus(editingBus.Id, this.campaignId(), f, editingBus.CompanyId)
+      : this.service.createBus(this.campaignId(), f);
+
+    request$
+      .pipe(finalize(() => this.submitting.set(false)))
+      .subscribe(success => {
+        if (!success) return;
+        const wasEditing = !!editingBus;
+        this.showModal.set(false);
+        this.editingBus.set(null);
+        if (wasEditing) {
+          this.toast.add({ severity: 'success', summary: 'نجاح', detail: 'تم تعديل الحافلة بنجاح' });
+        }
+      });
   }
 
   // ── Pagination ────────────────────────────────────────────────

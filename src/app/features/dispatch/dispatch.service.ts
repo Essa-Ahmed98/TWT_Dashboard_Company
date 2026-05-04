@@ -7,6 +7,7 @@ import {
   CreateTransportationScheduleRequest,
   TransportationScheduleApiItem,
   TransportationSchedulesQuery,
+  UpdateTransportationScheduleRequest,
 } from './dispatch.model';
 
 @Injectable({ providedIn: 'root' })
@@ -32,5 +33,9 @@ export class DispatchService {
 
   createSchedule(body: CreateTransportationScheduleRequest): Observable<ApiResult<string>> {
     return this.http.post<ApiResult<string>>(`${environment.apiBase}/TransportationSchedules`, body);
+  }
+
+  updateSchedule(body: UpdateTransportationScheduleRequest): Observable<ApiResult<string>> {
+    return this.http.put<ApiResult<string>>(`${environment.apiBase}/TransportationSchedules`, body);
   }
 }

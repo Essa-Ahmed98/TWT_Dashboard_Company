@@ -10,7 +10,7 @@ import { MessageService } from 'primeng/api';
 import { environment } from '../../../environments/environment';
 import { ApiResult } from '../../core/models/api.models';
 import { CampaignApiItem, GroupApiItem } from '../campaigns/campaigns.model';
-import { BLOOD_TYPE_OPTIONS, CreatePilgrimRequest, PilgrimForm } from './pilgrims.model';
+import { BLOOD_TYPE_OPTIONS, CreatePilgrimRequest, PilgrimApiItem, PilgrimDetailApiItem, PilgrimForm, UpdatePilgrimRequest } from './pilgrims.model';
 import { PilgrimsService } from './pilgrims.service';
 import { AuthService } from '../../core/auth/services/auth';
 import { CampaignsService } from '../campaigns/campaigns.service';
@@ -95,6 +95,8 @@ export class Pilgrims implements OnInit {
   submitting = signal(false);
   submitError = signal<string | null>(null);
   formData = signal<PilgrimForm>({ ...EMPTY_FORM });
+  editingPilgrim = signal<PilgrimDetailApiItem | null>(null);
+  editLoadingId = signal<string | null>(null);
   showQrDialog = signal(false);
   qrLoading = signal(false);
   qrCodeImage = signal<string | null>(null);
@@ -103,6 +105,11 @@ export class Pilgrims implements OnInit {
   phoneTouched = signal(false);
 
   private readonly saudiPhoneRegex = /^(?:\+966|00966|966|0)?5\d{8}$/;
+
+  readonly modalTitle = computed(() => this.editingPilgrim() ? 'تعديل بيانات الحاج' : 'إضافة حاج جديد');
+  readonly modalSubtitle = computed(() =>
+    this.editingPilgrim() ? 'عدّل بيانات الحاج الأساسية' : 'أدخل بيانات الحاج لإنشاء حسابه على النظام'
+  );
 
   readonly phoneInvalid = computed(() => {
     if (!this.phoneTouched()) return false;
@@ -264,6 +271,7 @@ export class Pilgrims implements OnInit {
   }
 
   openModal(): void {
+    this.editingPilgrim.set(null);
     this.formData.set({ ...EMPTY_FORM });
     this.submitError.set(null);
     this.phoneTouched.set(false);
@@ -276,9 +284,58 @@ export class Pilgrims implements OnInit {
     this.showModal.set(true);
   }
 
+  openEditModal(pilgrim: PilgrimApiItem): void {
+    if (this.editLoadingId()) return;
+
+    this.editLoadingId.set(pilgrim.Id);
+    this.submitError.set(null);
+
+    this.service.getPilgrimById(pilgrim.Id)
+      .pipe(finalize(() => this.editLoadingId.set(null)), takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: res => {
+          if (!res.IsSuccess) {
+            this.toast.add({ severity: 'error', summary: 'خطأ', detail: 'تعذر تحميل بيانات الحاج' });
+            return;
+          }
+
+          const detail = res.Data;
+          this.editingPilgrim.set(detail);
+          this.formData.set({
+            displayName: detail.DisplayName ?? '',
+            email: detail.Email ?? '',
+            phone: detail.Phone ?? '',
+            campaignId: detail.CampaignId ?? '',
+            groupId: detail.GroupId ?? '',
+            passportNumber: detail.PassportNumber ?? '',
+            nationality: detail.Nationality ?? '',
+            dateOfBirth: detail.DateOfBirth ? new Date(detail.DateOfBirth) : '',
+            gender: detail.Gender !== null && detail.Gender !== undefined ? String(detail.Gender) : '',
+            idNumber: detail.IDNumber ?? '',
+            accommodation: detail.Accommodation ?? '',
+            ritualCardNumber: detail.NuskCardNumber ?? '',
+            permitNumber: detail.PermitNumber ?? '',
+            bloodType: detail.BloodType !== null && detail.BloodType !== undefined ? String(detail.BloodType) : '',
+          });
+          this.selectedCampName.set(detail.CampaignName ?? '');
+          this.selectedGrpName.set(detail.GroupName ?? '');
+          this.campList.set([]);
+          this.grpList.set([]);
+          this.showCampDrop.set(false);
+          this.showGrpDrop.set(false);
+          this.phoneTouched.set(false);
+          this.showModal.set(true);
+        },
+        error: () => {
+          this.toast.add({ severity: 'error', summary: 'خطأ', detail: 'تعذر تحميل بيانات الحاج' });
+        },
+      });
+  }
+
   closeModal(): void {
     if (this.submitting()) return;
     this.showModal.set(false);
+    this.editingPilgrim.set(null);
   }
 
   openImportModal(): void {
@@ -715,9 +772,10 @@ export class Pilgrims implements OnInit {
 
   submitForm(): void {
     const f = this.formData();
-    if (!f.displayName.trim() || !f.campaignId) return;
+    const editingPilgrim = this.editingPilgrim();
+    if (!f.displayName.trim() || (!editingPilgrim && !f.campaignId)) return;
 
-    const req: CreatePilgrimRequest = {
+    const createReq: CreatePilgrimRequest = {
       Email: f.email.trim(),
       DisplayName: f.displayName.trim(),
       Phone: f.phone.trim(),
@@ -735,26 +793,53 @@ export class Pilgrims implements OnInit {
       BloodType: f.bloodType !== '' ? +f.bloodType : 0,
     };
 
+    const updateReq: UpdatePilgrimRequest | null = editingPilgrim
+      ? {
+          Id: editingPilgrim.Id,
+          HajjType: editingPilgrim.HajjType ?? 0,
+          PassportNumber: f.passportNumber.trim(),
+          Nationality: f.nationality.trim(),
+          DateOfBirth: f.dateOfBirth ? new Date(f.dateOfBirth).toISOString() : '',
+          Gender: f.gender !== '' ? +f.gender : 0,
+          IDNumber: f.idNumber.trim(),
+          Accommodation: f.accommodation.trim(),
+          NuskCardNumber: f.ritualCardNumber.trim(),
+          PermitNumber: f.permitNumber.trim(),
+          BloodType: f.bloodType !== '' ? +f.bloodType : 0,
+          AccommodationLatitude: editingPilgrim.AccommodationLat ?? 0,
+          AccommodationLongitude: editingPilgrim.AccommodationLong ?? 0,
+          Email: f.email.trim(),
+          DisplayName: f.displayName.trim(),
+          Phone: f.phone.trim(),
+        }
+      : null;
+
     this.submitting.set(true);
     this.submitError.set(null);
 
-    this.service.createPilgrim(req)
+    const request$ = updateReq ? this.service.updatePilgrim(updateReq) : this.service.createPilgrim(createReq);
+
+    request$
       .pipe(finalize(() => this.submitting.set(false)), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: res => {
           if (res.IsSuccess) {
             this.showModal.set(false);
-            this.loadPilgrims(1);
+            this.editingPilgrim.set(null);
+            this.loadPilgrims(updateReq ? this.page() : 1);
+            if (updateReq) {
+              this.toast.add({ severity: 'success', summary: 'نجاح', detail: 'تم تعديل الحاج بنجاح' });
+            }
           } else {
             this.submitError.set(
-              translateError(res.Error?.MessageKey) || translateError(res.Error?.message) || res.ValidationErrors?.[0]?.ErrorMessage || 'حدث خطأ أثناء إضافة الحاج'
+              translateError(res.Error?.MessageKey) || translateError(res.Error?.message) || res.ValidationErrors?.[0]?.ErrorMessage || (updateReq ? 'حدث خطأ أثناء تعديل الحاج' : 'حدث خطأ أثناء إضافة الحاج')
             );
           }
         },
         error: err => {
           const body = err?.error as ApiResult<unknown> | undefined;
           this.submitError.set(
-            translateError(body?.Error?.MessageKey) || translateError(body?.Error?.message) || body?.ValidationErrors?.[0]?.ErrorMessage || 'حدث خطأ أثناء إضافة الحاج'
+            translateError(body?.Error?.MessageKey) || translateError(body?.Error?.message) || body?.ValidationErrors?.[0]?.ErrorMessage || (updateReq ? 'حدث خطأ أثناء تعديل الحاج' : 'حدث خطأ أثناء إضافة الحاج')
           );
         },
       });
@@ -769,8 +854,7 @@ export class Pilgrims implements OnInit {
       f.ritualCardNumber.trim() &&
       !this.phoneInvalid() &&
       f.dateOfBirth &&
-      f.campaignId &&
-      f.groupId
+      (this.editingPilgrim() || (f.campaignId && f.groupId))
     );
   }
 

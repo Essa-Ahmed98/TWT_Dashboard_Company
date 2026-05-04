@@ -282,7 +282,7 @@ export class Devices implements OnInit {
   submitForm(): void {
     const f  = this.formData();
     const id = this.editingId();
-    if (!f.imeiNumber.trim() || this.saving()) return;
+    if (!f.imeiNumber.trim() || !f.simNumber.trim() || this.saving()) return;
 
     this.saving.set(true);
     const req$ = id

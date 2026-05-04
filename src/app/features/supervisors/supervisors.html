@@ -123,6 +123,13 @@
               </td>
               <td>
                 <div class="row-actions">
+                  <button class="row-actions__btn" title="تعديل المشرف" (click)="openEditModal(s)" [disabled]="!!editLoadingId()">
+                    @if (editLoadingId() === s.Id) {
+                      <i class="pi pi-spin pi-spinner"></i>
+                    } @else {
+                      <i class="pi pi-pencil"></i>
+                    }
+                  </button>
                   <button class="row-actions__btn" title="فتح المحادثة" (click)="openChat(s.UserId, s.DisplayName)">
                     <i class="pi pi-comment"></i>
                   </button>
@@ -182,8 +189,8 @@
 
     <div class="dialog__header">
       <div>
-        <h2 class="dialog__title">إضافة مشرف جديد</h2>
-        <p class="dialog__sub">أدخل بيانات المشرف لإنشاء حسابه على النظام</p>
+        <h2 class="dialog__title">{{ modalTitle() }}</h2>
+        <p class="dialog__sub">{{ modalSubtitle() }}</p>
       </div>
       <button class="dialog__close" (click)="closeModal()" [disabled]="submitting()">
         <i class="pi pi-times"></i>
@@ -220,24 +227,26 @@
             <span class="form-hint form-hint--error">يجب أن يكون رقم جوال سعودي صالح</span>
           }
         </div>
-        <div class="form-field">
-          <label class="form-label">كلمة المرور <span class="form-req">*</span></label>
-          <input class="form-input" type="password" placeholder="••••••••"
-            [value]="formData().password" [disabled]="submitting()"
-            (input)="patchForm({ password: $any($event.target).value })" />
-        </div>
+        @if (!editingSupervisor()) {
+          <div class="form-field">
+            <label class="form-label">كلمة المرور <span class="form-req">*</span></label>
+            <input class="form-input" type="password" placeholder="••••••••"
+              [value]="formData().password" [disabled]="submitting()"
+              (input)="patchForm({ password: $any($event.target).value })" />
+          </div>
+        }
       </div>
 
       <!-- المركز + المجموعة -->
       <div class="form-row">
         <div class="form-field">
           <label class="form-label">المركز <span class="form-req">*</span></label>
-          <div class="ss" [class.ss--disabled]="submitting()">
-            <button type="button" class="ss__trigger" [disabled]="submitting()" (click)="toggleCampDrop()">
+          <div class="ss" [class.ss--disabled]="submitting() || editingSupervisor()">
+            <button type="button" class="ss__trigger" [disabled]="submitting() || !!editingSupervisor()" (click)="toggleCampDrop()">
               <span [class.ss__placeholder]="!selectedCampName()">
                 {{ selectedCampName() || 'اختر المركز' }}
               </span>
-              @if (selectedCampName()) {
+              @if (selectedCampName() && !editingSupervisor()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearCamp()"></i>
               } @else {
                 <i class="pi pi-angle-down"></i>
@@ -264,14 +273,14 @@
 
         <div class="form-field">
           <label class="form-label">المجموعة <span class="form-req">*</span></label>
-          <div class="ss" [class.ss--disabled]="!formData().campaignId || submitting()">
+          <div class="ss" [class.ss--disabled]="!formData().campaignId || submitting() || editingSupervisor()">
             <button type="button" class="ss__trigger"
-              [disabled]="!formData().campaignId || submitting()"
+              [disabled]="!formData().campaignId || submitting() || !!editingSupervisor()"
               (click)="toggleGrpDrop()">
               <span [class.ss__placeholder]="!selectedGrpName()">
                 {{ selectedGrpName() || (formData().campaignId ? 'اختر المجموعة' : 'اختر المركز أولاً') }}
               </span>
-              @if (selectedGrpName()) {
+              @if (selectedGrpName() && !editingSupervisor()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearGrp()"></i>
               } @else {
                 <i class="pi pi-angle-down"></i>
@@ -402,9 +411,10 @@
       <button class="btn btn--outline" (click)="closeModal()" [disabled]="submitting()">إلغاء</button>
       <button class="btn btn--primary" (click)="submitForm()" [disabled]="submitting() || !isFormValid()">
         @if (submitting()) {
-          <span class="btn-spinner"></span>جاري الإضافة...
+          <span class="btn-spinner"></span>{{ editingSupervisor() ? 'جاري الحفظ...' : 'جاري الإضافة...' }}
         } @else {
-          <i class="pi pi-user-plus"></i>إضافة المشرف
+          <i class="pi" [class.pi-save]="editingSupervisor()" [class.pi-user-plus]="!editingSupervisor()"></i>
+          {{ editingSupervisor() ? 'حفظ التعديلات' : 'إضافة المشرف' }}
         }
       </button>
     </div>

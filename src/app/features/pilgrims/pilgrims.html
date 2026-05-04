@@ -100,6 +100,13 @@
             <td>{{ genderLabel(p.Gender) }}</td>
             <td>
               <div class="row-actions">
+                <button class="row-actions__btn" title="تعديل الحاج" (click)="openEditModal(p)" [disabled]="!!editLoadingId()">
+                  @if (editLoadingId() === p.Id) {
+                    <i class="pi pi-spin pi-spinner"></i>
+                  } @else {
+                    <i class="pi pi-pencil"></i>
+                  }
+                </button>
                 <button class="row-actions__btn" title="عرض رمز QR" (click)="openQrCode(p.Id, p.DisplayName)">
                   <i class="pi pi-qrcode"></i>
                 </button>
@@ -487,8 +494,8 @@
   <div class="dialog" (click)="$event.stopPropagation()">
     <div class="dialog__header">
       <div>
-        <h2 class="dialog__title">إضافة حاج جديد</h2>
-        <p class="dialog__sub">أدخل بيانات الحاج لإنشاء حسابه على النظام</p>
+        <h2 class="dialog__title">{{ modalTitle() }}</h2>
+        <p class="dialog__sub">{{ modalSubtitle() }}</p>
       </div>
       <button class="dialog__close" (click)="closeModal()" [disabled]="submitting()">
         <i class="pi pi-times"></i>
@@ -606,12 +613,12 @@
       <div class="form-row">
         <div class="form-field">
           <label class="form-label">المركز <span class="form-req">*</span></label>
-          <div class="ss" [class.ss--disabled]="submitting()">
-            <button type="button" class="ss__trigger" [disabled]="submitting()" (click)="toggleCampDrop()">
+          <div class="ss" [class.ss--disabled]="submitting() || editingPilgrim()">
+            <button type="button" class="ss__trigger" [disabled]="submitting() || !!editingPilgrim()" (click)="toggleCampDrop()">
               <span [class.ss__placeholder]="!selectedCampName()">
                 {{ selectedCampName() || 'اختر المركز' }}
               </span>
-              @if (selectedCampName()) {
+              @if (selectedCampName() && !editingPilgrim()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearCamp()"></i>
               } @else {
                 <i class="pi pi-angle-down"></i>
@@ -639,14 +646,14 @@
 
         <div class="form-field">
           <label class="form-label">المجموعة <span class="form-req">*</span></label>
-          <div class="ss" [class.ss--disabled]="!formData().campaignId || submitting()">
+          <div class="ss" [class.ss--disabled]="!formData().campaignId || submitting() || editingPilgrim()">
             <button type="button" class="ss__trigger"
-              [disabled]="!formData().campaignId || submitting()"
+              [disabled]="!formData().campaignId || submitting() || !!editingPilgrim()"
               (click)="toggleGrpDrop()">
               <span [class.ss__placeholder]="!selectedGrpName()">
                 {{ selectedGrpName() || (formData().campaignId ? 'اختر المجموعة' : 'اختر المركز أولاً') }}
               </span>
-              @if (selectedGrpName()) {
+              @if (selectedGrpName() && !editingPilgrim()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearGrp()"></i>
               } @else {
                 <i class="pi pi-angle-down"></i>
@@ -700,9 +707,10 @@
       <button class="btn btn--primary" (click)="submitForm()"
         [disabled]="submitting() || !isFormValid()">
         @if (submitting()) {
-          <span class="btn-spinner"></span>جاري الإضافة...
+          <span class="btn-spinner"></span>{{ editingPilgrim() ? 'جاري الحفظ...' : 'جاري الإضافة...' }}
         } @else {
-          <i class="pi pi-user-plus"></i>إضافة الحاج
+          <i class="pi" [class.pi-save]="editingPilgrim()" [class.pi-user-plus]="!editingPilgrim()"></i>
+          {{ editingPilgrim() ? 'حفظ التعديلات' : 'إضافة الحاج' }}
         }
       </button>
     </div>

@@ -4,6 +4,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signa
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { DatePicker } from 'primeng/datepicker';
+import { MessageService } from 'primeng/api';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -34,6 +35,7 @@ interface DispatchItem {
   driverName: string;
   status: TripStatus;
   note?: string;
+  raw: TransportationScheduleApiItem;
 }
 
 interface DispatchForm {
@@ -75,6 +77,7 @@ export class Dispatch {
   private readonly destroyRef = inject(DestroyRef);
   private readonly campaignsService = inject(CampaignsService);
   private readonly dispatchService = inject(DispatchService);
+  private readonly toast = inject(MessageService);
   private readonly search$ = new Subject<string>();
   readonly pageSize = signal(10);
 
@@ -111,6 +114,7 @@ export class Dispatch {
   readonly saving = signal(false);
   readonly submitError = signal('');
   readonly form = signal<DispatchForm>({ ...EMPTY_FORM });
+  readonly editingSchedule = signal<TransportationScheduleApiItem | null>(null);
   readonly openModalCampaignDrop = signal(false);
   readonly openModalGroupDrop = signal(false);
   readonly openModalBusDrop = signal(false);
@@ -136,6 +140,11 @@ export class Dispatch {
       form.departureTime
     );
   });
+
+  readonly modalTitle = computed(() => this.editingSchedule() ? 'تعديل الرحلة' : 'إضافة رحلة جديدة');
+  readonly modalSubtitle = computed(() =>
+    this.editingSchedule() ? 'عدّل بيانات الرحلة داخل النظام' : 'أدخل بيانات الرحلة لجدولتها داخل النظام'
+  );
 
   readonly stats = computed(() => {
     const items = this.items();
@@ -214,16 +223,39 @@ export class Dispatch {
   }
 
   openCreateModal(): void {
+    this.editingSchedule.set(null);
     this.form.set({ ...EMPTY_FORM });
     this.submitError.set('');
     this.closeModalDropdowns();
     this.showModal.set(true);
   }
 
+  openEditModal(item: DispatchItem): void {
+    const schedule = item.raw;
+    this.editingSchedule.set(schedule);
+    this.form.set({
+      campaignId: schedule.CampaignId,
+      campaignName: item.campaign,
+      groupId: schedule.GroupId,
+      groupName: item.group,
+      busId: schedule.BusId,
+      busName: item.busLabel.replace(/^حافلة\s*/, ''),
+      fromLocation: schedule.FromLocation ?? '',
+      toLocation: schedule.ToLocation ?? '',
+      departureTime: schedule.DepartureTime ? new Date(schedule.DepartureTime) : '',
+      notes: schedule.Notes ?? '',
+    });
+    this.submitError.set('');
+    this.closeModalDropdowns();
+    this.showModal.set(true);
+    this.hydrateEditLookups(schedule);
+  }
+
   closeModal(): void {
     if (this.saving()) return;
     this.closeModalDropdowns();
     this.showModal.set(false);
+    this.editingSchedule.set(null);
   }
 
   toggleCampaignDrop(event: Event): void {
@@ -444,15 +476,20 @@ export class Dispatch {
       return;
     }
 
-    const body = this.buildCreatePayload(companyId);
+    const body = this.buildPayload(companyId);
     if (!body) {
       this.submitError.set('يرجى اختيار موعد انطلاق صحيح.');
       return;
     }
 
+    const editingSchedule = this.editingSchedule();
+    const request$ = editingSchedule
+      ? this.dispatchService.updateSchedule({ ...body, Id: editingSchedule.Id })
+      : this.dispatchService.createSchedule(body);
+
     this.saving.set(true);
     this.submitError.set('');
-    this.dispatchService.createSchedule(body)
+    request$
       .pipe(
         finalize(() => this.saving.set(false)),
         takeUntilDestroyed(this.destroyRef),
@@ -466,10 +503,13 @@ export class Dispatch {
 
           this.saving.set(false);
           this.closeModal();
-          this.currentPage.set(1);
+          if (!editingSchedule) this.currentPage.set(1);
           this.loadSchedules();
+          if (editingSchedule) {
+            this.toast.add({ severity: 'success', summary: 'نجاح', detail: 'تم تعديل الرحلة بنجاح' });
+          }
         },
-        error: () => this.submitError.set('حدث خطأ أثناء إضافة الرحلة.'),
+        error: () => this.submitError.set(editingSchedule ? 'حدث خطأ أثناء تعديل الرحلة.' : 'حدث خطأ أثناء إضافة الرحلة.'),
       });
   }
 
@@ -589,7 +629,65 @@ export class Dispatch {
       });
   }
 
-  private buildCreatePayload(companyId: string): CreateTransportationScheduleRequest | null {
+  private hydrateEditLookups(schedule: TransportationScheduleApiItem): void {
+    const companyId = this.auth.currentUser()?.companyId;
+    if (!companyId || !schedule.CampaignId) return;
+
+    this.modalCampaignLoading.set(true);
+    this.campaignsService.getAllCampaigns(companyId)
+      .pipe(
+        finalize(() => this.modalCampaignLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((campaigns) => {
+        this.modalCampaignList.set(campaigns);
+        const campaign = campaigns.find((entry) => entry.Id === schedule.CampaignId);
+        if (campaign && this.editingSchedule()?.Id === schedule.Id) {
+          this.form.update((form) => ({ ...form, campaignName: campaign.Name }));
+        }
+      });
+
+    this.modalGroupLoading.set(true);
+    this.http
+      .get<ApiResult<GroupApiItem[]>>(`${environment.apiBase}/Groups/all/${schedule.CampaignId}`)
+      .pipe(
+        finalize(() => this.modalGroupLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((res) => {
+        if (!res.IsSuccess) return;
+
+        this.modalGroupList.set(res.Data);
+        const group = res.Data.find((entry) => entry.Id === schedule.GroupId);
+        if (group && this.editingSchedule()?.Id === schedule.Id) {
+          this.form.update((form) => ({ ...form, groupName: group.Name }));
+        }
+      });
+
+    this.modalBusLoading.set(true);
+    const params = new HttpParams()
+      .set('CampaignId', schedule.CampaignId)
+      .set('PageNumber', '1')
+      .set('PageSize', '100');
+
+    this.http
+      .get<ApiResult<PaginatedResult<BusApiItem>>>(`${environment.apiBase}/Buses`, { params })
+      .pipe(
+        finalize(() => this.modalBusLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((res) => {
+        if (!res.IsSuccess) return;
+
+        this.modalBusList.set(res.Data.Items);
+        const bus = res.Data.Items.find((entry) => entry.Id === schedule.BusId);
+        if (bus && this.editingSchedule()?.Id === schedule.Id) {
+          this.form.update((form) => ({ ...form, busName: bus.BusNumber }));
+        }
+      });
+  }
+
+  private buildPayload(companyId: string): CreateTransportationScheduleRequest | null {
     const form = this.form();
     const departureDate = new Date(form.departureTime);
     if (Number.isNaN(departureDate.getTime())) return null;
@@ -660,37 +758,36 @@ export class Dispatch {
   }
 
   private mapSchedule(item: TransportationScheduleApiItem): DispatchItem {
-    const campaignName = this.campaignList().find((campaign) => campaign.Id === item.CampaignId)?.Name
+    const campaignName = (
+      this.campaignList().find((campaign) => campaign.Id === item.CampaignId)?.Name
       ?? this.modalCampaignList().find((campaign) => campaign.Id === item.CampaignId)?.Name
-      ?? this.selectedCampaignName()
-      ?? item.CampaignId
-      ?? '—';
+    ) || this.selectedCampaignName() || '';
 
-    const groupName = this.groupList().find((group) => group.Id === item.GroupId)?.Name
+    const groupName = (
+      this.groupList().find((group) => group.Id === item.GroupId)?.Name
       ?? this.modalGroupList().find((group) => group.Id === item.GroupId)?.Name
-      ?? this.selectedGroupName()
-      ?? item.GroupId
-      ?? '—';
+    ) || this.selectedGroupName() || '';
 
     const bus = this.busList().find((entry) => entry.Id === item.BusId)
       ?? this.modalBusList().find((entry) => entry.Id === item.BusId);
 
-    const busName = bus?.BusNumber ?? this.selectedBusName() ?? item.BusId ?? '—';
+    const busName = bus?.BusNumber || this.selectedBusName() || '';
     const driverName = bus?.DriverName ?? '—';
 
     return {
       id: item.Id,
-      code: item.Id.slice(0, 8),
+      code: busName ? `حافلة ${busName}` : 'رحلة',
       campaign: campaignName,
       group: groupName,
       routeFrom: item.FromLocation || '—',
       routeTo: item.ToLocation || '—',
       departureTime: this.formatDepartureTime(item.DepartureTime),
       pilgrimsCount: 0,
-      busLabel: busName === '—' ? '—' : `حافلة ${busName}`,
+      busLabel: busName ? `حافلة ${busName}` : '',
       driverName,
       status: this.statusFromDate(item.DepartureTime),
       note: item.Notes || '',
+      raw: item,
     };
   }
 

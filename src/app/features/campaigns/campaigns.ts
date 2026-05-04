@@ -3,7 +3,7 @@ import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { CampaignForm, CampaignStatus } from './campaigns.model';
+import { Campaign, CampaignForm, CampaignStatus } from './campaigns.model';
 import { CampaignsService } from './campaigns.service';
 
 const EMPTY_FORM: CampaignForm = { name: '', number: '', color: '' };
@@ -50,7 +50,11 @@ export class Campaigns implements OnDestroy {
   showModal        = signal(false);
   submitting       = signal(false);
   formData         = signal<CampaignForm>({ ...EMPTY_FORM });
+  editingCampaign  = signal<Campaign | null>(null);
   selectedPageSize = signal(10);
+
+  modalTitle = computed(() => this.editingCampaign() ? 'تعديل المركز' : 'إضافة مركز جديدة');
+  modalSubtitle = computed(() => this.editingCampaign() ? 'عدّل بيانات المركز' : 'أدخل بيانات المركز لإنشائها');
 
   // ── Stats ────────────────────────────────────────────────────
   totalGroups = computed(() =>
@@ -110,11 +114,27 @@ export class Campaigns implements OnDestroy {
 
   // ── Modal ─────────────────────────────────────────────────────
   openModal(): void {
+    this.editingCampaign.set(null);
     this.formData.set({ ...EMPTY_FORM });
     this.showModal.set(true);
   }
 
-  closeModal(): void { this.showModal.set(false); }
+  openEditModal(campaign: Campaign, event?: Event): void {
+    event?.stopPropagation();
+    this.editingCampaign.set(campaign);
+    this.formData.set({
+      name: campaign.name,
+      number: campaign.number,
+      color: campaign.color || '#22c35d',
+    });
+    this.showModal.set(true);
+  }
+
+  closeModal(): void {
+    if (this.submitting()) return;
+    this.showModal.set(false);
+    this.editingCampaign.set(null);
+  }
 
   patchForm(patch: Partial<CampaignForm>): void {
     this.formData.update(f => ({ ...f, ...patch }));
@@ -125,9 +145,17 @@ export class Campaigns implements OnDestroy {
     if (!f.name.trim() || !f.number.trim() || !f.color || this.submitting()) return;
 
     this.submitting.set(true);
+    const editingCampaign = this.editingCampaign();
+    const request$ = editingCampaign
+      ? this.service.updateCampaign(editingCampaign.id, f.name.trim(), f.number.trim(), f.color, editingCampaign.companyId)
+      : this.service.createCampaign(f.name.trim(), f.number.trim(), f.color);
+
     this.subs.add(
-      this.service.createCampaign(f.name.trim(), f.number.trim(), f.color).subscribe({
-        next: () => { this.submitting.set(false); this.closeModal(); },
+      request$.subscribe({
+        next: success => {
+          this.submitting.set(false);
+          if (success) this.closeModal();
+        },
         error: () => { this.submitting.set(false); },
       })
     );

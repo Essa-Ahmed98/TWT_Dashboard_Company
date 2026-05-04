@@ -100,6 +100,21 @@ export interface CreateSupervisorRequest {
   Notes: string;
 }
 
+export interface UpdateSupervisorRequest {
+  Id: string;
+  PassportNumber: string;
+  Nationality: string;
+  DateOfBirth: string;
+  Gender: number;
+  Specialization: string;
+  YearsOfExperience: number;
+  Languages: number[];
+  Notes: string;
+  Email: string;
+  DisplayName: string;
+  Phone: string;
+}
+
 export interface PilgrimGroupItem {
   Id: string;
   UserId: string;

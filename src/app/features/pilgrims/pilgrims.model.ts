@@ -85,6 +85,8 @@ export interface UpdatePilgrimRequest {
   NuskCardNumber:   string;
   PermitNumber:     string;
   BloodType:        number;
+  AccommodationLatitude?: number;
+  AccommodationLongitude?: number;
   Email:            string;
   DisplayName:      string;
   Phone:            string;

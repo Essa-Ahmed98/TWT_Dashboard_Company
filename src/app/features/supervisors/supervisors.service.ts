@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResult, PaginatedResult } from '../../core/models/api.models';
-import { CreateSupervisorRequest, PilgrimGroupItem, PilgrimGroupQuery, SupervisorDetailApiItem, SupervisorReviewsApiData, SupervisorsPageData, SupervisorsQuery } from './supervisors.model';
+import { CreateSupervisorRequest, PilgrimGroupItem, PilgrimGroupQuery, SupervisorDetailApiItem, SupervisorReviewsApiData, SupervisorsPageData, SupervisorsQuery, UpdateSupervisorRequest } from './supervisors.model';
 import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -11,6 +11,10 @@ export class SupervisorsService {
 
   createSupervisor(req: CreateSupervisorRequest): Observable<ApiResult<void>> {
     return this.http.post<ApiResult<void>>(`${environment.apiBase}/Supervisors`, req);
+  }
+
+  updateSupervisor(req: UpdateSupervisorRequest): Observable<ApiResult<void>> {
+    return this.http.put<ApiResult<void>>(`${environment.apiBase}/Supervisors`, req);
   }
 
   getSupervisorById(id: string): Observable<ApiResult<SupervisorDetailApiItem>> {

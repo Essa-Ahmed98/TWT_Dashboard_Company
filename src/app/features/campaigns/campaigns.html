@@ -112,6 +112,12 @@
               عرض التفاصيل والمجموعات
               <i class="pi pi-angle-left"></i>
             </a>
+            <button class="campaign-edit-btn campaign-edit-btn--card"
+                    type="button"
+                    title="تعديل المركز"
+                    (click)="openEditModal(c, $event)">
+              <i class="pi pi-pencil"></i>
+            </button>
           </div>
         </div>
       }
@@ -139,7 +145,7 @@
             <th>المشرفين</th>
             <th>الحافلات</th>
             <th>الحالة</th>
-            <th></th>
+            <th>إجراءات</th>
           </tr>
         </thead>
         <tbody>
@@ -162,10 +168,20 @@
                 </span>
               </td>
               <td>
-                <a class="table-link" (click)="openDetail(c.id)">
-                  عرض التفاصيل والمجموعات
-                  <i class="pi pi-angle-left"></i>
-                </a>
+                <div class="table-actions">
+                  <button class="campaign-edit-btn"
+                          type="button"
+                          title="تعديل المركز"
+                          (click)="openEditModal(c, $event)">
+                    <i class="pi pi-pencil"></i>
+                  </button>
+                  <button class="campaign-icon-btn"
+                          type="button"
+                          title="عرض التفاصيل والمجموعات"
+                          (click)="openDetail(c.id)">
+                    <i class="pi pi-eye"></i>
+                  </button>
+                </div>
               </td>
             </tr>
           }
@@ -230,10 +246,10 @@
 
     <div class="dialog__header">
       <div>
-        <h2 class="dialog__title">إضافة مركز جديدة</h2>
-        <p class="dialog__sub">أدخل بيانات المركز لإنشائها</p>
+        <h2 class="dialog__title">{{ modalTitle() }}</h2>
+        <p class="dialog__sub">{{ modalSubtitle() }}</p>
       </div>
-      <button class="dialog__close" (click)="closeModal()">
+      <button class="dialog__close" (click)="closeModal()" [disabled]="submitting()">
         <i class="pi pi-times"></i>
       </button>
     </div>
@@ -245,12 +261,14 @@
           <label class="form-label">اسم المركز <span class="form-req">*</span></label>
           <input class="form-input" type="text" placeholder="مثال: مركز الراجحي"
             [value]="formData().name"
+            [disabled]="submitting()"
             (input)="patchForm({ name: $any($event.target).value })" />
         </div>
         <div class="form-field">
           <label class="form-label">رقم المركز <span class="form-req">*</span></label>
           <input class="form-input" type="text" placeholder="رقم المركز"
             [value]="formData().number"
+            [disabled]="submitting()"
             (input)="patchForm({ number: $any($event.target).value })" />
         </div>
       </div>
@@ -260,6 +278,7 @@
         <label class="color-picker-bar" [style.background]="formData().color || '#e9edf2'">
           <input id="centerColor" type="color"
             [value]="formData().color || '#22c35d'"
+            [disabled]="submitting()"
             (input)="patchForm({ color: $any($event.target).value })" />
         </label>
       </div>
@@ -267,9 +286,13 @@
     </div>
 
     <div class="dialog__footer">
-      <button class="btn btn--outline" (click)="closeModal()">إلغاء</button>
+      <button class="btn btn--outline" (click)="closeModal()" [disabled]="submitting()">إلغاء</button>
       <button class="btn btn--primary" (click)="submitForm()" [disabled]="submitting() || !formData().name.trim() || !formData().number.trim() || !formData().color">
-        @if (submitting()) { <i class="pi pi-spin pi-spinner"></i> } @else { إنشاء مركز }
+        @if (submitting()) {
+          <i class="pi pi-spin pi-spinner"></i>
+        } @else {
+          {{ editingCampaign() ? 'حفظ التعديلات' : 'إنشاء مركز' }}
+        }
       </button>
     </div>
 

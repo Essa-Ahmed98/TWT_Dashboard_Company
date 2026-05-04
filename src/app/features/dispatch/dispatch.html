@@ -7,8 +7,8 @@
   <div class="dialog" (click)="$event.stopPropagation()">
     <div class="dialog__header">
       <div>
-        <h2 class="dialog__title">إضافة رحلة جديدة</h2>
-        <p class="dialog__sub">أدخل بيانات الرحلة لجدولتها داخل النظام</p>
+        <h2 class="dialog__title">{{ modalTitle() }}</h2>
+        <p class="dialog__sub">{{ modalSubtitle() }}</p>
       </div>
       <button class="dialog__close" type="button" (click)="closeModal()" [disabled]="saving()">
         <i class="pi pi-times"></i>
@@ -204,10 +204,10 @@
       <button class="btn btn--primary" type="button" (click)="submitForm()" [disabled]="saving() || !isCreateFormValid()">
         @if (saving()) {
           <span class="btn-spinner"></span>
-          جاري الإضافة...
+          {{ editingSchedule() ? 'جاري الحفظ...' : 'جاري الإضافة...' }}
         } @else {
-          <i class="pi pi-plus"></i>
-          إضافة الرحلة
+          <i class="pi" [class.pi-save]="editingSchedule()" [class.pi-plus]="!editingSchedule()"></i>
+          {{ editingSchedule() ? 'حفظ التعديلات' : 'إضافة الرحلة' }}
         }
       </button>
     </div>
@@ -374,10 +374,18 @@
             </div>
 
            </div>
-     <span class="trip-card__badge trip-card__badge--{{ statusClass(item.status) }}">
-              <span class="trip-card__badge-dot"></span>
-              {{ statusLabel(item.status) }}
-            </span>
+            <div class="trip-card__head-actions">
+              <button class="trip-card__edit"
+                      type="button"
+                      title="تعديل الرحلة"
+                      (click)="openEditModal(item)">
+                <i class="pi pi-pencil"></i>
+              </button>
+              <span class="trip-card__badge trip-card__badge--{{ statusClass(item.status) }}">
+                <span class="trip-card__badge-dot"></span>
+                {{ statusLabel(item.status) }}
+              </span>
+            </div>
           </div>
 
           <div class="trip-card__route">

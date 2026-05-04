@@ -312,6 +312,36 @@ $text-muted: #6c7a89;
     gap: 0.75rem;
   }
 
+  &__head-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  &__edit {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid rgba($primary, 0.14);
+    border-radius: 9px;
+    background: rgba($primary, 0.06);
+    color: $primary;
+    display: inline-grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background .15s, border-color .15s, color .15s;
+
+    i {
+      font-size: 0.78rem;
+    }
+
+    &:hover {
+      background: $primary;
+      border-color: $primary;
+      color: #fff;
+    }
+  }
+
   &__badge {
     display: inline-flex;
     align-items: center;

@@ -48,6 +48,12 @@
               </div>
             </div>
             <div class="group-card__row-end">
+              <button class="group-card__edit"
+                      title="تعديل المجموعة"
+                      type="button"
+                      (click)="openEditModal(g, $event)">
+                <i class="pi pi-pencil"></i>
+              </button>
               <span class="group-card__supervisors">
                 <i class="pi pi-user-edit"></i>
                 {{ g.SupervisorsCount }} مشرف
@@ -162,10 +168,10 @@
   <div class="dialog" (click)="$event.stopPropagation()">
     <div class="dialog__header">
       <div>
-        <h2 class="dialog__title">إضافة مجموعة جديدة</h2>
-        <p class="dialog__sub">أدخل بيانات المجموعة لإنشائها داخل المركز</p>
+        <h2 class="dialog__title">{{ modalTitle() }}</h2>
+        <p class="dialog__sub">{{ modalSubtitle() }}</p>
       </div>
-      <button class="dialog__close" (click)="closeModal()">
+      <button class="dialog__close" (click)="closeModal()" [disabled]="submitting()">
         <i class="pi pi-times"></i>
       </button>
     </div>
@@ -175,20 +181,26 @@
         <label class="form-label">اسم المجموعة <span class="form-req">*</span></label>
         <input class="form-input" type="text" placeholder="مثال: المجموعة أ"
           [value]="form().name"
+          [disabled]="submitting()"
           (input)="patchForm({ name: $any($event.target).value })" />
       </div>
       <div class="form-field">
         <label class="form-label">ملاحظات</label>
         <textarea class="form-input form-input--textarea" rows="3" placeholder="ملاحظات..."
           [value]="form().notes"
+          [disabled]="submitting()"
           (input)="patchForm({ notes: $any($event.target).value })"></textarea>
       </div>
     </div>
 
     <div class="dialog__footer">
-      <button class="btn btn--outline" (click)="closeModal()">إلغاء</button>
+      <button class="btn btn--outline" (click)="closeModal()" [disabled]="submitting()">إلغاء</button>
       <button class="btn btn--primary" (click)="submit()" [disabled]="submitting() || !form().name.trim()">
-        @if (submitting()) { <i class="pi pi-spin pi-spinner"></i> } @else { إنشاء مجموعة }
+        @if (submitting()) {
+          <i class="pi pi-spin pi-spinner"></i>
+        } @else {
+          {{ editingGroup() ? 'حفظ التعديلات' : 'إنشاء مجموعة' }}
+        }
       </button>
     </div>
   </div>

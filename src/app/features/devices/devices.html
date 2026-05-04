@@ -265,7 +265,7 @@
       </div>
 
       <div class="form-field">
-        <label class="form-label">رقم الخط (SIM)</label>
+        <label class="form-label">رقم الخط (SIM) <span class="form-req">*</span></label>
         <input class="form-input" type="text"
           [value]="formData().simNumber"
           (input)="patchForm({ simNumber: $any($event.target).value })" />
@@ -281,7 +281,7 @@
 
     <div class="dialog__footer">
       <button class="btn btn--outline" (click)="closeModal()" [disabled]="saving()">إلغاء</button>
-      <button class="btn btn--primary" (click)="submitForm()" [disabled]="saving()">
+      <button class="btn btn--primary" (click)="submitForm()" [disabled]="saving() || !formData().imeiNumber.trim() || !formData().simNumber.trim()">
         @if (saving()) { <i class="pi pi-spin pi-spinner"></i> } @else { {{ editingId() ? 'حفظ التعديلات' : 'إضافة الجهاز' }} }
       </button>
     </div>

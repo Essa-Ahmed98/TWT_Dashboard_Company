@@ -288,6 +288,13 @@ $text-label:   #374151;
     gap: 10px;
   }
 
+  &__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
   &__info {
     display: flex;
     flex-direction: column;
@@ -314,6 +321,10 @@ $text-label:   #374151;
   &__footer {
     border-top: 1px solid $border;
     padding-top: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
   }
 
   &__link {
@@ -385,6 +396,63 @@ $text-label:   #374151;
 
   i { font-size: 12px; }
   &:hover { opacity: .75; }
+}
+
+.table-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.campaign-edit-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba($primary, .12);
+  border-radius: 8px;
+  background: rgba($primary, .06);
+  color: $primary;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .15s, border-color .15s, transform .15s;
+
+  i { font-size: 13px; }
+
+  &:hover {
+    background: rgba($primary, .11);
+    border-color: rgba($primary, .24);
+    transform: translateY(-1px);
+  }
+
+  &--card {
+    background: #fff;
+    box-shadow: 0 4px 14px rgba(11, 64, 91, .08);
+  }
+}
+
+.campaign-icon-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba($primary, .12);
+  border-radius: 8px;
+  background: rgba($primary, .06);
+  color: $primary;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .15s, border-color .15s, transform .15s;
+
+  i { font-size: 13px; }
+
+  &:hover {
+    background: rgba($primary, .11);
+    border-color: rgba($primary, .24);
+    transform: translateY(-1px);
+  }
 }
 
 // ── Status badges ─────────────────────────────────────────────────

@@ -30,3 +30,7 @@ export interface CreateTransportationScheduleRequest {
   DepartureTime: string;
   Notes: string;
 }
+
+export interface UpdateTransportationScheduleRequest extends CreateTransportationScheduleRequest {
+  Id: string;
+}

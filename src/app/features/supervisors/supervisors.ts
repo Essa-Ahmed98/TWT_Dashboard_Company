@@ -17,7 +17,7 @@ import { DatePicker } from 'primeng/datepicker';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 import { SupervisorsService } from './supervisors.service';
-import { SupervisorItem, SupervisorForm, CreateSupervisorRequest, LANGUAGE_OPTIONS } from './supervisors.model';
+import { SupervisorItem, SupervisorForm, CreateSupervisorRequest, LANGUAGE_OPTIONS, SupervisorDetailApiItem, UpdateSupervisorRequest } from './supervisors.model';
 import { CampaignApiItem, GroupApiItem } from '../campaigns/campaigns.model';
 import { ApiResult } from '../../core/models/api.models';
 import { AuthService } from '../../core/auth/services/auth';
@@ -74,6 +74,13 @@ export class Supervisors implements OnInit {
   submitError  = signal<string | null>(null);
   formData     = signal<SupervisorForm>({ ...EMPTY_FORM });
   phoneTouched = signal(false);
+  editingSupervisor = signal<SupervisorDetailApiItem | null>(null);
+  editLoadingId = signal<string | null>(null);
+
+  readonly modalTitle = computed(() => this.editingSupervisor() ? 'تعديل بيانات المشرف' : 'إضافة مشرف جديد');
+  readonly modalSubtitle = computed(() =>
+    this.editingSupervisor() ? 'عدّل بيانات المشرف الأساسية' : 'أدخل بيانات المشرف لإنشاء حسابه على النظام'
+  );
 
   readonly phoneInvalid = computed(() => {
     const phone = this.formData().phone.trim();
@@ -165,6 +172,7 @@ export class Supervisors implements OnInit {
 
   // ── Modal open / close ────────────────────────────────────────────
   openModal(): void {
+    this.editingSupervisor.set(null);
     this.formData.set({ ...EMPTY_FORM, languages: [] });
     this.submitError.set(null);
     this.phoneTouched.set(false);
@@ -178,7 +186,60 @@ export class Supervisors implements OnInit {
     this.showModal.set(true);
   }
 
-  closeModal(): void { if (this.submitting()) return; this.showModal.set(false); }
+  openEditModal(supervisor: SupervisorItem): void {
+    if (this.editLoadingId()) return;
+
+    this.editLoadingId.set(supervisor.Id);
+    this.submitError.set(null);
+
+    this.service.getSupervisorById(supervisor.Id)
+      .pipe(finalize(() => this.editLoadingId.set(null)), takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: res => {
+          if (!res.IsSuccess) {
+            this.toast.add({ severity: 'error', summary: 'خطأ', detail: 'تعذر تحميل بيانات المشرف' });
+            return;
+          }
+
+          const detail = res.Data;
+          this.editingSupervisor.set(detail);
+          this.formData.set({
+            email: detail.Email ?? '',
+            displayName: detail.DisplayName || detail.Name || detail.UserName || '',
+            phone: detail.Phone || detail.PhoneNumber || '',
+            password: '',
+            campaignId: detail.CampaignId ?? '',
+            groupId: detail.GroupId ?? '',
+            passportNumber: detail.PassportNumber ?? '',
+            nationality: detail.Nationality ?? '',
+            dateOfBirth: detail.DateOfBirth ? new Date(detail.DateOfBirth) : '',
+            gender: detail.Gender !== null && detail.Gender !== undefined ? String(detail.Gender) : '',
+            specialization: detail.Specialization ?? '',
+            yearsOfExperience: detail.YearsOfExperience !== null && detail.YearsOfExperience !== undefined ? String(detail.YearsOfExperience) : '',
+            languages: [...(detail.Languages ?? [])],
+            notes: detail.Notes ?? '',
+          });
+          this.selectedCampName.set(detail.CampaignName ?? '');
+          this.selectedGrpName.set(detail.GroupName ?? '');
+          this.campList.set([]);
+          this.grpList.set([]);
+          this.showCampDrop.set(false);
+          this.showGrpDrop.set(false);
+          this.showLangDrop.set(false);
+          this.phoneTouched.set(false);
+          this.showModal.set(true);
+        },
+        error: () => {
+          this.toast.add({ severity: 'error', summary: 'خطأ', detail: 'تعذر تحميل بيانات المشرف' });
+        },
+      });
+  }
+
+  closeModal(): void {
+    if (this.submitting()) return;
+    this.showModal.set(false);
+    this.editingSupervisor.set(null);
+  }
 
   patchForm(patch: Partial<SupervisorForm>): void {
     this.formData.update(f => ({ ...f, ...patch }));
@@ -281,7 +342,8 @@ export class Supervisors implements OnInit {
   // ── Submit ────────────────────────────────────────────────────────
   submitForm(): void {
     const f = this.formData();
-    const req: CreateSupervisorRequest = {
+    const editingSupervisor = this.editingSupervisor();
+    const createReq: CreateSupervisorRequest = {
       Email:             f.email,
       DisplayName:       f.displayName.trim(),
       Phone:             f.phone,
@@ -299,17 +361,43 @@ export class Supervisors implements OnInit {
       Notes:             f.notes,
     };
 
+    const updateReq: UpdateSupervisorRequest | null = editingSupervisor
+      ? {
+          Id: editingSupervisor.Id,
+          PassportNumber: f.passportNumber.trim(),
+          Nationality: f.nationality.trim(),
+          DateOfBirth: f.dateOfBirth ? new Date(f.dateOfBirth).toISOString() : '',
+          Gender: f.gender !== '' ? +f.gender : 0,
+          Specialization: f.specialization.trim(),
+          YearsOfExperience: f.yearsOfExperience !== '' ? +f.yearsOfExperience : 0,
+          Languages: f.languages,
+          Notes: f.notes.trim(),
+          Email: f.email.trim(),
+          DisplayName: f.displayName.trim(),
+          Phone: f.phone.trim(),
+        }
+      : null;
+
     this.submitting.set(true);
     this.submitError.set(null);
 
-    this.service.createSupervisor(req)
+    const request$ = updateReq ? this.service.updateSupervisor(updateReq) : this.service.createSupervisor(createReq);
+
+    request$
       .pipe(finalize(() => this.submitting.set(false)), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: res => {
-          if (res.IsSuccess) { this.showModal.set(false); this.load(); }
-          else { this.submitError.set('حدث خطأ أثناء إضافة المشرف'); }
+          if (res.IsSuccess) {
+            this.showModal.set(false);
+            this.editingSupervisor.set(null);
+            this.load();
+            if (updateReq) {
+              this.toast.add({ severity: 'success', summary: 'نجاح', detail: 'تم تعديل المشرف بنجاح' });
+            }
+          }
+          else { this.submitError.set(updateReq ? 'حدث خطأ أثناء تعديل المشرف' : 'حدث خطأ أثناء إضافة المشرف'); }
         },
-        error: () => this.submitError.set('حدث خطأ أثناء إضافة المشرف'),
+        error: () => this.submitError.set(updateReq ? 'حدث خطأ أثناء تعديل المشرف' : 'حدث خطأ أثناء إضافة المشرف'),
       });
   }
 
@@ -319,9 +407,8 @@ export class Supervisors implements OnInit {
       f.displayName.trim() &&
       f.email.trim()       &&
       f.phone.trim()       && !this.phoneInvalid() &&
-      f.password.trim()    &&
-      f.campaignId         &&
-      f.groupId            &&
+      (this.editingSupervisor() || f.password.trim()) &&
+      (this.editingSupervisor() || (f.campaignId && f.groupId)) &&
       f.passportNumber.trim() &&
       f.nationality.trim() &&
       f.dateOfBirth        &&

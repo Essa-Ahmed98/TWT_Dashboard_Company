@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal, afterNextRender } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
-import { GroupForm } from '../campaigns.model';
+import { finalize } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { GroupApiItem, GroupForm } from '../campaigns.model';
 import { CampaignsService } from '../campaigns.service';
 
 const EMPTY_FORM: GroupForm = { name: '', notes: '' };
@@ -16,6 +18,7 @@ const EMPTY_FORM: GroupForm = { name: '', notes: '' };
 export class CampaignGroupsTab {
   private readonly service = inject(CampaignsService);
   private readonly router  = inject(Router);
+  private readonly toast   = inject(MessageService);
 
   readonly campaignId = input.required<string>();
 
@@ -45,18 +48,57 @@ export class CampaignGroupsTab {
   showModal  = signal(false);
   form       = signal<GroupForm>({ ...EMPTY_FORM });
   submitting = signal(false);
+  editingGroup = signal<GroupApiItem | null>(null);
 
-  openModal(): void  { this.form.set({ ...EMPTY_FORM }); this.showModal.set(true); }
-  closeModal(): void { this.showModal.set(false); }
+  modalTitle = computed(() =>
+    this.editingGroup() ? 'تعديل المجموعة' : 'إضافة مجموعة جديدة'
+  );
+
+  modalSubtitle = computed(() =>
+    this.editingGroup() ? 'عدّل بيانات المجموعة داخل المركز' : 'أدخل بيانات المجموعة لإنشائها داخل المركز'
+  );
+
+  openModal(): void  {
+    this.editingGroup.set(null);
+    this.form.set({ ...EMPTY_FORM });
+    this.showModal.set(true);
+  }
+
+  openEditModal(group: GroupApiItem, event: Event): void {
+    event.stopPropagation();
+    this.editingGroup.set(group);
+    this.form.set({ name: group.Name, notes: group.Notes ?? '' });
+    this.showModal.set(true);
+  }
+
+  closeModal(): void {
+    if (this.submitting()) return;
+    this.showModal.set(false);
+  }
+
   patchForm(patch: Partial<GroupForm>): void { this.form.update(f => ({ ...f, ...patch })); }
 
   submit(): void {
     const f = this.form();
     if (!f.name.trim() || this.submitting()) return;
+
     this.submitting.set(true);
-    this.service.createGroup(f.name.trim(), f.notes.trim(), this.campaignId());
-    this.submitting.set(false);
-    this.closeModal();
+    const editingGroup = this.editingGroup();
+    const request$ = editingGroup
+      ? this.service.updateGroup(editingGroup.Id, f.name.trim(), f.notes.trim(), this.campaignId(), editingGroup.CompanyId)
+      : this.service.createGroup(f.name.trim(), f.notes.trim(), this.campaignId());
+
+    request$
+      .pipe(finalize(() => this.submitting.set(false)))
+      .subscribe(success => {
+        if (!success) return;
+        const wasEditing = !!editingGroup;
+        this.showModal.set(false);
+        this.editingGroup.set(null);
+        if (wasEditing) {
+          this.toast.add({ severity: 'success', summary: 'نجاح', detail: 'تم تعديل المجموعة بنجاح' });
+        }
+      });
   }
 
   // ── Accordion ─────────────────────────────────────────────────

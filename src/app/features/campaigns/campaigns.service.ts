@@ -144,6 +144,28 @@ export class CampaignsService {
       );
   }
 
+  updateCampaign(id: string, name: string, number: string, color: string, companyId?: string): Observable<boolean> {
+    const body = {
+      Id: id,
+      Name: name,
+      Number: number,
+      CompanyId: companyId || this.auth.currentUser()?.companyId || '',
+      Color: color,
+    };
+    return this.http
+      .put<ApiResult<unknown>>(`${environment.apiBase}/Campaigns`, body)
+      .pipe(
+        take(1),
+        tap(res => {
+          if (res.IsSuccess) {
+            this._allCampaignsCache = null;
+            this.loadCampaigns({ PageNumber: this._currentPage(), PageSize: this._pageSize() });
+          }
+        }),
+        map(res => !!res.IsSuccess),
+      );
+  }
+
   // ── Groups ────────────────────────────────────────────────────
   loadGroups(campaignId: string, pageNumber = 1): void {
     this._groupsLoading.set(true);
@@ -165,17 +187,41 @@ export class CampaignsService {
       });
   }
 
-  createGroup(name: string, notes: string, campaignId: string): void {
+  createGroup(name: string, notes: string, campaignId: string): Observable<boolean> {
     const body = { Name: name, Notes: notes, CampaignId: campaignId, CompanyId: this.auth.currentUser()?.companyId ?? '' };
-    this.http
+    return this.http
       .post<ApiResult<unknown>>(`${environment.apiBase}/Groups`, body)
-      .pipe(take(1))
-      .subscribe(res => {
-        if (res.IsSuccess) {
-          this.loadGroups(campaignId);
-          this._currentCampaign.update(c => c ? { ...c, groupsCount: c.groupsCount + 1 } : c);
-        }
-      });
+      .pipe(
+        take(1),
+        tap(res => {
+          if (res.IsSuccess) {
+            this.loadGroups(campaignId);
+            this._currentCampaign.update(c => c ? { ...c, groupsCount: c.groupsCount + 1 } : c);
+          }
+        }),
+        map(res => !!res.IsSuccess),
+      );
+  }
+
+  updateGroup(id: string, name: string, notes: string, campaignId: string, companyId?: string): Observable<boolean> {
+    const body = {
+      Id: id,
+      Name: name,
+      Notes: notes,
+      CampaignId: campaignId,
+      CompanyId: companyId || this.auth.currentUser()?.companyId || '',
+    };
+    return this.http
+      .put<ApiResult<unknown>>(`${environment.apiBase}/Groups`, body)
+      .pipe(
+        take(1),
+        tap(res => {
+          if (res.IsSuccess) {
+            this.loadGroups(campaignId, this._groupsCurrentPage());
+          }
+        }),
+        map(res => !!res.IsSuccess),
+      );
   }
 
   // ── Buses ─────────────────────────────────────────────────────
@@ -199,7 +245,7 @@ export class CampaignsService {
       });
   }
 
-  createBus(campaignId: string, form: BusForm): void {
+  createBus(campaignId: string, form: BusForm): Observable<boolean> {
     const body = {
       BusNumber:   form.number.trim(),
       DriverName:  form.driverName.trim(),
@@ -211,15 +257,44 @@ export class CampaignsService {
       CampaignId:  campaignId,
       CompanyId:   this.auth.currentUser()?.companyId ?? '',
     };
-    this.http
+    return this.http
       .post<ApiResult<unknown>>(`${environment.apiBase}/Buses`, body)
-      .pipe(take(1))
-      .subscribe(res => {
-        if (res.IsSuccess) {
-          this.loadBuses(campaignId);
-          this._currentCampaign.update(c => c ? { ...c, busesCount: c.busesCount + 1 } : c);
-        }
-      });
+      .pipe(
+        take(1),
+        tap(res => {
+          if (res.IsSuccess) {
+            this.loadBuses(campaignId);
+            this._currentCampaign.update(c => c ? { ...c, busesCount: c.busesCount + 1 } : c);
+          }
+        }),
+        map(res => !!res.IsSuccess),
+      );
+  }
+
+  updateBus(id: string, campaignId: string, form: BusForm, companyId?: string): Observable<boolean> {
+    const body = {
+      Id: id,
+      BusNumber:   form.number.trim(),
+      DriverName:  form.driverName.trim(),
+      SeatsCount:  form.capacity ? +form.capacity : 45,
+      DriverPhone: form.driverPhone,
+      BusType:     form.type,
+      PlateNumber: form.plateNumber.trim(),
+      Notes:       form.notes.trim(),
+      CampaignId:  campaignId,
+      CompanyId:   companyId || this.auth.currentUser()?.companyId || '',
+    };
+    return this.http
+      .put<ApiResult<unknown>>(`${environment.apiBase}/Buses`, body)
+      .pipe(
+        take(1),
+        tap(res => {
+          if (res.IsSuccess) {
+            this.loadBuses(campaignId, this._busesCurrentPage());
+          }
+        }),
+        map(res => !!res.IsSuccess),
+      );
   }
 
   // ── Mapping ───────────────────────────────────────────────────

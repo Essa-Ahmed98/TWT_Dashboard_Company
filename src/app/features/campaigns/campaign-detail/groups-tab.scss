@@ -73,6 +73,29 @@ $card-radius: .75rem;
     i { font-size: 13px; }
   }
 
+  &__edit {
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba($primary, .12);
+    border-radius: 8px;
+    background: rgba($primary, .06);
+    color: $primary;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background .15s, border-color .15s, transform .15s;
+
+    i { font-size: 13px; }
+
+    &:hover {
+      background: rgba($primary, .11);
+      border-color: rgba($primary, .24);
+      transform: translateY(-1px);
+    }
+  }
+
   &__chevron { color: $text-muted; font-size: 13px; transition: transform .25s; }
 
   &__body {
