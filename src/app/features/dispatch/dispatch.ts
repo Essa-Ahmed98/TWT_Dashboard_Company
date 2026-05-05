@@ -239,7 +239,7 @@ export class Dispatch {
       groupId: schedule.GroupId,
       groupName: item.group,
       busId: schedule.BusId,
-      busName: item.busLabel.replace(/^حافلة\s*/, ''),
+      busName: schedule.BusName ?? schedule.BusNumber ?? item.busLabel.replace(/^حافلة\s*/, ''),
       fromLocation: schedule.FromLocation ?? '',
       toLocation: schedule.ToLocation ?? '',
       departureTime: schedule.DepartureTime ? new Date(schedule.DepartureTime) : '',
@@ -759,31 +759,33 @@ export class Dispatch {
 
   private mapSchedule(item: TransportationScheduleApiItem): DispatchItem {
     const campaignName = (
-      this.campaignList().find((campaign) => campaign.Id === item.CampaignId)?.Name
+      item.CampaignName
+      ?? this.campaignList().find((campaign) => campaign.Id === item.CampaignId)?.Name
       ?? this.modalCampaignList().find((campaign) => campaign.Id === item.CampaignId)?.Name
     ) || this.selectedCampaignName() || '';
 
     const groupName = (
-      this.groupList().find((group) => group.Id === item.GroupId)?.Name
+      item.GroupName
+      ?? this.groupList().find((group) => group.Id === item.GroupId)?.Name
       ?? this.modalGroupList().find((group) => group.Id === item.GroupId)?.Name
     ) || this.selectedGroupName() || '';
 
     const bus = this.busList().find((entry) => entry.Id === item.BusId)
       ?? this.modalBusList().find((entry) => entry.Id === item.BusId);
 
-    const busName = bus?.BusNumber || this.selectedBusName() || '';
+    const busName = item.BusName ?? item.BusNumber ?? bus?.BusNumber ?? this.selectedBusName() ?? '';
     const driverName = bus?.DriverName ?? '—';
 
     return {
       id: item.Id,
-      code: busName ? `حافلة ${busName}` : 'رحلة',
+      code: busName || 'رحلة',
       campaign: campaignName,
       group: groupName,
       routeFrom: item.FromLocation || '—',
       routeTo: item.ToLocation || '—',
       departureTime: this.formatDepartureTime(item.DepartureTime),
       pilgrimsCount: 0,
-      busLabel: busName ? `حافلة ${busName}` : '',
+      busLabel: busName || '',
       driverName,
       status: this.statusFromDate(item.DepartureTime),
       note: item.Notes || '',

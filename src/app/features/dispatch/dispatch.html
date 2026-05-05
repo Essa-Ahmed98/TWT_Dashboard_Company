@@ -364,16 +364,15 @@
       @for (item of items(); track item.id) {
         <article class="trip-card">
           <div class="trip-card__head">
-           <div class="flex align-items-center">
+            <div class="trip-card__summary">
                <div class="trip-card__icon">
-              <i class="pi pi-car"></i>
+                <i class="pi pi-car"></i>
+              </div>
+              <div class="trip-card__identity">
+                <strong class="trip-card__code">{{ item.code }}</strong>
+                <span class="trip-card__campaign">{{ item.campaign }}</span>
+              </div>
             </div>
-              <div class="trip-card__identity mx-2">
-              <strong class="trip-card__code">{{ item.code }}</strong>
-              <span class="trip-card__campaign">{{ item.campaign }}</span>
-            </div>
-
-           </div>
             <div class="trip-card__head-actions">
               <button class="trip-card__edit"
                       type="button"

@@ -2,8 +2,12 @@ export interface TransportationScheduleApiItem {
   Id: string;
   CompanyId: string;
   CampaignId: string;
+  CampaignName?: string;
   GroupId: string;
+  GroupName?: string;
   BusId: string;
+  BusName?: string;
+  BusNumber?: string;
   FromLocation: string;
   ToLocation: string;
   DepartureTime: string;
