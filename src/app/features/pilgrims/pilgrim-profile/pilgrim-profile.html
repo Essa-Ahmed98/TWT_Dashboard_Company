@@ -1,7 +1,7 @@
 @if (detailState().loading) {
   <div class="pp pp--state">
     <i class="pi pi-spin pi-spinner"></i>
-    <p>جاري تحميل بيانات الحاج...</p>
+    <p>{{ 'PILGRIM_DETAIL.LOADING' | translate }}</p>
   </div>
 } @else if (pilgrim(); as p) {
   <div class="pp-shell">
@@ -9,13 +9,13 @@
       <div class="pp__page-header">
         <div class="pp__page-header-content">
           <div>
-            <h1 class="pp__page-title">ملف الحاج</h1>
-            <p class="pp__page-subtitle">بيانات تفاصيل الحاج</p>
+            <h1 class="pp__page-title">{{ 'PILGRIMS_PROFILE.TITLE' | translate }}</h1>
+            <p class="pp__page-subtitle">{{ 'PILGRIMS_PROFILE.SUBTITLE' | translate }}</p>
           </div>
 
           <button class="pp__action-btn" type="button" [disabled]="showAccommodationLoading()" (click)="showAccommodation()">
             <i class="pi" [class.pi-spin]="showAccommodationLoading()" [class.pi-map-marker]="!showAccommodationLoading()" [class.pi-spinner]="showAccommodationLoading()"></i>
-            إظهار السكن
+            {{ 'PILGRIMS_PROFILE.SHOW_ACCOMMODATION' | translate }}
           </button>
         </div>
       </div>
@@ -31,12 +31,12 @@
               <h2 class="pp__name">{{ p.name }}</h2>
               <span class="status-badge status-badge--{{ p.status }}">
                 <span class="status-badge__dot"></span>
-                {{ statusLabel[p.status] }}
+                {{ statusLabel[p.status] | translate }}
               </span>
             </div>
 
             <div class="pp__meta-row">
-              <span><i class="pi pi-calendar"></i> {{ p.age }} سنة</span>
+              <span><i class="pi pi-calendar"></i> {{ p.age }} {{ 'PILGRIMS_PROFILE.AGE_UNIT' | translate }}</span>
               <span><i class="pi pi-globe"></i> {{ p.nationality }}</span>
             </div>
 
@@ -51,13 +51,13 @@
         <div class="pp__profile-divider"></div>
 
         <div class="pp__vitals-row">
-          @for (v of p.vitals; track v.label) {
+          @for (v of p.vitals; track v.labelKey) {
             <div class="pp__vital">
               <div class="pp__vital-icon" [style.color]="v.color">
                 <i [class]="v.icon"></i>
               </div>
-              <span class="pp__vital-value">{{ v.value }}</span>
-              <span class="pp__vital-label">{{ v.label }}</span>
+              <span class="pp__vital-value">{{ v.value | translate }}</span>
+              <span class="pp__vital-label">{{ v.labelKey | translate }}</span>
             </div>
           }
         </div>
@@ -68,10 +68,11 @@
           <button
             class="pp__tab"
             type="button"
+            [title]="tab.labelKey | translate"
             [class.pp__tab--active]="activeTab() === tab.key"
             (click)="activeTab.set(tab.key)">
             <i [class]="tab.icon"></i>
-            {{ tab.label }}
+            <span class="pp__tab-label">{{ tab.labelKey | translate }}</span>
           </button>
         }
       </div>
@@ -89,6 +90,6 @@
 } @else {
   <div class="pp pp--state">
     <i class="pi pi-exclamation-circle"></i>
-    <p>لم يتم العثور على بيانات الحاج</p>
+    <p>{{ 'PILGRIM_DETAIL.NOT_FOUND' | translate }}</p>
   </div>
 }

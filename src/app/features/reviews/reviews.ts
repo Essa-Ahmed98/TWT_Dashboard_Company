@@ -1,4 +1,5 @@
 ﻿import { HttpClient } from '@angular/common/http';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -21,7 +22,7 @@ import { ReviewsService } from './reviews.service';
 
 interface ReviewCategoryOption {
   value: number;
-  label: string;
+  labelKey: string;
   icon: string;
   accent: string;
 }
@@ -36,7 +37,7 @@ const EMPTY_RATINGS_SUMMARY: ReviewsSummaryApiData = {
 
 @Component({
   selector: 'app-reviews',
-  imports: [FormsModule, ProgressSpinnerModule, DecimalPipe],
+  imports: [TranslateModule, FormsModule, ProgressSpinnerModule, DecimalPipe],
   templateUrl: './reviews.html',
   styleUrl: './reviews.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,20 +48,21 @@ export class Reviews {
   private readonly destroyRef = inject(DestroyRef);
   private readonly campaignsService = inject(CampaignsService);
   private readonly reviewsService = inject(ReviewsService);
+  private readonly translate = inject(TranslateService);
   private readonly search$ = new Subject<string>();
 
   readonly pageSize = signal(10);
   readonly loading = signal(false);
 
   readonly categoryOptions: ReviewCategoryOption[] = [
-    { value: 0, label: 'المشرف', icon: 'pi pi-user', accent: 'blue' },
-    { value: 1, label: 'النقل والتفويج', icon: 'pi pi-car', accent: 'sky' },
-    { value: 2, label: 'السكن', icon: 'pi pi-home', accent: 'green' },
-    { value: 3, label: 'الوجبات', icon: 'pi pi-globe', accent: 'amber' },
-    { value: 4, label: 'الخدمات الطبية', icon: 'pi pi-heart', accent: 'red' },
-    { value: 5, label: 'الإرشاد الديني', icon: 'pi pi-book', accent: 'emerald' },
-    { value: 6, label: 'التطبيق', icon: 'pi pi-mobile', accent: 'slate' },
-    { value: 7, label: 'عام', icon: 'pi pi-star', accent: 'neutral' },
+    { value: 0, labelKey: 'REVIEWS.CATEGORIES.SUPERVISOR', icon: 'pi pi-user', accent: 'blue' },
+    { value: 1, labelKey: 'REVIEWS.CATEGORIES.TRANSPORT', icon: 'pi pi-car', accent: 'sky' },
+    { value: 2, labelKey: 'REVIEWS.CATEGORIES.ACCOMMODATION', icon: 'pi pi-home', accent: 'green' },
+    { value: 3, labelKey: 'REVIEWS.CATEGORIES.MEALS', icon: 'pi pi-globe', accent: 'amber' },
+    { value: 4, labelKey: 'REVIEWS.CATEGORIES.MEDICAL', icon: 'pi pi-heart', accent: 'red' },
+    { value: 5, labelKey: 'REVIEWS.CATEGORIES.RELIGIOUS', icon: 'pi pi-book', accent: 'emerald' },
+    { value: 6, labelKey: 'REVIEWS.CATEGORIES.APP', icon: 'pi pi-mobile', accent: 'slate' },
+    { value: 7, labelKey: 'REVIEWS.CATEGORIES.GENERAL', icon: 'pi pi-star', accent: 'neutral' },
   ];
 
   readonly reviews = signal<ReviewApiItem[]>([]);
@@ -136,8 +138,6 @@ export class Reviews {
   readonly hasCategoryCardsData = computed(() =>
     this.categoryCards().some((category) => category.count > 0),
   );
-
-  readonly reviewsCountLabel = computed(() => `${this.summary().total} تقييم من الحجاج`);
 
   readonly visiblePages = computed<(number | '...')[]>(() => {
     const total = this.totalPages();
@@ -265,22 +265,23 @@ export class Reviews {
   }
 
   campaignFilterLabel(): string {
-    return this.selectedCampaignName() || 'جميع المراكز';
+    return this.selectedCampaignName() || 'REVIEWS.ALL_CENTERS';
   }
 
   groupFilterLabel(): string {
     if (this.selectedGroupName()) return this.selectedGroupName();
-    return this.selectedCampaignId() ? 'اختر المركز أولًا' : 'اختر المركز أولًا';
+    return 'REVIEWS.SELECT_CENTER_FIRST';
   }
 
   categoryFilterLabel(): string {
     const cat = this.selectedCategory();
-    if (cat === undefined) return 'جميع الفئات';
-    return this.categoryOptions.find((item) => item.value === cat)?.label ?? 'اختر الفئة';
+    if (cat === undefined) return 'REVIEWS.ALL_CATEGORIES';
+    return this.categoryOptions.find((item) => item.value === cat)?.labelKey ?? 'REVIEWS.SELECT_CATEGORY';
   }
 
   categoryLabel(category: number): string {
-    return this.categoryOptions.find((item) => item.value === category)?.label ?? `تصنيف ${category}`;
+    const key = this.categoryOptions.find((item) => item.value === category)?.labelKey;
+    return key ? this.translate.instant(key) : this.translate.instant('REVIEWS.UNKNOWN_CATEGORY', { value: category });
   }
 
   categoryIcon(category: number): string {
@@ -292,13 +293,13 @@ export class Reviews {
   }
 
   ratingLabel(rating: number): string {
-    if (rating >= 4) return 'ممتاز';
-    if (rating === 3) return 'متوسط';
-    return 'ضعيف';
+    if (rating >= 4) return 'REVIEWS.RATING.EXCELLENT';
+    if (rating === 3) return 'REVIEWS.RATING.AVERAGE';
+    return 'REVIEWS.RATING.POOR';
   }
 
   formatDate(value: string): string {
-    return new Intl.DateTimeFormat('ar-EG', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(value));
+    return new Intl.DateTimeFormat(this.translate.currentLang || 'en', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(value));
   }
 
   private fetchCampaigns(): void {

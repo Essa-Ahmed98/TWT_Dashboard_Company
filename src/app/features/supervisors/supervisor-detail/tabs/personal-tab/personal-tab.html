@@ -3,27 +3,27 @@
     <div class="info-card">
       <div class="info-card__header">
         <i class="pi pi-id-card"></i>
-        البيانات الأساسية
+        {{ 'SUPERVISOR_DETAIL.PERSONAL.BASIC_DATA' | translate }}
       </div>
       <div class="info-card__body">
         <div class="info-row">
-          <span class="info-row__label">الاسم الكامل</span>
+          <span class="info-row__label">{{ 'SUPERVISOR_DETAIL.PERSONAL.FULL_NAME' | translate }}</span>
           <span class="info-row__value">{{ supervisor().name }}</span>
         </div>
         <div class="info-row">
-          <span class="info-row__label">رقم جواز السفر</span>
+          <span class="info-row__label">{{ 'SUPERVISOR_DETAIL.PERSONAL.PASSPORT' | translate }}</span>
           <span class="info-row__value" dir="ltr">{{ supervisor().passportNumber }}</span>
         </div>
         <div class="info-row">
-          <span class="info-row__label">تاريخ الميلاد</span>
+          <span class="info-row__label">{{ 'SUPERVISOR_DETAIL.PERSONAL.BIRTH_DATE' | translate }}</span>
           <span class="info-row__value" dir="ltr">{{ supervisor().birthDate }}</span>
         </div>
         <div class="info-row">
-          <span class="info-row__label">الجنسية</span>
+          <span class="info-row__label">{{ 'SUPERVISOR_DETAIL.PERSONAL.NATIONALITY' | translate }}</span>
           <span class="info-row__value">{{ supervisor().nationality }}</span>
         </div>
         <div class="info-row">
-          <span class="info-row__label">الجنس</span>
+          <span class="info-row__label">{{ 'SUPERVISOR_DETAIL.PERSONAL.GENDER' | translate }}</span>
           <span class="info-row__value">{{ supervisor().gender }}</span>
         </div>
       </div>
@@ -32,19 +32,19 @@
     <div class="info-card">
       <div class="info-card__header">
         <i class="pi pi-phone"></i>
-        بيانات التواصل
+        {{ 'SUPERVISOR_DETAIL.PERSONAL.CONTACT_DATA' | translate }}
       </div>
       <div class="info-card__body">
         <div class="info-row">
-          <span class="info-row__label">البريد الإلكتروني</span>
+          <span class="info-row__label">{{ 'SUPERVISOR_DETAIL.PERSONAL.EMAIL' | translate }}</span>
           <span class="info-row__value" dir="ltr">{{ supervisor().email }}</span>
         </div>
         <div class="info-row">
-          <span class="info-row__label">رقم الهاتف</span>
+          <span class="info-row__label">{{ 'SUPERVISOR_DETAIL.PERSONAL.PHONE' | translate }}</span>
           <span class="info-row__value" dir="ltr">{{ supervisor().phone }}</span>
         </div>
         <div class="info-row">
-          <span class="info-row__label">اللغات</span>
+          <span class="info-row__label">{{ 'SUPERVISOR_DETAIL.PERSONAL.LANGUAGES' | translate }}</span>
           <span class="info-row__value">{{ supervisor().languages }}</span>
         </div>
       </div>
@@ -55,31 +55,31 @@
     <div class="info-card">
       <div class="info-card__header">
         <i class="pi pi-briefcase"></i>
-        بيانات العمل
+        {{ 'SUPERVISOR_DETAIL.PERSONAL.WORK_DATA' | translate }}
       </div>
       <div class="info-card__body">
         <div class="info-row">
-          <span class="info-row__label">المركز</span>
+          <span class="info-row__label">{{ 'SUPERVISOR_DETAIL.PERSONAL.CENTER' | translate }}</span>
           <span class="info-row__value">{{ supervisor().campaignName }}</span>
         </div>
         <div class="info-row">
-          <span class="info-row__label">المجموعة</span>
+          <span class="info-row__label">{{ 'SUPERVISOR_DETAIL.PERSONAL.GROUP' | translate }}</span>
           <span class="info-row__value">{{ supervisor().group }}</span>
         </div>
         <div class="info-row">
-          <span class="info-row__label">التخصص</span>
+          <span class="info-row__label">{{ 'SUPERVISOR_DETAIL.PERSONAL.SPECIALIZATION' | translate }}</span>
           <span class="info-row__value">{{ supervisor().qualification }}</span>
         </div>
         <div class="info-row">
-          <span class="info-row__label">سنوات الخبرة</span>
+          <span class="info-row__label">{{ 'SUPERVISOR_DETAIL.PERSONAL.EXPERIENCE' | translate }}</span>
           <span class="info-row__value">{{ supervisor().yearsOfExperience }}</span>
         </div>
         <div class="info-row">
-          <span class="info-row__label">عدد الحجاج</span>
+          <span class="info-row__label">{{ 'SUPERVISOR_DETAIL.PERSONAL.PILGRIM_COUNT' | translate }}</span>
           <span class="info-row__value">{{ supervisor().pilgrimsCount }}</span>
         </div>
         <div class="info-row">
-          <span class="info-row__label">تاريخ الانضمام</span>
+          <span class="info-row__label">{{ 'SUPERVISOR_DETAIL.PERSONAL.JOIN_DATE' | translate }}</span>
           <span class="info-row__value" dir="ltr">{{ supervisor().joinDate }}</span>
         </div>
       </div>
@@ -88,7 +88,7 @@
     <div class="info-card">
       <div class="info-card__header">
         <i class="pi pi-file-edit"></i>
-        ملاحظات
+        {{ 'SUPERVISOR_DETAIL.PERSONAL.NOTES' | translate }}
       </div>
       <div class="info-card__body">
         <div class="notes-text">{{ supervisor().notes }}</div>

@@ -4,7 +4,7 @@
 @if (loading()) {
   <div class="cd cd--loading">
     <span class="cd__spinner"></span>
-    <span>جاري التحميل...</span>
+    <span>{{ 'CAMPAIGN_DETAIL.LOADING' | translate }}</span>
   </div>
 }
 
@@ -17,20 +17,20 @@
   <div class="cd__page-header">
     <div class="cd__page-header-start">
       <button class="cd__back-btn" (click)="goBack()">
-        <i class="pi pi-arrow-right"></i>
+        <i class="pi pi-arrow-right detail-back__icon"></i>
       </button>
       <div>
         <h1 class="cd__page-title">{{ c.name }}</h1>
         <p class="cd__page-subtitle">
-          رقم المركز {{ c.number }}
-          &bull; {{ c.groupsCount }} مجموعة
-          &bull; {{ c.busesCount }} حافلة
+          {{ 'CAMPAIGN_DETAIL.CENTER_NUMBER' | translate }} {{ c.number }}
+          &bull; {{ c.groupsCount }} {{ 'CAMPAIGN_DETAIL.GROUP_UNIT' | translate }}
+          &bull; {{ c.busesCount }} {{ 'CAMPAIGN_DETAIL.BUS_UNIT' | translate }}
         </p>
       </div>
     </div>
     <span class="status-badge status-badge--{{ statusClass(c.status) }}">
       <span class="status-badge__dot"></span>
-      {{ c.status }}
+      {{ statusLabelKey(c.status) | translate }}
     </span>
   </div>
 
@@ -41,7 +41,7 @@
 
     <div class="cd__stat cd__stat--primary">
       <div class="cd__stat-body">
-        <span class="cd__stat-label">الحجاج</span>
+        <span class="cd__stat-label">{{ 'CAMPAIGN_DETAIL.PILGRIMS' | translate }}</span>
         <span class="cd__stat-value">{{ c.pilgrimsCount | number }}</span>
       </div>
       <div class="cd__stat-icon"><i class="pi pi-users"></i></div>
@@ -49,7 +49,7 @@
 
     <div class="cd__stat">
       <div class="cd__stat-body">
-        <span class="cd__stat-label">المجموعات</span>
+        <span class="cd__stat-label">{{ 'CAMPAIGN_DETAIL.GROUPS' | translate }}</span>
         <span class="cd__stat-value">{{ c.groupsCount }}</span>
       </div>
       <div class="cd__stat-icon"><i class="pi pi-microsoft"></i></div>
@@ -57,7 +57,7 @@
 
     <div class="cd__stat cd__stat--gold">
       <div class="cd__stat-body">
-        <span class="cd__stat-label">المشرفين</span>
+        <span class="cd__stat-label">{{ 'CAMPAIGN_DETAIL.SUPERVISORS' | translate }}</span>
         <span class="cd__stat-value">{{ c.supervisorsCount }}</span>
       </div>
       <div class="cd__stat-icon"><i class="pi pi-user-edit"></i></div>
@@ -65,7 +65,7 @@
 
     <div class="cd__stat">
       <div class="cd__stat-body">
-        <span class="cd__stat-label">الحافلات</span>
+        <span class="cd__stat-label">{{ 'CAMPAIGN_DETAIL.BUSES' | translate }}</span>
         <span class="cd__stat-value">{{ c.busesCount }}</span>
       </div>
       <div class="cd__stat-icon"><i class="pi pi-car"></i></div>
@@ -83,7 +83,7 @@
         [class.cd__tab--active]="activeTab() === tab.key"
         (click)="activeTab.set(tab.key)">
         <i [class]="tab.icon"></i>
-        {{ tab.label }}
+        {{ tab.labelKey | translate }}
       </button>
     }
   </div>
@@ -107,6 +107,6 @@
 @if (!loading() && !campaign()) {
   <div class="cd cd--not-found">
     <i class="pi pi-exclamation-circle"></i>
-    <p>لم يتم العثور على المركز</p>
+    <p>{{ 'CAMPAIGN_DETAIL.NOT_FOUND' | translate }}</p>
   </div>
 }

@@ -1,20 +1,46 @@
 <header class="header">
 
-  <!-- RIGHT: toggle + title -->
+  <!-- START: toggle + title -->
   <div class="header__start">
-    <button class="header__icon-btn" (click)="toggleSidenav.emit()" title="القائمة">
+    <button class="header__icon-btn" (click)="toggleSidenav.emit()" [title]="'HEADER.MENU' | translate">
       <i class="pi pi-microsoft"></i>
     </button>
     <div class="header__title">
       <div class="header__title-icon">
         <i class="pi pi-shield"></i>
       </div>
-      <span>لوحة الإدارة</span>
+      <span>{{ 'HEADER.TITLE' | translate }}</span>
     </div>
   </div>
 
-  <!-- LEFT: actions -->
+  <!-- ACTIONS -->
   <div class="header__actions">
+
+    <!-- Language Switcher -->
+    <div class="header__lang" [class.header__lang--open]="langDropOpen()">
+      <button class="header__lang-btn" (click)="toggleLangDrop()" [title]="'HEADER.LANGUAGE' | translate">
+        <i class="pi pi-globe"></i>
+        <span class="header__lang-label">{{ translation.getCurrentLanguage().label }}</span>
+        <i class="pi pi-angle-down header__lang-arrow"></i>
+      </button>
+      @if (langDropOpen()) {
+        <ul class="header__lang-menu">
+          @for (lang of languages; track lang.code) {
+            <li
+              class="header__lang-item"
+              [class.header__lang-item--active]="translation.currentLang() === lang.code"
+              (click)="selectLang(lang.code)"
+            >
+              @if (translation.currentLang() === lang.code) {
+                <i class="pi pi-check header__lang-check"></i>
+              }
+              <span>{{ lang.label }}</span>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+
     <!-- User pill -->
     <div class="header__user">
       <i class="pi pi-user"></i>
@@ -22,7 +48,7 @@
     </div>
 
     <!-- Logout -->
-    <button class="header__icon-btn header__logout" (click)="auth.logout()" title="تسجيل الخروج">
+    <button class="header__icon-btn header__logout" (click)="auth.logout()" [title]="'HEADER.LOGOUT' | translate">
       <i class="pi pi-sign-out"></i>
     </button>
   </div>

@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { SupervisorDetailData } from '../../supervisor-detail.model';
 
 @Component({
   selector: 'app-sv-personal-tab',
-  imports: [],
+  imports: [TranslateModule, ],
   templateUrl: './personal-tab.html',
   styleUrl: './personal-tab.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

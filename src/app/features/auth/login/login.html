@@ -1,19 +1,42 @@
 
-<div class="login-page flex-1 flex flex-column align-items-center justify-content-center px-6" dir="rtl">
+<div class="login-page flex-1 flex flex-column align-items-center justify-content-center px-6">
 
+  <div class="login-lang" [class.login-lang--open]="langDropOpen()">
+    <button class="login-lang__btn" type="button" (click)="toggleLangDrop()" [title]="'HEADER.LANGUAGE' | translate">
+      <i class="pi pi-globe"></i>
+      <span class="login-lang__label">{{ translation.getCurrentLanguage().label }}</span>
+      <i class="pi pi-angle-down login-lang__arrow"></i>
+    </button>
+    @if (langDropOpen()) {
+      <ul class="login-lang__menu">
+        @for (lang of languages; track lang.code) {
+          <li
+            class="login-lang__item"
+            [class.login-lang__item--active]="translation.currentLang() === lang.code"
+            (click)="selectLang(lang.code)"
+          >
+            @if (translation.currentLang() === lang.code) {
+              <i class="pi pi-check login-lang__check"></i>
+            }
+            <span>{{ lang.label }}</span>
+          </li>
+        }
+      </ul>
+    }
+  </div>
 
   <div class="login-container">
 
     <!-- Logo -->
     <div class="login-logo">
       <div class="login-logo__row">
-        <img src="assets/logo.png" alt="TWT Logo" class="login-logo__img login-logo__img--main" />
-        <img src="assets/aiLogo.png" alt="AI Logo" class="login-logo__img login-logo__img--partner" />
+        <img src="assets/logo.png" [alt]="'LOGIN.LOGO_ALT' | translate" class="login-logo__img login-logo__img--main" />
+        <img src="assets/aiLogo.png" [alt]="'LOGIN.PARTNER_LOGO_ALT' | translate" class="login-logo__img login-logo__img--partner" />
       </div>
     </div>
 
-    <h1 class="login-title">الأدمن</h1>
-    <p class="login-subtitle">إدارة المنظومة والشركات والصلاحيات</p>
+    <h1 class="login-title">{{ 'LOGIN.TITLE' | translate }}</h1>
+    <p class="login-subtitle">{{ 'LOGIN.SUBTITLE' | translate }}</p>
 
     <form [formGroup]="form" (ngSubmit)="submit()" class="login-form">
 
@@ -22,7 +45,7 @@
         <input
           formControlName="emailOrPhone"
           type="text"
-          placeholder="البريد الإلكتروني أو رقم الهاتف"
+          [placeholder]="'LOGIN.EMAIL_PHONE' | translate"
           class="login-input"
           [class.login-input--error]="hasError()"
           autocomplete="username"
@@ -35,7 +58,7 @@
         <input
           formControlName="password"
           [type]="showPassword() ? 'text' : 'password'"
-          placeholder="كلمة المرور"
+          [placeholder]="'LOGIN.PASSWORD' | translate"
           class="login-input login-input--password"
           [class.login-input--error]="hasError()"
           autocomplete="current-password"
@@ -45,6 +68,7 @@
           type="button"
           class="login-field__toggle"
           (click)="showPassword.set(!showPassword())"
+          [title]="(showPassword() ? 'LOGIN.HIDE_PASSWORD' : 'LOGIN.SHOW_PASSWORD') | translate"
           tabindex="-1"
         >
           <i [class]="showPassword() ? 'pi pi-eye-slash with-font-size' : 'pi pi-eye with-font-size'"></i>
@@ -55,7 +79,7 @@
       <div class="login-options">
         <label class="login-options__remember" [class.login-options__remember--active]="rememberMe()" (click)="rememberMe.set(!rememberMe())">
           <i [class]="rememberMe() ? 'pi pi-check-circle login-options__check login-options__check--active' : 'pi pi-circle login-options__check'"></i>
-          <span class="remmeber-me-text">تذكرني</span>
+          <span class="remmeber-me-text">{{ 'LOGIN.REMEMBER_ME' | translate }}</span>
         </label>
       </div>
 
@@ -63,7 +87,7 @@
      <div class="submit-btn">
       <button type="submit" class="login-btn" [disabled]="loading()">
         <i class="pi pi-shield"></i>
-        {{ loading() ? 'جاري الدخول...' : 'دخول لوحة الإدارة' }}
+        {{ loading() ? ('LOGIN.ENTERING' | translate) : ('LOGIN.ENTER' | translate) }}
       </button>
      </div>
 

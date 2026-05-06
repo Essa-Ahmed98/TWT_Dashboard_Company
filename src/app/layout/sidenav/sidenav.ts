@@ -1,21 +1,22 @@
-﻿import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../core/auth/services/auth';
 
 export interface NavItem {
-  label: string;
+  labelKey: string;
   icon: string;
   route: string;
 }
 
 export interface NavGroup {
-  label: string;
+  labelKey: string;
   items: NavItem[];
 }
 
 @Component({
   selector: 'app-sidenav',
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, TranslateModule],
   templateUrl: './sidenav.html',
   styleUrl: './sidenav.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,32 +27,32 @@ export class Sidenav {
 
   navGroups: NavGroup[] = [
     {
-      label: 'القائمة الرئيسية',
+      labelKey: 'SIDENAV.MAIN_MENU',
       items: [
-        { label: 'لوحة التحكم', icon: 'pi pi-th-large', route: '/dashboard' },
-        { label: 'إدارة المراكز', icon: 'pi pi-globe', route: '/campaigns' },
-        { label: 'إدارة التفويج والنقل', icon: 'pi pi-car', route: '/dispatch' },
-        { label: 'غرفة المراقبة', icon: 'pi pi-map-marker', route: '/geo-fence' },
-        { label: 'موقع السكن',    icon: 'pi pi-home',       route: '/accommodation-location' },
+        { labelKey: 'SIDENAV.DASHBOARD',    icon: 'pi pi-th-large',          route: '/dashboard' },
+        { labelKey: 'SIDENAV.CENTERS',      icon: 'pi pi-globe',             route: '/campaigns' },
+        { labelKey: 'SIDENAV.DISPATCH',     icon: 'pi pi-car',               route: '/dispatch' },
+        { labelKey: 'SIDENAV.GEOFENCE',     icon: 'pi pi-map-marker',        route: '/geo-fence' },
+        { labelKey: 'SIDENAV.ACCOMMODATION',icon: 'pi pi-home',              route: '/accommodation-location' },
       ],
     },
     {
-      label: 'إدارة الأفراد',
+      labelKey: 'SIDENAV.PERSONNEL',
       items: [
-        { label: 'إدارة الحجاج', icon: 'pi pi-users', route: '/pilgrims' },
-        { label: 'إدارة المشرفين', icon: 'pi pi-user', route: '/supervisors' },
-        { label: 'إدارة الأجهزة', icon: 'pi pi-mobile', route: '/devices' },
+        { labelKey: 'SIDENAV.PILGRIMS',    icon: 'pi pi-users',   route: '/pilgrims' },
+        { labelKey: 'SIDENAV.SUPERVISORS', icon: 'pi pi-user',    route: '/supervisors' },
+        { labelKey: 'SIDENAV.DEVICES',     icon: 'pi pi-mobile',  route: '/devices' },
       ],
     },
     {
-      label: 'أدوات',
+      labelKey: 'SIDENAV.TOOLS',
       items: [
-        { label: 'الدردشة', icon: 'pi pi-comments', route: '/chat' },
-        { label: 'الإشعارات الجماعية', icon: 'pi pi-bell', route: '/notifications' },
-        { label: 'الرسائل الجماعية', icon: 'pi pi-send', route: '/broadcast' },
-        { label: 'التقييمات', icon: 'pi pi-star', route: '/reviews' },
-        { label: 'الشكاوى',    icon: 'pi pi-exclamation-circle', route: '/complaints' },
-        { label: 'الإعدادات', icon: 'pi pi-cog',               route: '/settings'   },
+        { labelKey: 'SIDENAV.CHAT',          icon: 'pi pi-comments',           route: '/chat' },
+        { labelKey: 'SIDENAV.NOTIFICATIONS', icon: 'pi pi-bell',               route: '/notifications' },
+        { labelKey: 'SIDENAV.BROADCAST',     icon: 'pi pi-send',               route: '/broadcast' },
+        { labelKey: 'SIDENAV.REVIEWS',       icon: 'pi pi-star',               route: '/reviews' },
+        { labelKey: 'SIDENAV.COMPLAINTS',    icon: 'pi pi-exclamation-circle', route: '/complaints' },
+        { labelKey: 'SIDENAV.SETTINGS',      icon: 'pi pi-cog',                route: '/settings' },
       ],
     },
   ];

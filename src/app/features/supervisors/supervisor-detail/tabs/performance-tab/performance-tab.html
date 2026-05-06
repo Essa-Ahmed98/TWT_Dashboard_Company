@@ -3,13 +3,13 @@
     <div class="info-card">
       <div class="info-card__header">
         <i class="pi pi-clock"></i>
-        مهام اليوم ({{ supervisor().tasksDone }}/{{ supervisor().tasksTotal }})
+        {{ 'SUPERVISOR_DETAIL.PERFORMANCE.TODAY_TASKS' | translate }} ({{ supervisor().tasksDone }}/{{ supervisor().tasksTotal }})
       </div>
       <div class="info-card__body">
         @if (supervisor().tasks.length === 0) {
           <div class="empty-msg">
             <i class="pi pi-clock"></i>
-            <p>لا توجد مهام متاحة من الـ API الحالي</p>
+            <p>{{ 'SUPERVISOR_DETAIL.PERFORMANCE.NO_TASKS' | translate }}</p>
           </div>
         }
         @for (task of supervisor().tasks; track task.label) {
@@ -24,7 +24,7 @@
             <div class="task-progress__bar" [style.width.%]="supervisor().tasksCompletionPct"></div>
           </div>
           <div class="task-progress__info">
-            <span class="task-progress__label">نسبة الإنجاز</span>
+            <span class="task-progress__label">{{ 'SUPERVISOR_DETAIL.PERFORMANCE.PROGRESS' | translate }}</span>
             <span class="task-progress__pct">{{ supervisor().tasksCompletionPct }}%</span>
           </div>
         </div>
@@ -34,8 +34,7 @@
     <div class="info-card">
       <div class="info-card__header">
         <i class="pi pi-chart-bar"></i>
-        مقاييس الأداء
-      </div>
+        {{ 'SUPERVISOR_DETAIL.PERFORMANCE.METRICS' | translate }}</div>
       <div class="info-card__body">
         @for (m of supervisor().performanceMetrics; track m.label) {
           <div class="metric-row">
@@ -56,8 +55,7 @@
     <div class="info-card">
       <div class="info-card__header">
         <i class="pi pi-star"></i>
-        التقييم العام
-      </div>
+        {{ 'SUPERVISOR_DETAIL.PERFORMANCE.OVERALL_RATING' | translate }}</div>
       <div class="perf__overall">
         <div class="perf__stars">
           @for (s of filledStars(supervisor().ratingAvg); track $index) {
@@ -68,12 +66,12 @@
         <div class="perf__overall-stats">
           <div class="perf__overall-stat">
             <span class="perf__stat-value">{{ supervisor().reports.length }}</span>
-            <span class="perf__stat-label">تقارير مرفوعة</span>
+            <span class="perf__stat-label">{{ 'SUPERVISOR_DETAIL.PERFORMANCE.REPORTS' | translate }}</span>
           </div>
           <div class="perf__overall-divider"></div>
           <div class="perf__overall-stat">
             <span class="perf__stat-value">{{ supervisor().yearsOfExperience }}</span>
-            <span class="perf__stat-label">سنوات خبرة</span>
+            <span class="perf__stat-label">{{ 'SUPERVISOR_DETAIL.PERFORMANCE.EXPERIENCE' | translate }}</span>
           </div>
         </div>
       </div>
@@ -82,13 +80,12 @@
     <div class="info-card">
       <div class="info-card__header">
         <i class="pi pi-file"></i>
-        التقارير المقدمة
-      </div>
+        {{ 'SUPERVISOR_DETAIL.PERFORMANCE.SUBMITTED_REPORTS' | translate }}</div>
       <div class="info-card__body">
         @if (supervisor().reports.length === 0) {
           <div class="empty-msg">
             <i class="pi pi-file"></i>
-            <p>لا توجد تقارير متاحة لهذا المشرف حاليًا</p>
+            <p>{{ 'SUPERVISOR_DETAIL.PERFORMANCE.NO_REPORTS' | translate }}</p>
           </div>
         }
         @for (r of supervisor().reports; track r.title) {
@@ -100,7 +97,7 @@
               <span class="report-row__title">{{ r.title }}</span>
               <span class="report-row__date">{{ r.date }}</span>
             </div>
-            <span class="report-row__badge">مقدم</span>
+            <span class="report-row__badge">{{ 'SUPERVISOR_DETAIL.PERFORMANCE.SUBMITTED' | translate }}</span>
           </div>
         }
       </div>

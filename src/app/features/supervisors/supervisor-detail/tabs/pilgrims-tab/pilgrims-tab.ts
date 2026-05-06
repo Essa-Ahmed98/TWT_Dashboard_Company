@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, input, signal } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, catchError, debounceTime, distinctUntilChanged, of, switchMap } from 'rxjs';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -8,7 +9,7 @@ import { PilgrimGroupItem } from '../../../supervisors.model';
 
 @Component({
   selector: 'app-sv-pilgrims-tab',
-  imports: [ProgressSpinnerModule],
+  imports: [TranslateModule, ProgressSpinnerModule],
   templateUrl: './pilgrims-tab.html',
   styleUrl: './pilgrims-tab.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -2,29 +2,29 @@
   @if (loading()) {
     <div class="empty-card">
       <i class="pi pi-spin pi-spinner"></i>
-      <p>جاري تحميل بيانات المناسك...</p>
+      <p>{{ 'PILGRIM_DETAIL.RITUALS.LOADING' | translate }}</p>
     </div>
   } @else if (!hasItems()) {
     <div class="empty-card">
       <i class="pi pi-map-marker"></i>
-      <p>لا توجد بيانات مناسك متاحة لهذا الحاج</p>
+      <p>{{ 'PILGRIM_DETAIL.RITUALS.EMPTY' | translate }}</p>
     </div>
   } @else {
     <div class="summary-grid">
       <div class="summary-card">
-        <span class="summary-card__label">المنسك الحالي</span>
+        <span class="summary-card__label">{{ 'PILGRIM_DETAIL.RITUALS.CURRENT' | translate }}</span>
         <strong class="summary-card__value">{{ summary()?.currentRitualName }}</strong>
       </div>
       <div class="summary-card">
-        <span class="summary-card__label">نوع الحج</span>
+        <span class="summary-card__label">{{ 'PILGRIM_DETAIL.RITUALS.HAJJ_TYPE' | translate }}</span>
         <strong class="summary-card__value">{{ summary()?.hajjType }}</strong>
       </div>
       <div class="summary-card">
-        <span class="summary-card__label">نسبة الإنجاز</span>
+        <span class="summary-card__label">{{ 'PILGRIM_DETAIL.RITUALS.PROGRESS' | translate }}</span>
         <strong class="summary-card__value">{{ summary()?.progressText }}</strong>
       </div>
       <div class="summary-card">
-        <span class="summary-card__label">المناسك المكتملة</span>
+        <span class="summary-card__label">{{ 'PILGRIM_DETAIL.RITUALS.COMPLETED' | translate }}</span>
         <strong class="summary-card__value">{{ summary()?.completionText }}</strong>
       </div>
     </div>
@@ -32,8 +32,7 @@
     <div class="info-card">
       <div class="info-card__header">
         <i class="pi pi-map-marker"></i>
-        تقدم المناسك
-      </div>
+        {{ 'PILGRIM_DETAIL.RITUALS.RITUAL_PROGRESS' | translate }}</div>
       <div class="rituals-timeline">
         @for (r of rituals(); track r.id; let last = $last) {
           <div class="ritual-item ritual-item--{{ r.status }}">
@@ -55,7 +54,7 @@
               <p class="ritual-item__description">{{ r.description }}</p>
               <div class="ritual-item__chips">
                 <span class="ritual-item__badge ritual-item__badge--{{ r.status }}">{{ statusLabel(r.status) }}</span>
-                <span class="ritual-item__meta">الحالة رقم {{ r.rawStatus }}</span>
+                <span class="ritual-item__meta">{{ 'PILGRIM_DETAIL.RITUALS.STATUS_NUMBER' | translate }} {{ r.rawStatus }}</span>
               </div>
             </div>
           </div>

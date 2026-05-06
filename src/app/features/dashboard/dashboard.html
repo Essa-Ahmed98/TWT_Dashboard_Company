@@ -5,17 +5,17 @@
   ══════════════════════════════════════════ -->
   <div class="dashboard__header">
     <div class="dashboard__title">
-      <h1 class="dashboard__title-text">لوحة التحكم الرئيسية</h1>
-      <span class="dashboard__title-sub">لوحة التحكم الإدارية &bull; موسم حج {{ hijriYear }}</span>
+      <h1 class="dashboard__title-text">{{ 'DASHBOARD.TITLE' | translate }}</h1>
+      <span class="dashboard__title-sub">{{ 'DASHBOARD.SUBTITLE' | translate }} {{ hijriYear }}</span>
     </div>
     <div class="dashboard__actions">
       <span class="system-badge">
         <span class="system-badge__dot"></span>
-        النظام يعمل
+        {{ 'DASHBOARD.SYSTEM_WORKING' | translate }}
       </span>
       <a class="btn-monitor" routerLink="/geo-fence">
         <i class="pi pi-eye"></i>
-        غرفة المراقبة
+        {{ 'DASHBOARD.MONITORING_ROOM' | translate }}
       </a>
     </div>
   </div>
@@ -26,7 +26,7 @@
   @if (svc.loading()) {
     <div class="dashboard__loading">
       <span class="dashboard__spinner"></span>
-      <span>جاري التحميل...</span>
+      <span>{{ 'DASHBOARD.LOADING' | translate }}</span>
     </div>
   }
 
@@ -42,7 +42,7 @@
           <i class="pi pi-users"></i>
         </div>
         <div class="stat-card__body">
-          <span class="stat-card__label">إجمالي الحجاج</span>
+          <span class="stat-card__label">{{ 'DASHBOARD.TOTAL_PILGRIMS' | translate }}</span>
           <span class="stat-card__value">{{ s.PilgrimsCount | number }}</span>
         </div>
       </div>
@@ -52,7 +52,7 @@
           <i class="pi pi-map"></i>
         </div>
         <div class="stat-card__body">
-          <span class="stat-card__label">الحملات النشطة</span>
+          <span class="stat-card__label">{{ 'DASHBOARD.ACTIVE_CAMPAIGNS' | translate }}</span>
           <span class="stat-card__value">{{ s.CampaignsCount }}</span>
         </div>
       </div>
@@ -62,9 +62,9 @@
           <i class="pi pi-user-check"></i>
         </div>
         <div class="stat-card__body">
-          <span class="stat-card__label stat-card__label--dark">المشرفين النشطين</span>
+          <span class="stat-card__label stat-card__label--dark">{{ 'DASHBOARD.ACTIVE_SUPERVISORS' | translate }}</span>
           <span class="stat-card__value stat-card__value--dark">{{ s.SupervisorsCount | number }}</span>
-          <span class="stat-card__sub stat-card__sub--muted">{{ s.OnlineSupervisorsCount }} متصل</span>
+          <span class="stat-card__sub stat-card__sub--muted">{{ s.OnlineSupervisorsCount }} {{ 'DASHBOARD.ONLINE_LABEL' | translate }}</span>
         </div>
       </div>
 
@@ -73,7 +73,7 @@
           <i class="pi pi-sitemap"></i>
         </div>
         <div class="stat-card__body">
-          <span class="stat-card__label stat-card__label--dark">المجموعات</span>
+          <span class="stat-card__label stat-card__label--dark">{{ 'DASHBOARD.GROUPS' | translate }}</span>
           <span class="stat-card__value stat-card__value--dark">{{ s.GroupsCount | number }}</span>
         </div>
       </div>
@@ -90,7 +90,7 @@
           <i class="pi pi-car"></i>
         </div>
         <div class="mini-card__body">
-          <span class="mini-card__label">الحافلات النشطة</span>
+          <span class="mini-card__label">{{ 'DASHBOARD.ACTIVE_BUSES' | translate }}</span>
           <span class="mini-card__value">{{ s.BusesCount }}</span>
         </div>
       </div>
@@ -100,7 +100,7 @@
           <i class="pi pi-user"></i>
         </div>
         <div class="mini-card__body">
-          <span class="mini-card__label">إجمالي المشرفين</span>
+          <span class="mini-card__label">{{ 'DASHBOARD.TOTAL_SUPERVISORS' | translate }}</span>
           <span class="mini-card__value">{{ s.SupervisorsCount }}</span>
         </div>
       </div>
@@ -110,7 +110,7 @@
           <i class="pi pi-wifi"></i>
         </div>
         <div class="mini-card__body">
-          <span class="mini-card__label">المشرفين المتصلين</span>
+          <span class="mini-card__label">{{ 'DASHBOARD.ONLINE_SUPERVISORS' | translate }}</span>
           <span class="mini-card__value">{{ s.OnlineSupervisorsCount }}</span>
         </div>
       </div>
@@ -120,7 +120,7 @@
           <i class="pi pi-sitemap"></i>
         </div>
         <div class="mini-card__body">
-          <span class="mini-card__label">إجمالي المجموعات</span>
+          <span class="mini-card__label">{{ 'DASHBOARD.TOTAL_GROUPS' | translate }}</span>
           <span class="mini-card__value">{{ s.GroupsCount }}</span>
         </div>
       </div>
@@ -135,7 +135,7 @@
       <!-- Health Donut Chart (API) -->
       <div class="chart-card chart-card--donut">
         <div class="chart-card__head chart-card__head--compact">
-          <h3 class="chart-card__title">توزيع الحالات الصحية</h3>
+          <h3 class="chart-card__title">{{ 'DASHBOARD.HEALTH_DISTRIBUTION' | translate }}</h3>
         </div>
 
         @if (svc.healthLoading()) {
@@ -152,13 +152,13 @@
                 <circle cx="60" cy="60" r="47" fill="none" stroke="#f0f3f7" stroke-width="14"/>
 
                 <!-- Arc segments -->
-                @for (seg of d.segments; track seg.label) {
+                @for (seg of d.segments; track seg.labelKey) {
                   @if (seg.path) {
                     <path
                       [attr.d]="seg.path"
                       [attr.fill]="seg.color"
                       class="donut-seg"
-                      [class.donut-seg--hovered]="hoveredSegment()?.label === seg.label"
+                      [class.donut-seg--hovered]="hoveredSegment()?.labelKey === seg.labelKey"
                       (mouseenter)="hoveredSegment.set(seg)"
                       (mouseleave)="hoveredSegment.set(null)"/>
                   }
@@ -167,40 +167,40 @@
                 <!-- Center: hover info or total -->
                 @if (hoveredSegment(); as seg) {
                   <text x="60" y="54" text-anchor="middle" font-size="17" font-weight="800" [attr.fill]="seg.color">{{ seg.count }}</text>
-                  <text x="60" y="65" text-anchor="middle" font-size="7.5" fill="#6c7a89">{{ seg.label }}</text>
+                  <text x="60" y="65" text-anchor="middle" font-size="7.5" fill="#6c7a89">{{ seg.labelKey | translate }}</text>
                   <text x="60" y="76" text-anchor="middle" font-size="8" fill="#9aa5b1">{{ seg.pct }}%</text>
                 } @else {
                   <text x="60" y="56" text-anchor="middle" font-size="17" font-weight="800" fill="#1a2e3b">{{ d.pilgrims | number }}</text>
-                  <text x="60" y="68" text-anchor="middle" font-size="7.5" fill="#6c7a89">إجمالي الحجاج</text>
+                  <text x="60" y="68" text-anchor="middle" font-size="7.5" fill="#6c7a89">{{ 'DASHBOARD.TOTAL_PILGRIMS_CHART' | translate }}</text>
                 }
               </svg>
             </div>
 
             <div class="donut-legend">
-              @for (seg of d.segments; track seg.label) {
+              @for (seg of d.segments; track seg.labelKey) {
                 <div class="donut-legend__item"
                      (mouseenter)="hoveredSegment.set(seg)"
                      (mouseleave)="hoveredSegment.set(null)">
                   <span class="donut-legend__dot" [style.background]="seg.color"></span>
-                  <span class="donut-legend__label">{{ seg.label }}</span>
+                  <span class="donut-legend__label">{{ seg.labelKey | translate }}</span>
                   <span class="donut-legend__count">{{ seg.count | number }}</span>
                 </div>
               }
               <div class="donut-legend__divider"></div>
               <div class="donut-legend__item donut-legend__item--total">
-                <span class="donut-legend__label">إجمالي الحجاج</span>
+                <span class="donut-legend__label">{{ 'DASHBOARD.TOTAL_PILGRIMS_CHART' | translate }}</span>
                 <span class="donut-legend__count">{{ d.pilgrims | number }}</span>
               </div>
             </div>
 
             <div class="health-overview">
               <div class="health-overview__header">
-                <span class="health-overview__eyebrow">مؤشر السلامة</span>
+                <span class="health-overview__eyebrow">{{ 'DASHBOARD.SAFETY_INDEX' | translate }}</span>
                 <strong class="health-overview__score">{{ d.segments[0].pct }}%</strong>
               </div>
 
               <div class="health-overview__bar">
-                @for (seg of d.segments; track seg.label) {
+                @for (seg of d.segments; track seg.labelKey) {
                   @if (seg.count > 0) {
                     <span
                       class="health-overview__bar-seg"
@@ -212,9 +212,9 @@
               </div>
 
               <div class="health-overview__tiles">
-                @for (seg of d.segments; track seg.label) {
+                @for (seg of d.segments; track seg.labelKey) {
                   <div class="health-overview__tile">
-                    <span class="health-overview__tile-label">{{ seg.label }}</span>
+                    <span class="health-overview__tile-label">{{ seg.labelKey | translate }}</span>
                     <span class="health-overview__tile-value">{{ seg.pct }}%</span>
                   </div>
                 }

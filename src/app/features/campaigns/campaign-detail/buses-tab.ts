@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal, afterNextRender } from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DecimalPipe } from '@angular/common';
 import { finalize } from 'rxjs';
 import { MessageService } from 'primeng/api';
@@ -12,7 +13,7 @@ const EMPTY_FORM: BusForm = {
 
 @Component({
   selector: 'app-campaign-buses-tab',
-  imports: [DecimalPipe],
+  imports: [TranslateModule, DecimalPipe],
   templateUrl: './buses-tab.html',
   styleUrl: './buses-tab.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,6 +21,7 @@ const EMPTY_FORM: BusForm = {
 export class CampaignBusesTab {
   private readonly service = inject(CampaignsService);
   private readonly toast   = inject(MessageService);
+  private readonly translate = inject(TranslateService);
 
   readonly campaignId = input.required<string>();
 
@@ -56,12 +58,12 @@ export class CampaignBusesTab {
   phoneTouched = signal(false);
   editingBus   = signal<BusApiItem | null>(null);
 
-  modalTitle = computed(() =>
-    this.editingBus() ? 'تعديل الحافلة' : 'إضافة حافلة جديدة'
+  modalTitleKey = computed(() =>
+    this.editingBus() ? 'BUSES_TAB.MODAL_TITLE_EDIT' : 'BUSES_TAB.MODAL_TITLE_ADD'
   );
 
-  modalSubtitle = computed(() =>
-    this.editingBus() ? 'عدّل بيانات الحافلة والسائق' : 'أدخل بيانات الحافلة والسائق'
+  modalSubtitleKey = computed(() =>
+    this.editingBus() ? 'BUSES_TAB.MODAL_SUBTITLE_EDIT' : 'BUSES_TAB.MODAL_SUBTITLE_ADD'
   );
 
   readonly phoneInvalid = computed(() => {
@@ -117,7 +119,11 @@ export class CampaignBusesTab {
         this.showModal.set(false);
         this.editingBus.set(null);
         if (wasEditing) {
-          this.toast.add({ severity: 'success', summary: 'نجاح', detail: 'تم تعديل الحافلة بنجاح' });
+          this.toast.add({
+            severity: 'success',
+            summary: this.translate.instant('COMMON.SUCCESS'),
+            detail: this.translate.instant('BUSES_TAB.EDIT_SUCCESS'),
+          });
         }
       });
   }

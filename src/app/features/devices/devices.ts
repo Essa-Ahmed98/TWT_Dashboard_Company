@@ -14,6 +14,7 @@ import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TooltipModule } from 'primeng/tooltip';
 import { MessageService } from 'primeng/api';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { AuthService } from '../../core/auth/services/auth';
 import { ApiResult } from '../../core/models/api.models';
@@ -24,7 +25,7 @@ const EMPTY_FORM: DeviceForm = { imeiNumber: '', simNumber: '', notes: '' };
 
 @Component({
   selector:    'app-devices',
-  imports:     [FormsModule, ProgressSpinnerModule, TooltipModule, DecimalPipe],
+  imports:     [FormsModule, ProgressSpinnerModule, TooltipModule, DecimalPipe, TranslateModule],
   templateUrl: './devices.html',
   styleUrl:    './devices.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

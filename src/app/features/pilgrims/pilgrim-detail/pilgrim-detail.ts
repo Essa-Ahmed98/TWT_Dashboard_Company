@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, effect, inject, signal } from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, map, of, startWith, switchMap } from 'rxjs';
@@ -25,7 +26,7 @@ const INITIAL_DETAIL_STATE: PilgrimDetailState = {
 
 @Component({
   selector: 'app-pilgrim-detail',
-  imports: [PersonalTab, HealthTab, RitualsTab, FamilyTab, SupervisorsTab, RatingsTab],
+  imports: [TranslateModule, PersonalTab, HealthTab, RitualsTab, FamilyTab, SupervisorsTab, RatingsTab],
   templateUrl: './pilgrim-detail.html',
   styleUrl: './pilgrim-detail.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,6 +37,7 @@ export class PilgrimDetail {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly toast = inject(MessageService);
+  private readonly translate = inject(TranslateService);
 
   activeTab = signal<PilgrimTab>('personal');
   isEditing = signal(false);
@@ -45,13 +47,13 @@ export class PilgrimDetail {
 
   statusLabel = STATUS_LABEL;
 
-  tabs: { key: PilgrimTab; label: string; icon: string }[] = [
-    { key: 'personal', label: 'البيانات الشخصية', icon: 'pi pi-user' },
-    { key: 'supervisors', label: 'بيانات المشرفين', icon: 'pi pi-user-edit' },
-    { key: 'health', label: 'الصحة والأدوية', icon: 'pi pi-heart' },
-    { key: 'rituals', label: 'المناسك', icon: 'pi pi-map-marker' },
-    { key: 'family', label: 'العائلة', icon: 'pi pi-users' },
-    { key: 'ratings', label: 'التقييمات', icon: 'pi pi-star' },
+  tabs: { key: PilgrimTab; labelKey: string; icon: string }[] = [
+    { key: 'personal', labelKey: 'PILGRIM_DETAIL.TABS.PERSONAL', icon: 'pi pi-user' },
+    { key: 'supervisors', labelKey: 'PILGRIM_DETAIL.TABS.SUPERVISORS', icon: 'pi pi-user-edit' },
+    { key: 'health', labelKey: 'PILGRIM_DETAIL.TABS.HEALTH', icon: 'pi pi-heart' },
+    { key: 'rituals', labelKey: 'PILGRIM_DETAIL.TABS.RITUALS', icon: 'pi pi-map-marker' },
+    { key: 'family', labelKey: 'PILGRIM_DETAIL.TABS.FAMILY', icon: 'pi pi-users' },
+    { key: 'ratings', labelKey: 'PILGRIM_DETAIL.TABS.RATINGS', icon: 'pi pi-star' },
   ];
 
   readonly detailState = signal<PilgrimDetailState>(INITIAL_DETAIL_STATE);
@@ -146,15 +148,15 @@ export class PilgrimDetail {
             this.editData.set(null);
             this.toast.add({
               severity: 'success',
-              summary: 'تم التعديل',
-              detail: 'تم تحديث بيانات الحاج بنجاح',
+              summary: this.translate.instant('PILGRIM_DETAIL.EDIT_SUCCESS_SUMMARY'),
+              detail: this.translate.instant('PILGRIM_DETAIL.EDIT_SUCCESS_DETAIL'),
               life: 3000,
             });
           } else {
             this.toast.add({
               severity: 'error',
-              summary: 'خطأ',
-              detail: res.Error?.MessageKey || res.Error?.message || res.ValidationErrors?.[0]?.ErrorMessage || 'تعذر تحديث بيانات الحاج',
+              summary: this.translate.instant('COMMON.ERROR'),
+              detail: res.Error?.MessageKey || res.Error?.message || res.ValidationErrors?.[0]?.ErrorMessage || this.translate.instant('PILGRIM_DETAIL.EDIT_ERROR_DETAIL'),
               life: 4000,
             });
           }
@@ -164,8 +166,8 @@ export class PilgrimDetail {
           const body = err?.error as ApiResult<unknown> | undefined;
           this.toast.add({
             severity: 'error',
-            summary: 'خطأ',
-            detail: body?.Error?.MessageKey || body?.Error?.message || body?.ValidationErrors?.[0]?.ErrorMessage || 'حدث خطأ أثناء تحديث بيانات الحاج',
+            summary: this.translate.instant('COMMON.ERROR'),
+            detail: body?.Error?.MessageKey || body?.Error?.message || body?.ValidationErrors?.[0]?.ErrorMessage || this.translate.instant('PILGRIM_DETAIL.EDIT_EXCEPTION_DETAIL'),
             life: 4000,
           });
         },

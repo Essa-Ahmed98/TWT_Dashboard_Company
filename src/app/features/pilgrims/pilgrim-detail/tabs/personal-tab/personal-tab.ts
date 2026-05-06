@@ -11,12 +11,13 @@ import {
   output,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import { PilgrimDetailData } from '../../pilgrim-detail.model';
 import { loadLeaflet } from '../../../../../shared/utils/leaflet-loader';
 
 @Component({
   selector: 'app-personal-tab',
-  imports: [],
+  imports: [TranslateModule, ],
   templateUrl: './personal-tab.html',
   styleUrl: './personal-tab.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

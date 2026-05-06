@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, signal } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { catchError, map, of, startWith, switchMap } from 'rxjs';
 import { PilgrimRitualApiItem } from '../../../pilgrims.model';
@@ -25,7 +26,7 @@ interface RitualSummaryView {
 
 @Component({
   selector: 'app-rituals-tab',
-  imports: [],
+  imports: [TranslateModule, ],
   templateUrl: './rituals-tab.html',
   styleUrl: './rituals-tab.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

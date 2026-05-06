@@ -3,15 +3,14 @@
     <div class="info-card">
       <div class="info-card__header">
         <i class="pi pi-chart-line"></i>
-        المؤشرات الحيوية
-      </div>
+        {{ 'PILGRIM_DETAIL.HEALTH.VITAL_INDICATORS' | translate }}</div>
       <div class="vital-bars">
-        @for (vb of pilgrim().vitalBars; track vb.label) {
+        @for (vb of pilgrim().vitalBars; track vb.labelKey) {
           <div class="vital-bar-item">
             <div class="vital-bar-item__header">
               <span class="vital-bar-item__label">
                 <i [class]="vb.icon" [style.color]="vb.color"></i>
-                {{ vb.label }}
+                {{ vb.labelKey | translate }}
               </span>
               <span class="vital-bar-item__value" dir="ltr">{{ vb.value }}</span>
             </div>
@@ -28,20 +27,19 @@
     <div class="info-card">
       <div class="info-card__header">
         <i class="pi pi-shield"></i>
-        البيانات الطبية
-      </div>
+        {{ 'PILGRIM_DETAIL.HEALTH.MEDICAL_DATA' | translate }}</div>
       <div class="info-card__body">
         <div class="info-row">
-          <span class="info-row__label">فصيلة الدم</span>
-          <span class="info-row__value">{{ pilgrim().bloodType }}</span>
+          <span class="info-row__label">{{ 'PILGRIM_DETAIL.HEALTH.BLOOD_TYPE' | translate }}</span>
+          <span class="info-row__value">{{ pilgrim().bloodType | translate }}</span>
         </div>
         <div class="info-row">
-          <span class="info-row__label">الأمراض المزمنة</span>
-          <span class="info-row__value">{{ pilgrim().chronicDiseases }}</span>
+          <span class="info-row__label">{{ 'PILGRIM_DETAIL.HEALTH.CHRONIC_DISEASES' | translate }}</span>
+          <span class="info-row__value">{{ pilgrim().chronicDiseases | translate }}</span>
         </div>
         <div class="info-row">
-          <span class="info-row__label">الحساسيات</span>
-          <span class="info-row__value">{{ pilgrim().allergies }}</span>
+          <span class="info-row__label">{{ 'PILGRIM_DETAIL.HEALTH.ALLERGIES' | translate }}</span>
+          <span class="info-row__value">{{ pilgrim().allergies | translate }}</span>
         </div>
       </div>
     </div>
@@ -49,20 +47,19 @@
     <div class="info-card">
       <div class="info-card__header">
         <i class="pi pi-tag"></i>
-        الأدوية المسجلة
-      </div>
+        {{ 'PILGRIM_DETAIL.HEALTH.REGISTERED_MEDICATIONS' | translate }}</div>
       <div class="info-card__body">
         @if (loadingDrugs()) {
-          <div class="empty-msg"><i class="pi pi-spin pi-spinner"></i> جاري التحميل...</div>
+          <div class="empty-msg"><i class="pi pi-spin pi-spinner"></i> {{ 'COMMON.LOADING' | translate }}</div>
         } @else if (drugs().length === 0) {
-          <p class="empty-msg">لا توجد أدوية مسجلة</p>
+          <p class="empty-msg">{{ 'PILGRIM_DETAIL.HEALTH.NO_MEDICATIONS' | translate }}</p>
         } @else {
           @for (drug of drugs(); track drug.Id) {
             <div class="med-item">
               <div class="med-item__header">
                 <span class="med-item__name">{{ drug.Name }}</span>
                 @if (!drug.IsActive) {
-                  <span class="med-item__inactive">متوقف</span>
+                  <span class="med-item__inactive">{{ 'PILGRIM_DETAIL.HEALTH.INACTIVE' | translate }}</span>
                 }
               </div>
               <div class="med-item__times">

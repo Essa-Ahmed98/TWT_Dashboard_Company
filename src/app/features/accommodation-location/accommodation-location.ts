@@ -13,6 +13,7 @@ import {
   signal,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -34,7 +35,7 @@ interface AccommodationLocationRequest {
 
 @Component({
   selector: 'app-accommodation-location',
-  imports: [FormsModule],
+  imports: [TranslateModule, FormsModule],
   templateUrl: './accommodation-location.html',
   styleUrl: './accommodation-location.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

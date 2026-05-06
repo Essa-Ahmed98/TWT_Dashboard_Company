@@ -10,7 +10,6 @@ $danger:      #e53935;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  direction: rtl;
   height: 100%;
 
   // ── Page Header ──────────────────────────────────────────────
@@ -108,7 +107,7 @@ $danger:      #e53935;
     gap: 12px;
     flex: 1;
     min-height: 0;
-    direction: ltr; // keep column order consistent
+   
   }
 
   // ── Map ──────────────────────────────────────────────────────
@@ -153,7 +152,6 @@ $danger:      #e53935;
       gap: .75rem;
       box-shadow: none;
       pointer-events: auto;
-      direction: rtl;
       font-size: .95rem;
       font-weight: 600;
       position: relative;
@@ -198,7 +196,6 @@ $danger:      #e53935;
     font-weight: 600;
     color: $primary;
     user-select: none;
-    direction: rtl;
     transition: background .15s;
 
     &:hover { background: #f4f6f9; }
@@ -243,7 +240,6 @@ $danger:      #e53935;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    direction: rtl;
   }
 
   // ── Tabs ─────────────────────────────────────────────────────
@@ -340,14 +336,16 @@ $danger:      #e53935;
       width: 100%;
       border: 1px solid #dce2e5;
       border-radius: $card-radius;
-      padding: .5rem .75rem .5rem 2.25rem;
+      padding-block: .5rem;
+      padding-inline-start: .75rem;
+      padding-inline-end: 2.25rem;
       font-size: .875rem;
       line-height: 1.25rem;
       color: $primary;
       background: transparent;
       font-family: inherit;
-      direction: rtl;
       box-sizing: border-box;
+      direction: inherit;
       transition: border-color .18s;
       outline: none;
 
@@ -382,7 +380,6 @@ $danger:      #e53935;
     font-weight: 500;
     flex-shrink: 0;
     transition: all .18s;
-    direction: rtl;
 
     &:hover { background: #f4f6f9; }
 
@@ -395,7 +392,7 @@ $danger:      #e53935;
     &__menu {
       position: absolute;
       top: calc(100% + 6px);
-      right: 0;
+      inset-inline-end: 0;
       min-width: 110px;
       background: #fff;
       border: 1px solid #eef0f4;
@@ -403,7 +400,6 @@ $danger:      #e53935;
       box-shadow: $card-shadow;
       z-index: 200;
       overflow: hidden;
-      direction: rtl;
     }
 
     &__item {
@@ -809,7 +805,6 @@ $danger:      #e53935;
   max-height: calc(100vh - 4rem);
   display: flex;
   flex-direction: column;
-  direction: rtl;
   overflow: hidden;
 
   &__header {
@@ -895,7 +890,6 @@ $danger:      #e53935;
     font-family: inherit;
     background: #fff;
     transition: border-color .15s;
-    direction: rtl;
     width: 100%;
     box-sizing: border-box;
 
@@ -1009,7 +1003,6 @@ $danger:      #e53935;
 }
 .map-header {
   padding: 1rem;
-  direction: rtl;
 }
 
 // ── Campaign Accordion ────────────────────────────────────────────
@@ -1188,21 +1181,29 @@ $danger:      #e53935;
 
 // ── Pagination bar ────────────────────────────────────────────────
 .pagination-bar {
-  position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 8px;
   padding: 8px 0;
+  direction: ltr;
 
   &__controls {
     display: flex;
     align-items: center;
     gap: 4px;
+    direction: ltr;
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 
   &__info {
-    position: absolute;
-    right: 0;
     font-size: 13px;
     font-weight: 600;
     color: #1a2e3b;
@@ -1211,6 +1212,8 @@ $danger:      #e53935;
     border: 1px solid #e9edf2;
     border-radius: 8px;
     padding: 4px 10px;
+    flex: 0 0 auto;
+    direction: ltr;
   }
 }
 
@@ -1243,6 +1246,15 @@ $danger:      #e53935;
   &:disabled { opacity: .35; cursor: not-allowed; }
 
   i { font-size: 12px; }
+}
+
+:host-context(html[dir='rtl']) {
+  .pagination__btn {
+    &--prev .pi,
+    &--next .pi {
+      transform: scaleX(-1);
+    }
+  }
 }
 
 .pagination__ellipsis {

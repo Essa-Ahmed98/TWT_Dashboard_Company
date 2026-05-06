@@ -10,6 +10,7 @@ import {
   signal,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpClient } from '@angular/common/http';
 import { finalize } from 'rxjs';
@@ -22,14 +23,15 @@ import { ApiResult } from '../../core/models/api.models';
 import { AuthService } from '../../core/auth/services/auth';
 import { CampaignsService } from '../campaigns/campaigns.service';
 import { environment } from '../../../environments/environment';
+import { TranslationService as AppTranslationService } from '../../core/services/translation.service';
 
 const API_ERRORS: Record<string, string> = {
-  'This username is already taken.': 'ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ ط£ظˆ ط±ظ‚ظ… ط§ظ„ظ‡ط§طھظپ ظ…ط³طھط®ط¯ظ… ط¨ط§ظ„ظپط¹ظ„',
+  'This username is already taken.': 'LOGIN.ERROR_DETAIL',
 };
 
 @Component({
   selector: 'app-broadcast',
-  imports: [],
+  imports: [TranslateModule, ],
   templateUrl: './broadcast.html',
   styleUrl: './broadcast.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,14 +43,16 @@ export class Broadcast implements OnInit, OnDestroy {
   private readonly campaignsService = inject(CampaignsService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly toast = inject(MessageService);
+  private readonly translate = inject(TranslateService);
+  private readonly appTranslation = inject(AppTranslationService);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   readonly TargetType = TargetType;
 
   readonly targetOptions = [
-    { type: TargetType.Company, label: 'الشركة', icon: 'pi-building' },
-    { type: TargetType.Campaign, label: 'حملة', icon: 'pi-map' },
-    { type: TargetType.Group, label: 'مجموعة', icon: 'pi-users' },
+    { type: TargetType.Company, labelKey: 'BROADCAST.TARGET.COMPANY', icon: 'pi-building' },
+    { type: TargetType.Campaign, labelKey: 'BROADCAST.TARGET.CAMPAIGN', icon: 'pi-map' },
+    { type: TargetType.Group, labelKey: 'BROADCAST.TARGET.GROUP', icon: 'pi-users' },
   ];
 
   selectedTargetType = signal<TargetType>(TargetType.Company);
@@ -98,8 +102,9 @@ export class Broadcast implements OnInit, OnDestroy {
   );
 
   readonly audienceLabel = computed(() => {
+    this.appTranslation.currentLang();
     const type = this.selectedTargetType();
-    if (type === TargetType.Company) return 'جميع مستخدمي الشركة';
+    if (type === TargetType.Company) return this.translate.instant('BROADCAST.ALL_COMPANY_USERS');
     const camp = this.selectedCampName();
     const grp = this.selectedGrpName();
     if (!camp) return '';
@@ -289,7 +294,7 @@ export class Broadcast implements OnInit, OnDestroy {
       this.recordingSeconds.set(0);
       this.recordingInterval = setInterval(() => this.recordingSeconds.update(s => s + 1), 1000);
     } catch {
-      this.submitError.set('لم يتم السماح بالوصول للميكروفون');
+      this.submitError.set(this.translate.instant('BROADCAST.MIC_PERMISSION_ERROR'));
     }
   }
 
@@ -352,8 +357,9 @@ export class Broadcast implements OnInit, OnDestroy {
       error?.Error?.message ||
       error?.ValidationErrors?.[0]?.ErrorMessage;
 
-    if (!rawMessage) return 'حدث خطأ أثناء إرسال الرسالة';
-    return API_ERRORS[rawMessage] ?? rawMessage;
+    if (!rawMessage) return this.translate.instant('BROADCAST.SEND_ERROR');
+    const mapped = API_ERRORS[rawMessage];
+    return mapped ? this.translate.instant(mapped) : rawMessage;
   }
 
   private sendText(): void {
@@ -398,7 +404,7 @@ export class Broadcast implements OnInit, OnDestroy {
 
           this.discardImagePreview();
           this.service.send({
-            Content: 'صورة',
+            Content: this.translate.instant('BROADCAST.CONTENT_IMAGE'),
             TargetType: type,
             TargetId: id,
             MessageType: MessageType.Image,
@@ -441,7 +447,7 @@ export class Broadcast implements OnInit, OnDestroy {
           }
 
           this.service.send({
-            Content: 'صوتي',
+            Content: this.translate.instant('BROADCAST.CONTENT_AUDIO'),
             TargetType: type,
             TargetId: id,
             MessageType: MessageType.Audio,
@@ -483,8 +489,8 @@ export class Broadcast implements OnInit, OnDestroy {
     this.resetForm();
     this.toast.add({
       severity: 'success',
-      summary: 'تم الإرسال',
-      detail: 'تم إرسال الرسالة الجماعية بنجاح',
+      summary: this.translate.instant('BROADCAST.SENT_SUCCESS_SUMMARY'),
+      detail: this.translate.instant('BROADCAST.SENT_SUCCESS_DETAIL'),
     });
   }
 

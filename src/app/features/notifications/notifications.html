@@ -7,9 +7,9 @@
     <div>
       <h1 class="notifications__title">
         <i class="pi pi-bell"></i>
-        الإشعارات الجماعية
+        {{ 'NOTIFICATIONS.TITLE' | translate }}
       </h1>
-      <p class="notifications__subtitle">إرسال إشعار بعنوان ومحتوى للحجاج والمشرفين والعائلات</p>
+      <p class="notifications__subtitle">{{ 'NOTIFICATIONS.SUBTITLE' | translate }}</p>
     </div>
   </div>
 
@@ -19,21 +19,21 @@
             type="button"
             (click)="setTab('send')">
       <i class="pi pi-send"></i>
-      إرسال إشعار
+      {{ 'NOTIFICATIONS.TAB_SEND' | translate }}
     </button>
     <button class="notifications__tab"
             [class.notifications__tab--active]="activeTab() === 'templates'"
             type="button"
             (click)="setTab('templates')">
       <i class="pi pi-sparkles"></i>
-      قوالب جاهزة
+      {{ 'NOTIFICATIONS.TAB_TEMPLATES' | translate }}
     </button>
     <button class="notifications__tab"
             [class.notifications__tab--active]="activeTab() === 'sent'"
             type="button"
             (click)="setTab('sent')">
       <i class="pi pi-clock"></i>
-      الإشعارات المرسلة
+      {{ 'NOTIFICATIONS.TAB_SENT' | translate }}
     </button>
   </div>
 
@@ -42,15 +42,15 @@
     <aside class="notifications__panel">
       <div class="notifications__panel-header">
         <i class="pi pi-users"></i>
-        <span>تحديد الجمهور المستهدف</span>
+        <span>{{ 'NOTIFICATIONS.AUDIENCE_TARGET' | translate }}</span>
       </div>
 
       <div class="notifications__panel-body">
         <div class="form-field">
-          <label class="form-label">نوع الجمهور</label>
+          <label class="form-label">{{ 'NOTIFICATIONS.AUDIENCE_TYPE' | translate }}</label>
           <div class="ss">
             <button class="ss__trigger" type="button" (click)="toggleAudienceDrop()">
-              <span>{{ selectedAudienceLabel() }}</span>
+              <span>{{ selectedAudienceLabel() | translate }}</span>
               <i class="pi pi-angle-down"></i>
             </button>
             @if (showAudienceDrop()) {
@@ -63,7 +63,7 @@
                       @if (selectedAudienceRole() === option.role) {
                         <i class="pi pi-check"></i>
                       }
-                      <span>{{ option.label }}</span>
+                      <span>{{ option.labelKey | translate }}</span>
                     </li>
                   }
                 </ul>
@@ -73,10 +73,10 @@
         </div>
 
         <div class="form-field">
-          <label class="form-label">الحملة</label>
+          <label class="form-label">{{ 'NOTIFICATIONS.CAMPAIGN' | translate }}</label>
           <div class="ss">
             <button class="ss__trigger" type="button" (click)="toggleCampDrop()">
-              <span [class.ss__placeholder]="!selectedCampName()">{{ selectedCampName() || 'كل الحملات' }}</span>
+              <span [class.ss__placeholder]="!selectedCampName()">{{ selectedCampName() || ('NOTIFICATIONS.ALL_CAMPAIGNS' | translate) }}</span>
               @if (selectedCampName()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearCamp()"></i>
               } @else {
@@ -88,7 +88,7 @@
                 @if (campLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (campList().length === 0) {
-                  <div class="ss__state">لا توجد حملات</div>
+                  <div class="ss__state">{{ 'NOTIFICATIONS.NO_CAMPAIGNS' | translate }}</div>
                 } @else {
                   <ul class="ss__list">
                     @for (campaign of campList(); track campaign.Id) {
@@ -106,11 +106,11 @@
         </div>
 
         <div class="form-field">
-          <label class="form-label">المجموعة / الفوج</label>
+          <label class="form-label">{{ 'NOTIFICATIONS.GROUP' | translate }}</label>
           <div class="ss" [class.ss--disabled]="!selectedCampId()">
             <button class="ss__trigger" type="button" [disabled]="!selectedCampId()" (click)="toggleGrpDrop()">
               <span [class.ss__placeholder]="!selectedGrpName()">
-                {{ selectedGrpName() || (selectedCampId() ? 'كل المجموعات' : 'اختر الحملة أولاً') }}
+                {{ selectedGrpName() || (selectedCampId() ? ('NOTIFICATIONS.ALL_GROUPS' | translate) : ('NOTIFICATIONS.SELECT_CAMPAIGN_FIRST' | translate)) }}
               </span>
               @if (selectedGrpName()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearGrp()"></i>
@@ -123,7 +123,7 @@
                 @if (grpLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (grpList().length === 0) {
-                  <div class="ss__state">لا توجد مجموعات</div>
+                  <div class="ss__state">{{ 'NOTIFICATIONS.NO_GROUPS' | translate }}</div>
                 } @else {
                   <ul class="ss__list">
                     @for (group of grpList(); track group.Id) {
@@ -141,7 +141,7 @@
         </div>
 
         <div class="notifications__audience">
-          <span class="notifications__audience-label">الجمهور المحدد</span>
+          <span class="notifications__audience-label">{{ 'NOTIFICATIONS.SELECTED_AUDIENCE' | translate }}</span>
           <span class="notifications__audience-value">{{ audienceSummary() }}</span>
         </div>
       </div>
@@ -150,12 +150,12 @@
     <section class="notifications__panel notifications__panel--compose">
       <div class="notifications__panel-header">
         <i class="pi pi-bell"></i>
-        <span>صياغة الإشعار</span>
+        <span>{{ 'NOTIFICATIONS.COMPOSE' | translate }}</span>
       </div>
 
       <div class="notifications__panel-body">
         <div class="form-field">
-          <label class="form-label">نوع الإشعار</label>
+          <label class="form-label">{{ 'NOTIFICATIONS.TYPE' | translate }}</label>
           <div class="type-grid">
             @for (option of typeOptions; track option.type) {
               <button class="type-card"
@@ -164,29 +164,29 @@
                       [class.type-card--active]="selectedType() === option.type"
                       (click)="setType(option.type)">
                 <i class="pi {{ option.icon }}"></i>
-                <span>{{ option.label }}</span>
+                <span>{{ option.labelKey | translate }}</span>
               </button>
             }
           </div>
         </div>
 
         <div class="form-field">
-          <label class="form-label">عنوان الإشعار *</label>
+          <label class="form-label">{{ 'NOTIFICATIONS.TITLE_FIELD' | translate }}</label>
           <input class="form-control"
                  type="text"
                  maxlength="100"
-                 placeholder="مثال: تنبيه عاجل - تغيير موعد التفويج"
+                 [placeholder]="'NOTIFICATIONS.TITLE_PLACEHOLDER' | translate"
                  [value]="title()"
                  (input)="title.set($any($event.target).value)" />
           <span class="form-hint">{{ titleCount() }}/100</span>
         </div>
 
         <div class="form-field">
-          <label class="form-label">محتوى الإشعار *</label>
+          <label class="form-label">{{ 'NOTIFICATIONS.BODY_FIELD' | translate }}</label>
           <textarea class="form-control form-control--textarea"
                     rows="7"
                     maxlength="500"
-                    placeholder="اكتب تفاصيل الإشعار هنا..."
+                    [placeholder]="'NOTIFICATIONS.BODY_PLACEHOLDER' | translate"
                     [value]="body()"
                     (input)="body.set($any($event.target).value)"></textarea>
           <span class="form-hint">{{ bodyCount() }}/500</span>
@@ -194,14 +194,14 @@
 
         @if (title().trim() || body().trim()) {
           <div class="form-field">
-            <label class="form-label">معاينة</label>
+            <label class="form-label">{{ 'NOTIFICATIONS.PREVIEW' | translate }}</label>
             <div class="notification-preview" [class]="'notification-preview notification-preview--' + selectedTypeOption().tone">
               <div class="notification-preview__icon">
                 <i class="pi {{ selectedTypeOption().icon }}"></i>
               </div>
               <div class="notification-preview__content">
-                <strong>{{ title().trim() || 'عنوان الإشعار' }}</strong>
-                <span>{{ body().trim() || 'محتوى الإشعار' }}</span>
+                <strong>{{ title().trim() || ('NOTIFICATIONS.PREVIEW_TITLE' | translate) }}</strong>
+                <span>{{ body().trim() || ('NOTIFICATIONS.PREVIEW_BODY' | translate) }}</span>
               </div>
             </div>
           </div>
@@ -213,10 +213,10 @@
         <button class="btn btn--primary" type="button" [disabled]="!canSend()" (click)="send()">
           @if (submitting()) {
             <span class="btn-spinner"></span>
-            جاري الإرسال...
+            {{ 'NOTIFICATIONS.SENDING' | translate }}
           } @else {
             <i class="pi pi-send"></i>
-            إرسال الإشعار
+            {{ 'NOTIFICATIONS.SEND' | translate }}
           }
         </button>
       </div>
@@ -233,26 +233,26 @@
 
   @if (activeTab() === 'templates') {
     <section class="templates-grid">
-      @for (template of templates; track template.title) {
+      @for (template of templates; track template.titleKey) {
         <article class="template-card">
           <div [class]="templateIconClass(template)">
             <i class="pi {{ notificationTypeOption(template.type).icon }}"></i>
           </div>
 
           <div class="template-card__content">
-            <h3 class="template-card__title">{{ template.title }}</h3>
-            <p class="template-card__body">{{ template.body }}</p>
+            <h3 class="template-card__title">{{ template.titleKey | translate }}</h3>
+            <p class="template-card__body">{{ template.bodyKey | translate }}</p>
             <div class="template-card__pills">
               <span class="sent-card__pill" [class]="'sent-card__pill sent-card__pill--' + notificationTypeOption(template.type).tone">
-                {{ notificationTypeOption(template.type).label }}
+                {{ notificationTypeOption(template.type).labelKey | translate }}
               </span>
-              <span class="sent-card__pill">{{ template.audience }}</span>
+              <span class="sent-card__pill">{{ template.audienceKey | translate }}</span>
             </div>
           </div>
 
           <button class="template-card__btn" type="button" (click)="useTemplate(template)">
             <i class="pi pi-send"></i>
-            استخدام القالب
+            {{ 'NOTIFICATIONS.USE_TEMPLATE' | translate }}
           </button>
         </article>
       }
@@ -272,7 +272,7 @@
         </div>
       } @else if (sentItems().length === 0) {
         <div class="sent-state">
-          لا توجد إشعارات مرسلة
+          {{ 'NOTIFICATIONS.NO_SENT' | translate }}
         </div>
       } @else {
         <div class="sent-list">
@@ -286,9 +286,9 @@
                 <div class="sent-card__header">
                   <h3 class="sent-card__title">{{ item.Title }}</h3>
                   <span class="sent-card__pill" [class]="'sent-card__pill sent-card__pill--' + notificationTypeOption(item.Type).tone">
-                    {{ notificationTypeOption(item.Type).label }}
+                    {{ notificationTypeOption(item.Type).labelKey | translate }}
                   </span>
-                  <span class="sent-card__pill">الجميع</span>
+                  <span class="sent-card__pill">{{ 'NOTIFICATIONS.ALL' | translate }}</span>
                 </div>
 
                 <p class="sent-card__body">{{ item.Body }}</p>
@@ -300,7 +300,7 @@
                   </span>
                   <span>
                     <i class="pi pi-check-circle"></i>
-                    مستلم {{ item.RecipientCount }}
+                    {{ 'NOTIFICATIONS.RECEIVED_COUNT' | translate:{ value: item.RecipientCount } }}
                   </span>
                 </div>
               </div>
@@ -341,7 +341,7 @@
             </div>
 
             <span class="pagination-bar__info">
-              {{ sentTotalCount() }} إشعار
+              {{ 'NOTIFICATIONS.COUNT' | translate:{ value: sentTotalCount() } }}
             </span>
           </div>
         }

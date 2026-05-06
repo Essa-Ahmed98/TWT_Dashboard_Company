@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, distinctUntilChanged, map, of, switchMap, tap } from 'rxjs';
@@ -10,7 +11,7 @@ import { SvRatingsTab } from './tabs/ratings-tab/ratings-tab';
 
 @Component({
   selector: 'app-supervisor-detail',
-  imports: [SvPersonalTab, SvPilgrimsTab, SvRatingsTab],
+  imports: [TranslateModule, SvPersonalTab, SvPilgrimsTab, SvRatingsTab],
   templateUrl: './supervisor-detail.html',
   styleUrl: './supervisor-detail.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,10 +26,10 @@ export class SupervisorDetail {
   loading = signal(true);
   supervisor = signal<SupervisorDetailData | null>(null);
 
-  tabs: { key: SupervisorTab; label: string; icon: string }[] = [
-    { key: 'personal', label: 'البيانات الشخصية', icon: 'pi pi-user' },
-    { key: 'pilgrims', label: 'الحجاج', icon: 'pi pi-users' },
-    { key: 'ratings', label: 'التقييمات', icon: 'pi pi-star' },
+  tabs: { key: SupervisorTab; labelKey: string; icon: string }[] = [
+    { key: 'personal', labelKey: 'SUPERVISOR_DETAIL.TABS.PERSONAL', icon: 'pi pi-user' },
+    { key: 'pilgrims', labelKey: 'SUPERVISOR_DETAIL.TABS.PILGRIMS', icon: 'pi pi-users' },
+    { key: 'ratings', labelKey: 'SUPERVISOR_DETAIL.TABS.RATINGS', icon: 'pi pi-star' },
   ];
 
   constructor() {

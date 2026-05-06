@@ -1,4 +1,4 @@
-﻿@if (openFilterDrop()) {
+@if (openFilterDrop()) {
   <div class="backdrop" (click)="closeFilterDrop()"></div>
 }
 @if (showCampDrop() || showGrpDrop() || showImportCampDrop() || showImportGrpDrop() || showQrDownloadCampDrop() || showQrDownloadGrpDrop()) {
@@ -11,19 +11,19 @@
 <div class="pilgrims">
   <div class="pilgrims__header">
     <div class="pilgrims__title">
-      <h1 class="pilgrims__title-text">إدارة الحجاج</h1>
-      <span class="pilgrims__title-count">{{ total() }} حاج مسجل</span>
+      <h1 class="pilgrims__title-text">{{ 'PILGRIMS.TITLE' | translate }}</h1>
+      <span class="pilgrims__title-count">{{ total() }} {{ 'PILGRIMS.REGISTERED' | translate }}</span>
     </div>
     <div class="pilgrims__actions">
       <button class="btn btn--ghost" (click)="openQrDownloadModal()">
-        <i class="pi pi-qrcode"></i><span>تحميل QR Codes</span>
+        <i class="pi pi-qrcode"></i><span>{{ 'PILGRIMS.DOWNLOAD_QR' | translate }}</span>
       </button>
       <button class="btn btn--ghost" (click)="openImportModal()">
-        <i class="pi pi-file-excel"></i><span>استيراد من Excel</span>
+        <i class="pi pi-file-excel"></i><span>{{ 'PILGRIMS.IMPORT_EXCEL' | translate }}</span>
       </button>
-      <button class="btn btn--secondary" (click)="exportCurrentList()"><i class="pi pi-download"></i><span>تصدير</span></button>
+      <button class="btn btn--secondary" (click)="exportCurrentList()"><i class="pi pi-download"></i><span>{{ 'PILGRIMS.EXPORT' | translate }}</span></button>
       <button class="btn btn--primary" (click)="openModal()">
-        <i class="pi pi-user-plus"></i><span>إضافة حاج</span>
+        <i class="pi pi-user-plus"></i><span>{{ 'PILGRIMS.ADD' | translate }}</span>
       </button>
     </div>
   </div>
@@ -32,7 +32,7 @@
     <div class="dropdown" [class.dropdown--open]="openFilterDrop()">
       <button class="dropdown__trigger" (click)="toggleFilterDrop($event)">
         <i class="pi pi-building"></i>
-        <span>{{ filterCampaignLabel() }}</span>
+        <span>{{ filterCampaignLabel() | translate }}</span>
         @if (selectedCampaign()) {
           <i class="pi pi-times dropdown__clear"
              (click)="$event.stopPropagation(); selectFilterCampaign('')"></i>
@@ -60,7 +60,7 @@
 
     <div class="pilgrims__search">
       <i class="pi pi-search pilgrims__search-icon"></i>
-      <input class="pilgrims__search-input" type="text" placeholder="بحث بالاسم أو رقم الجواز..."
+      <input class="pilgrims__search-input" type="text" [placeholder]="'PILGRIMS.SEARCH_PLACEHOLDER' | translate"
         [value]="searchQuery()"
         (input)="searchQuery.set($any($event.target).value)" />
     </div>
@@ -80,13 +80,13 @@
     <table class="pilgrims__table">
       <thead>
         <tr>
-          <th>الحاج</th>
-          <th>المركز</th>
-          <th>المجموعة</th>
-          <th>رقم الجواز</th>
-          <th>الجنسية</th>
-          <th>الجنس</th>
-          <th>إجراءات</th>
+          <th>{{ 'PILGRIMS.TABLE.PILGRIM' | translate }}</th>
+          <th>{{ 'PILGRIMS.TABLE.CENTER' | translate }}</th>
+          <th>{{ 'PILGRIMS.TABLE.GROUP' | translate }}</th>
+          <th>{{ 'PILGRIMS.TABLE.PASSPORT' | translate }}</th>
+          <th>{{ 'PILGRIMS.TABLE.NATIONALITY' | translate }}</th>
+          <th>{{ 'PILGRIMS.TABLE.GENDER' | translate }}</th>
+          <th>{{ 'PILGRIMS.TABLE.ACTIONS' | translate }}</th>
         </tr>
       </thead>
       <tbody>
@@ -97,23 +97,23 @@
             <td>{{ p.GroupName }}</td>
             <td class="pilgrims__id">{{ p.PassportNumber }}</td>
             <td>{{ p.Nationality }}</td>
-            <td>{{ genderLabel(p.Gender) }}</td>
+            <td>{{ p.Gender === 0 ? ('COMMON.MALE' | translate) : ('COMMON.FEMALE' | translate) }}</td>
             <td>
               <div class="row-actions">
-                <button class="row-actions__btn" title="تعديل الحاج" (click)="openEditModal(p)" [disabled]="!!editLoadingId()">
+                <button class="row-actions__btn" [title]="'PILGRIMS.EDIT' | translate" (click)="openEditModal(p)" [disabled]="!!editLoadingId()">
                   @if (editLoadingId() === p.Id) {
                     <i class="pi pi-spin pi-spinner"></i>
                   } @else {
                     <i class="pi pi-pencil"></i>
                   }
                 </button>
-                <button class="row-actions__btn" title="عرض رمز QR" (click)="openQrCode(p.Id, p.DisplayName)">
+                <button class="row-actions__btn" [title]="'PILGRIMS.VIEW_QR' | translate" (click)="openQrCode(p.Id, p.DisplayName)">
                   <i class="pi pi-qrcode"></i>
                 </button>
-                <button class="row-actions__btn" title="فتح المحادثة" (click)="openChat(p.UserId, p.DisplayName)">
+                <button class="row-actions__btn" [title]="'PILGRIMS.OPEN_CHAT' | translate" (click)="openChat(p.UserId, p.DisplayName)">
                   <i class="pi pi-comment"></i>
                 </button>
-                <button class="row-actions__btn" title="عرض التفاصيل" (click)="openDetail(p.Id)">
+                <button class="row-actions__btn" [title]="'PILGRIMS.VIEW_DETAILS' | translate" (click)="openDetail(p.Id)">
                   <i class="pi pi-eye"></i>
                 </button>
               </div>
@@ -121,7 +121,7 @@
           </tr>
         }
         @if (!loading() && list().length === 0) {
-          <tr><td colspan="7" class="pilgrims__empty"><i class="pi pi-inbox"></i><p>لا توجد نتائج</p></td></tr>
+          <tr><td colspan="7" class="pilgrims__empty"><i class="pi pi-inbox"></i><p>{{ 'PILGRIMS.EMPTY' | translate }}</p></td></tr>
         }
       </tbody>
     </table>
@@ -152,7 +152,7 @@
       </div>
 
       <span class="pagination-bar__info">
-        {{ list().length }} من {{ total() | number }}
+        {{ list().length }} {{ 'COMMON.OF' | translate }} {{ total() | number }}
       </span>
     </div>
   }
@@ -162,8 +162,8 @@
   <div class="dialog dialog--qr" (click)="$event.stopPropagation()">
     <div class="dialog__header">
       <div>
-        <h2 class="dialog__title">رمز QR للحاج</h2>
-        <p class="dialog__sub">{{ qrPilgrimName() || 'عرض رمز الاستجابة السريعة' }}</p>
+        <h2 class="dialog__title">{{ 'PILGRIMS.QR.TITLE' | translate }}</h2>
+        <p class="dialog__sub">{{ qrPilgrimName() }}</p>
       </div>
       <button class="dialog__close" (click)="closeQrDialog()" [disabled]="qrLoading()">
         <i class="pi pi-times"></i>
@@ -174,7 +174,7 @@
       @if (qrLoading()) {
         <div class="qr-dialog__state">
           <span class="pilgrims__spinner"></span>
-          <p>جاري تحميل رمز QR...</p>
+          <p>{{ 'PILGRIMS.QR.LOADING' | translate }}</p>
         </div>
       } @else if (qrCodeImage(); as image) {
         <div class="qr-dialog">
@@ -182,13 +182,13 @@
             <div class="qr-dialog__image-wrap">
               <img class="qr-dialog__image" [src]="image" alt="Pilgrim QR Code" />
             </div>
-            <p class="qr-dialog__hint">يرجى عمل مسح لهذا الرمز باستخدام تطبيق الكاميرا أو قارئ QR.</p>
+            <p class="qr-dialog__hint">{{ 'PILGRIMS.QR.HINT' | translate }}</p>
           </div>
         </div>
       } @else {
         <div class="qr-dialog__state">
           <i class="pi pi-exclamation-circle"></i>
-          <p>لا توجد صورة QR متاحة حالياً.</p>
+          <p>{{ 'PILGRIMS.QR.NO_IMAGE' | translate }}</p>
         </div>
       }
     </div>
@@ -199,8 +199,8 @@
   <div class="dialog dialog--import" (click)="$event.stopPropagation()">
     <div class="dialog__header">
       <div>
-        <h2 class="dialog__title">تحميل رموز QR للحجاج</h2>
-        <p class="dialog__sub">اختر المركز والمجموعة لتحميل ملف يحتوي على رموز QR الخاصة بالحجاج.</p>
+        <h2 class="dialog__title">{{ 'PILGRIMS.QR_DOWNLOAD.TITLE' | translate }}</h2>
+        <p class="dialog__sub">{{ 'PILGRIMS.QR_DOWNLOAD.SUBTITLE' | translate }}</p>
       </div>
       <button class="dialog__close" (click)="closeQrDownloadModal()" [disabled]="downloadingQrCodes()">
         <i class="pi pi-times"></i>
@@ -210,11 +210,11 @@
     <div class="dialog__body dialog__body--import">
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">المركز <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'PILGRIMS.FORM.CENTER' | translate }} <span class="form-req">*</span></label>
           <div class="ss">
             <button type="button" class="ss__trigger" (click)="toggleQrDownloadCampDrop()">
               <span [class.ss__placeholder]="!selectedQrDownloadCampName()">
-                {{ selectedQrDownloadCampName() || 'اختر المركز' }}
+                {{ selectedQrDownloadCampName() || ('PILGRIMS.QR_DOWNLOAD.SELECT_CENTER' | translate) }}
               </span>
               @if (selectedQrDownloadCampName()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearQrDownloadCamp()"></i>
@@ -227,7 +227,7 @@
                 @if (qrDownloadCampLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (qrDownloadCampList().length === 0) {
-                  <div class="ss__state">لا توجد مراكز</div>
+                  <div class="ss__state">{{ 'PILGRIMS.QR_DOWNLOAD.NO_CENTERS' | translate }}</div>
                 } @else {
                   <ul class="ss__list">
                     @for (c of qrDownloadCampList(); track c.Id) {
@@ -243,13 +243,13 @@
         </div>
 
         <div class="form-field">
-          <label class="form-label">المجموعة <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'PILGRIMS.FORM.GROUP' | translate }} <span class="form-req">*</span></label>
           <div class="ss" [class.ss--disabled]="!selectedQrDownloadCampId()">
             <button type="button" class="ss__trigger"
               [disabled]="!selectedQrDownloadCampId()"
               (click)="toggleQrDownloadGrpDrop()">
               <span [class.ss__placeholder]="!selectedQrDownloadGrpName()">
-                {{ selectedQrDownloadGrpName() || (selectedQrDownloadCampId() ? 'اختر المجموعة' : 'اختر المركز أولاً') }}
+                {{ selectedQrDownloadGrpName() || (selectedQrDownloadCampId() ? ('PILGRIMS.QR_DOWNLOAD.SELECT_GROUP' | translate) : ('PILGRIMS.QR_DOWNLOAD.SELECT_CENTER_FIRST' | translate)) }}
               </span>
               @if (selectedQrDownloadGrpName()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearQrDownloadGrp()"></i>
@@ -262,7 +262,7 @@
                 @if (qrDownloadGrpLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (qrDownloadGrpList().length === 0) {
-                  <div class="ss__state">لا توجد مجموعات</div>
+                  <div class="ss__state">{{ 'PILGRIMS.QR_DOWNLOAD.NO_GROUPS' | translate }}</div>
                 } @else {
                   <ul class="ss__list">
                     @for (g of qrDownloadGrpList(); track g.Id) {
@@ -282,8 +282,8 @@
         <div class="import-card__head">
           <div class="import-card__icon"><i class="pi pi-info-circle"></i></div>
           <div>
-            <h3 class="import-card__title">تحميل الملف</h3>
-            <p class="import-card__text">سيتم تنزيل ملف يحتوي على رموز QR لجميع الحجاج داخل المركز والمجموعة المحددين.</p>
+            <h3 class="import-card__title">{{ 'PILGRIMS.QR_DOWNLOAD.INFO_TITLE' | translate }}</h3>
+            <p class="import-card__text">{{ 'PILGRIMS.QR_DOWNLOAD.INFO_TEXT' | translate }}</p>
           </div>
         </div>
         <button type="button" class="btn import-card__action"
@@ -291,10 +291,10 @@
           (click)="downloadPilgrimsQrCodes()">
           @if (downloadingQrCodes()) {
             <span class="btn-spinner import-card__spinner"></span>
-            <span>جاري تحميل الملف...</span>
+            <span>{{ 'PILGRIMS.QR_DOWNLOAD.DOWNLOADING' | translate }}</span>
           } @else {
             <i class="pi pi-download"></i>
-            <span>تحميل ملف QR Codes</span>
+            <span>{{ 'PILGRIMS.QR_DOWNLOAD.DOWNLOAD_BTN' | translate }}</span>
           }
         </button>
       </section>
@@ -306,8 +306,8 @@
   <div class="dialog dialog--import" (click)="$event.stopPropagation()">
     <div class="dialog__header">
       <div>
-        <h2 class="dialog__title">استيراد الحجاج من ملف Excel</h2>
-        <p class="dialog__sub">حمّل النموذج، ثم ارفع الملف لإضافتهم دفعة واحدة.</p>
+        <h2 class="dialog__title">{{ 'PILGRIMS.IMPORT.TITLE' | translate }}</h2>
+        <p class="dialog__sub">{{ 'PILGRIMS.IMPORT.SUBTITLE' | translate }}</p>
       </div>
       <button class="dialog__close" (click)="closeImportModal()" [disabled]="uploadingImportFile()">
         <i class="pi pi-times"></i>
@@ -317,11 +317,11 @@
     <div class="dialog__body dialog__body--import">
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">المركز <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'PILGRIMS.FORM.CENTER' | translate }} <span class="form-req">*</span></label>
           <div class="ss">
             <button type="button" class="ss__trigger" (click)="toggleImportCampDrop()">
               <span [class.ss__placeholder]="!selectedImportCampName()">
-                {{ selectedImportCampName() || 'اختر المركز' }}
+                {{ selectedImportCampName() || ('PILGRIMS.FORM.SELECT_CENTER' | translate) }}
               </span>
               @if (selectedImportCampName()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearImportCamp()"></i>
@@ -334,7 +334,7 @@
                 @if (importCampLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (importCampList().length === 0) {
-                  <div class="ss__state">لا توجد مراكز</div>
+                  <div class="ss__state">{{ 'PILGRIMS.FORM.NO_CENTERS' | translate }}</div>
                 } @else {
                   <ul class="ss__list">
                     @for (c of importCampList(); track c.Id) {
@@ -350,13 +350,13 @@
         </div>
 
         <div class="form-field">
-          <label class="form-label">المجموعة <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'PILGRIMS.FORM.GROUP' | translate }} <span class="form-req">*</span></label>
           <div class="ss" [class.ss--disabled]="!selectedImportCampId()">
             <button type="button" class="ss__trigger"
               [disabled]="!selectedImportCampId()"
               (click)="toggleImportGrpDrop()">
               <span [class.ss__placeholder]="!selectedImportGrpName()">
-                {{ selectedImportGrpName() || (selectedImportCampId() ? 'اختر المجموعة' : 'اختر المركز أولاً') }}
+                {{ selectedImportGrpName() || (selectedImportCampId() ? ('PILGRIMS.FORM.SELECT_GROUP' | translate) : ('PILGRIMS.FORM.SELECT_CENTER_FIRST' | translate)) }}
               </span>
               @if (selectedImportGrpName()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearImportGrp()"></i>
@@ -369,7 +369,7 @@
                 @if (importGrpLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (importGrpList().length === 0) {
-                  <div class="ss__state">لا توجد مجموعات</div>
+                  <div class="ss__state">{{ 'PILGRIMS.FORM.NO_GROUPS' | translate }}</div>
                 } @else {
                   <ul class="ss__list">
                     @for (g of importGrpList(); track g.Id) {
@@ -389,8 +389,8 @@
         <div class="import-card__head">
           <div class="import-card__icon"><i class="pi pi-info-circle"></i></div>
           <div>
-            <h3 class="import-card__title">تحميل النموذج</h3>
-            <p class="import-card__text">حمّل ملف الإكسل الذي يحتوي على الأعمدة المطلوبة وبيانات توضيحية.</p>
+            <h3 class="import-card__title">{{ 'PILGRIMS.IMPORT.DOWNLOAD_TITLE' | translate }}</h3>
+            <p class="import-card__text">{{ 'PILGRIMS.IMPORT.DOWNLOAD_TEXT' | translate }}</p>
           </div>
         </div>
         <button type="button" class="btn import-card__action"
@@ -398,10 +398,10 @@
           (click)="downloadImportTemplate()">
           @if (downloadingTemplate()) {
             <span class="btn-spinner import-card__spinner"></span>
-            <span>جاري تحميل النموذج...</span>
+            <span>{{ 'PILGRIMS.IMPORT.DOWNLOADING' | translate }}</span>
           } @else {
             <i class="pi pi-download"></i>
-            <span>تحميل نموذج Excel</span>
+            <span>{{ 'PILGRIMS.IMPORT.DOWNLOAD_BTN' | translate }}</span>
           }
         </button>
       </section>
@@ -410,28 +410,28 @@
         <div class="import-hints__head">
           <div class="import-hints__icon"><i class="pi pi-exclamation-circle"></i></div>
           <div>
-            <h3 class="import-hints__title">ملحوظة مهمة قبل رفع الملف</h3>
-            <p class="import-hints__text">بعض الحقول داخل ملف Excel تعتمد على قيم رقمية ثابتة كما يلي:</p>
+            <h3 class="import-hints__title">{{ 'PILGRIMS.IMPORT.NOTES_TITLE' | translate }}</h3>
+            <p class="import-hints__text">{{ 'PILGRIMS.IMPORT.NOTES_SUBTITLE' | translate }}</p>
           </div>
         </div>
 
         <div class="import-hints__grid">
           <article class="hint-item">
-            <h4 class="hint-item__label">الجنس</h4>
+            <h4 class="hint-item__label">{{ 'PILGRIMS.IMPORT.GENDER_LABEL' | translate }}</h4>
             <div class="hint-item__list">
               <div class="hint-item__row">
                 <span class="hint-item__code">0</span>
-                <span class="hint-item__text">ذكر</span>
+                <span class="hint-item__text">{{ 'COMMON.MALE' | translate }}</span>
               </div>
               <div class="hint-item__row">
                 <span class="hint-item__code">1</span>
-                <span class="hint-item__text">أنثى</span>
+                <span class="hint-item__text">{{ 'COMMON.FEMALE' | translate }}</span>
               </div>
             </div>
           </article>
 
           <article class="hint-item">
-            <h4 class="hint-item__label">فصيلة الدم</h4>
+            <h4 class="hint-item__label">{{ 'PILGRIMS.IMPORT.BLOOD_LABEL' | translate }}</h4>
             <div class="hint-item__list hint-item__list--blood">
               <div class="hint-item__row"><span class="hint-item__code">0</span><span class="hint-item__text">A+</span></div>
               <div class="hint-item__row"><span class="hint-item__code">1</span><span class="hint-item__text">A-</span></div>
@@ -445,13 +445,13 @@
           </article>
 
           <article class="hint-item">
-            <h4 class="hint-item__label">تاريخ الميلاد</h4>
-            <p class="hint-item__value"><strong>YYYY-MM-DD</strong> مثل <strong>1990-08-25</strong></p>
+            <h4 class="hint-item__label">{{ 'PILGRIMS.IMPORT.DATE_LABEL' | translate }}</h4>
+            <p class="hint-item__value"><strong>YYYY-MM-DD</strong> {{ 'PILGRIMS.IMPORT.DATE_FORMAT' | translate }} <strong>1990-08-25</strong></p>
           </article>
 
           <article class="hint-item">
-            <h4 class="hint-item__label">ملاحظات مهمة</h4>
-            <p class="hint-item__value">بدون فراغات في الحقول المطلوبة، وبدون تغيير أسماء الأعمدة داخل النموذج.</p>
+            <h4 class="hint-item__label">{{ 'PILGRIMS.IMPORT.IMPORTANT_NOTES_TITLE' | translate }}</h4>
+            <p class="hint-item__value">{{ 'PILGRIMS.IMPORT.IMPORTANT_NOTES_TEXT' | translate }}</p>
           </article>
         </div>
       </section>
@@ -460,8 +460,8 @@
         <div class="import-card__head">
           <div class="import-card__icon"><i class="pi pi-upload"></i></div>
           <div>
-            <h3 class="import-card__title">رفع الملف</h3>
-            <p class="import-card__text">بعد ملء البيانات، ارفع الملف هنا لإضافة الحجاج تلقائيًا.</p>
+            <h3 class="import-card__title">{{ 'PILGRIMS.IMPORT.UPLOAD_TITLE' | translate }}</h3>
+            <p class="import-card__text">{{ 'PILGRIMS.IMPORT.UPLOAD_TEXT' | translate }}</p>
           </div>
         </div>
 
@@ -473,14 +473,14 @@
             (click)="handleImportUpload(importFileInput)">
             @if (uploadingImportFile()) {
               <span class="btn-spinner"></span>
-              <span>جاري رفع الملف...</span>
+              <span>{{ 'PILGRIMS.IMPORT.UPLOADING' | translate }}</span>
             } @else {
               <i class="pi pi-upload"></i>
-              <span>{{ importSelectedFileName() || 'رفع ملف Excel' }}</span>
+              <span>{{ importSelectedFileName() || ('PILGRIMS.IMPORT.UPLOAD_BTN' | translate) }}</span>
             }
           </button>
           @if (importSelectedFile() && !uploadingImportFile()) {
-            <button type="button" class="btn import-card__clear-file" (click)="clearImportFile(importFileInput)" title="إزالة الملف">
+            <button type="button" class="btn import-card__clear-file" (click)="clearImportFile(importFileInput)" [title]="'PILGRIMS.IMPORT.REMOVE_FILE' | translate">
               <i class="pi pi-times"></i>
             </button>
           }
@@ -494,8 +494,8 @@
   <div class="dialog" (click)="$event.stopPropagation()">
     <div class="dialog__header">
       <div>
-        <h2 class="dialog__title">{{ modalTitle() }}</h2>
-        <p class="dialog__sub">{{ modalSubtitle() }}</p>
+        <h2 class="dialog__title">{{ (editingPilgrim() ? 'PILGRIMS.EDIT' : 'PILGRIMS.ADD') | translate }}</h2>
+        <p class="dialog__sub">{{ (editingPilgrim() ? 'PILGRIMS.MODAL_SUBTITLE_EDIT' : 'PILGRIMS.MODAL_SUBTITLE_ADD') | translate }}</p>
       </div>
       <button class="dialog__close" (click)="closeModal()" [disabled]="submitting()">
         <i class="pi pi-times"></i>
@@ -505,14 +505,14 @@
     <div class="dialog__body">
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">الاسم الكامل <span class="form-req">*</span></label>
-          <input class="form-input" type="text" placeholder="أدخل اسم الحاج"
+          <label class="form-label">{{ 'PILGRIMS.FORM.FULL_NAME' | translate }} <span class="form-req">*</span></label>
+          <input class="form-input" type="text" [placeholder]="'PILGRIMS.FORM.FULL_NAME_PLACEHOLDER' | translate"
             [value]="formData().displayName"
             [disabled]="submitting()"
             (input)="patchForm({ displayName: $any($event.target).value })" />
         </div>
         <div class="form-field">
-          <label class="form-label">البريد الإلكتروني</label>
+          <label class="form-label">{{ 'PILGRIMS.FORM.EMAIL' | translate }}</label>
           <input class="form-input" type="email" placeholder="example@gmail.com"
             [value]="formData().email"
             [class.form-input--error]="!!submitError()"
@@ -523,7 +523,7 @@
 
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">رقم الهاتف</label>
+          <label class="form-label">{{ 'PILGRIMS.FORM.PHONE' | translate }}</label>
           <input class="form-input" type="tel" placeholder="+966"
             [value]="formData().phone"
             [class.form-input--error]="phoneInvalid() || !!submitError()"
@@ -531,12 +531,12 @@
             (input)="submitError.set(null); patchForm({ phone: $any($event.target).value })"
             (blur)="phoneTouched.set(true)" />
           @if (phoneInvalid()) {
-            <span class="form-hint form-hint--error">يجب أن يكون رقم جوال سعودي صالح</span>
+            <span class="form-hint form-hint--error">{{ 'PILGRIMS.FORM.PHONE_INVALID' | translate }}</span>
           }
         </div>
         <div class="form-field">
-          <label class="form-label">رقم الهوية <span class="form-req">*</span></label>
-          <input class="form-input" type="text" placeholder="رقم الهوية"
+          <label class="form-label">{{ 'PILGRIMS.FORM.ID_NUMBER' | translate }} <span class="form-req">*</span></label>
+          <input class="form-input" type="text" [placeholder]="'PILGRIMS.FORM.ID_NUMBER' | translate"
             [value]="formData().idNumber"
             [disabled]="submitting()"
             (input)="patchForm({ idNumber: $any($event.target).value })" />
@@ -545,15 +545,15 @@
 
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">رقم جواز السفر <span class="form-req">*</span></label>
-          <input class="form-input" type="text" placeholder="رقم الجواز"
+          <label class="form-label">{{ 'PILGRIMS.FORM.PASSPORT' | translate }} <span class="form-req">*</span></label>
+          <input class="form-input" type="text" [placeholder]="'PILGRIMS.FORM.PASSPORT' | translate"
             [value]="formData().passportNumber"
             [disabled]="submitting()"
             (input)="patchForm({ passportNumber: $any($event.target).value })" />
         </div>
         <div class="form-field">
-          <label class="form-label">الجنسية</label>
-          <input class="form-input" type="text" placeholder="الجنسية"
+          <label class="form-label">{{ 'PILGRIMS.FORM.NATIONALITY' | translate }}</label>
+          <input class="form-input" type="text" [placeholder]="'PILGRIMS.FORM.NATIONALITY' | translate"
             [value]="formData().nationality"
             [disabled]="submitting()"
             (input)="patchForm({ nationality: $any($event.target).value })" />
@@ -562,14 +562,14 @@
 
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">تاريخ الميلاد <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'PILGRIMS.FORM.DATE_OF_BIRTH' | translate }} <span class="form-req">*</span></label>
           <p-datepicker
             [ngModel]="formData().dateOfBirth"
             (ngModelChange)="patchForm({ dateOfBirth: $event })"
             (onSelect)="patchForm({ dateOfBirth: $event })"
             dateFormat="yy-mm-dd"
             [disabled]="submitting()"
-            placeholder="اختر التاريخ"
+            [placeholder]="'PILGRIMS.FORM.SELECT_DATE' | translate"
             [showIcon]="true"
             [inline]="false"
             appendTo="body"
@@ -577,22 +577,22 @@
           </p-datepicker>
         </div>
         <div class="form-field">
-          <label class="form-label">الجنس</label>
+          <label class="form-label">{{ 'PILGRIMS.FORM.GENDER' | translate }}</label>
           <select class="form-select" [disabled]="submitting()"
             (change)="patchForm({ gender: $any($event.target).value })">
-            <option value="" [selected]="formData().gender === ''">اختر الجنس</option>
-            <option value="0" [selected]="formData().gender === '0'">ذكر</option>
-            <option value="1" [selected]="formData().gender === '1'">أنثى</option>
+            <option value="" [selected]="formData().gender === ''">{{ 'PILGRIMS.FORM.SELECT_GENDER' | translate }}</option>
+            <option value="0" [selected]="formData().gender === '0'">{{ 'COMMON.MALE' | translate }}</option>
+            <option value="1" [selected]="formData().gender === '1'">{{ 'COMMON.FEMALE' | translate }}</option>
           </select>
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">فصيلة الدم</label>
+          <label class="form-label">{{ 'PILGRIMS.FORM.BLOOD_TYPE' | translate }}</label>
           <select class="form-select" [disabled]="submitting()"
             (change)="patchForm({ bloodType: $any($event.target).value })">
-            <option value="" [selected]="formData().bloodType === ''">اختر فصيلة الدم</option>
+            <option value="" [selected]="formData().bloodType === ''">{{ 'PILGRIMS.FORM.SELECT_BLOOD' | translate }}</option>
             @for (bt of bloodTypeOptions; track bt.value) {
               <option [value]="bt.value"
                       [selected]="formData().bloodType === bt.value.toString()">
@@ -602,8 +602,8 @@
           </select>
         </div>
         <div class="form-field">
-          <label class="form-label">السكن</label>
-          <input class="form-input" type="text" placeholder="مثال: فندق الصفا"
+          <label class="form-label">{{ 'PILGRIMS.FORM.ACCOMMODATION' | translate }}</label>
+          <input class="form-input" type="text" [placeholder]="'PILGRIMS.FORM.ACCOMMODATION_PLACEHOLDER' | translate"
             [value]="formData().accommodation"
             [disabled]="submitting()"
             (input)="patchForm({ accommodation: $any($event.target).value })" />
@@ -612,11 +612,11 @@
 
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">المركز <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'PILGRIMS.FORM.CENTER' | translate }} <span class="form-req">*</span></label>
           <div class="ss" [class.ss--disabled]="submitting() || editingPilgrim()">
             <button type="button" class="ss__trigger" [disabled]="submitting() || !!editingPilgrim()" (click)="toggleCampDrop()">
               <span [class.ss__placeholder]="!selectedCampName()">
-                {{ selectedCampName() || 'اختر المركز' }}
+                {{ selectedCampName() || ('PILGRIMS.FORM.SELECT_CENTER' | translate) }}
               </span>
               @if (selectedCampName() && !editingPilgrim()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearCamp()"></i>
@@ -629,7 +629,7 @@
                 @if (campLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (campList().length === 0) {
-                  <div class="ss__state">لا توجد مراكز</div>
+                  <div class="ss__state">{{ 'PILGRIMS.FORM.NO_CENTERS' | translate }}</div>
                 } @else {
                   <ul class="ss__list">
                     @for (c of campList(); track c.Id) {
@@ -645,13 +645,13 @@
         </div>
 
         <div class="form-field">
-          <label class="form-label">المجموعة <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'PILGRIMS.FORM.GROUP' | translate }} <span class="form-req">*</span></label>
           <div class="ss" [class.ss--disabled]="!formData().campaignId || submitting() || editingPilgrim()">
             <button type="button" class="ss__trigger"
               [disabled]="!formData().campaignId || submitting() || !!editingPilgrim()"
               (click)="toggleGrpDrop()">
               <span [class.ss__placeholder]="!selectedGrpName()">
-                {{ selectedGrpName() || (formData().campaignId ? 'اختر المجموعة' : 'اختر المركز أولاً') }}
+                {{ selectedGrpName() || (formData().campaignId ? ('PILGRIMS.FORM.SELECT_GROUP' | translate) : ('PILGRIMS.FORM.SELECT_CENTER_FIRST' | translate)) }}
               </span>
               @if (selectedGrpName() && !editingPilgrim()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearGrp()"></i>
@@ -664,7 +664,7 @@
                 @if (grpLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (grpList().length === 0) {
-                  <div class="ss__state">لا توجد مجموعات</div>
+                  <div class="ss__state">{{ 'PILGRIMS.FORM.NO_GROUPS' | translate }}</div>
                 } @else {
                   <ul class="ss__list">
                     @for (g of grpList(); track g.Id) {
@@ -682,15 +682,15 @@
 
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">رقم بطاقة المناسك <span class="form-req">*</span></label>
-          <input class="form-input" type="text" placeholder="رقم البطاقة"
+          <label class="form-label">{{ 'PILGRIMS.FORM.RITUAL_CARD' | translate }} <span class="form-req">*</span></label>
+          <input class="form-input" type="text" [placeholder]="'PILGRIMS.FORM.RITUAL_CARD' | translate"
             [value]="formData().ritualCardNumber"
             [disabled]="submitting()"
             (input)="patchForm({ ritualCardNumber: $any($event.target).value })" />
         </div>
         <div class="form-field">
-          <label class="form-label">رقم التصريح</label>
-          <input class="form-input" type="text" placeholder="رقم التصريح"
+          <label class="form-label">{{ 'PILGRIMS.FORM.PERMIT' | translate }}</label>
+          <input class="form-input" type="text" [placeholder]="'PILGRIMS.FORM.PERMIT' | translate"
             [value]="formData().permitNumber"
             [disabled]="submitting()"
             (input)="patchForm({ permitNumber: $any($event.target).value })" />
@@ -703,14 +703,14 @@
     </div>
 
     <div class="dialog__footer">
-      <button class="btn btn--outline" (click)="closeModal()" [disabled]="submitting()">إلغاء</button>
+      <button class="btn btn--outline" (click)="closeModal()" [disabled]="submitting()">{{ 'COMMON.CANCEL' | translate }}</button>
       <button class="btn btn--primary" (click)="submitForm()"
         [disabled]="submitting() || !isFormValid()">
         @if (submitting()) {
-          <span class="btn-spinner"></span>{{ editingPilgrim() ? 'جاري الحفظ...' : 'جاري الإضافة...' }}
+          <span class="btn-spinner"></span>{{ (editingPilgrim() ? 'PILGRIMS.FORM.SAVING' : 'PILGRIMS.FORM.ADDING') | translate }}
         } @else {
           <i class="pi" [class.pi-save]="editingPilgrim()" [class.pi-user-plus]="!editingPilgrim()"></i>
-          {{ editingPilgrim() ? 'حفظ التعديلات' : 'إضافة الحاج' }}
+          {{ (editingPilgrim() ? 'PILGRIMS.FORM.SAVE' : 'PILGRIMS.FORM.ADD') | translate }}
         }
       </button>
     </div>

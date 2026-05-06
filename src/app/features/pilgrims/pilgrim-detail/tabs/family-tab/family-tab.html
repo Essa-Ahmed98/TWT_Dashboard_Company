@@ -2,12 +2,12 @@
   @if (loading()) {
     <div class="empty-card">
       <i class="pi pi-spin pi-spinner"></i>
-      <p>جاري تحميل بيانات العائلة...</p>
+      <p>{{ 'PILGRIM_DETAIL.FAMILY.LOADING' | translate }}</p>
     </div>
   } @else if (!hasItems()) {
     <div class="empty-card">
       <i class="pi pi-users"></i>
-      <p>لا توجد بيانات عائلة مسجلة</p>
+      <p>{{ 'PILGRIM_DETAIL.FAMILY.EMPTY' | translate }}</p>
     </div>
   }
 

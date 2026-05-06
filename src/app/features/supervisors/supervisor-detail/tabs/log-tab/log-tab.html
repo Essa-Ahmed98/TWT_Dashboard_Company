@@ -2,13 +2,12 @@
   <div class="info-card">
     <div class="info-card__header">
       <i class="pi pi-history"></i>
-      سجل الأنشطة
-    </div>
+      {{ 'SUPERVISOR_DETAIL.LOG.ACTIVITY_LOG' | translate }}</div>
 
     @if (supervisor().log.length === 0) {
       <div class="empty-msg">
         <i class="pi pi-history"></i>
-        <p>لا توجد أحداث مسجلة لهذا المشرف</p>
+        <p>{{ 'SUPERVISOR_DETAIL.LOG.EMPTY' | translate }}</p>
       </div>
     } @else {
       <div class="log-timeline">

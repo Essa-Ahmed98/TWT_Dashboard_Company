@@ -2,8 +2,7 @@
   <div class="info-card">
     <div class="info-card__header">
       <i class="pi pi-history"></i>
-      سجل النشاط
-    </div>
+      {{ 'PILGRIM_DETAIL.LOG.ACTIVITY_LOG' | translate }}</div>
     <div class="log-timeline">
       @for (entry of pilgrim().log; track entry.event; let last = $last) {
         <div class="log-item">

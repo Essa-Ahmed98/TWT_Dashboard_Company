@@ -6,25 +6,25 @@
 
   <div class="cd__tab-panel-header">
     <span class="cd__tab-panel-count">
-      {{ totalCount() | number }} مجموعة
+      {{ totalCount() | number }} {{ 'GROUPS_TAB.GROUP_UNIT' | translate }}
     </span>
     <button class="btn btn--primary" (click)="openModal()">
       <i class="pi pi-plus"></i>
-      إضافة مجموعة
+      {{ 'GROUPS_TAB.ADD_GROUP' | translate }}
     </button>
   </div>
 
   @if (loading()) {
     <div class="cd__tab-loading">
       <span class="cd__spinner--sm"></span>
-      <span>جاري تحميل المجموعات...</span>
+      <span>{{ 'GROUPS_TAB.LOADING' | translate }}</span>
     </div>
   }
 
   @if (!loading() && groups().length === 0) {
     <div class="cd__empty">
       <i class="pi pi-inbox"></i>
-      <p>لا توجد مجموعات بعد</p>
+      <p>{{ 'GROUPS_TAB.EMPTY' | translate }}</p>
     </div>
   }
 
@@ -41,22 +41,22 @@
                   <span class="group-card__name">{{ g.Name }}</span>
                 </div>
                 <span class="group-card__meta">
-                  <i class="pi pi-users"></i> {{ g.PilgrimsCount }} حاج
+                  <i class="pi pi-users"></i> {{ g.PilgrimsCount }} {{ 'GROUPS_TAB.PILGRIM_UNIT' | translate }}
                   &bull;
-                  <i class="pi pi-user-edit"></i> {{ g.SupervisorsCount }} مشرف
+                  <i class="pi pi-user-edit"></i> {{ g.SupervisorsCount }} {{ 'GROUPS_TAB.SUPERVISOR_UNIT' | translate }}
                 </span>
               </div>
             </div>
             <div class="group-card__row-end">
               <button class="group-card__edit"
-                      title="تعديل المجموعة"
+                      [title]="'GROUPS_TAB.EDIT_GROUP' | translate"
                       type="button"
                       (click)="openEditModal(g, $event)">
                 <i class="pi pi-pencil"></i>
               </button>
               <span class="group-card__supervisors">
                 <i class="pi pi-user-edit"></i>
-                {{ g.SupervisorsCount }} مشرف
+                {{ g.SupervisorsCount }} {{ 'GROUPS_TAB.SUPERVISOR_UNIT' | translate }}
               </span>
               <i class="group-card__chevron pi"
                  [class.pi-chevron-up]="isExpanded(g.Id)"
@@ -71,7 +71,7 @@
                 <div class="group-section__header">
                   <span class="group-section__title">
                     <i class="pi pi-user-edit"></i>
-                    مشرفو المجموعة ({{ g.SupervisorsCount }})
+                    {{ 'GROUPS_TAB.GROUP_SUPERVISORS' | translate }} ({{ g.SupervisorsCount }})
                   </span>
                 </div>
                 <div class="group-section__chips">
@@ -82,7 +82,7 @@
                     </span>
                   }
                   @if (g.Supervisors.length === 0) {
-                    <span class="group-section__empty">لا يوجد مشرفون</span>
+                    <span class="group-section__empty">{{ 'GROUPS_TAB.NO_SUPERVISORS' | translate }}</span>
                   }
                 </div>
               </div>
@@ -92,15 +92,15 @@
                   <table class="group-table">
                     <thead>
                       <tr>
-                        <th>الحاج</th>
-                        <th>الجنسية</th>
-                        <th>إجراءات</th>
+                        <th>{{ 'GROUPS_TAB.PILGRIM' | translate }}</th>
+                        <th>{{ 'GROUPS_TAB.NATIONALITY' | translate }}</th>
+                        <th>{{ 'GROUPS_TAB.ACTIONS' | translate }}</th>
                       </tr>
                     </thead>
                     <tbody>
                       @if (g.Pilgrims.length === 0) {
                         <tr>
-                          <td colspan="3" class="group-table__empty">لا يوجد حجاج</td>
+                          <td colspan="3" class="group-table__empty">{{ 'GROUPS_TAB.NO_PILGRIMS' | translate }}</td>
                         </tr>
                       }
                       @for (p of g.Pilgrims; track p.Id) {
@@ -108,7 +108,7 @@
                           <td>{{ p.DisplayName }}</td>
                           <td>{{ p.Nationality }}</td>
                           <td>
-                            <button class="icon-btn" title="عرض التفاصيل" (click)="openPilgrimDetail(p.Id)">
+                            <button class="icon-btn" [title]="'COMMON.VIEW_DETAILS' | translate" (click)="openPilgrimDetail(p.Id)">
                               <i class="pi pi-eye"></i>
                             </button>
                           </td>
@@ -122,8 +122,8 @@
               @if (g.PilgrimsCount > 0) {
                 <div class="group-section group-section--footer">
                   <button class="group-section__more" (click)="viewGroupPilgrims()">
-                    عرض كل حجاج المجموعة ({{ g.PilgrimsCount }})
-                    <i class="pi pi-arrow-left"></i>
+                    {{ 'GROUPS_TAB.VIEW_ALL_GROUP_PILGRIMS' | translate }} ({{ g.PilgrimsCount }})
+                    <i class="pi pi-arrow-left dir-forward__icon"></i>
                   </button>
                 </div>
               }
@@ -136,7 +136,7 @@
 
     @if (totalPages() > 1) {
       <div class="pagination pagination--inner">
-        <span class="pagination__info">{{ totalCount() | number }} مجموعة</span>
+        <span class="pagination__info">{{ totalCount() | number }} {{ 'GROUPS_TAB.GROUP_UNIT' | translate }}</span>
         <div class="pagination__controls">
           <button class="pagination__btn"
                   [disabled]="currentPage() === 1"
@@ -168,8 +168,8 @@
   <div class="dialog" (click)="$event.stopPropagation()">
     <div class="dialog__header">
       <div>
-        <h2 class="dialog__title">{{ modalTitle() }}</h2>
-        <p class="dialog__sub">{{ modalSubtitle() }}</p>
+        <h2 class="dialog__title">{{ modalTitleKey() | translate }}</h2>
+        <p class="dialog__sub">{{ modalSubtitleKey() | translate }}</p>
       </div>
       <button class="dialog__close" (click)="closeModal()" [disabled]="submitting()">
         <i class="pi pi-times"></i>
@@ -178,15 +178,15 @@
 
     <div class="dialog__body">
       <div class="form-field">
-        <label class="form-label">اسم المجموعة <span class="form-req">*</span></label>
-        <input class="form-input" type="text" placeholder="مثال: المجموعة أ"
+        <label class="form-label">{{ 'GROUPS_TAB.GROUP_NAME' | translate }} <span class="form-req">*</span></label>
+        <input class="form-input" type="text" [placeholder]="'GROUPS_TAB.GROUP_NAME_PLACEHOLDER' | translate"
           [value]="form().name"
           [disabled]="submitting()"
           (input)="patchForm({ name: $any($event.target).value })" />
       </div>
       <div class="form-field">
-        <label class="form-label">ملاحظات</label>
-        <textarea class="form-input form-input--textarea" rows="3" placeholder="ملاحظات..."
+        <label class="form-label">{{ 'GROUPS_TAB.NOTES' | translate }}</label>
+        <textarea class="form-input form-input--textarea" rows="3" [placeholder]="'GROUPS_TAB.NOTES_PLACEHOLDER' | translate"
           [value]="form().notes"
           [disabled]="submitting()"
           (input)="patchForm({ notes: $any($event.target).value })"></textarea>
@@ -194,12 +194,12 @@
     </div>
 
     <div class="dialog__footer">
-      <button class="btn btn--outline" (click)="closeModal()" [disabled]="submitting()">إلغاء</button>
+      <button class="btn btn--outline" (click)="closeModal()" [disabled]="submitting()">{{ 'COMMON.CANCEL' | translate }}</button>
       <button class="btn btn--primary" (click)="submit()" [disabled]="submitting() || !form().name.trim()">
         @if (submitting()) {
           <i class="pi pi-spin pi-spinner"></i>
         } @else {
-          {{ editingGroup() ? 'حفظ التعديلات' : 'إنشاء مجموعة' }}
+          {{ (editingGroup() ? 'COMMON.SAVE_CHANGES' : 'GROUPS_TAB.CREATE_GROUP') | translate }}
         }
       </button>
     </div>

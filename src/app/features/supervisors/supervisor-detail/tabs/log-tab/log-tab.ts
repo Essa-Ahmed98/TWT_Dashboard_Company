@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { SupervisorDetailData } from '../../supervisor-detail.model';
 
 @Component({
   selector: 'app-sv-log-tab',
-  imports: [],
+  imports: [TranslateModule, ],
   templateUrl: './log-tab.html',
   styleUrl: './log-tab.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
