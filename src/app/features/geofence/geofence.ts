@@ -97,7 +97,7 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
   campaignsHasPrevious = signal(false);
   campaignsLoaded      = signal(false);
   loadingGroupIds      = signal<Set<string>>(new Set());
-  filterType           = signal('الكل');
+  filterType           = signal('all');
   editingZoneId        = signal<string | null>(null);
   showFilterDropdown   = signal(false);
   submitting           = signal(false);
@@ -113,12 +113,12 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
 
   campaigns = signal<Campaign[]>([]);
 
-  readonly filterOptions = ['الكل', 'مشعر مقدس', 'مخيم مركز'];
+  readonly filterOptions = ['all', 'sacred', 'camp'];
 
   private readonly TYPE_FILTER_MAP: Record<string, ZoneType | null> = {
-    'الكل': null,
-    'مشعر مقدس': 'مشعر مقدس',
-    'مخيم مركز': 'مخيم مركز',
+    all:    null,
+    sacred: 'مشعر مقدس',
+    camp:   'مخيم مركز',
   };
 
   private readonly LOCATION_COORDS: Record<string, [number, number]> = {
@@ -369,9 +369,9 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
 
   filterLabelKey(opt: string): string {
     return {
-      'الكل': 'GEOFENCE.FILTER_ALL',
-      'مشعر مقدس': 'GEOFENCE.SACRED_SITE',
-      'مخيم مركز': 'GEOFENCE.CAMP_ZONE',
+      all:    'GEOFENCE.FILTER_ALL',
+      sacred: 'GEOFENCE.SACRED_SITE',
+      camp:   'GEOFENCE.CAMP_ZONE',
     }[opt] ?? opt;
   }
 

@@ -28,7 +28,7 @@ export interface PilgrimDetailData {
   idNumber: string;
   passportNumber: string;
   birthDate: string;
-  gender: string;
+  gender: number;  // 0 = male, 1 = female
   company: string;
   campaign: string;
   group: string;
@@ -103,10 +103,6 @@ function calculateAge(dateOfBirth: string): number {
   return Math.max(age, 0);
 }
 
-function genderLabel(value: number): string {
-  return value === 0 ? 'ذكر' : 'أنثى';
-}
-
 function bloodTypeLabel(value: number): string {
   return BLOOD_TYPE_OPTIONS.find(option => option.value === value)?.label ?? 'COMMON.NOT_AVAILABLE';
 }
@@ -161,7 +157,7 @@ export function pilgrimApiToDetailData(pilgrim: PilgrimDetailApiItem): PilgrimDe
     idNumber: pilgrim.IDNumber,
     passportNumber: pilgrim.PassportNumber,
     birthDate: formatDateOnly(pilgrim.DateOfBirth),
-    gender: genderLabel(pilgrim.Gender),
+    gender: pilgrim.Gender,
     company: `نوع الحج: ${hajjTypeLabel(pilgrim.HajjType)}`,
     campaign: pilgrim.CampaignName,
     group: pilgrim.GroupName,

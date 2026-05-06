@@ -1,9 +1,9 @@
-export type CampaignStatus = 'نشطة' | 'طارئة' | 'مكتملة';
-export type GroupStatus    = 'آمن' | 'تحذير' | 'طارئة';
-export type BusStatus      = 'متحركة' | 'متوقفة';
+export type CampaignStatus = 'active' | 'urgent' | 'done';
+export type GroupStatus    = 'safe' | 'warning' | 'urgent';
+export type BusStatus      = 'moving' | 'stopped';
 
 // ── Group ────────────────────────────────────────────────────────
-export type PilgrimHealth = 'آمن' | 'تحذير' | 'خطر';
+export type PilgrimHealth = 'safe' | 'warning' | 'danger';
 
 export interface GroupSupervisor {
   id:   string;

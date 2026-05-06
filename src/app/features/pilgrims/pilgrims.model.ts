@@ -1,5 +1,5 @@
-﻿export type PilgrimStatus = 'آمن' | 'تحذير' | 'خطر';
-export type Gender       = 'ذكر' | 'أنثى';
+﻿export type PilgrimStatus = 'safe' | 'warning' | 'danger';
+export type Gender        = 0 | 1;  // 0 = male, 1 = female
 
 export interface Campaign {
   id:   string;

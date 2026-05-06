@@ -7,7 +7,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { debounceTime, finalize, skip } from 'rxjs';
 import { DatePicker } from 'primeng/datepicker';
 import { MessageService } from 'primeng/api';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment';
 import { ApiResult } from '../../core/models/api.models';
 import { CampaignApiItem, GroupApiItem } from '../campaigns/campaigns.model';
@@ -59,6 +59,7 @@ export class Pilgrims implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly campaignsService = inject(CampaignsService);
   private readonly toast = inject(MessageService);
+  private readonly translate = inject(TranslateService);
 
   readonly bloodTypeOptions = BLOOD_TYPE_OPTIONS;
 
@@ -880,6 +881,6 @@ export class Pilgrims implements OnInit {
   }
 
   genderLabel(gender: number): string {
-    return gender === 0 ? 'ذكر' : 'أنثى';
+    return this.translate.instant(gender === 0 ? 'COMMON.MALE' : 'COMMON.FEMALE');
   }
 }

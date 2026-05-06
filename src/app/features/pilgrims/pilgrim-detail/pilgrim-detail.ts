@@ -128,7 +128,7 @@ export class PilgrimDetail {
       PassportNumber:  data.passportNumber,
       Nationality:     data.nationality,
       DateOfBirth:     data.birthDate ? new Date(data.birthDate).toISOString() : '',
-      Gender:          data.gender === 'أنثى' ? 1 : 0,
+      Gender:          data.gender,
       IDNumber:        data.idNumber,
       Accommodation:   data.accommodation,
       NuskCardNumber:  data.nusukCard,

@@ -59,13 +59,13 @@
         <div class="info-row">
           <span class="info-row__label">{{ 'PILGRIM_DETAIL.PERSONAL.GENDER' | translate }}</span>
           @if (isEditing()) {
-            <select class="info-edit-input" [value]="editData()!.gender"
-              (change)="fieldChanged.emit({ gender: $any($event.target).value })">
-              <option value="{{ 'COMMON.MALE' | translate }}">{{ 'COMMON.MALE' | translate }}</option>
-              <option value="{{ 'COMMON.FEMALE' | translate }}">{{ 'COMMON.FEMALE' | translate }}</option>
+            <select class="info-edit-input"
+              (change)="fieldChanged.emit({ gender: +$any($event.target).value })">
+              <option [value]="0" [selected]="editData()!.gender === 0">{{ 'COMMON.MALE' | translate }}</option>
+              <option [value]="1" [selected]="editData()!.gender === 1">{{ 'COMMON.FEMALE' | translate }}</option>
             </select>
           } @else {
-            <span class="info-row__value">{{ pilgrim().gender }}</span>
+            <span class="info-row__value">{{ (pilgrim().gender === 0 ? 'COMMON.MALE' : 'COMMON.FEMALE') | translate }}</span>
           }
         </div>
       </div>

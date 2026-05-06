@@ -15,7 +15,7 @@ import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 import { DatePicker } from 'primeng/datepicker';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { SupervisorsService } from './supervisors.service';
 import { SupervisorItem, SupervisorForm, CreateSupervisorRequest, LANGUAGE_OPTIONS, SupervisorDetailApiItem, UpdateSupervisorRequest } from './supervisors.model';
@@ -50,6 +50,7 @@ export class Supervisors implements OnInit {
   private readonly campaignsService = inject(CampaignsService);
   private readonly destroyRef       = inject(DestroyRef);
   private readonly toast            = inject(MessageService);
+  private readonly translate        = inject(TranslateService);
 
   // ── List state ───────────────────────────────────────────────────
   supervisors  = signal<SupervisorItem[]>([]);
@@ -434,7 +435,7 @@ export class Supervisors implements OnInit {
         s.PassportNumber || '—',
         s.Nationality || '—',
         this.langLabels(s.Languages),
-        s.IsOnline ? 'متصل' : 'غير متصل',
+        this.translate.instant(s.IsOnline ? 'COMMON.ONLINE' : 'COMMON.OFFLINE'),
       ]),
     );
   }

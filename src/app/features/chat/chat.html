@@ -101,7 +101,7 @@
             <div class="chat__win-info">
               <span class="chat__win-name">{{ conv.FriendDisplayName }}</span>
               <span class="chat__win-status" [class.chat__win-status--online]="conv.IsOnline">
-                {{ conv.IsOnline ? 'متصل الآن' : 'غير متصل' }}
+                {{ (conv.IsOnline ? 'CHAT.ONLINE' : 'CHAT.OFFLINE') | translate }}
               </span>
             </div>
           </div>

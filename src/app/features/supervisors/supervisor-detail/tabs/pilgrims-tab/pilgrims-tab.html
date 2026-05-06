@@ -42,7 +42,7 @@
             <div class="pilgrim-info">
               <span class="pilgrim-info__name">{{ p.DisplayName || '—' }}</span>
               <span class="pilgrim-info__meta">
-                {{ p.Nationality || '—' }} &bull; {{ genderLabel(p.Gender) }} &bull; {{ getAge(p.DateOfBirth) }}
+                {{ p.Nationality || '—' }} &bull; {{ genderLabel(p.Gender) | translate }} &bull; {{ getAge(p.DateOfBirth) }}
               </span>
             </div>
           </div>

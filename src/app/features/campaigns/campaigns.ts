@@ -164,14 +164,14 @@ export class Campaigns implements OnDestroy {
 
   // ── UI helpers ─────────────────────────────────────────────────
   statusClass(status: CampaignStatus): string {
-    return { 'نشطة': 'active', 'طارئة': 'urgent', 'مكتملة': 'done' }[status] ?? '';
+    return status;
   }
 
   statusLabelKey(status: CampaignStatus): string {
     return {
-      'نشطة': 'CAMPAIGNS.STATUS.ACTIVE',
-      'طارئة': 'CAMPAIGNS.STATUS.URGENT',
-      'مكتملة': 'CAMPAIGNS.STATUS.DONE',
+      active: 'CAMPAIGNS.STATUS.ACTIVE',
+      urgent: 'CAMPAIGNS.STATUS.URGENT',
+      done:   'CAMPAIGNS.STATUS.DONE',
     }[status] ?? 'COMMON.NO_DATA';
   }
 }

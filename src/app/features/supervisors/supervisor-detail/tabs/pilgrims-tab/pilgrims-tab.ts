@@ -103,7 +103,7 @@ export class SvPilgrimsTab implements OnInit {
   }
 
   genderLabel(gender: number): string {
-    return gender === 0 ? 'ذكر' : gender === 1 ? 'أنثى' : '—';
+    return gender === 0 ? 'COMMON.MALE' : gender === 1 ? 'COMMON.FEMALE' : '—';
   }
 
   getAge(value: string): string {

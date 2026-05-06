@@ -303,7 +303,7 @@ export class CampaignsService {
       id:               item.Id,
       number:           item.Number,
       name:             item.Name,
-      status:           'نشطة' as CampaignStatus,
+      status:           'active' as CampaignStatus,
       color:            item.Color ?? '',
       companyId:        item.CompanyId,
       pilgrimsCount:    item.PilgrimsCount,

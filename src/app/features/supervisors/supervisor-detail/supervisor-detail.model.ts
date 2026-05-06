@@ -125,24 +125,14 @@ function getInitials(name: string): string {
 }
 
 function genderLabel(value: string | number | null | undefined): string {
-  if (value === 0 || value === '0') {
-    return 'ذكر';
-  }
-  if (value === 1 || value === '1') {
-    return 'أنثى';
-  }
+  if (value === 0 || value === '0') return 'COMMON.MALE';
+  if (value === 1 || value === '1') return 'COMMON.FEMALE';
 
   const text = String(value ?? '').trim().toLowerCase();
-  if (!text) {
-    return EMPTY_VALUE;
-  }
+  if (!text) return EMPTY_VALUE;
 
-  if (['male', 'man', 'ذكر'].includes(text)) {
-    return 'ذكر';
-  }
-  if (['female', 'woman', 'أنثى'].includes(text)) {
-    return 'أنثى';
-  }
+  if (['male', 'man'].includes(text)) return 'COMMON.MALE';
+  if (['female', 'woman'].includes(text)) return 'COMMON.FEMALE';
 
   return displayValue(value);
 }
@@ -160,14 +150,8 @@ function languagesLabel(values: number[] | null | undefined): string {
 function getStatus(api: SupervisorDetailApiItem): { status: string; statusClass: SupervisorStatusClass } {
   const rawStatus = String(api.Status ?? '').trim().toLowerCase();
 
-  if (rawStatus.includes('leave') || rawStatus.includes('vacation') || rawStatus.includes('إجاز')) {
+  if (rawStatus.includes('leave') || rawStatus.includes('vacation')) {
     return { status: 'SUPERVISOR_DETAIL.STATUS.ON_LEAVE', statusClass: 'leave' };
-  }
-  if (rawStatus.includes('online') || rawStatus.includes('connected') || rawStatus.includes('متصل')) {
-    return { status: 'COMMON.ONLINE', statusClass: 'online' };
-  }
-  if (rawStatus.includes('offline') || rawStatus.includes('غير')) {
-    return { status: 'COMMON.OFFLINE', statusClass: 'offline' };
   }
 
   if (api.IsOnline) {
