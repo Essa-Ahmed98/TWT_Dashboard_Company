@@ -56,7 +56,7 @@ export interface SupervisorDetailData {
   notes: string;
   pilgrimsCount: number;
   rating: number;
-  vitals: { label: string; value: string; icon: string; color: string }[];
+  vitals: { labelKey: string; value: string; icon: string; color: string }[];
   pilgrims: SupervisorPilgrim[];
   pilgrimStats: { label: string; value: number; color: string }[];
   ratings: SupervisorRating[];
@@ -161,24 +161,24 @@ function getStatus(api: SupervisorDetailApiItem): { status: string; statusClass:
   const rawStatus = String(api.Status ?? '').trim().toLowerCase();
 
   if (rawStatus.includes('leave') || rawStatus.includes('vacation') || rawStatus.includes('إجاز')) {
-    return { status: 'في إجازة', statusClass: 'leave' };
+    return { status: 'SUPERVISOR_DETAIL.STATUS.ON_LEAVE', statusClass: 'leave' };
   }
   if (rawStatus.includes('online') || rawStatus.includes('connected') || rawStatus.includes('متصل')) {
-    return { status: 'متصل', statusClass: 'online' };
+    return { status: 'COMMON.ONLINE', statusClass: 'online' };
   }
   if (rawStatus.includes('offline') || rawStatus.includes('غير')) {
-    return { status: 'غير متصل', statusClass: 'offline' };
+    return { status: 'COMMON.OFFLINE', statusClass: 'offline' };
   }
 
   if (api.IsOnline) {
-    return { status: 'متصل', statusClass: 'online' };
+    return { status: 'COMMON.ONLINE', statusClass: 'online' };
   }
 
   if (api.IsActive === false) {
-    return { status: 'في إجازة', statusClass: 'leave' };
+    return { status: 'SUPERVISOR_DETAIL.STATUS.ON_LEAVE', statusClass: 'leave' };
   }
 
-  return { status: 'غير متصل', statusClass: 'offline' };
+  return { status: 'COMMON.OFFLINE', statusClass: 'offline' };
 }
 
 export function supervisorApiToDetailData(api: SupervisorDetailApiItem): SupervisorDetailData {
@@ -214,10 +214,10 @@ export function supervisorApiToDetailData(api: SupervisorDetailApiItem): Supervi
     pilgrimsCount,
     rating,
     vitals: [
-      { label: 'عدد الحجاج', value: String(pilgrimsCount), icon: 'pi pi-users', color: '#0b405b' },
-      { label: 'سنوات الخبرة', value: String(yearsOfExperience), icon: 'pi pi-briefcase', color: '#22c35d' },
-      { label: 'رقم الجواز', value: displayValue(api.PassportNumber), icon: 'pi pi-id-card', color: '#3b82f6' },
-      { label: 'التقييم', value: rating > 0 ? String(rating) : EMPTY_VALUE, icon: 'pi pi-star-fill', color: '#f59e0b' },
+      { labelKey: 'SUPERVISOR_DETAIL.PERSONAL.PILGRIM_COUNT', value: String(pilgrimsCount), icon: 'pi pi-users', color: '#0b405b' },
+      { labelKey: 'SUPERVISOR_DETAIL.PERSONAL.EXPERIENCE', value: String(yearsOfExperience), icon: 'pi pi-briefcase', color: '#22c35d' },
+      { labelKey: 'SUPERVISOR_DETAIL.PERSONAL.PASSPORT', value: displayValue(api.PassportNumber), icon: 'pi pi-id-card', color: '#3b82f6' },
+      { labelKey: 'SUPERVISOR_DETAIL.VITALS.RATING', value: rating > 0 ? String(rating) : EMPTY_VALUE, icon: 'pi pi-star-fill', color: '#f59e0b' },
     ],
     pilgrims: [],
     pilgrimStats: [

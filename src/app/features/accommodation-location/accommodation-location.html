@@ -11,9 +11,9 @@
     <div class="accom__title">
       <h1 class="accom__title-text">
         <i class="pi pi-map-marker"></i>
-        تحديث موقع السكن
+        {{ 'ACCOMMODATION.TITLE' | translate }}
       </h1>
-      <p class="accom__title-sub">اختر المركز والمجموعة، ثم حدد السكن وموقعه على الخريطة</p>
+      <p class="accom__title-sub">{{ 'ACCOMMODATION.SUBTITLE' | translate }}</p>
     </div>
   </div>
 
@@ -24,7 +24,7 @@
 
     <div class="accom__card-header">
       <i class="pi pi-home"></i>
-      <span>بيانات السكن</span>
+      <span>{{ 'ACCOMMODATION.ACCOMMODATION_DATA' | translate }}</span>
     </div>
 
     <div class="accom__card-body">
@@ -34,11 +34,11 @@
 
         <!-- Campaign dropdown -->
         <div class="form-field">
-          <label class="form-label">المركز</label>
+          <label class="form-label">{{ 'ACCOMMODATION.CENTER' | translate }}</label>
           <div class="ss">
             <button type="button" class="ss__trigger" (click)="toggleCampDrop()">
               <span [class.ss__placeholder]="!selectedCampName()">
-                {{ selectedCampName() || 'اختر المركز' }}
+                {{ selectedCampName() || ('ACCOMMODATION.SELECT_CENTER' | translate) }}
               </span>
               @if (selectedCampName()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearCamp()"></i>
@@ -51,7 +51,7 @@
                 @if (campLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (campList().length === 0) {
-                  <div class="ss__state">لا توجد مراكز</div>
+                  <div class="ss__state">{{ 'ACCOMMODATION.NO_CENTERS' | translate }}</div>
                 } @else {
                   <ul class="ss__list">
                     @for (c of campList(); track c.Id) {
@@ -67,13 +67,13 @@
 
         <!-- Group dropdown -->
         <div class="form-field">
-          <label class="form-label">المجموعة</label>
+          <label class="form-label">{{ 'ACCOMMODATION.GROUP' | translate }}</label>
           <div class="ss" [class.ss--disabled]="!selectedCampId()">
             <button type="button" class="ss__trigger"
                     [disabled]="!selectedCampId()"
                     (click)="toggleGrpDrop()">
               <span [class.ss__placeholder]="!selectedGroupName()">
-                {{ selectedGroupName() || (selectedCampId() ? 'اختر المجموعة' : 'اختر المركز أولاً') }}
+                {{ selectedGroupName() || (selectedCampId() ? ('ACCOMMODATION.SELECT_GROUP' | translate) : ('ACCOMMODATION.SELECT_CENTER_FIRST' | translate)) }}
               </span>
               @if (selectedGroupName()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearGrp()"></i>
@@ -86,7 +86,7 @@
                 @if (grpLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (grpList().length === 0) {
-                  <div class="ss__state">لا توجد مجموعات</div>
+                  <div class="ss__state">{{ 'ACCOMMODATION.NO_GROUPS' | translate }}</div>
                 } @else {
                   <ul class="ss__list">
                     @for (g of grpList(); track g.Id) {
@@ -104,11 +104,11 @@
 
       <!-- Row 2: Accommodation name -->
       <div class="form-field">
-        <label class="form-label">السكن</label>
+        <label class="form-label">{{ 'ACCOMMODATION.ACCOMMODATION_NAME' | translate }}</label>
         <input
           type="text"
           class="form-input"
-          placeholder="أدخل السكن"
+          [placeholder]="'ACCOMMODATION.ACCOMMODATION_PLACEHOLDER' | translate"
           [value]="accommodationName()"
           (input)="accommodationName.set($any($event.target).value)"
           [disabled]="submitting()"
@@ -118,7 +118,7 @@
       <!-- Row 3: Lat + Lng -->
       <div class="accom__row">
         <div class="form-field">
-          <label class="form-label">خط العرض (Latitude)</label>
+          <label class="form-label">{{ 'ACCOMMODATION.LAT' | translate }}</label>
           <input
             type="number"
             class="form-input"
@@ -129,7 +129,7 @@
           />
         </div>
         <div class="form-field">
-          <label class="form-label">خط الطول (Longitude)</label>
+          <label class="form-label">{{ 'ACCOMMODATION.LNG' | translate }}</label>
           <input
             type="number"
             class="form-input"
@@ -145,7 +145,7 @@
       <div class="form-field">
         <div class="accom__map-label">
           <i class="pi pi-map-marker"></i>
-          <span>الموقع على الخريطة (يمكن سحب الدبوس)</span>
+          <span>{{ 'ACCOMMODATION.MAP_HINT' | translate }}</span>
         </div>
         <div class="accom__map-wrap">
           <div #mapEl class="accom__map"></div>
@@ -161,9 +161,9 @@
               (click)="submit()">
         @if (submitting()) {
           <span class="btn-spinner"></span>
-          جاري التحديث...
+          {{ 'ACCOMMODATION.UPDATING' | translate }}
         } @else {
-          تحديث السكن
+          {{ 'ACCOMMODATION.UPDATE' | translate }}
         }
       </button>
 

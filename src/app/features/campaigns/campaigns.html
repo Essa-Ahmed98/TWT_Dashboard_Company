@@ -1,4 +1,4 @@
-﻿<!-- Modal backdrop -->
+<!-- Modal backdrop -->
 @if (showModal()) {
   <div class="modal-backdrop" (click)="closeModal()"></div>
 }
@@ -10,9 +10,9 @@
   ══════════════════════════════════════════ -->
   <div class="campaigns__header">
     <div class="campaigns__title">
-      <h1 class="campaigns__title-text">إدارة المراكز</h1>
+      <h1 class="campaigns__title-text">{{ 'CAMPAIGNS.TITLE' | translate }}</h1>
       <span class="campaigns__title-count">
-        {{ campaigns().length }} مركز مسجلة &bull; {{ totalGroups() }} مجموعة
+        {{ campaigns().length }} {{ 'CAMPAIGNS.CENTER_UNIT' | translate }} &bull; {{ totalGroups() }} {{ 'CAMPAIGNS.GROUP_UNIT' | translate }}
       </span>
     </div>
     <div class="campaigns__actions">
@@ -22,7 +22,7 @@
         <input
           class="campaigns__search-input"
           type="text"
-          placeholder="بحث..."
+          [placeholder]="'CAMPAIGNS.SEARCH_PLACEHOLDER' | translate"
           [value]="searchQuery()"
           (input)="onSearch($any($event.target).value)"
         />
@@ -39,19 +39,19 @@
       <div class="view-toggle">
         <button class="view-toggle__btn"
                 [class.view-toggle__btn--active]="viewMode() === 'grid'"
-                (click)="viewMode.set('grid')" title="عرض الشبكة">
+                (click)="viewMode.set('grid')" [title]="'CAMPAIGNS.VIEW_GRID' | translate">
           <i class="pi pi-th-large"></i>
         </button>
         <button class="view-toggle__btn"
                 [class.view-toggle__btn--active]="viewMode() === 'list'"
-                (click)="viewMode.set('list')" title="عرض القائمة">
+                (click)="viewMode.set('list')" [title]="'CAMPAIGNS.VIEW_LIST' | translate">
           <i class="pi pi-list"></i>
         </button>
       </div>
 
       <button class="btn btn--primary" (click)="openModal()">
         <i class="pi pi-plus"></i>
-        <span>إضافة مركز</span>
+        <span>{{ 'CAMPAIGNS.ADD' | translate }}</span>
       </button>
     </div>
   </div>
@@ -62,7 +62,7 @@
   @if (loading()) {
     <div class="campaigns__loading">
       <span class="campaigns__spinner"></span>
-      <span class="campaigns__loading-text">جاري التحميل...</span>
+      <span class="campaigns__loading-text">{{ 'CAMPAIGNS.LOADING' | translate }}</span>
     </div>
   }
 
@@ -76,11 +76,11 @@
           <div class="campaign-card__head">
             <div class="campaign-card__info">
               <span class="campaign-card__name">{{ c.name }}</span>
-              <span class="campaign-card__number">رقم المركز: {{ c.number }}</span>
+              <span class="campaign-card__number">{{ 'CAMPAIGNS.CENTER_NUMBER' | translate }} {{ c.number }}</span>
             </div>
             <span class="status-badge status-badge--{{ statusClass(c.status) }}">
               <span class="status-badge__dot"></span>
-              {{ c.status }}
+              {{ statusLabelKey(c.status) | translate }}
             </span>
           </div>
 
@@ -88,33 +88,33 @@
             <div class="cstat">
               <i class="pi pi-users cstat__icon" [style.color]="c.color || null"></i>
               <span class="cstat__value">{{ c.pilgrimsCount | number }}</span>
-              <span class="cstat__label">حاج</span>
+              <span class="cstat__label">{{ 'CAMPAIGNS.PILGRIM_UNIT' | translate }}</span>
             </div>
             <div class="cstat">
               <i class="pi pi-sitemap cstat__icon" [style.color]="c.color || null"></i>
               <span class="cstat__value">{{ c.groupsCount }}</span>
-              <span class="cstat__label">مجموعة</span>
+              <span class="cstat__label">{{ 'CAMPAIGNS.GROUP_UNIT' | translate }}</span>
             </div>
             <div class="cstat">
               <i class="pi pi-user cstat__icon" [style.color]="c.color || null"></i>
               <span class="cstat__value">{{ c.supervisorsCount }}</span>
-              <span class="cstat__label">مشرف</span>
+              <span class="cstat__label">{{ 'CAMPAIGNS.SUPERVISOR_UNIT' | translate }}</span>
             </div>
             <div class="cstat">
               <i class="pi pi-car cstat__icon" [style.color]="c.color || null"></i>
               <span class="cstat__value">{{ c.busesCount }}</span>
-              <span class="cstat__label">حافلة</span>
+              <span class="cstat__label">{{ 'CAMPAIGNS.BUS_UNIT' | translate }}</span>
             </div>
           </div>
 
           <div class="campaign-card__footer">
-            <a class="campaign-card__link" (click)="openDetail(c.id)">
-              عرض التفاصيل والمجموعات
-              <i class="pi pi-angle-left"></i>
-            </a>
+                <a class="campaign-card__link" (click)="openDetail(c.id)">
+                  {{ 'CAMPAIGNS.VIEW_DETAILS' | translate }}
+                  <i class="pi pi-angle-left dir-forward__icon"></i>
+                </a>
             <button class="campaign-edit-btn campaign-edit-btn--card"
                     type="button"
-                    title="تعديل المركز"
+                    [title]="'CAMPAIGNS.EDIT' | translate"
                     (click)="openEditModal(c, $event)">
               <i class="pi pi-pencil"></i>
             </button>
@@ -125,7 +125,7 @@
       @if (filteredCampaigns().length === 0) {
         <div class="campaigns__empty">
           <i class="pi pi-inbox"></i>
-          <p>لا توجد نتائج</p>
+          <p>{{ 'CAMPAIGNS.EMPTY' | translate }}</p>
         </div>
       }
     </div>
@@ -139,13 +139,13 @@
       <table class="campaigns__table">
         <thead>
           <tr>
-            <th>المركز</th>
-            <th>الحجاج</th>
-            <th>المجموعات</th>
-            <th>المشرفين</th>
-            <th>الحافلات</th>
-            <th>الحالة</th>
-            <th>إجراءات</th>
+            <th>{{ 'CAMPAIGNS.TABLE.CENTER' | translate }}</th>
+            <th>{{ 'CAMPAIGNS.TABLE.PILGRIMS' | translate }}</th>
+            <th>{{ 'CAMPAIGNS.TABLE.GROUPS' | translate }}</th>
+            <th>{{ 'CAMPAIGNS.TABLE.SUPERVISORS' | translate }}</th>
+            <th>{{ 'CAMPAIGNS.TABLE.BUSES' | translate }}</th>
+            <th>{{ 'CAMPAIGNS.TABLE.STATUS' | translate }}</th>
+            <th>{{ 'CAMPAIGNS.TABLE.ACTIONS' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -154,7 +154,7 @@
               <td>
                 <div class="campaign-name">
                   <span class="campaign-name__text">{{ c.name }}</span>
-                  <span class="campaign-name__sub">رقم المركز {{ c.number }}</span>
+                  <span class="campaign-name__sub">{{ 'CAMPAIGNS.CENTER_NUMBER' | translate }} {{ c.number }}</span>
                 </div>
               </td>
               <td>{{ c.pilgrimsCount | number }}</td>
@@ -164,20 +164,20 @@
               <td>
                 <span class="status-badge status-badge--{{ statusClass(c.status) }}">
                   <span class="status-badge__dot"></span>
-                  {{ c.status }}
+                  {{ statusLabelKey(c.status) | translate }}
                 </span>
               </td>
               <td>
                 <div class="table-actions">
                   <button class="campaign-edit-btn"
                           type="button"
-                          title="تعديل المركز"
+                          [title]="'CAMPAIGNS.EDIT' | translate"
                           (click)="openEditModal(c, $event)">
                     <i class="pi pi-pencil"></i>
                   </button>
                   <button class="campaign-icon-btn"
                           type="button"
-                          title="عرض التفاصيل والمجموعات"
+                          [title]="'CAMPAIGNS.VIEW_DETAILS' | translate"
                           (click)="openDetail(c.id)">
                     <i class="pi pi-eye"></i>
                   </button>
@@ -190,7 +190,7 @@
             <tr>
               <td colspan="7" class="campaigns__empty">
                 <i class="pi pi-inbox"></i>
-                <p>لا توجد نتائج</p>
+                <p>{{ 'CAMPAIGNS.EMPTY' | translate }}</p>
               </td>
             </tr>
           }
@@ -231,7 +231,7 @@
       </div>
 
       <span class="pagination-bar__info">
-        {{ campaigns().length }} من {{ totalCount() | number }}
+        {{ campaigns().length }} {{ 'COMMON.OF' | translate }} {{ totalCount() | number }}
       </span>
     </div>
   }
@@ -239,15 +239,15 @@
 </div>
 
 <!-- ══════════════════════════════════════════
-     ADD CAMPAIGN DIALOG
+     ADD/EDIT CAMPAIGN DIALOG
 ══════════════════════════════════════════ -->
 @if (showModal()) {
   <div class="dialog" (click)="$event.stopPropagation()">
 
     <div class="dialog__header">
       <div>
-        <h2 class="dialog__title">{{ modalTitle() }}</h2>
-        <p class="dialog__sub">{{ modalSubtitle() }}</p>
+        <h2 class="dialog__title">{{ (editingCampaign() ? 'CAMPAIGNS.EDIT' : 'CAMPAIGNS.ADD') | translate }}</h2>
+        <p class="dialog__sub">{{ (editingCampaign() ? 'CAMPAIGNS.MODAL_SUBTITLE_EDIT' : 'CAMPAIGNS.MODAL_SUBTITLE_ADD') | translate }}</p>
       </div>
       <button class="dialog__close" (click)="closeModal()" [disabled]="submitting()">
         <i class="pi pi-times"></i>
@@ -258,15 +258,15 @@
 
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">اسم المركز <span class="form-req">*</span></label>
-          <input class="form-input" type="text" placeholder="مثال: مركز الراجحي"
+          <label class="form-label">{{ 'CAMPAIGNS.FORM.CENTER_NAME' | translate }} <span class="form-req">*</span></label>
+          <input class="form-input" type="text" [placeholder]="'CAMPAIGNS.FORM.CENTER_NAME_PLACEHOLDER' | translate"
             [value]="formData().name"
             [disabled]="submitting()"
             (input)="patchForm({ name: $any($event.target).value })" />
         </div>
         <div class="form-field">
-          <label class="form-label">رقم المركز <span class="form-req">*</span></label>
-          <input class="form-input" type="text" placeholder="رقم المركز"
+          <label class="form-label">{{ 'CAMPAIGNS.FORM.CENTER_NUMBER' | translate }} <span class="form-req">*</span></label>
+          <input class="form-input" type="text" [placeholder]="'CAMPAIGNS.FORM.CENTER_NUMBER' | translate"
             [value]="formData().number"
             [disabled]="submitting()"
             (input)="patchForm({ number: $any($event.target).value })" />
@@ -274,7 +274,7 @@
       </div>
 
       <div class="form-field">
-        <label class="form-label" for="centerColor">اللون <span class="form-req">*</span></label>
+        <label class="form-label" for="centerColor">{{ 'CAMPAIGNS.FORM.COLOR' | translate }} <span class="form-req">*</span></label>
         <label class="color-picker-bar" [style.background]="formData().color || '#e9edf2'">
           <input id="centerColor" type="color"
             [value]="formData().color || '#22c35d'"
@@ -286,12 +286,12 @@
     </div>
 
     <div class="dialog__footer">
-      <button class="btn btn--outline" (click)="closeModal()" [disabled]="submitting()">إلغاء</button>
+      <button class="btn btn--outline" (click)="closeModal()" [disabled]="submitting()">{{ 'COMMON.CANCEL' | translate }}</button>
       <button class="btn btn--primary" (click)="submitForm()" [disabled]="submitting() || !formData().name.trim() || !formData().number.trim() || !formData().color">
         @if (submitting()) {
           <i class="pi pi-spin pi-spinner"></i>
         } @else {
-          {{ editingCampaign() ? 'حفظ التعديلات' : 'إنشاء مركز' }}
+          {{ (editingCampaign() ? 'CAMPAIGNS.FORM.SAVE' : 'CAMPAIGNS.FORM.CREATE') | translate }}
         }
       </button>
     </div>

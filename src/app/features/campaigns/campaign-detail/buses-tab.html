@@ -6,25 +6,25 @@
 
   <div class="cd__tab-panel-header">
     <span class="cd__tab-panel-count">
-      {{ totalCount() | number }} حافلة مسجلة في المركز
+      {{ totalCount() | number }} {{ 'BUSES_TAB.REGISTERED_IN_CENTER' | translate }}
     </span>
     <button class="btn btn--primary" (click)="openModal()">
       <i class="pi pi-plus"></i>
-      إضافة حافلة
+      {{ 'BUSES_TAB.ADD_BUS' | translate }}
     </button>
   </div>
 
   @if (loading()) {
     <div class="cd__tab-loading">
       <span class="cd__spinner--sm"></span>
-      <span>جاري تحميل الحافلات...</span>
+      <span>{{ 'BUSES_TAB.LOADING' | translate }}</span>
     </div>
   }
 
   @if (!loading() && buses().length === 0) {
     <div class="cd__empty">
       <i class="pi pi-car"></i>
-      <p>لا توجد حافلات بعد</p>
+      <p>{{ 'BUSES_TAB.EMPTY' | translate }}</p>
     </div>
   }
 
@@ -33,13 +33,13 @@
       <table class="cd__table">
         <thead>
           <tr>
-            <th>رقم الحافلة</th>
-            <th>السائق</th>
-            <th>النوع</th>
-            <th>المقاعد</th>
-            <th>رقم اللوحة</th>
-            <th>ملاحظات</th>
-            <th>إجراءات</th>
+            <th>{{ 'BUSES_TAB.BUS_NUMBER' | translate }}</th>
+            <th>{{ 'BUSES_TAB.DRIVER' | translate }}</th>
+            <th>{{ 'BUSES_TAB.TYPE' | translate }}</th>
+            <th>{{ 'BUSES_TAB.SEATS' | translate }}</th>
+            <th>{{ 'BUSES_TAB.PLATE' | translate }}</th>
+            <th>{{ 'BUSES_TAB.NOTES' | translate }}</th>
+            <th>{{ 'BUSES_TAB.ACTIONS' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -58,7 +58,7 @@
               <td class="cd__notes">{{ b.Notes || '—' }}</td>
               <td>
                 <button class="cd__edit-btn"
-                        title="تعديل الحافلة"
+                        [title]="'BUSES_TAB.EDIT_BUS' | translate"
                         type="button"
                         (click)="openEditModal(b)">
                   <i class="pi pi-pencil"></i>
@@ -72,7 +72,7 @@
 
     @if (totalPages() > 1) {
       <div class="pagination pagination--inner">
-        <span class="pagination__info">{{ totalCount() | number }} حافلة</span>
+        <span class="pagination__info">{{ totalCount() | number }} {{ 'BUSES_TAB.BUS_UNIT' | translate }}</span>
         <div class="pagination__controls">
           <button class="pagination__btn"
                   [disabled]="currentPage() === 1"
@@ -107,8 +107,8 @@
         <div class="dialog__title-row">
           <div class="dialog__title-icon"><i class="pi pi-car"></i></div>
           <div>
-          <h2 class="dialog__title">{{ modalTitle() }}</h2>
-          <p class="dialog__sub">{{ modalSubtitle() }}</p>
+          <h2 class="dialog__title">{{ modalTitleKey() | translate }}</h2>
+          <p class="dialog__sub">{{ modalSubtitleKey() | translate }}</p>
         </div>
       </div>
       <button class="dialog__close" (click)="closeModal()" [disabled]="submitting()">
@@ -119,15 +119,15 @@
     <div class="dialog__body">
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">رقم الحافلة <span class="form-req">*</span></label>
-          <input class="form-input" type="text" placeholder="مثال: ح-٧٢١"
+          <label class="form-label">{{ 'BUSES_TAB.BUS_NUMBER' | translate }} <span class="form-req">*</span></label>
+          <input class="form-input" type="text" [placeholder]="'BUSES_TAB.BUS_NUMBER_PLACEHOLDER' | translate"
             [value]="form().number"
             [disabled]="submitting()"
             (input)="patchForm({ number: $any($event.target).value })" />
         </div>
         <div class="form-field">
-          <label class="form-label">اسم السائق <span class="form-req">*</span></label>
-          <input class="form-input" type="text" placeholder="اسم السائق"
+          <label class="form-label">{{ 'BUSES_TAB.DRIVER' | translate }} <span class="form-req">*</span></label>
+          <input class="form-input" type="text" placeholder="{{ 'BUSES_TAB.DRIVER' | translate }}"
             [value]="form().driverName"
             [disabled]="submitting()"
             (input)="patchForm({ driverName: $any($event.target).value })" />
@@ -136,19 +136,19 @@
 
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">عدد المقاعد</label>
+          <label class="form-label">{{ 'BUSES_TAB.SEATS' | translate }}</label>
           <input class="form-input" type="number" placeholder="45"
             [value]="form().capacity"
             [disabled]="submitting()"
             (input)="patchForm({ capacity: $any($event.target).value })" />
         </div>
         <div class="form-field">
-          <label class="form-label">نوع الحافلة <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'BUSES_TAB.TYPE' | translate }} <span class="form-req">*</span></label>
           <select class="form-select"
             [value]="form().type"
             [disabled]="submitting()"
             (change)="patchForm({ type: $any($event.target).value })">
-            <option value="">اختر النوع</option>
+            <option value="">{{ 'BUSES_TAB.SELECT_TYPE' | translate }}</option>
             @for (t of busTypes; track t) {
               <option [value]="t">{{ t }}</option>
             }
@@ -158,19 +158,19 @@
 
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">رقم هاتف السائق <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'BUSES_TAB.DRIVER_PHONE' | translate }} <span class="form-req">*</span></label>
           <input class="form-input" type="tel" placeholder="+966 5x xxx xxxx"
             [class.form-input--error]="phoneInvalid()"
             [value]="form().driverPhone"
             [disabled]="submitting()"
             (input)="phoneTouched.set(true); patchForm({ driverPhone: $any($event.target).value })" />
           @if (phoneInvalid()) {
-            <span class="form-error">رقم الهاتف غير صحيح، يجب أن يكون سعودياً</span>
+            <span class="form-error">{{ 'COMMON.PHONE_INVALID_SA' | translate }}</span>
           }
         </div>
         <div class="form-field">
-          <label class="form-label">رقم اللوحة <span class="form-req">*</span></label>
-          <input class="form-input" type="text" placeholder="رقم لوحة الحافلة"
+          <label class="form-label">{{ 'BUSES_TAB.PLATE' | translate }} <span class="form-req">*</span></label>
+          <input class="form-input" type="text" [placeholder]="'BUSES_TAB.PLATE_PLACEHOLDER' | translate"
             [value]="form().plateNumber"
             [disabled]="submitting()"
             (input)="patchForm({ plateNumber: $any($event.target).value })" />
@@ -178,8 +178,8 @@
       </div>
 
       <div class="form-field">
-        <label class="form-label">ملاحظات</label>
-        <textarea class="form-input form-input--textarea" rows="3" placeholder="ملاحظات إضافية..."
+        <label class="form-label">{{ 'BUSES_TAB.NOTES' | translate }}</label>
+        <textarea class="form-input form-input--textarea" rows="3" [placeholder]="'BUSES_TAB.NOTES_PLACEHOLDER' | translate"
           [value]="form().notes"
           [disabled]="submitting()"
           (input)="patchForm({ notes: $any($event.target).value })"></textarea>
@@ -187,12 +187,12 @@
     </div>
 
     <div class="dialog__footer">
-      <button class="btn btn--outline" (click)="closeModal()" [disabled]="submitting()">إلغاء</button>
+      <button class="btn btn--outline" (click)="closeModal()" [disabled]="submitting()">{{ 'COMMON.CANCEL' | translate }}</button>
       <button class="btn btn--primary" (click)="submit()" [disabled]="submitting() || !form().number.trim() || !form().driverName.trim() || !form().type || !form().plateNumber.trim() || !form().driverPhone.trim() || phoneInvalid()">
         @if (submitting()) {
           <i class="pi pi-spin pi-spinner"></i>
         } @else {
-          {{ editingBus() ? 'حفظ التعديلات' : 'إضافة الحافلة' }}
+          {{ (editingBus() ? 'COMMON.SAVE_CHANGES' : 'BUSES_TAB.ADD_BUS_SUBMIT') | translate }}
         }
       </button>
     </div>

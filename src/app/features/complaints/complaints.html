@@ -5,15 +5,15 @@
 <div class="complaints">
   <div class="complaints__header">
     <div class="complaints__title">
-      <h1 class="complaints__title-text">الشكاوى</h1>
-      <span class="complaints__title-sub">متابعة شكاوى الحجاج داخل مراكز الشركة</span>
+      <h1 class="complaints__title-text">{{ 'COMPLAINTS.TITLE' | translate }}</h1>
+      <span class="complaints__title-sub">{{ 'COMPLAINTS.SUBTITLE' | translate }}</span>
     </div>
   </div>
 
   <div class="complaints__stats">
     <article class="stat-card stat-card--primary">
       <div class="stat-card__info">
-        <span class="stat-card__label">إجمالي الشكاوى</span>
+        <span class="stat-card__label">{{ 'COMPLAINTS.TOTAL_LABEL' | translate }}</span>
         <span class="stat-card__value">{{ totalCount() }}</span>
       </div>
       <div class="stat-card__icon-wrap">
@@ -22,7 +22,7 @@
     </article>
     <article class="stat-card stat-card--amber">
       <div class="stat-card__info">
-        <span class="stat-card__label">المراكز المتأثرة</span>
+        <span class="stat-card__label">{{ 'COMPLAINTS.AFFECTED_CENTERS' | translate }}</span>
         <span class="stat-card__value">{{ affectedCampaignsCount() }}</span>
       </div>
       <div class="stat-card__icon-wrap">
@@ -31,7 +31,7 @@
     </article>
     <article class="stat-card stat-card--light">
       <div class="stat-card__info">
-        <span class="stat-card__label">المجموعات المتأثرة</span>
+        <span class="stat-card__label">{{ 'COMPLAINTS.AFFECTED_GROUPS' | translate }}</span>
         <span class="stat-card__value">{{ affectedGroupsCount() }}</span>
       </div>
       <div class="stat-card__icon-wrap">
@@ -44,7 +44,7 @@
     <div class="dropdown" [class.dropdown--open]="openCampaignDrop()">
       <button class="dropdown__trigger" type="button" (click)="toggleCampaignDrop($event)">
         <i class="pi pi-building"></i>
-        <span>{{ selectedCampaignId() ? campaignFilterLabel() : 'جميع المراكز' }}</span>
+        <span>{{ selectedCampaignId() ? campaignFilterLabel() : ('COMPLAINTS.ALL_CENTERS' | translate) }}</span>
         @if (selectedCampaignId()) {
           <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectCampaignFilter()"></i>
         } @else {
@@ -74,7 +74,7 @@
     <div class="dropdown" [class.dropdown--open]="openGroupDrop()" [class.dropdown--disabled]="!selectedCampaignId()">
       <button class="dropdown__trigger" type="button" [disabled]="!selectedCampaignId()" (click)="toggleGroupDrop($event)">
         <i class="pi pi-users"></i>
-        <span>{{ selectedGroupId() ? groupFilterLabel() : (selectedCampaignId() ? 'جميع المجموعات' : 'اختر المركز أولًا') }}</span>
+        <span>{{ selectedGroupId() ? groupFilterLabel() : (selectedCampaignId() ? ('COMPLAINTS.ALL_GROUPS' | translate) : ('COMPLAINTS.SELECT_CENTER_FIRST' | translate)) }}</span>
         @if (selectedGroupId()) {
           <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectGroupFilter()"></i>
         } @else {
@@ -104,7 +104,7 @@
 
   <section class="complaints-list panel">
     <div class="panel__header">
-      <h2 class="panel__title">قائمة الشكاوى ({{ totalCount() }})</h2>
+      <h2 class="panel__title">{{ 'COMPLAINTS.LIST_WITH_COUNT' | translate:{ value: totalCount() } }}</h2>
     </div>
 
     @if (loading()) {
@@ -114,15 +114,15 @@
     } @else if (complaints().length === 0) {
       <div class="complaints-list__empty">
         <i class="pi pi-inbox"></i>
-        <p>لا توجد شكاوى مطابقة للفلاتر الحالية</p>
+        <p>{{ 'COMPLAINTS.EMPTY' | translate }}</p>
       </div>
     } @else {
       <div class="complaints-table">
         <div class="complaints-table__head">
-          <span class="complaints-table__col-label">الشكوى</span>
-          <span class="complaints-table__col-label">معلومات الحاج</span>
-          <span class="complaints-table__col-label">المركز / المجموعة</span>
-          <span class="complaints-table__col-label">التاريخ</span>
+          <span class="complaints-table__col-label">{{ 'COMPLAINTS.TITLE' | translate }}</span>
+          <span class="complaints-table__col-label">{{ 'PILGRIMS.TABLE.PILGRIM' | translate }}</span>
+          <span class="complaints-table__col-label">{{ 'COMPLAINTS.CENTER_GROUP' | translate }}</span>
+          <span class="complaints-table__col-label">{{ 'COMPLAINTS.DATE' | translate }}</span>
         </div>
         @for (complaint of complaints(); track complaint.Id) {
           <div class="complaints-table__row">
@@ -177,7 +177,7 @@
         </button>
       </div>
       <span class="pagination-bar__info">
-        {{ complaints().length }} من {{ totalCount() | number }}
+        {{ complaints().length }} {{ 'COMMON.OF' | translate }} {{ totalCount() | number }}
       </span>
     </div>
   }

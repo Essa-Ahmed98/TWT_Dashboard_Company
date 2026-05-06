@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, signal } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { catchError, map, of, startWith, switchMap } from 'rxjs';
 import { PilgrimsService } from '../../../pilgrims.service';
@@ -14,7 +15,7 @@ interface ReviewView {
 
 @Component({
   selector: 'app-ratings-tab',
-  imports: [],
+  imports: [TranslateModule, ],
   templateUrl: './ratings-tab.html',
   styleUrl: './ratings-tab.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

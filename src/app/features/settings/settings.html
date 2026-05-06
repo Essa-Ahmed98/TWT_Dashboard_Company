@@ -1,24 +1,24 @@
 <div class="settings">
   <div class="settings__header">
     <div class="settings__title">
-      <h1 class="settings__title-text">الإعدادات</h1>
-      <p class="settings__title-sub">إعدادات النظام والشركة</p>
+      <h1 class="settings__title-text">{{ 'SETTINGS.TITLE' | translate }}</h1>
+      <p class="settings__title-sub">{{ 'SETTINGS.SUBTITLE' | translate }}</p>
     </div>
   </div>
 
-  <div class="settings__tabs" role="tablist" aria-label="تبويبات الإعدادات">
+  <div class="settings__tabs" role="tablist" [attr.aria-label]="'SETTINGS.TABS_LABEL' | translate">
     <button class="settings__tab settings__tab--active" type="button" role="tab" aria-selected="true">
       <i class="pi pi-mobile"></i>
-      <span>إعدادات الموبايل</span>
+      <span>{{ 'SETTINGS.MOBILE_SETTINGS' | translate }}</span>
     </button>
   </div>
 
   <div class="settings__card">
     <div class="settings__card-header">
-      <h2>إعدادات الموبايل</h2>
+      <h2>{{ 'SETTINGS.MOBILE_SETTINGS' | translate }}</h2>
       <button class="btn btn--primary" (click)="saveSettings()" [disabled]="saving() || loading()">
         <i class="pi pi-save"></i>
-        {{ saving() ? 'جاري الحفظ...' : 'حفظ' }}
+        {{ (saving() ? 'SETTINGS.SAVING' : 'COMMON.SAVE') | translate }}
       </button>
     </div>
 
@@ -35,14 +35,14 @@
           <div class="settings__profile-main">
                  <div class="settings__avatar">
               @if (iconPreviewUrl()) {
-                <img [src]="iconPreviewUrl()" alt="أيقونة تطبيق الموبايل" />
+                <img [src]="iconPreviewUrl()" [alt]="'SETTINGS.MOBILE_ICON_ALT' | translate" />
               } @else {
                 <i class="pi pi-user"></i>
               }
             </div>
             <div class="settings__profile-copy">
-              <span id="mobile-icon-title" class="settings__profile-title">أيقونة الشركة</span>
-              <span class="settings__profile-desc">ارفع صورة جديدة لاستخدامها كأيقونة للشركة.</span>
+              <span id="mobile-icon-title" class="settings__profile-title">{{ 'SETTINGS.COMPANY_ICON' | translate }}</span>
+              <span class="settings__profile-desc">{{ 'SETTINGS.ICON_DESC' | translate }}</span>
             </div>
 
           </div>
@@ -57,13 +57,13 @@
 
             <button class="btn btn--secondary" type="button" (click)="iconInput.click()">
               <i class="pi pi-upload"></i>
-              رفع صورة
+              {{ 'SETTINGS.UPLOAD_IMAGE' | translate }}
             </button>
 
             @if (iconFileName()) {
               <button class="btn btn--ghost" type="button" (click)="clearSelectedIcon(iconInput)">
                 <i class="pi pi-times"></i>
-                إلغاء
+                {{ 'COMMON.CANCEL' | translate }}
               </button>
               <span class="settings__file-name">{{ iconFileName() }}</span>
             }
@@ -74,8 +74,8 @@
           @for (item of features(); track item.key) {
             <div class="settings__feature-row">
               <div class="settings__feature-info">
-                <span class="settings__feature-title">{{ item.title }}</span>
-                <span class="settings__feature-desc">{{ item.description }}</span>
+                <span class="settings__feature-title">{{ item.titleKey | translate }}</span>
+                <span class="settings__feature-desc">{{ item.descriptionKey | translate }}</span>
               </div>
               <button
                 class="toggle"
@@ -92,7 +92,7 @@
       } @else {
         <div class="settings__empty">
           <i class="pi pi-inbox settings__empty-icon"></i>
-          <p class="settings__empty-text">لا توجد بيانات</p>
+          <p class="settings__empty-text">{{ 'SETTINGS.EMPTY' | translate }}</p>
         </div>
       }
     </div>

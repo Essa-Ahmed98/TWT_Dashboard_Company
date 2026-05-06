@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal, afterNextRender } from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -10,7 +11,7 @@ const EMPTY_FORM: GroupForm = { name: '', notes: '' };
 
 @Component({
   selector: 'app-campaign-groups-tab',
-  imports: [DecimalPipe],
+  imports: [TranslateModule, DecimalPipe],
   templateUrl: './groups-tab.html',
   styleUrl: './groups-tab.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,6 +20,7 @@ export class CampaignGroupsTab {
   private readonly service = inject(CampaignsService);
   private readonly router  = inject(Router);
   private readonly toast   = inject(MessageService);
+  private readonly translate = inject(TranslateService);
 
   readonly campaignId = input.required<string>();
 
@@ -50,12 +52,12 @@ export class CampaignGroupsTab {
   submitting = signal(false);
   editingGroup = signal<GroupApiItem | null>(null);
 
-  modalTitle = computed(() =>
-    this.editingGroup() ? 'تعديل المجموعة' : 'إضافة مجموعة جديدة'
+  modalTitleKey = computed(() =>
+    this.editingGroup() ? 'GROUPS_TAB.MODAL_TITLE_EDIT' : 'GROUPS_TAB.MODAL_TITLE_ADD'
   );
 
-  modalSubtitle = computed(() =>
-    this.editingGroup() ? 'عدّل بيانات المجموعة داخل المركز' : 'أدخل بيانات المجموعة لإنشائها داخل المركز'
+  modalSubtitleKey = computed(() =>
+    this.editingGroup() ? 'GROUPS_TAB.MODAL_SUBTITLE_EDIT' : 'GROUPS_TAB.MODAL_SUBTITLE_ADD'
   );
 
   openModal(): void  {
@@ -96,7 +98,11 @@ export class CampaignGroupsTab {
         this.showModal.set(false);
         this.editingGroup.set(null);
         if (wasEditing) {
-          this.toast.add({ severity: 'success', summary: 'نجاح', detail: 'تم تعديل المجموعة بنجاح' });
+          this.toast.add({
+            severity: 'success',
+            summary: this.translate.instant('COMMON.SUCCESS'),
+            detail: this.translate.instant('GROUPS_TAB.EDIT_SUCCESS'),
+          });
         }
       });
   }

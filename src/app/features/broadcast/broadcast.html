@@ -8,9 +8,9 @@
     <div class="broadcast__title">
       <h1 class="broadcast__title-text">
         <i class="pi pi-send"></i>
-        الرسائل الجماعية
+        {{ 'BROADCAST.TITLE' | translate }}
       </h1>
-      <p class="broadcast__title-sub">إرسال رسائل نصية أو صوتية أو صور للفئة المستهدفة</p>
+      <p class="broadcast__title-sub">{{ 'BROADCAST.SUBTITLE' | translate }}</p>
     </div>
   </div>
 
@@ -18,12 +18,12 @@
     <div class="broadcast__panel">
       <div class="broadcast__panel-header">
         <i class="pi pi-users"></i>
-        <span>تحديد الجمهور المستهدف</span>
+        <span>{{ 'BROADCAST.AUDIENCE_TARGET' | translate }}</span>
       </div>
 
       <div class="broadcast__panel-body">
         <div class="form-field">
-          <label class="form-label">نوع الإرسال</label>
+          <label class="form-label">{{ 'BROADCAST.SEND_TYPE' | translate }}</label>
           <div class="target-tabs">
             @for (opt of targetOptions; track opt.type) {
               <button
@@ -31,7 +31,7 @@
                 [class.target-tab--active]="selectedTargetType() === opt.type"
                 (click)="setTargetType(opt.type)">
                 <i class="pi {{ opt.icon }}"></i>
-                {{ opt.label }}
+                {{ opt.labelKey | translate }}
               </button>
             }
           </div>
@@ -39,11 +39,11 @@
 
         @if (needsCampaign()) {
           <div class="form-field">
-            <label class="form-label">الحملة</label>
+            <label class="form-label">{{ 'BROADCAST.CAMPAIGN' | translate }}</label>
             <div class="ss">
               <button type="button" class="ss__trigger" (click)="toggleCampDrop()">
                 <span [class.ss__placeholder]="!selectedCampName()">
-                  {{ selectedCampName() || 'اختر الحملة' }}
+                  {{ selectedCampName() || ('BROADCAST.SELECT_CAMPAIGN' | translate) }}
                 </span>
                 @if (selectedCampName()) {
                   <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearCamp()"></i>
@@ -56,7 +56,7 @@
                   @if (campLoading()) {
                     <div class="ss__state"><span class="ss-spinner"></span></div>
                   } @else if (campList().length === 0) {
-                    <div class="ss__state">لا توجد حملات</div>
+                    <div class="ss__state">{{ 'BROADCAST.NO_CAMPAIGNS' | translate }}</div>
                   } @else {
                     <ul class="ss__list">
                       @for (c of campList(); track c.Id) {
@@ -73,13 +73,13 @@
 
         @if (needsGroup()) {
           <div class="form-field">
-            <label class="form-label">المجموعة</label>
+            <label class="form-label">{{ 'BROADCAST.GROUP' | translate }}</label>
             <div class="ss" [class.ss--disabled]="!selectedCampId()">
               <button type="button" class="ss__trigger"
                       [disabled]="!selectedCampId()"
                       (click)="toggleGrpDrop()">
                 <span [class.ss__placeholder]="!selectedGrpName()">
-                  {{ selectedGrpName() || (selectedCampId() ? 'اختر المجموعة' : 'اختر الحملة أولاً') }}
+                  {{ selectedGrpName() || (selectedCampId() ? ('BROADCAST.SELECT_GROUP' | translate) : ('BROADCAST.SELECT_CAMPAIGN_FIRST' | translate)) }}
                 </span>
                 @if (selectedGrpName()) {
                   <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearGrp()"></i>
@@ -92,7 +92,7 @@
                   @if (grpLoading()) {
                     <div class="ss__state"><span class="ss-spinner"></span></div>
                   } @else if (grpList().length === 0) {
-                    <div class="ss__state">لا توجد مجموعات</div>
+                    <div class="ss__state">{{ 'BROADCAST.NO_GROUPS' | translate }}</div>
                   } @else {
                     <ul class="ss__list">
                       @for (g of grpList(); track g.Id) {
@@ -109,7 +109,7 @@
 
         @if (audienceLabel()) {
           <div class="broadcast__audience">
-            <span class="broadcast__audience-label">الرسالة إلى:</span>
+            <span class="broadcast__audience-label">{{ 'BROADCAST.MESSAGE_TO' | translate }}</span>
             <span class="broadcast__audience-value">{{ audienceLabel() }}</span>
           </div>
         }
@@ -119,14 +119,14 @@
     <div class="broadcast__panel broadcast__panel--message">
       <div class="broadcast__panel-header">
         <i class="pi pi-comment"></i>
-        <span>صياغة الرسالة</span>
+        <span>{{ 'BROADCAST.COMPOSE' | translate }}</span>
       </div>
 
       <div class="broadcast__panel-body">
         @if (imagePreviewUrl()) {
           <div class="broadcast__media-preview">
-            <img [src]="imagePreviewUrl()" alt="معاينة الصورة" class="broadcast__img-preview" />
-            <button class="broadcast__discard-btn" (click)="discardImagePreview()" title="إزالة الصورة">
+            <img [src]="imagePreviewUrl()" [alt]="'BROADCAST.IMAGE_ALT' | translate" class="broadcast__img-preview" />
+            <button class="broadcast__discard-btn" (click)="discardImagePreview()" [title]="'COMMON.REMOVE_IMAGE' | translate">
               <i class="pi pi-times"></i>
             </button>
           </div>
@@ -135,7 +135,7 @@
         @if (recordingPreviewUrl()) {
           <div class="broadcast__media-preview broadcast__media-preview--audio">
             <audio controls [src]="recordingPreviewUrl()" class="broadcast__audio-preview"></audio>
-            <button class="broadcast__discard-btn broadcast__discard-btn--inline" (click)="discardAudioPreview()" title="إزالة التسجيل">
+            <button class="broadcast__discard-btn broadcast__discard-btn--inline" (click)="discardAudioPreview()" [title]="'COMMON.REMOVE_RECORDING' | translate">
               <i class="pi pi-trash"></i>
             </button>
           </div>
@@ -145,15 +145,15 @@
           <div class="broadcast__recording">
             <span class="broadcast__recording-dot"></span>
             <span class="broadcast__recording-timer">{{ recordingLabel() }}</span>
-            <span class="broadcast__recording-hint">جارٍ التسجيل...</span>
+            <span class="broadcast__recording-hint">{{ 'BROADCAST.RECORDING' | translate }}</span>
           </div>
         }
 
         @if (!imagePreviewFile() && !recordingPreviewUrl() && !isRecording()) {
-          <label class="broadcast__textarea-label">نص الرسالة</label>
+          <label class="broadcast__textarea-label">{{ 'BROADCAST.MESSAGE_TEXT' | translate }}</label>
           <textarea
             class="broadcast__textarea"
-            placeholder="اكتب رسالتك هنا..."
+            [placeholder]="'BROADCAST.MESSAGE_PLACEHOLDER' | translate"
             rows="7"
             [value]="content()"
             (input)="content.set($any($event.target).value)"
@@ -166,34 +166,34 @@
         @if (!content().trim()) {
         <div class="broadcast__media-btns">
           @if (!isRecording() && !recordingPreviewUrl() && !imagePreviewFile()) {
-            <label class="broadcast__media-btn" title="إرفاق صورة"
+            <label class="broadcast__media-btn" [title]="'BROADCAST.ATTACH_IMAGE' | translate"
                    [class.broadcast__media-btn--disabled]="uploadingMedia() || submitting()">
               <input type="file" accept="image/*" class="broadcast__file-input"
                      [disabled]="uploadingMedia() || submitting()"
                      (change)="onImageFileSelected($event)" />
               <i class="pi pi-image"></i>
-              <span>صورة</span>
+              <span>{{ 'BROADCAST.IMAGE' | translate }}</span>
             </label>
           }
 
           @if (!imagePreviewFile() && !recordingPreviewUrl()) {
             @if (isRecording()) {
               <button class="broadcast__media-btn broadcast__media-btn--stop"
-                      (click)="toggleRecording()" title="إيقاف التسجيل">
+                      (click)="toggleRecording()" [title]="'CHAT.STOP_RECORDING' | translate">
                 <i class="pi pi-stop-circle"></i>
-                <span>إيقاف</span>
+                <span>{{ 'BROADCAST.STOP' | translate }}</span>
               </button>
               <button class="broadcast__media-btn broadcast__media-btn--danger"
-                      (click)="cancelRecording()" title="إلغاء التسجيل">
+                      (click)="cancelRecording()" [title]="'CHAT.CANCEL_RECORDING' | translate">
                 <i class="pi pi-trash"></i>
-                <span>إلغاء</span>
+                <span>{{ 'COMMON.CANCEL' | translate }}</span>
               </button>
             } @else {
-              <button class="broadcast__media-btn" title="تسجيل رسالة صوتية"
+              <button class="broadcast__media-btn" [title]="'CHAT.RECORD_AUDIO' | translate"
                       [disabled]="uploadingMedia() || submitting()"
                       (click)="toggleRecording()">
                 <i class="pi pi-microphone"></i>
-                <span>تسجيل صوت</span>
+                <span>{{ 'BROADCAST.RECORD' | translate }}</span>
               </button>
             }
           }
@@ -205,10 +205,10 @@
                 (click)="send()">
           @if (submitting() || uploadingMedia()) {
             <span class="btn-spinner"></span>
-            جاري الإرسال...
+            {{ 'BROADCAST.SENDING' | translate }}
           } @else {
             <i class="pi pi-send"></i>
-            إرسال الرسالة
+            {{ 'BROADCAST.SEND' | translate }}
           }
         </button>
       </div>

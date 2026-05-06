@@ -42,8 +42,8 @@ export interface PilgrimDetailData {
   hajjYear: string;
   hajjType: number;
   emergencyContact: { name: string; phone: string };
-  vitals: { label: string; value: string; icon: string; color: string }[];
-  vitalBars: { label: string; value: string; icon: string; pct: number; color: string }[];
+  vitals: { labelKey: string; value: string; icon: string; color: string }[];
+  vitalBars: { labelKey: string; value: string; icon: string; pct: number; color: string }[];
   bloodType: string;
   bloodTypeValue: number;
   chronicDiseases: string;
@@ -56,9 +56,9 @@ export interface PilgrimDetailData {
 }
 
 export const STATUS_LABEL: Record<PilgrimDetailStatus, string> = {
-  safe: 'آمن',
-  warning: 'تحذير',
-  danger: 'خطر',
+  safe: 'PILGRIM_DETAIL.STATUS.SAFE',
+  warning: 'PILGRIM_DETAIL.STATUS.WARNING',
+  danger: 'PILGRIM_DETAIL.STATUS.DANGER',
 };
 
 const STATUS_COLOR: Record<PilgrimDetailStatus, string> = {
@@ -108,7 +108,7 @@ function genderLabel(value: number): string {
 }
 
 function bloodTypeLabel(value: number): string {
-  return BLOOD_TYPE_OPTIONS.find(option => option.value === value)?.label ?? 'غير محدد';
+  return BLOOD_TYPE_OPTIONS.find(option => option.value === value)?.label ?? 'COMMON.NOT_AVAILABLE';
 }
 
 function hajjTypeLabel(value: number): string {
@@ -120,7 +120,7 @@ function ritualStatusText(pilgrim: PilgrimDetailApiItem): string {
 }
 
 function displayValue(value: string | null | undefined): string {
-  return value?.trim() || 'غير متوفر';
+  return value?.trim() || 'COMMON.NOT_AVAILABLE';
 }
 
 function buildRitualTimeline(currentStatus: number): { name: string; date: string; status: RitualStatus }[] {
@@ -165,7 +165,7 @@ export function pilgrimApiToDetailData(pilgrim: PilgrimDetailApiItem): PilgrimDe
     company: `نوع الحج: ${hajjTypeLabel(pilgrim.HajjType)}`,
     campaign: pilgrim.CampaignName,
     group: pilgrim.GroupName,
-    supervisor: supervisors.map(supervisor => supervisor.displayName).join('، ') || 'غير متوفر',
+    supervisor: supervisors.map(supervisor => supervisor.displayName).join('، ') || 'COMMON.NOT_AVAILABLE',
     supervisors,
     accommodation: pilgrim.Accommodation,
     accommodationLat: pilgrim.AccommodationLat ?? null,
@@ -174,18 +174,18 @@ export function pilgrimApiToDetailData(pilgrim: PilgrimDetailApiItem): PilgrimDe
     permitNumber: pilgrim.PermitNumber,
     hajjYear: '1447',
     hajjType: pilgrim.HajjType,
-    emergencyContact: { name: 'غير متوفر', phone: 'غير متوفر' },
+    emergencyContact: { name: 'COMMON.NOT_AVAILABLE', phone: 'COMMON.NOT_AVAILABLE' },
     vitals: [
-      { label: 'فصيلة الدم', value: bloodType, icon: 'pi pi-heart', color },
-      { label: 'رقم جواز السفر', value: pilgrim.PassportNumber, icon: 'pi pi-id-card', color },
-      { label: 'رقم التصريح', value: pilgrim.PermitNumber, icon: 'pi pi-ticket', color },
-      { label: 'الحالة الحالية', value: currentRitual || 'غير متوفر', icon: 'pi pi-map-marker', color },
+      { labelKey: 'PILGRIM_DETAIL.HEALTH.BLOOD_TYPE', value: bloodType, icon: 'pi pi-heart', color },
+      { labelKey: 'PILGRIM_DETAIL.PERSONAL.PASSPORT', value: pilgrim.PassportNumber, icon: 'pi pi-id-card', color },
+      { labelKey: 'PILGRIM_DETAIL.PERSONAL.PERMIT_NUMBER', value: pilgrim.PermitNumber, icon: 'pi pi-ticket', color },
+      { labelKey: 'PILGRIM_DETAIL.VITALS.CURRENT_STATUS', value: currentRitual || 'COMMON.NOT_AVAILABLE', icon: 'pi pi-map-marker', color },
     ],
     vitalBars: [],
     bloodType,
     bloodTypeValue: pilgrim.BloodType,
-    chronicDiseases: 'غير متوفر',
-    allergies: 'غير متوفر',
+    chronicDiseases: 'COMMON.NOT_AVAILABLE',
+    allergies: 'COMMON.NOT_AVAILABLE',
     medications: [],
     rituals: buildRitualTimeline(pilgrim.CurrentRitualStatus),
     family: [],

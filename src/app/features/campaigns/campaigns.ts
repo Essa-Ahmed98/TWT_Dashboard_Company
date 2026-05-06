@@ -3,6 +3,7 @@ import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { TranslateModule } from '@ngx-translate/core';
 import { Campaign, CampaignForm, CampaignStatus } from './campaigns.model';
 import { CampaignsService } from './campaigns.service';
 
@@ -10,7 +11,7 @@ const EMPTY_FORM: CampaignForm = { name: '', number: '', color: '' };
 
 @Component({
   selector: 'app-campaigns',
-  imports: [DecimalPipe],
+  imports: [DecimalPipe, TranslateModule],
   templateUrl: './campaigns.html',
   styleUrl: './campaigns.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,9 +53,6 @@ export class Campaigns implements OnDestroy {
   formData         = signal<CampaignForm>({ ...EMPTY_FORM });
   editingCampaign  = signal<Campaign | null>(null);
   selectedPageSize = signal(10);
-
-  modalTitle = computed(() => this.editingCampaign() ? 'تعديل المركز' : 'إضافة مركز جديدة');
-  modalSubtitle = computed(() => this.editingCampaign() ? 'عدّل بيانات المركز' : 'أدخل بيانات المركز لإنشائها');
 
   // ── Stats ────────────────────────────────────────────────────
   totalGroups = computed(() =>
@@ -167,5 +165,13 @@ export class Campaigns implements OnDestroy {
   // ── UI helpers ─────────────────────────────────────────────────
   statusClass(status: CampaignStatus): string {
     return { 'نشطة': 'active', 'طارئة': 'urgent', 'مكتملة': 'done' }[status] ?? '';
+  }
+
+  statusLabelKey(status: CampaignStatus): string {
+    return {
+      'نشطة': 'CAMPAIGNS.STATUS.ACTIVE',
+      'طارئة': 'CAMPAIGNS.STATUS.URGENT',
+      'مكتملة': 'CAMPAIGNS.STATUS.DONE',
+    }[status] ?? 'COMMON.NO_DATA';
   }
 }

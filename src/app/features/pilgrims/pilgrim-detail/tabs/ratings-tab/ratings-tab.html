@@ -2,12 +2,12 @@
   @if (loading()) {
     <div class="empty-card">
       <i class="pi pi-spin pi-spinner"></i>
-      <p>جاري تحميل التقييمات...</p>
+      <p>{{ 'PILGRIM_DETAIL.RATINGS.LOADING' | translate }}</p>
     </div>
   } @else if (!hasItems()) {
     <div class="empty-card">
       <i class="pi pi-star"></i>
-      <p>لا توجد تقييمات مسجلة</p>
+      <p>{{ 'PILGRIM_DETAIL.RATINGS.EMPTY' | translate }}</p>
     </div>
   }
 
@@ -27,7 +27,7 @@
           }
         </div>
       </div>
-      <p class="rating-card__comment">{{ r.comment || 'لا يوجد تعليق' }}</p>
+      <p class="rating-card__comment">{{ r.comment || ('PILGRIM_DETAIL.RATINGS.NO_COMMENT' | translate) }}</p>
     </div>
   }
 </div>

@@ -4,14 +4,14 @@
     <div class="info-card__header">
       <div class="info-card__header-right">
         <i class="pi pi-users"></i>
-        الحجاج التابعون ({{ totalCount() }})
+        {{ 'SUPERVISOR_DETAIL.PILGRIMS.FOLLOWED_PILGRIMS' | translate }} ({{ totalCount() }})
       </div>
       <div class="plt__search">
         <i class="pi pi-search plt__search-icon"></i>
         <input
           class="plt__search-input"
           type="text"
-          placeholder="بحث عن حاج..."
+          [placeholder]="'SUPERVISOR_DETAIL.PILGRIMS.SEARCH_PLACEHOLDER' | translate"
           [value]="searchQuery()"
           (input)="onSearch($any($event.target).value)"
         />
@@ -25,12 +25,12 @@
     } @else if (!supervisor().groupId) {
       <div class="plt__empty">
         <i class="pi pi-info-circle"></i>
-        <p>المشرف غير مرتبط بمجموعة</p>
+        <p>{{ 'SUPERVISOR_DETAIL.PILGRIMS.NO_GROUP' | translate }}</p>
       </div>
     } @else if (pilgrims().length === 0) {
       <div class="plt__empty">
         <i class="pi pi-users"></i>
-        <p>لا يوجد حجاج مرتبطون بهذا المشرف</p>
+        <p>{{ 'SUPERVISOR_DETAIL.PILGRIMS.EMPTY' | translate }}</p>
       </div>
     } @else {
       @for (p of pilgrims(); track p.Id) {

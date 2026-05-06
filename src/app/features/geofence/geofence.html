@@ -5,24 +5,24 @@
     <div>
       <div class="gf__header-right">
         <i class="pi pi-shield"></i>
-         <h1 class="gf__title">غرفة المراقبة</h1>
+         <h1 class="gf__title">{{ 'GEOFENCE.TITLE' | translate }}</h1>
       </div>
       <div>
-        <p class="gf__subtitle">إدارة ومراقبة المناطق الجغرافية وتنبيهات خروج الحجاج</p>
+        <p class="gf__subtitle">{{ 'GEOFENCE.SUBTITLE' | translate }}</p>
       </div>
     </div>
     <button class="gf__add-btn" (click)="openModal()">
       <i class="pi pi-plus"></i>
-      إضافة منطقة
+      {{ 'GEOFENCE.ADD_ZONE_FULL' | translate }}
     </button>
   </div>
 
   <!-- ── Stats ─────────────────────────────────────────────── -->
   <div class="gf__stats">
-    @for (s of stats(); track s.label) {
+    @for (s of stats(); track s.labelKey) {
       <div class="gf__stat">
         <p class="gf__stat-value" [style.color]="s.color">{{ s.value }}</p>
-        <p class="gf__stat-label">{{ s.label }}</p>
+        <p class="gf__stat-label">{{ s.labelKey | translate }}</p>
       </div>
     }
   </div>
@@ -39,13 +39,13 @@
           class="gf__tab"
           [class.gf__tab--active]="activeTab() === 'zones'"
           (click)="setActiveTab('zones')">
-          المناطق
+          {{ 'GEOFENCE.ZONES' | translate }}
         </button>
         <button
           class="gf__tab"
           [class.gf__tab--active]="activeTab() === 'campaigns'"
           (click)="setActiveTab('campaigns')">
-          المراكز
+          {{ 'GEOFENCE.CENTERS' | translate }}
         </button>
       </div>
 
@@ -57,7 +57,7 @@
         <div class="gf__search-bar">
           <!-- Filter Dropdown -->
           <div class="gf__filter" (click)="showFilterDropdown.update(v => !v)">
-            <span>{{ filterType() }}</span>
+            <span>{{ filterLabelKey(filterType()) | translate }}</span>
             <i class="pi pi-chevron-down gf__filter__arrow"
                [class.gf__filter__arrow--open]="showFilterDropdown()"></i>
             @if (showFilterDropdown()) {
@@ -70,7 +70,7 @@
                     @if (filterType() === opt) {
                       <i class="pi pi-check"></i>
                     }
-                    {{ opt }}
+                    {{ filterLabelKey(opt) | translate }}
                   </div>
                 }
               </div>
@@ -82,7 +82,7 @@
             <input
               class="gf__search__input"
               type="text"
-              placeholder="بحث..."
+              [placeholder]="'GEOFENCE.SEARCH_PLACEHOLDER' | translate"
               [value]="searchQuery()"
               (input)="onSearch($any($event.target).value)"
             />
@@ -159,11 +159,11 @@
                 <div class="zone-card__actions">
                   <button class="zone-card__action zone-card__action--edit" (click)="openEditModal(zone, $event)">
                     <i class="pi pi-pencil"></i>
-                    تعديل
+                    {{ 'GEOFENCE.EDIT' | translate }}
                   </button>
                   <button class="zone-card__action zone-card__action--delete" (click)="deleteZone(zone, $event)">
                     <i class="pi pi-trash"></i>
-                    حذف
+                    {{ 'GEOFENCE.DELETE' | translate }}
                   </button>
                 </div>
               }
@@ -174,15 +174,15 @@
           @if (filteredZones().length === 0) {
             <div class="gf__empty">
               <i class="pi pi-search"></i>
-              <p>لا توجد نتائج للبحث</p>
+              <p>{{ 'GEOFENCE.EMPTY_SEARCH' | translate }}</p>
             </div>
           }
         </div>
         @if (totalCount() > 0) {
           <div class="pagination-bar">
             <div class="pagination-bar__controls">
-              <button class="pagination__btn" [disabled]="!hasPrevious()" (click)="prevPage()">
-                <i class="pi pi-angle-right"></i>
+              <button class="pagination__btn pagination__btn--prev" [disabled]="!hasPrevious()" (click)="prevPage()">
+                <i class="pi pi-angle-left"></i>
               </button>
               @for (p of visiblePages(); track $index) {
                 @if (p === '...') {
@@ -193,12 +193,12 @@
                           (click)="goToPage(p)">{{ p }}</button>
                 }
               }
-              <button class="pagination__btn" [disabled]="!hasNext()" (click)="nextPage()">
-                <i class="pi pi-angle-left"></i>
+              <button class="pagination__btn pagination__btn--next" [disabled]="!hasNext()" (click)="nextPage()">
+                <i class="pi pi-angle-right"></i>
               </button>
             </div>
             <span class="pagination-bar__info">
-              {{ zones().length }} من {{ totalCount() | number }}
+              {{ zones().length }} {{ 'COMMON.OF' | translate }} {{ totalCount() | number }}
             </span>
           </div>
         }
@@ -210,7 +210,7 @@
         <div class="gf__campaigns-toolbar">
           <div class="gf__campaigns-hint">
             <i class="pi pi-map"></i>
-            اختر مركز ثم فعّل المجموعات لعرض حجاجها على الخريطة
+            {{ 'GEOFENCE.GROUPS_HINT' | translate }}
           </div>
           <select class="page-size-select" (change)="onPageSizeChange(+$any($event.target).value)">
             <option [value]="10" [selected]="pageSize() === 10">10</option>
@@ -239,7 +239,7 @@
                     <div>
                       <span class="campaign__name">{{ campaign.name }}</span>
                       <span class="campaign__meta">
-                        {{ campaign.groupsCount }} مجموعة • رقم المركز {{ campaign.number }}
+                        {{ campaign.groupsCount }} {{ 'GEOFENCE.GROUP_UNIT' | translate }} • {{ 'GEOFENCE.CENTER_NUMBER_LABEL' | translate }} {{ campaign.number }}
                       </span>
                     </div>
                   </div>
@@ -250,7 +250,7 @@
                     <i class="pi"
                        [class.pi-eye]="!allVisible"
                        [class.pi-eye-slash]="allVisible"></i>
-                    {{ allVisible ? 'إخفاء الكل' : 'إظهار الكل' }}
+                    {{ (allVisible ? 'GEOFENCE.HIDE_ALL' : 'GEOFENCE.SHOW_ALL') | translate }}
                   </button>
                 </div>
 
@@ -267,7 +267,7 @@
                         </div>
                         <div>
                           <span class="campaign__group-name">{{ group.name }}</span>
-                          <span class="campaign__group-meta">{{ group.pilgrimsCount }} حاج</span>
+                          <span class="campaign__group-meta">{{ group.pilgrimsCount }} {{ 'GEOFENCE.PILGRIM_UNIT' | translate }}</span>
                         </div>
                       </div>
                       <button
@@ -275,7 +275,7 @@
                         [class.campaign__group-btn--on]="group.visible"
                         [disabled]="isGroupLoading(group.id)"
                         (click)="toggleGroupVisibility(campaign.id, group.id, $event)">
-                        {{ isGroupLoading(group.id) ? 'جاري التحميل...' : (group.visible ? 'معروضة' : 'مخفية') }}
+                        {{ (isGroupLoading(group.id) ? 'GEOFENCE.LOADING_GROUP' : (group.visible ? 'GEOFENCE.SHOWN' : 'GEOFENCE.HIDDEN')) | translate }}
                       </button>
                     </div>
                   }
@@ -287,7 +287,7 @@
             @if (campaigns().length === 0) {
               <div class="gf__empty">
                 <i class="pi pi-briefcase"></i>
-                <p>لا توجد مراكز</p>
+                <p>{{ 'GEOFENCE.EMPTY_CENTERS' | translate }}</p>
               </div>
             }
           </div>
@@ -295,8 +295,8 @@
           @if (campaignsTotalCount() > 0) {
             <div class="pagination-bar">
               <div class="pagination-bar__controls">
-                <button class="pagination__btn" [disabled]="!campaignsHasPrevious()" (click)="prevCampaignsPage()">
-                  <i class="pi pi-angle-right"></i>
+                <button class="pagination__btn pagination__btn--prev" [disabled]="!campaignsHasPrevious()" (click)="prevCampaignsPage()">
+                  <i class="pi pi-angle-left"></i>
                 </button>
                 @for (p of campaignVisiblePages(); track $index) {
                   @if (p === '...') {
@@ -307,12 +307,12 @@
                             (click)="goToCampaignsPage(p)">{{ p }}</button>
                   }
                 }
-                <button class="pagination__btn" [disabled]="!campaignsHasNext()" (click)="nextCampaignsPage()">
-                  <i class="pi pi-angle-left"></i>
+                <button class="pagination__btn pagination__btn--next" [disabled]="!campaignsHasNext()" (click)="nextCampaignsPage()">
+                  <i class="pi pi-angle-right"></i>
                 </button>
               </div>
               <span class="pagination-bar__info">
-                {{ campaigns().length }} من {{ campaignsTotalCount() | number }}
+                {{ campaigns().length }} {{ 'COMMON.OF' | translate }} {{ campaignsTotalCount() | number }}
               </span>
             </div>
           }
@@ -325,13 +325,13 @@
     <!-- Leaflet Map -->
     <div class="gf__map">
       <div class="map-header">
-        <h2 class="map-header-title">الخريطة التفاعلية</h2>
+        <h2 class="map-header-title">{{ 'GEOFENCE.MAP_TITLE' | translate }}</h2>
       </div>
       @if (selectingLocation()) {
         <div class="gf__map-picker">
           <div class="gf__map-picker__content">
-            <span>اضغط على الخريطة لتحديد موقع المنطقة الجديدة</span>
-            <button class="gf__map-picker__cancel" type="button" (click)="cancelLocationSelection()">إلغاء</button>
+            <span>{{ 'GEOFENCE.PICK_MAP_HINT' | translate }}</span>
+            <button class="gf__map-picker__cancel" type="button" (click)="cancelLocationSelection()">{{ 'COMMON.CANCEL' | translate }}</button>
           </div>
         </div>
       }
@@ -347,7 +347,7 @@
   <div class="modal-backdrop" (click)="closeModal()"></div>
   <div class="modal">
     <div class="modal__header">
-      <h2 class="modal__title">{{ modalTitle() }}</h2>
+      <h2 class="modal__title">{{ (editingZoneId() !== null ? 'GEOFENCE.FORM.TITLE_EDIT' : 'GEOFENCE.FORM.TITLE_ADD') | translate }}</h2>
       <button class="modal__close" (click)="closeModal()">
         <i class="pi pi-times"></i>
       </button>
@@ -358,17 +358,17 @@
       <!-- Row 1: اسم + نوع -->
       <div class="modal__row">
         <div class="modal__field modal__field--required">
-          <label class="modal__label">اسم المنطقة</label>
+          <label class="modal__label">{{ 'GEOFENCE.FORM.ZONE_NAME' | translate }}</label>
           <input
             class="modal__input"
             type="text"
-            placeholder="مثال: مخيم مركز..."
+            [placeholder]="'GEOFENCE.FORM.ZONE_NAME_PLACEHOLDER' | translate"
             [value]="form().name"
             (input)="patchForm({ name: $any($event.target).value })"
           />
         </div>
         <div class="modal__field">
-          <label class="modal__label">نوع المنطقة</label>
+          <label class="modal__label">{{ 'GEOFENCE.FORM.ZONE_TYPE' | translate }}</label>
           <select
             class="modal__select"
             [value]="form().type"
@@ -383,28 +383,28 @@
 
       <!-- الوصف -->
       <div class="modal__field">
-        <label class="modal__label">الوصف</label>
+        <label class="modal__label">{{ 'GEOFENCE.FORM.DESCRIPTION' | translate }}</label>
         <textarea
           class="modal__textarea"
-          placeholder="وصف المنطقة..."
+          [placeholder]="'GEOFENCE.FORM.DESCRIPTION_PLACEHOLDER' | translate"
           rows="3"
           [value]="form().description"
           (input)="patchForm({ description: $any($event.target).value })"
         ></textarea>
       </div>
 
-      <!-- تحديد الموقع -->
+      <!-- {{ 'GEOFENCE.FORM.SELECT_LOCATION' | translate }} -->
       <div class="modal__section-title">
         <i class="pi pi-map-marker"></i>
-        تحديد الموقع
+        {{ 'GEOFENCE.FORM.SELECT_LOCATION' | translate }}
       </div>
       <div class="modal__location-row">
         <button class="modal__map-btn" type="button" (click)="startLocationSelection()">
           <i class="pi pi-map-marker"></i>
-          اختر من الخريطة
+          {{ 'GEOFENCE.FORM.PICK_FROM_MAP' | translate }}
         </button>
         <div class="modal__field">
-          <label class="modal__label">خط العرض (lat)</label>
+          <label class="modal__label">{{ 'GEOFENCE.FORM.LAT' | translate }}</label>
           <input
             class="modal__input"
             type="number"
@@ -414,7 +414,7 @@
           />
         </div>
         <div class="modal__field">
-          <label class="modal__label">خط الطول (lng)</label>
+          <label class="modal__label">{{ 'GEOFENCE.FORM.LNG' | translate }}</label>
           <input
             class="modal__input"
             type="number"
@@ -427,7 +427,7 @@
 
       <!-- نصف القطر -->
       <div class="modal__field">
-        <label class="modal__label">نصف القطر: {{ form().radius }} متر</label>
+        <label class="modal__label">{{ 'GEOFENCE.FORM.RADIUS_LABEL' | translate:{ value: form().radius } }}</label>
         <input
           class="modal__range"
           type="range"
@@ -442,7 +442,7 @@
       <!-- Row: السعة + اللون -->
       <div class="modal__row">
         <div class="modal__field">
-          <label class="modal__label">شفافية اللون</label>
+          <label class="modal__label">{{ 'GEOFENCE.FORM.OPACITY' | translate }}</label>
           <input
             class="modal__input"
             type="number"
@@ -454,7 +454,7 @@
           />
         </div>
         <div class="modal__field">
-          <label class="modal__label">اللون</label>
+          <label class="modal__label">{{ 'GEOFENCE.FORM.COLOR' | translate }}</label>
           <input
             class="modal__color"
             type="color"
@@ -469,10 +469,10 @@
     <div class="modal__footer">
       <button class="modal__btn modal__btn--primary" [disabled]="submitting() || !formValid()" (click)="submitForm()">
         <i class="pi pi-check"></i>
-        {{ editingZoneId() !== null ? 'حفظ التعديلات' : 'إنشاء المنطقة' }}
+        {{ (editingZoneId() !== null ? 'GEOFENCE.FORM.SAVE' : 'GEOFENCE.FORM.CREATE') | translate }}
       </button>
       <button class="modal__btn modal__btn--secondary" (click)="closeModal()">
-        إلغاء
+        {{ 'COMMON.CANCEL' | translate }}
       </button>
     </div>
 

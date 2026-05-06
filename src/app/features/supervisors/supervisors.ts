@@ -15,6 +15,7 @@ import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 import { DatePicker } from 'primeng/datepicker';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { SupervisorsService } from './supervisors.service';
 import { SupervisorItem, SupervisorForm, CreateSupervisorRequest, LANGUAGE_OPTIONS, SupervisorDetailApiItem, UpdateSupervisorRequest } from './supervisors.model';
@@ -36,7 +37,7 @@ const EMPTY_FORM: SupervisorForm = {
 
 @Component({
   selector:    'app-supervisors',
-  imports:     [ProgressSpinnerModule, FormsModule, DatePicker, DecimalPipe],
+  imports:     [ProgressSpinnerModule, FormsModule, DatePicker, DecimalPipe, TranslateModule],
   templateUrl: './supervisors.html',
   styleUrl:    './supervisors.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -76,11 +77,6 @@ export class Supervisors implements OnInit {
   phoneTouched = signal(false);
   editingSupervisor = signal<SupervisorDetailApiItem | null>(null);
   editLoadingId = signal<string | null>(null);
-
-  readonly modalTitle = computed(() => this.editingSupervisor() ? 'تعديل بيانات المشرف' : 'إضافة مشرف جديد');
-  readonly modalSubtitle = computed(() =>
-    this.editingSupervisor() ? 'عدّل بيانات المشرف الأساسية' : 'أدخل بيانات المشرف لإنشاء حسابه على النظام'
-  );
 
   readonly phoneInvalid = computed(() => {
     const phone = this.formData().phone.trim();

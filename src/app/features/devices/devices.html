@@ -17,18 +17,18 @@
     <div class="devices__title">
       <h1 class="devices__title-text">
         <i class="pi pi-mobile"></i>
-        إدارة الأجهزة (الساعات)
+        {{ 'DEVICES.TITLE' | translate }}
       </h1>
-      <span class="devices__title-count">{{ totalCount() }} جهاز مسجل</span>
+      <span class="devices__title-count">{{ totalCount() }} {{ 'DEVICES.REGISTERED' | translate }}</span>
     </div>
     <div class="devices__actions">
       <button class="btn btn--ghost" (click)="openImportModal()">
         <i class="pi pi-file-excel"></i>
-        <span>استيراد Excel</span>
+        <span>{{ 'DEVICES.IMPORT_EXCEL' | translate }}</span>
       </button>
       <button class="btn btn--primary" (click)="openModal()">
         <i class="pi pi-plus"></i>
-        <span>إضافة جهاز</span>
+        <span>{{ 'DEVICES.ADD' | translate }}</span>
       </button>
     </div>
   </div>
@@ -39,7 +39,7 @@
       <input
         class="devices__search-input"
         type="text"
-        placeholder="بحث برقم IMEI أو رقم الخط..."
+        [placeholder]="'DEVICES.SEARCH_PLACEHOLDER' | translate"
         [value]="searchQuery()"
         (input)="onSearch($any($event.target).value)"
       />
@@ -56,20 +56,17 @@
   <div class="devices__table-wrap">
     @if (loading()) {
       <div class="devices__spinner">
-        <p-progressSpinner
-          strokeWidth="4"
-          styleClass="devices__progress-spinner"
-        />
+        <p-progressSpinner strokeWidth="4" styleClass="devices__progress-spinner" />
       </div>
     } @else {
       <table class="devices__table">
         <thead>
           <tr>
-            <th>رقم IMEI</th>
-            <th>رقم الخط</th>
-            <th>ملاحظات</th>
-            <th>المستخدم المرتبط</th>
-            <th>إجراءات</th>
+            <th>{{ 'DEVICES.TABLE.IMEI' | translate }}</th>
+            <th>{{ 'DEVICES.TABLE.SIM' | translate }}</th>
+            <th>{{ 'DEVICES.TABLE.NOTES' | translate }}</th>
+            <th>{{ 'DEVICES.TABLE.LINKED_USER' | translate }}</th>
+            <th>{{ 'DEVICES.TABLE.ACTIONS' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -80,9 +77,7 @@
               <td class="devices__notes">{{ d.Notes || '—' }}</td>
               <td>
                 @if (d.UserId) {
-                  <span class="assigned-user">
-                    {{ d.UserName || '—' }}
-                  </span>
+                  <span class="assigned-user">{{ d.UserName || '—' }}</span>
                 } @else {
                   <span class="no-user">—</span>
                 }
@@ -91,7 +86,7 @@
                 <div class="row-actions">
                   <button
                     class="row-actions__btn"
-                    pTooltip="تعديل بيانات الجهاز"
+                    [pTooltip]="'DEVICES.EDIT' | translate"
                     tooltipPosition="top"
                     (click)="openEditModal(d)"
                   >
@@ -101,7 +96,7 @@
                   @if (d.UserId) {
                     <button
                       class="row-actions__btn row-actions__btn--warning"
-                      pTooltip="فك الربط عن المستخدم"
+                      [pTooltip]="'DEVICES.UNLINK' | translate"
                       tooltipPosition="top"
                       (click)="unlinkDevice(d)"
                     >
@@ -110,7 +105,7 @@
                   } @else {
                     <button
                       class="row-actions__btn row-actions__btn--success"
-                      pTooltip="ربط الجهاز بحاج"
+                      [pTooltip]="'DEVICES.LINK' | translate"
                       tooltipPosition="top"
                       (click)="openLinkModal(d)"
                     >
@@ -120,7 +115,7 @@
 
                   <button
                     class="row-actions__btn row-actions__btn--danger"
-                    pTooltip="حذف الجهاز"
+                    [pTooltip]="'DEVICES.DELETE' | translate"
                     tooltipPosition="top"
                     (click)="deleteDevice(d.Id)"
                   >
@@ -135,7 +130,7 @@
             <tr>
               <td colspan="5" class="devices__empty">
                 <i class="pi pi-mobile"></i>
-                <p>لا توجد أجهزة</p>
+                <p>{{ 'DEVICES.EMPTY' | translate }}</p>
               </td>
             </tr>
           }
@@ -169,7 +164,7 @@
       </div>
 
       <span class="pagination-bar__info">
-        {{ devices().length }} من {{ totalCount() | number }}
+        {{ devices().length }} {{ 'COMMON.OF' | translate }} {{ totalCount() | number }}
       </span>
     </div>
   }
@@ -179,8 +174,8 @@
   <div class="dialog dialog--import" (click)="$event.stopPropagation()">
     <div class="dialog__header">
       <div>
-        <h2 class="dialog__title">استيراد أجهزة من Excel</h2>
-        <p class="dialog__sub">حمّل النموذج، املأ بيانات الأجهزة، ثم ارفع الملف.</p>
+        <h2 class="dialog__title">{{ 'DEVICES.IMPORT.TITLE' | translate }}</h2>
+        <p class="dialog__sub">{{ 'DEVICES.IMPORT.SUBTITLE' | translate }}</p>
       </div>
       <button class="dialog__close" (click)="closeImportModal()" [disabled]="uploadingImportFile()">
         <i class="pi pi-times"></i>
@@ -192,8 +187,8 @@
         <div class="import-card__head">
           <div class="import-card__icon"><i class="pi pi-info-circle"></i></div>
           <div>
-            <h3 class="import-card__title">تحميل النموذج</h3>
-            <p class="import-card__text">حمّل ملف الإكسل الذي يحتوي على الأعمدة المطلوبة وبيانات توضيحية.</p>
+            <h3 class="import-card__title">{{ 'DEVICES.IMPORT.DOWNLOAD_TITLE' | translate }}</h3>
+            <p class="import-card__text">{{ 'DEVICES.IMPORT.DOWNLOAD_TEXT' | translate }}</p>
           </div>
         </div>
         <button type="button" class="btn import-card__action"
@@ -201,10 +196,10 @@
           (click)="downloadImportTemplate()">
           @if (downloadingTemplate()) {
             <span class="btn-spinner import-card__spinner"></span>
-            <span>جاري تحميل النموذج...</span>
+            <span>{{ 'DEVICES.IMPORT.DOWNLOADING' | translate }}</span>
           } @else {
             <i class="pi pi-download"></i>
-            <span>تحميل نموذج Excel</span>
+            <span>{{ 'DEVICES.IMPORT.DOWNLOAD_BTN' | translate }}</span>
           }
         </button>
       </section>
@@ -213,8 +208,8 @@
         <div class="import-card__head">
           <div class="import-card__icon"><i class="pi pi-upload"></i></div>
           <div>
-            <h3 class="import-card__title">رفع الملف</h3>
-            <p class="import-card__text">بعد ملء البيانات، ارفع الملف هنا لإضافة الأجهزة تلقائيًا.</p>
+            <h3 class="import-card__title">{{ 'DEVICES.IMPORT.UPLOAD_TITLE' | translate }}</h3>
+            <p class="import-card__text">{{ 'DEVICES.IMPORT.UPLOAD_TEXT' | translate }}</p>
           </div>
         </div>
 
@@ -226,14 +221,14 @@
             (click)="handleImportUpload(importDevicesFileInput)">
             @if (uploadingImportFile()) {
               <span class="btn-spinner"></span>
-              <span>جاري رفع الملف...</span>
+              <span>{{ 'DEVICES.IMPORT.UPLOADING' | translate }}</span>
             } @else {
               <i class="pi pi-upload"></i>
-              <span>{{ importSelectedName() || 'رفع ملف Excel' }}</span>
+              <span>{{ importSelectedName() || ('DEVICES.IMPORT.UPLOAD_BTN' | translate) }}</span>
             }
           </button>
           @if (importSelectedFile() && !uploadingImportFile()) {
-            <button type="button" class="btn import-card__clear-file" (click)="clearImportFile(importDevicesFileInput)" title="إزالة الملف">
+            <button type="button" class="btn import-card__clear-file" (click)="clearImportFile(importDevicesFileInput)" [title]="'DEVICES.IMPORT.REMOVE_FILE' | translate">
               <i class="pi pi-times"></i>
             </button>
           }
@@ -248,8 +243,8 @@
 
     <div class="dialog__header">
       <div>
-        <h2 class="dialog__title">{{ editingId() ? 'تعديل الجهاز' : 'إضافة جهاز جديد' }}</h2>
-        <p class="dialog__sub">{{ editingId() ? 'عدّل بيانات الجهاز' : 'أدخل بيانات الساعة لإضافتها للنظام' }}</p>
+        <h2 class="dialog__title">{{ (editingId() ? 'DEVICES.FORM.TITLE_EDIT' : 'DEVICES.FORM.TITLE_ADD') | translate }}</h2>
+        <p class="dialog__sub">{{ (editingId() ? 'DEVICES.FORM.DESC_EDIT' : 'DEVICES.FORM.DESC_ADD') | translate }}</p>
       </div>
       <button class="dialog__close" (click)="closeModal()">
         <i class="pi pi-times"></i>
@@ -258,21 +253,21 @@
 
     <div class="dialog__body">
       <div class="form-field">
-        <label class="form-label">رقم IMEI <span class="form-req">*</span></label>
+        <label class="form-label">{{ 'DEVICES.FORM.IMEI' | translate }} <span class="form-req">*</span></label>
         <input class="form-input" type="text"
           [value]="formData().imeiNumber"
           (input)="patchForm({ imeiNumber: $any($event.target).value })" />
       </div>
 
       <div class="form-field">
-        <label class="form-label">رقم الخط (SIM) <span class="form-req">*</span></label>
+        <label class="form-label">{{ 'DEVICES.FORM.SIM' | translate }} <span class="form-req">*</span></label>
         <input class="form-input" type="text"
           [value]="formData().simNumber"
           (input)="patchForm({ simNumber: $any($event.target).value })" />
       </div>
 
       <div class="form-field">
-        <label class="form-label">ملاحظات</label>
+        <label class="form-label">{{ 'DEVICES.FORM.NOTES' | translate }}</label>
         <textarea class="form-input form-input--textarea" rows="3"
           [value]="formData().notes"
           (input)="patchForm({ notes: $any($event.target).value })"></textarea>
@@ -280,9 +275,9 @@
     </div>
 
     <div class="dialog__footer">
-      <button class="btn btn--outline" (click)="closeModal()" [disabled]="saving()">إلغاء</button>
+      <button class="btn btn--outline" (click)="closeModal()" [disabled]="saving()">{{ 'COMMON.CANCEL' | translate }}</button>
       <button class="btn btn--primary" (click)="submitForm()" [disabled]="saving() || !formData().imeiNumber.trim() || !formData().simNumber.trim()">
-        @if (saving()) { <i class="pi pi-spin pi-spinner"></i> } @else { {{ editingId() ? 'حفظ التعديلات' : 'إضافة الجهاز' }} }
+        @if (saving()) { <i class="pi pi-spin pi-spinner"></i> } @else { {{ (editingId() ? 'DEVICES.FORM.SAVE' : 'DEVICES.FORM.ADD') | translate }} }
       </button>
     </div>
 
@@ -294,8 +289,8 @@
 
     <div class="dialog__header">
       <div>
-        <h2 class="dialog__title">ربط الجهاز بحاج</h2>
-        <p class="dialog__sub">اختر الحاج الذي سيرتبط بهذا الجهاز</p>
+        <h2 class="dialog__title">{{ 'DEVICES.LINK_MODAL.TITLE' | translate }}</h2>
+        <p class="dialog__sub">{{ 'DEVICES.LINK_MODAL.SUBTITLE' | translate }}</p>
       </div>
       <button class="dialog__close" (click)="closeLinkModal()">
         <i class="pi pi-times"></i>
@@ -304,11 +299,11 @@
 
     <div class="dialog__body">
       <div class="form-field">
-        <label class="form-label">اختر الحاج <span class="form-req">*</span></label>
+        <label class="form-label">{{ 'DEVICES.LINK_MODAL.SELECT_PILGRIM' | translate }} <span class="form-req">*</span></label>
         <div class="ss">
           <button type="button" class="ss__trigger" (click)="togglePilgrimDrop()">
             <span [class.ss__placeholder]="!selectedPilgrimName()">
-              {{ selectedPilgrimName() || 'اختر الحاج' }}
+              {{ selectedPilgrimName() || ('DEVICES.LINK_MODAL.SELECT_PILGRIM_PLACEHOLDER' | translate) }}
             </span>
             @if (selectedPilgrimName()) {
               <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearPilgrim()"></i>
@@ -321,7 +316,7 @@
               @if (loadingPilgrims()) {
                 <div class="ss__state"><span class="ss-spinner"></span></div>
               } @else if (pilgrims().length === 0) {
-                <div class="ss__state">لا يوجد حجاج</div>
+                <div class="ss__state">{{ 'DEVICES.LINK_MODAL.NO_PILGRIMS' | translate }}</div>
               } @else {
                 <ul class="ss__list">
                   @for (p of pilgrims(); track p.Id) {
@@ -338,9 +333,9 @@
     </div>
 
     <div class="dialog__footer">
-      <button class="btn btn--outline" (click)="closeLinkModal()" [disabled]="savingLink()">إلغاء</button>
+      <button class="btn btn--outline" (click)="closeLinkModal()" [disabled]="savingLink()">{{ 'COMMON.CANCEL' | translate }}</button>
       <button class="btn btn--primary" (click)="confirmLink()" [disabled]="savingLink() || !selectedPilgrimId()">
-        @if (savingLink()) { <i class="pi pi-spin pi-spinner"></i> } @else { تأكيد الربط }
+        @if (savingLink()) { <i class="pi pi-spin pi-spinner"></i> } @else { {{ 'DEVICES.LINK_MODAL.CONFIRM' | translate }} }
       </button>
     </div>
 

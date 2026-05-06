@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, signal } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { catchError, map, of, startWith, switchMap } from 'rxjs';
 import { PilgrimsService } from '../../../pilgrims.service';
@@ -13,7 +14,7 @@ interface FamilyMemberView {
 
 @Component({
   selector: 'app-family-tab',
-  imports: [],
+  imports: [TranslateModule, ],
   templateUrl: './family-tab.html',
   styleUrl: './family-tab.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

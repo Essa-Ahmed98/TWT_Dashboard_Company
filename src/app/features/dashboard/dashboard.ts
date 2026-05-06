@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, computed, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import { DashboardService } from './dashboard.service';
 
 export interface DonutSegment {
-  label: string;
+  labelKey: string;
   count: number;
   color: string;
   path: string;
@@ -13,7 +14,7 @@ export interface DonutSegment {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [RouterLink, DecimalPipe],
+  imports: [RouterLink, DecimalPipe, TranslateModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,9 +35,9 @@ export class Dashboard implements OnInit {
 
     const total = (h.StableCount + h.WarningCount + h.CriticalCount) || 1;
     const items = [
-      { label: 'مستقر',        count: h.StableCount,   color: '#22c35d' },
-      { label: 'يحتاج متابعة', count: h.WarningCount,  color: '#fb8c00' },
-      { label: 'حرج',          count: h.CriticalCount, color: '#e53935' },
+      { labelKey: 'DASHBOARD.STABLE',   count: h.StableCount,   color: '#22c35d' },
+      { labelKey: 'DASHBOARD.WARNING',  count: h.WarningCount,  color: '#fb8c00' },
+      { labelKey: 'DASHBOARD.CRITICAL', count: h.CriticalCount, color: '#e53935' },
     ];
 
     let angle = 0;

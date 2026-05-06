@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, signal } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { catchError, map, of, startWith, switchMap } from 'rxjs';
 import { SupervisorsService } from '../../../supervisors.service';
@@ -30,7 +31,7 @@ interface RatingsSummaryView {
 
 @Component({
   selector: 'app-sv-ratings-tab',
-  imports: [],
+  imports: [TranslateModule, ],
   templateUrl: './ratings-tab.html',
   styleUrl: './ratings-tab.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -7,6 +7,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { debounceTime, finalize, skip } from 'rxjs';
 import { DatePicker } from 'primeng/datepicker';
 import { MessageService } from 'primeng/api';
+import { TranslateModule } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment';
 import { ApiResult } from '../../core/models/api.models';
 import { CampaignApiItem, GroupApiItem } from '../campaigns/campaigns.model';
@@ -44,7 +45,7 @@ const EMPTY_FORM: PilgrimForm = {
 
 @Component({
   selector: 'app-pilgrims',
-  imports: [FormsModule, DatePicker, DecimalPipe],
+  imports: [FormsModule, DatePicker, DecimalPipe, TranslateModule],
   templateUrl: './pilgrims.html',
   styleUrl: './pilgrims.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -105,11 +106,6 @@ export class Pilgrims implements OnInit {
   phoneTouched = signal(false);
 
   private readonly saudiPhoneRegex = /^(?:\+966|00966|966|0)?5\d{8}$/;
-
-  readonly modalTitle = computed(() => this.editingPilgrim() ? 'تعديل بيانات الحاج' : 'إضافة حاج جديد');
-  readonly modalSubtitle = computed(() =>
-    this.editingPilgrim() ? 'عدّل بيانات الحاج الأساسية' : 'أدخل بيانات الحاج لإنشاء حسابه على النظام'
-  );
 
   readonly phoneInvalid = computed(() => {
     if (!this.phoneTouched()) return false;
@@ -254,7 +250,7 @@ export class Pilgrims implements OnInit {
 
   filterCampaignLabel(): string {
     const c = this.filterCampList().find(x => x.Id === this.selectedCampaign());
-    return c ? c.Name : 'كل المراكز';
+    return c ? c.Name : 'PILGRIMS.FILTER_ALL';
   }
 
   private fetchFilterCampaigns(): void {

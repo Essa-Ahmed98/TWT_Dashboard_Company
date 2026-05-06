@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, input, signal } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PilgrimDetailData } from '../../pilgrim-detail.model';
 import { PilgrimsService } from '../../../pilgrims.service';
@@ -6,7 +7,7 @@ import { DrugApiItem } from '../../../pilgrims.model';
 
 @Component({
   selector: 'app-health-tab',
-  imports: [],
+  imports: [TranslateModule, ],
   templateUrl: './health-tab.html',
   styleUrl: './health-tab.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

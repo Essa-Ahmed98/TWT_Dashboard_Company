@@ -3,11 +3,11 @@
     <div class="info-card">
       <div class="info-card__header">
         <i class="pi pi-id-card"></i>
-        بيانات الهوية
+        {{ 'PILGRIM_DETAIL.PERSONAL.IDENTITY_DATA' | translate }}
       </div>
       <div class="info-card__body">
         <div class="info-row">
-          <span class="info-row__label">الاسم الكامل</span>
+          <span class="info-row__label">{{ 'PILGRIM_DETAIL.PERSONAL.FULL_NAME' | translate }}</span>
           @if (isEditing()) {
             <input class="info-edit-input" type="text" [value]="editData()!.name"
               (input)="fieldChanged.emit({ name: $any($event.target).value })" />
@@ -17,7 +17,7 @@
         </div>
 
         <div class="info-row">
-          <span class="info-row__label">رقم الهوية</span>
+          <span class="info-row__label">{{ 'PILGRIM_DETAIL.PERSONAL.ID_NUMBER' | translate }}</span>
           @if (isEditing()) {
             <input class="info-edit-input" type="text" [value]="editData()!.idNumber"
               (input)="fieldChanged.emit({ idNumber: $any($event.target).value })" />
@@ -27,7 +27,7 @@
         </div>
 
         <div class="info-row">
-          <span class="info-row__label">رقم جواز السفر</span>
+          <span class="info-row__label">{{ 'PILGRIM_DETAIL.PERSONAL.PASSPORT' | translate }}</span>
           @if (isEditing()) {
             <input class="info-edit-input" type="text" [value]="editData()!.passportNumber"
               (input)="fieldChanged.emit({ passportNumber: $any($event.target).value })" />
@@ -37,7 +37,7 @@
         </div>
 
         <div class="info-row">
-          <span class="info-row__label">تاريخ الميلاد</span>
+          <span class="info-row__label">{{ 'PILGRIM_DETAIL.PERSONAL.BIRTH_DATE' | translate }}</span>
           @if (isEditing()) {
             <input class="info-edit-input" type="date" [value]="editData()!.birthDate"
               (input)="fieldChanged.emit({ birthDate: $any($event.target).value })" />
@@ -47,7 +47,7 @@
         </div>
 
         <div class="info-row">
-          <span class="info-row__label">الجنسية</span>
+          <span class="info-row__label">{{ 'PILGRIM_DETAIL.PERSONAL.NATIONALITY' | translate }}</span>
           @if (isEditing()) {
             <input class="info-edit-input" type="text" [value]="editData()!.nationality"
               (input)="fieldChanged.emit({ nationality: $any($event.target).value })" />
@@ -57,12 +57,12 @@
         </div>
 
         <div class="info-row">
-          <span class="info-row__label">الجنس</span>
+          <span class="info-row__label">{{ 'PILGRIM_DETAIL.PERSONAL.GENDER' | translate }}</span>
           @if (isEditing()) {
             <select class="info-edit-input" [value]="editData()!.gender"
               (change)="fieldChanged.emit({ gender: $any($event.target).value })">
-              <option value="ذكر">ذكر</option>
-              <option value="أنثى">أنثى</option>
+              <option value="{{ 'COMMON.MALE' | translate }}">{{ 'COMMON.MALE' | translate }}</option>
+              <option value="{{ 'COMMON.FEMALE' | translate }}">{{ 'COMMON.FEMALE' | translate }}</option>
             </select>
           } @else {
             <span class="info-row__value">{{ pilgrim().gender }}</span>
@@ -74,11 +74,11 @@
     <div class="info-card">
       <div class="info-card__header">
         <i class="pi pi-phone"></i>
-        بيانات التواصل
+        {{ 'PILGRIM_DETAIL.PERSONAL.CONTACT_DATA' | translate }}
       </div>
       <div class="info-card__body">
         <div class="info-row">
-          <span class="info-row__label">البريد الإلكتروني</span>
+          <span class="info-row__label">{{ 'PILGRIM_DETAIL.PERSONAL.EMAIL' | translate }}</span>
           @if (isEditing()) {
             <input class="info-edit-input" type="email" [value]="editData()!.email"
               (input)="fieldChanged.emit({ email: $any($event.target).value })" />
@@ -88,7 +88,7 @@
         </div>
 
         <div class="info-row">
-          <span class="info-row__label">رقم الهاتف</span>
+          <span class="info-row__label">{{ 'PILGRIM_DETAIL.PERSONAL.PHONE' | translate }}</span>
           @if (isEditing()) {
             <input class="info-edit-input" type="tel" [value]="editData()!.phone"
               (input)="fieldChanged.emit({ phone: $any($event.target).value })" />
@@ -98,26 +98,26 @@
         </div>
 
         <div class="info-row info-row--section">
-          <span class="info-row__label">جهة اتصال الطوارئ</span>
+          <span class="info-row__label">{{ 'PILGRIM_DETAIL.PERSONAL.EMERGENCY_CONTACT' | translate }}</span>
         </div>
 
         <div class="info-row">
-          <span class="info-row__label">الاسم</span>
+          <span class="info-row__label">{{ 'PILGRIM_DETAIL.PERSONAL.NAME' | translate }}</span>
           @if (isEditing()) {
             <input class="info-edit-input" type="text" [value]="editData()!.emergencyContact.name"
               (input)="patchEmergency('name', $any($event.target).value)" />
           } @else {
-            <span class="info-row__value">{{ pilgrim().emergencyContact.name }}</span>
+            <span class="info-row__value">{{ pilgrim().emergencyContact.name | translate }}</span>
           }
         </div>
 
         <div class="info-row">
-          <span class="info-row__label">الهاتف</span>
+          <span class="info-row__label">{{ 'PILGRIM_DETAIL.PERSONAL.PHONE' | translate }}</span>
           @if (isEditing()) {
             <input class="info-edit-input" type="tel" [value]="editData()!.emergencyContact.phone"
               (input)="patchEmergency('phone', $any($event.target).value)" />
           } @else {
-            <span class="info-row__value" dir="ltr">{{ pilgrim().emergencyContact.phone }}</span>
+            <span class="info-row__value" dir="ltr">{{ pilgrim().emergencyContact.phone | translate }}</span>
           }
         </div>
       </div>
@@ -128,14 +128,14 @@
     <div class="info-card">
       <div class="info-card__header">
         <i class="pi pi-home"></i>
-        موقع السكن
+        {{ 'PILGRIM_DETAIL.PERSONAL.ACCOMMODATION_LOCATION' | translate }}
       </div>
       @if (pilgrim().accommodationLat != null && pilgrim().accommodationLng != null) {
         <div #accommodationMapEl class="accommodation-map"></div>
       } @else {
         <div class="map-placeholder">
           <i class="pi pi-home map-placeholder__pin"></i>
-          <span class="map-placeholder__location">{{ pilgrim().accommodation || 'لم يتم تحديد موقع السكن' }}</span>
+          <span class="map-placeholder__location">{{ pilgrim().accommodation || ('PILGRIM_DETAIL.PERSONAL.ACCOMMODATION_NOT_SET' | translate) }}</span>
         </div>
       }
     </div>
@@ -143,19 +143,19 @@
     <div class="info-card">
       <div class="info-card__header">
         <i class="pi pi-building"></i>
-        بيانات المركز والمجموعة
+        {{ 'PILGRIM_DETAIL.PERSONAL.CENTER_GROUP_DATA' | translate }}
       </div>
       <div class="info-card__body">
         <div class="info-row">
-          <span class="info-row__label">المركز</span>
+          <span class="info-row__label">{{ 'PILGRIM_DETAIL.PERSONAL.CENTER' | translate }}</span>
           <span class="info-row__value">{{ pilgrim().campaign }}</span>
         </div>
         <div class="info-row">
-          <span class="info-row__label">المجموعة</span>
+          <span class="info-row__label">{{ 'PILGRIM_DETAIL.PERSONAL.GROUP' | translate }}</span>
           <span class="info-row__value">{{ pilgrim().group }}</span>
         </div>
         <div class="info-row">
-          <span class="info-row__label">السكن</span>
+          <span class="info-row__label">{{ 'PILGRIM_DETAIL.PERSONAL.ACCOMMODATION' | translate }}</span>
           @if (isEditing()) {
             <input class="info-edit-input" type="text" [value]="editData()!.accommodation"
               (input)="fieldChanged.emit({ accommodation: $any($event.target).value })" />
@@ -164,7 +164,7 @@
           }
         </div>
         <div class="info-row">
-          <span class="info-row__label">بطاقة نسك</span>
+          <span class="info-row__label">{{ 'PILGRIM_DETAIL.PERSONAL.NUSUK_CARD' | translate }}</span>
           @if (isEditing()) {
             <input class="info-edit-input" type="text" dir="ltr" [value]="editData()!.nusukCard"
               (input)="fieldChanged.emit({ nusukCard: $any($event.target).value })" />
@@ -173,7 +173,7 @@
           }
         </div>
         <div class="info-row">
-          <span class="info-row__label">رقم التصريح</span>
+          <span class="info-row__label">{{ 'PILGRIM_DETAIL.PERSONAL.PERMIT_NUMBER' | translate }}</span>
           @if (isEditing()) {
             <input class="info-edit-input" type="text" dir="ltr" [value]="editData()!.permitNumber"
               (input)="fieldChanged.emit({ permitNumber: $any($event.target).value })" />
@@ -182,7 +182,7 @@
           }
         </div>
         <div class="info-row">
-          <span class="info-row__label">سنة الحج</span>
+          <span class="info-row__label">{{ 'PILGRIM_DETAIL.PERSONAL.HAJJ_YEAR' | translate }}</span>
           <span class="info-row__value">{{ pilgrim().hajjYear }}</span>
         </div>
       </div>

@@ -1,4 +1,5 @@
 ﻿import { HttpClient } from '@angular/common/http';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -16,7 +17,7 @@ import { ComplaintsService } from './complaints.service';
 
 @Component({
   selector: 'app-complaints',
-  imports: [FormsModule, ProgressSpinnerModule, DecimalPipe],
+  imports: [TranslateModule, FormsModule, ProgressSpinnerModule, DecimalPipe],
   templateUrl: './complaints.html',
   styleUrl: './complaints.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,6 +28,7 @@ export class Complaints {
   private readonly destroyRef = inject(DestroyRef);
   private readonly campaignsService = inject(CampaignsService);
   private readonly complaintsService = inject(ComplaintsService);
+  private readonly translate = inject(TranslateService);
 
   readonly pageSize = signal(10);
   readonly loading = signal(false);
@@ -145,15 +147,15 @@ export class Complaints {
   }
 
   campaignFilterLabel(): string {
-    return this.selectedCampaignName() || 'جميع المراكز';
+    return this.selectedCampaignName() || 'COMPLAINTS.ALL_CENTERS';
   }
 
   groupFilterLabel(): string {
-    return this.selectedGroupName() || (this.selectedCampaignId() ? 'جميع المجموعات' : 'اختر المركز أولًا');
+    return this.selectedGroupName() || (this.selectedCampaignId() ? 'COMPLAINTS.ALL_GROUPS' : 'COMPLAINTS.SELECT_CENTER_FIRST');
   }
 
   formatDate(value: string): string {
-    return new Intl.DateTimeFormat('ar-EG', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(value));
+    return new Intl.DateTimeFormat(this.translate.currentLang || 'en', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(value));
   }
 
   private fetchCampaigns(): void {

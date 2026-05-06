@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { catchError, map, of, startWith, switchMap } from 'rxjs';
@@ -21,7 +22,7 @@ const INITIAL_PROFILE_STATE: PilgrimProfileState = {
 @Component({
   selector: 'app-pilgrim-profile',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PersonalTab, SupervisorsTab],
+  imports: [TranslateModule, PersonalTab, SupervisorsTab],
   templateUrl: './pilgrim-profile.html',
   styleUrl: './pilgrim-profile.scss',
 })
@@ -30,6 +31,7 @@ export class PilgrimProfile {
   private readonly service = inject(PilgrimsService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly toast = inject(MessageService);
+  private readonly translate = inject(TranslateService);
 
   readonly statusLabel = STATUS_LABEL;
   readonly detailState = signal<PilgrimProfileState>(INITIAL_PROFILE_STATE);
@@ -37,9 +39,9 @@ export class PilgrimProfile {
   readonly showAccommodationLoading = signal(false);
   readonly activeTab = signal<'personal' | 'supervisors'>('personal');
 
-  readonly tabs: { key: 'personal' | 'supervisors'; label: string; icon: string }[] = [
-    { key: 'personal', label: 'البيانات الشخصية', icon: 'pi pi-user' },
-    { key: 'supervisors', label: 'بيانات المشرفين', icon: 'pi pi-user-edit' },
+  readonly tabs: { key: 'personal' | 'supervisors'; labelKey: string; icon: string }[] = [
+    { key: 'personal', labelKey: 'PILGRIMS_PROFILE.PERSONAL_DATA', icon: 'pi pi-user' },
+    { key: 'supervisors', labelKey: 'PILGRIMS_PROFILE.SUPERVISORS_DATA', icon: 'pi pi-user-edit' },
   ];
 
   constructor() {
@@ -83,8 +85,8 @@ export class PilgrimProfile {
 
           this.toast.add({
             severity: 'warn',
-            summary: 'تنبيه',
-            detail: 'لم يتم تحديد مكان السكن',
+            summary: this.translate.instant('COMMON.WARNING'),
+            detail: this.translate.instant('PILGRIMS_PROFILE.ACCOMMODATION_NOT_SET'),
             life: 3000,
           });
         },
@@ -92,8 +94,8 @@ export class PilgrimProfile {
           this.showAccommodationLoading.set(false);
           this.toast.add({
             severity: 'error',
-            summary: 'خطأ',
-            detail: 'تعذر عرض مكان السكن',
+            summary: this.translate.instant('COMMON.ERROR'),
+            detail: this.translate.instant('PILGRIMS_PROFILE.ACCOMMODATION_OPEN_ERROR'),
             life: 4000,
           });
         },

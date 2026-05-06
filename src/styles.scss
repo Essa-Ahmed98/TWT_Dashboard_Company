@@ -33,13 +33,12 @@
 }
 
 body {
-  font-family: 'Cairo', sans-serif !important;
-  direction: rtl;
+  font-family: 'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif !important;
 }
 
 /* ── Leaflet zone centre label ──────────────────────────────── */
 .zone-centre-label {
-  font-family: 'Cairo', sans-serif;
+  font-family: 'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif;
   font-size: .8125rem;
   font-weight: 700;
   white-space: nowrap;
@@ -78,4 +77,23 @@ body {
 .p-datepicker-prev-button svg,
 .p-datepicker-next-button svg {
   transform: scaleX(-1);
+}
+
+// Some older hand-rolled paginators still use RTL-oriented icons in the markup.
+// Flip only those legacy icons in LTR languages so previous points left and next points right.
+html[dir='ltr'] {
+  .detail-back__icon,
+  .dir-forward__icon {
+    transform: scaleX(-1);
+  }
+
+  .pagination__controls,
+  .plt__pagination {
+    > .pagination__btn:first-child .pi,
+    > .pagination__btn:last-child .pi,
+    > .plt__page-btn:first-child .pi,
+    > .plt__page-btn:last-child .pi {
+      transform: scaleX(-1);
+    }
+  }
 }

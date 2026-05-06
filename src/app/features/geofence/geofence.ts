@@ -4,6 +4,7 @@
   ViewChild, ElementRef, AfterViewInit, OnDestroy, effect, OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslateModule } from '@ngx-translate/core';
 import { isPlatformBrowser, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
@@ -50,7 +51,7 @@ interface Campaign {
 
 @Component({
   selector: 'app-geofence',
-  imports: [FormsModule, ProgressSpinnerModule, DecimalPipe],
+  imports: [TranslateModule, FormsModule, ProgressSpinnerModule, DecimalPipe],
   templateUrl: './geofence.html',
   styleUrl: './geofence.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -166,10 +167,10 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
     const visHajj    = visGroups.reduce((sum, g) => sum + g.pilgrimsCount, 0);
 
     return [
-      { label: 'إجمالي المناطق', value: this.totalCount(),                          color: '#0b405b' },
-      { label: 'منطقة نشطة',    value: z.filter(x => x.status === 'active').length, color: '#22c35d' },
-      { label: 'حاج معروض',     value: visHajj,                                     color: '#fb8c00' },
-      { label: 'مجموعات مفعلة',  value: visGroups.length,                            color: '#e53935' },
+      { labelKey: 'GEOFENCE.STATS.TOTAL_ZONES',      value: this.totalCount(),                          color: '#0b405b' },
+      { labelKey: 'GEOFENCE.STATS.ACTIVE_ZONES',     value: z.filter(x => x.status === 'active').length, color: '#22c35d' },
+      { labelKey: 'GEOFENCE.STATS.VISIBLE_PILGRIMS', value: visHajj,                                     color: '#fb8c00' },
+      { labelKey: 'GEOFENCE.STATS.ACTIVE_GROUPS',    value: visGroups.length,                            color: '#e53935' },
     ];
   });
 
@@ -364,6 +365,14 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
   selectFilter(opt: string): void {
     this.filterType.set(opt);
     this.showFilterDropdown.set(false);
+  }
+
+  filterLabelKey(opt: string): string {
+    return {
+      'الكل': 'GEOFENCE.FILTER_ALL',
+      'مشعر مقدس': 'GEOFENCE.SACRED_SITE',
+      'مخيم مركز': 'GEOFENCE.CAMP_ZONE',
+    }[opt] ?? opt;
   }
 
   setActiveTab(tab: 'zones' | 'campaigns'): void {

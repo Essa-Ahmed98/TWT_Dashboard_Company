@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
@@ -11,32 +12,33 @@ import { CampaignsService } from '../campaigns/campaigns.service';
 import { environment } from '../../../environments/environment';
 import { NotificationAudienceRole, NotificationType, SendNotificationRequest, SentNotificationItem } from './notifications.model';
 import { NotificationsService } from './notifications.service';
+import { TranslationService as AppTranslationService } from '../../core/services/translation.service';
 
 type NotificationsTab = 'send' | 'templates' | 'sent';
 
 interface AudienceOption {
   role: NotificationAudienceRole;
-  label: string;
-  summary: string;
+  labelKey: string;
+  summaryKey: string;
 }
 
 interface TypeOption {
   type: NotificationType;
-  label: string;
+  labelKey: string;
   icon: string;
   tone: 'general' | 'health' | 'location' | 'emergency' | 'dispatch' | 'religious' | 'schedule' | 'message';
 }
 
 interface NotificationTemplate {
-  title: string;
-  body: string;
+  titleKey: string;
+  bodyKey: string;
   type: NotificationType;
-  audience: string;
+  audienceKey: string;
 }
 
 @Component({
   selector: 'app-notifications',
-  imports: [],
+  imports: [TranslateModule, ],
   templateUrl: './notifications.html',
   styleUrl: './notifications.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -48,63 +50,65 @@ export class Notifications {
   private readonly campaignsService = inject(CampaignsService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly toast = inject(MessageService);
+  private readonly translate = inject(TranslateService);
+  private readonly appTranslation = inject(AppTranslationService);
 
   readonly NotificationAudienceRole = NotificationAudienceRole;
 
   readonly audienceOptions: AudienceOption[] = [
-    { role: NotificationAudienceRole.All, label: 'الجميع (حجاج + مشرفين + عائلات)', summary: 'كل المستخدمين' },
-    { role: NotificationAudienceRole.Pilgrims, label: 'الحجاج فقط', summary: 'الحجاج' },
-    { role: NotificationAudienceRole.Supervisors, label: 'المشرفين فقط', summary: 'المشرفين' },
-    { role: NotificationAudienceRole.Families, label: 'العائلات فقط', summary: 'العائلات' },
+    { role: NotificationAudienceRole.All, labelKey: 'NOTIFICATIONS.AUDIENCE.ALL_LABEL', summaryKey: 'NOTIFICATIONS.AUDIENCE.ALL_SUMMARY' },
+    { role: NotificationAudienceRole.Pilgrims, labelKey: 'NOTIFICATIONS.AUDIENCE.PILGRIMS_LABEL', summaryKey: 'NOTIFICATIONS.AUDIENCE.PILGRIMS_SUMMARY' },
+    { role: NotificationAudienceRole.Supervisors, labelKey: 'NOTIFICATIONS.AUDIENCE.SUPERVISORS_LABEL', summaryKey: 'NOTIFICATIONS.AUDIENCE.SUPERVISORS_SUMMARY' },
+    { role: NotificationAudienceRole.Families, labelKey: 'NOTIFICATIONS.AUDIENCE.FAMILIES_LABEL', summaryKey: 'NOTIFICATIONS.AUDIENCE.FAMILIES_SUMMARY' },
   ];
 
   readonly typeOptions: TypeOption[] = [
-    { type: NotificationType.General, label: 'عام', icon: 'pi-info-circle', tone: 'general' },
-    { type: NotificationType.Health, label: 'صحي', icon: 'pi-heart', tone: 'health' },
-    { type: NotificationType.Location, label: 'مكاني / جغرافي', icon: 'pi-map-marker', tone: 'location' },
-    { type: NotificationType.Emergency, label: 'طوارئ', icon: 'pi-shield', tone: 'emergency' },
-    { type: NotificationType.Dispatch, label: 'تفويج / نقل', icon: 'pi-truck', tone: 'dispatch' },
-    { type: NotificationType.Religious, label: 'ديني / مناسك', icon: 'pi-sparkles', tone: 'religious' },
-    { type: NotificationType.Schedule, label: 'جدول / موعد', icon: 'pi-calendar-clock', tone: 'schedule' },
-    { type: NotificationType.Message, label: 'رسالة', icon: 'pi-comment', tone: 'message' },
+    { type: NotificationType.General, labelKey: 'NOTIFICATIONS.TYPE_OPTIONS.GENERAL', icon: 'pi-info-circle', tone: 'general' },
+    { type: NotificationType.Health, labelKey: 'NOTIFICATIONS.TYPE_OPTIONS.HEALTH', icon: 'pi-heart', tone: 'health' },
+    { type: NotificationType.Location, labelKey: 'NOTIFICATIONS.TYPE_OPTIONS.LOCATION', icon: 'pi-map-marker', tone: 'location' },
+    { type: NotificationType.Emergency, labelKey: 'NOTIFICATIONS.TYPE_OPTIONS.EMERGENCY', icon: 'pi-shield', tone: 'emergency' },
+    { type: NotificationType.Dispatch, labelKey: 'NOTIFICATIONS.TYPE_OPTIONS.DISPATCH', icon: 'pi-truck', tone: 'dispatch' },
+    { type: NotificationType.Religious, labelKey: 'NOTIFICATIONS.TYPE_OPTIONS.RELIGIOUS', icon: 'pi-sparkles', tone: 'religious' },
+    { type: NotificationType.Schedule, labelKey: 'NOTIFICATIONS.TYPE_OPTIONS.SCHEDULE', icon: 'pi-calendar-clock', tone: 'schedule' },
+    { type: NotificationType.Message, labelKey: 'NOTIFICATIONS.TYPE_OPTIONS.MESSAGE', icon: 'pi-comment', tone: 'message' },
   ];
 
   readonly templates: NotificationTemplate[] = [
     {
-      title: 'تنبيه شرب الماء',
-      body: 'يرجى الحرص على شرب الماء بكثرة والبقاء في المناطق المظللة لتجنب الإجهاد الحراري',
+      titleKey: 'NOTIFICATIONS.TEMPLATES.WATER_TITLE',
+      bodyKey: 'NOTIFICATIONS.TEMPLATES.WATER_BODY',
       type: NotificationType.Health,
-      audience: 'الحجاج',
+      audienceKey: 'NOTIFICATIONS.AUDIENCE.PILGRIMS_SUMMARY',
     },
     {
-      title: 'موعد تفويج',
-      body: 'يرجى التجمع في نقطة التجمع المحددة قبل الموعد بـ 15 دقيقة استعدادا للتفويج',
+      titleKey: 'NOTIFICATIONS.TEMPLATES.DISPATCH_TITLE',
+      bodyKey: 'NOTIFICATIONS.TEMPLATES.DISPATCH_BODY',
       type: NotificationType.Dispatch,
-      audience: 'الحجاج',
+      audienceKey: 'NOTIFICATIONS.AUDIENCE.PILGRIMS_SUMMARY',
     },
     {
-      title: 'اجتماع مشرفين',
-      body: 'يرجى حضور جميع المشرفين للاجتماع في الموعد المحدد لمراجعة خطة اليوم',
+      titleKey: 'NOTIFICATIONS.TEMPLATES.SUPERVISOR_MEETING_TITLE',
+      bodyKey: 'NOTIFICATIONS.TEMPLATES.SUPERVISOR_MEETING_BODY',
       type: NotificationType.Schedule,
-      audience: 'المشرفين',
+      audienceKey: 'NOTIFICATIONS.AUDIENCE.SUPERVISORS_SUMMARY',
     },
     {
-      title: 'تذكير بمناسك اليوم',
-      body: 'اليوم هو يوم التروية، التوجه إلى منى والالتزام بالذكر والدعاء',
+      titleKey: 'NOTIFICATIONS.TEMPLATES.RITUAL_TITLE',
+      bodyKey: 'NOTIFICATIONS.TEMPLATES.RITUAL_BODY',
       type: NotificationType.Religious,
-      audience: 'الحجاج',
+      audienceKey: 'NOTIFICATIONS.AUDIENCE.PILGRIMS_SUMMARY',
     },
     {
-      title: 'تنبيه السياج الجغرافي',
-      body: 'بعض الحجاج خرجوا من المنطقة الآمنة. يرجى المتابعة الفورية',
+      titleKey: 'NOTIFICATIONS.TEMPLATES.GEOFENCE_TITLE',
+      bodyKey: 'NOTIFICATIONS.TEMPLATES.GEOFENCE_BODY',
       type: NotificationType.Location,
-      audience: 'المشرفين',
+      audienceKey: 'NOTIFICATIONS.AUDIENCE.SUPERVISORS_SUMMARY',
     },
     {
-      title: 'تحديث للعائلات',
-      body: 'حجاجكم بخير والحمد لله. سيتم تحديث الموقع كل ساعة',
+      titleKey: 'NOTIFICATIONS.TEMPLATES.FAMILY_TITLE',
+      bodyKey: 'NOTIFICATIONS.TEMPLATES.FAMILY_BODY',
       type: NotificationType.General,
-      audience: 'العائلات',
+      audienceKey: 'NOTIFICATIONS.AUDIENCE.FAMILIES_SUMMARY',
     },
   ];
 
@@ -158,13 +162,15 @@ export class Notifications {
   });
 
   readonly selectedAudienceLabel = computed(() =>
-    this.audienceOptions.find(option => option.role === this.selectedAudienceRole())?.label ?? ''
+    this.audienceOptions.find(option => option.role === this.selectedAudienceRole())?.labelKey ?? ''
   );
 
   readonly audienceSummary = computed(() => {
-    const role = this.audienceOptions.find(option => option.role === this.selectedAudienceRole())?.summary ?? '';
-    const campaign = this.selectedCampName() || 'كل الحملات';
-    const group = this.selectedGrpName() || 'كل المجموعات';
+    this.appTranslation.currentLang();
+    const roleKey = this.audienceOptions.find(option => option.role === this.selectedAudienceRole())?.summaryKey ?? '';
+    const role = roleKey ? this.translate.instant(roleKey) : '';
+    const campaign = this.selectedCampName() || this.translate.instant('NOTIFICATIONS.ALL_CAMPAIGNS');
+    const group = this.selectedGrpName() || this.translate.instant('NOTIFICATIONS.ALL_GROUPS');
     return `${role} - ${campaign} - ${group}`;
   });
 
@@ -274,8 +280,8 @@ export class Notifications {
 
   useTemplate(template: NotificationTemplate): void {
     this.selectedType.set(template.type);
-    this.title.set(template.title);
-    this.body.set(template.body);
+    this.title.set(this.translate.instant(template.titleKey));
+    this.body.set(this.translate.instant(template.bodyKey));
     this.activeTab.set('send');
     this.closeAllDrops();
   }
@@ -308,8 +314,8 @@ export class Notifications {
             this.resetForm();
             this.toast.add({
               severity: 'success',
-              summary: 'تم الإرسال',
-              detail: 'تم إرسال الإشعار بنجاح',
+              summary: this.translate.instant('NOTIFICATIONS.SENT_SUCCESS_SUMMARY'),
+              detail: this.translate.instant('NOTIFICATIONS.SENT_SUCCESS_DETAIL'),
             });
             if (this.activeTab() === 'sent') this.loadSent(1);
           } else {
@@ -389,23 +395,23 @@ export class Notifications {
 
     const diffMs = Date.now() - created.getTime();
     const diffMinutes = Math.max(0, Math.floor(diffMs / 60000));
-    if (diffMinutes < 1) return 'الآن';
-    if (diffMinutes < 60) return `منذ ${diffMinutes} دقيقة`;
+    if (diffMinutes < 1) return this.translate.instant('COMMON.NOW');
+    if (diffMinutes < 60) return this.translate.instant('COMMON.MINUTE_AGO', { value: diffMinutes });
 
     const diffHours = Math.floor(diffMinutes / 60);
-    if (diffHours < 24) return `منذ ${diffHours} ساعة`;
+    if (diffHours < 24) return this.translate.instant('COMMON.HOUR_AGO', { value: diffHours });
 
     const diffDays = Math.floor(diffHours / 24);
-    if (diffDays < 30) return `منذ ${diffDays} يوم`;
+    if (diffDays < 30) return this.translate.instant('COMMON.DAY_AGO', { value: diffDays });
 
-    return created.toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' });
+    return created.toLocaleDateString(this.translate.currentLang || 'en', { year: 'numeric', month: 'short', day: 'numeric' });
   }
 
   private resolveApiErrorMessage(error?: ApiResult<unknown> | null): string {
     return error?.Error?.MessageKey ||
       error?.Error?.message ||
       error?.ValidationErrors?.[0]?.ErrorMessage ||
-      'حدث خطأ أثناء إرسال الإشعار';
+      this.translate.instant('NOTIFICATIONS.SEND_ERROR');
   }
 
   private closeDropsExcept(drop: 'audience' | 'campaign' | 'group'): void {

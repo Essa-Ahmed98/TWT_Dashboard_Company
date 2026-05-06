@@ -83,12 +83,15 @@ $text-label:   #374151;
     height: 38px;
     border: 1px solid $border;
     border-radius: 8px;
-    padding: 0 38px 0 12px;
+    padding-block: 0;
+    padding-inline-start: 38px;
+    padding-inline-end: 12px;
     font-family: inherit;
     font-size: 13.5px;
     color: $text-main;
     background: transparent;
     outline: none;
+    direction: inherit;
     transition: border-color .18s;
 
     &::placeholder { color: $text-muted; }

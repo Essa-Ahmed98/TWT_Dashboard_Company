@@ -8,7 +8,7 @@
     <!-- Header -->
     <div class="chat__sidebar-header">
       <div class="chat__sidebar-title">
-        <span>الدردشة</span>
+        <span>{{ 'CHAT.TITLE' | translate }}</span>
         @if (totalUnread() > 0) {
           <span class="chat__sidebar-badge">{{ totalUnread() }}</span>
         }
@@ -20,7 +20,7 @@
         <input
           class="chat__search-input"
           type="text"
-          placeholder="ابحث في المحادثات..."
+          [placeholder]="'CHAT.SEARCH_PLACEHOLDER' | translate"
           [value]="searchQuery()"
           (input)="searchQuery.set($any($event.target).value)"
         />
@@ -28,9 +28,9 @@
 
       <!-- Tabs -->
       <div class="chat__tabs">
-        <button class="chat__tab" [class.chat__tab--active]="activeTab() === 'all'"         (click)="setTab('all')">الكل</button>
-        <button class="chat__tab" [class.chat__tab--active]="activeTab() === 'groups'"      (click)="setTab('groups')">الحجاج</button>
-        <button class="chat__tab" [class.chat__tab--active]="activeTab() === 'supervisors'" (click)="setTab('supervisors')">المشرفين</button>
+        <button class="chat__tab" [class.chat__tab--active]="activeTab() === 'all'"         (click)="setTab('all')">{{ 'CHAT.TAB_ALL' | translate }}</button>
+        <button class="chat__tab" [class.chat__tab--active]="activeTab() === 'groups'"      (click)="setTab('groups')">{{ 'CHAT.TAB_PILGRIMS' | translate }}</button>
+        <button class="chat__tab" [class.chat__tab--active]="activeTab() === 'supervisors'" (click)="setTab('supervisors')">{{ 'CHAT.TAB_SUPERVISORS' | translate }}</button>
       </div>
     </div>
 
@@ -42,7 +42,7 @@
           <i class="pi pi-spin pi-spinner"></i>
         </li>
       } @else if (filteredConversations().length === 0) {
-        <li class="chat__list-empty">لا توجد محادثات</li>
+        <li class="chat__list-empty">{{ 'CHAT.EMPTY_CONVS' | translate }}</li>
       } @else {
         @for (conv of filteredConversations(); track conv.ConversationId) {
           <li
@@ -118,7 +118,7 @@
           } @else if (nextCursor()) {
             <div class="chat__load-more chat__load-more--btn" (click)="loadMoreMessages()">
               <i class="pi pi-arrow-up"></i>
-              <span>تحميل رسائل أقدم</span>
+              <span>{{ 'CHAT.LOAD_OLDER' | translate }}</span>
             </div>
           }
 
@@ -159,7 +159,7 @@
 
           @if (activeMessages().length === 0) {
             <div class="chat__no-msgs">
-              <span>لا توجد رسائل بعد، ابدأ المحادثة!</span>
+              <span>{{ 'CHAT.NO_MESSAGES' | translate }}</span>
             </div>
           }
         </div>
@@ -179,12 +179,12 @@
 
             <!-- ── State 4: Image preview ── -->
             <button class="chat__input-btn chat__input-btn--danger"
-                    (click)="discardImagePreview()" title="حذف الصورة">
+                    (click)="discardImagePreview()" [title]="'CHAT.DELETE_IMAGE' | translate">
               <i class="pi pi-trash"></i>
             </button>
             <img class="chat__img-preview" [src]="imagePreviewUrl()" alt="معاينة" />
             <button class="chat__send-btn chat__send-btn--active"
-                    (click)="sendImage()" [disabled]="uploadingMedia()" title="إرسال">
+                    (click)="sendImage()" [disabled]="uploadingMedia()" [title]="'CHAT.SEND' | translate">
               @if (uploadingMedia()) {
                 <i class="pi pi-spin pi-spinner"></i>
               } @else {
@@ -196,12 +196,12 @@
 
             <!-- ── State 3: Audio preview ── -->
             <button class="chat__input-btn chat__input-btn--danger"
-                    (click)="discardPreview()" title="حذف التسجيل">
+                    (click)="discardPreview()" [title]="'CHAT.DELETE_AUDIO' | translate">
               <i class="pi pi-trash"></i>
             </button>
             <audio class="chat__rec-preview-audio" controls [src]="recordingPreviewUrl()"></audio>
             <button class="chat__send-btn chat__send-btn--active"
-                    (click)="sendRecording()" [disabled]="uploadingMedia()" title="إرسال">
+                    (click)="sendRecording()" [disabled]="uploadingMedia()" [title]="'CHAT.SEND' | translate">
               @if (uploadingMedia()) {
                 <i class="pi pi-spin pi-spinner"></i>
               } @else {
@@ -213,7 +213,7 @@
 
             <!-- ── State 2: Recording ── -->
             <button class="chat__input-btn chat__input-btn--danger"
-                    (click)="cancelRecording()" title="إلغاء التسجيل">
+                    (click)="cancelRecording()" [title]="'CHAT.CANCEL_RECORDING' | translate">
               <i class="pi pi-trash"></i>
             </button>
             <div class="chat__recording">
@@ -221,7 +221,7 @@
               <span class="chat__recording-timer">{{ recordingLabel() }}</span>
             </div>
             <button class="chat__input-btn chat__input-btn--danger"
-                    (click)="toggleRecording()" title="إيقاف التسجيل">
+                    (click)="toggleRecording()" [title]="'CHAT.STOP_RECORDING' | translate">
               <i class="pi pi-stop-circle"></i>
             </button>
 
@@ -230,7 +230,7 @@
             <!-- ── State 1: Normal ── -->
             <label class="chat__input-btn"
                    [class.chat__input-btn--disabled]="uploadingMedia()"
-                   title="إرسال صورة">
+                   [title]="'CHAT.SEND_IMAGE' | translate">
               <input type="file" accept="image/*" class="chat__file-input"
                      [disabled]="uploadingMedia()"
                      (change)="onImageFileSelected($event)" />
@@ -241,13 +241,13 @@
               }
             </label>
             <button class="chat__input-btn" (click)="toggleRecording()"
-                    [disabled]="uploadingMedia()" title="تسجيل رسالة صوتية">
+                    [disabled]="uploadingMedia()" [title]="'CHAT.RECORD_AUDIO' | translate">
               <i class="pi pi-microphone"></i>
             </button>
             <input
               class="chat__input"
               type="text"
-              placeholder="اكتب رسالة..."
+              [placeholder]="'CHAT.TYPE_MESSAGE' | translate"
               [value]="newMessage()"
               (input)="newMessage.set($any($event.target).value)"
               (keydown)="onKeydown($event)"
@@ -256,7 +256,7 @@
               class="chat__send-btn"
               [class.chat__send-btn--active]="newMessage().trim().length > 0"
               (click)="sendMessage()"
-              title="إرسال"
+              [title]="'CHAT.SEND' | translate"
             >
               <i class="pi pi-send"></i>
             </button>
@@ -272,8 +272,8 @@
         <div class="chat__empty-icon">
           <i class="pi pi-comments"></i>
         </div>
-        <p class="chat__empty-title">اختر محادثة للبدء</p>
-        <p class="chat__empty-sub">اختر إحدى المحادثات من القائمة على اليمين</p>
+        <p class="chat__empty-title">{{ 'CHAT.CHOOSE_CONVO' | translate }}</p>
+        <p class="chat__empty-sub">{{ 'CHAT.CHOOSE_CONVO_SUB' | translate }}</p>
       </div>
     }
 

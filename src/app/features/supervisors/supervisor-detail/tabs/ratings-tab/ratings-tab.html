@@ -2,24 +2,24 @@
   @if (loading()) {
     <div class="empty-msg">
       <i class="pi pi-spin pi-spinner"></i>
-      <p>جاري تحميل التقييمات...</p>
+      <p>{{ 'SUPERVISOR_DETAIL.RATINGS.LOADING' | translate }}</p>
     </div>
   } @else {
     <div class="ratt__summary">
       <div class="ratt__summary-card">
         <span class="ratt__big-num">{{ summary().totalReviews }}</span>
-        <span class="ratt__big-label">عدد التقييمات</span>
+        <span class="ratt__big-label">{{ 'SUPERVISOR_DETAIL.RATINGS.COUNT' | translate }}</span>
       </div>
       <div class="ratt__summary-card">
         <span class="ratt__big-num">{{ summary().positiveCount }}</span>
-        <span class="ratt__big-label">التقييمات الإيجابية</span>
+        <span class="ratt__big-label">{{ 'SUPERVISOR_DETAIL.RATINGS.POSITIVE' | translate }}</span>
       </div>
       <div class="ratt__summary-card ratt__summary-card--star">
         <div class="ratt__avg-row">
           <span class="ratt__big-num">{{ summary().averageRating > 0 ? summary().averageRating : '—' }}</span>
           <i class="pi pi-star-fill ratt__avg-star"></i>
         </div>
-        <span class="ratt__big-label">متوسط التقييم</span>
+        <span class="ratt__big-label">{{ 'SUPERVISOR_DETAIL.RATINGS.AVERAGE' | translate }}</span>
         <div class="ratt__stars">
           @for (s of filledStars(summary().averageRating); track $index) {
             <i class="pi pi-star-fill ratt__star ratt__star--filled"></i>
@@ -34,8 +34,7 @@
     <div class="info-card">
       <div class="info-card__header">
         <i class="pi pi-chart-bar"></i>
-        توزيع التقييمات
-      </div>
+        {{ 'SUPERVISOR_DETAIL.RATINGS.DISTRIBUTION' | translate }}</div>
       <div class="ratt__dist">
         @for (d of summary().distribution; track d.stars) {
           <div class="ratt__dist-row">
@@ -54,12 +53,11 @@
     <div class="info-card">
       <div class="info-card__header">
         <i class="pi pi-comments"></i>
-        آراء الحجاج
-      </div>
+        {{ 'SUPERVISOR_DETAIL.RATINGS.PILGRIM_REVIEWS' | translate }}</div>
       @if (!hasItems()) {
         <div class="empty-msg">
           <i class="pi pi-star"></i>
-          <p>لا توجد تقييمات تفصيلية متاحة لهذا المشرف حاليًا</p>
+          <p>{{ 'SUPERVISOR_DETAIL.RATINGS.EMPTY' | translate }}</p>
         </div>
       }
       @for (r of ratings(); track r.id) {

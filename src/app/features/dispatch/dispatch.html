@@ -7,8 +7,8 @@
   <div class="dialog" (click)="$event.stopPropagation()">
     <div class="dialog__header">
       <div>
-        <h2 class="dialog__title">{{ modalTitle() }}</h2>
-        <p class="dialog__sub">{{ modalSubtitle() }}</p>
+        <h2 class="dialog__title">{{ (editingSchedule() ? 'DISPATCH.MODAL_TITLE_EDIT' : 'DISPATCH.MODAL_TITLE_ADD') | translate }}</h2>
+        <p class="dialog__sub">{{ (editingSchedule() ? 'DISPATCH.MODAL_SUBTITLE_EDIT' : 'DISPATCH.MODAL_SUBTITLE_ADD') | translate }}</p>
       </div>
       <button class="dialog__close" type="button" (click)="closeModal()" [disabled]="saving()">
         <i class="pi pi-times"></i>
@@ -18,10 +18,10 @@
     <div class="dialog__body">
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">المركز <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'DISPATCH.CENTER' | translate }} <span class="form-req">*</span></label>
           <div class="ss" [class.ss--disabled]="saving()">
             <button class="ss__trigger" type="button" (click)="toggleModalCampaignDrop($event)" [disabled]="saving()">
-              <span [class.ss__placeholder]="!form().campaignName">{{ form().campaignName || 'اختر المركز' }}</span>
+              <span [class.ss__placeholder]="!form().campaignName">{{ form().campaignName || ('DISPATCH.SELECT_CENTER' | translate) }}</span>
               @if (form().campaignId) {
                 <i class="pi pi-times ss__clear" (click)="clearModalCampaign($event)"></i>
               } @else {
@@ -33,7 +33,7 @@
                 @if (modalCampaignLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (modalCampaignList().length === 0) {
-                  <div class="ss__state">لا توجد مراكز متاحة</div>
+                  <div class="ss__state">{{ 'DISPATCH.NO_CENTERS' | translate }}</div>
                 } @else {
                   <ul class="ss__list">
                     @for (option of modalCampaignList(); track option.Id) {
@@ -53,7 +53,7 @@
         </div>
 
         <div class="form-field">
-          <label class="form-label">المجموعة <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'DISPATCH.GROUP' | translate }} <span class="form-req">*</span></label>
           <div class="ss" [class.ss--disabled]="!form().campaignId || saving()">
             <button
               class="ss__trigger"
@@ -62,7 +62,7 @@
               (click)="toggleModalGroupDrop($event)"
             >
               <span [class.ss__placeholder]="!form().groupName">
-                {{ form().groupName || (form().campaignId ? 'اختر المجموعة' : 'اختر المركز أولًا') }}
+                {{ form().groupName || (form().campaignId ? ('DISPATCH.SELECT_GROUP' | translate) : ('DISPATCH.SELECT_CENTER_FIRST' | translate)) }}
               </span>
               @if (form().groupId) {
                 <i class="pi pi-times ss__clear" (click)="clearModalGroup($event)"></i>
@@ -75,7 +75,7 @@
                 @if (modalGroupLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (modalGroupList().length === 0) {
-                  <div class="ss__state">لا توجد مجموعات متاحة</div>
+                  <div class="ss__state">{{ 'DISPATCH.NO_GROUPS' | translate }}</div>
                 } @else {
                   <ul class="ss__list">
                     @for (group of modalGroupList(); track group.Id) {
@@ -97,7 +97,7 @@
 
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">الحافلة <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'DISPATCH.BUS' | translate }} <span class="form-req">*</span></label>
           <div class="ss" [class.ss--disabled]="!form().campaignId || saving()">
             <button
               class="ss__trigger"
@@ -106,7 +106,7 @@
               (click)="toggleModalBusDrop($event)"
             >
               <span [class.ss__placeholder]="!form().busName">
-                {{ form().busName || (form().campaignId ? 'اختر الحافلة' : 'اختر المركز أولًا') }}
+                {{ form().busName || (form().campaignId ? ('DISPATCH.SELECT_BUS' | translate) : ('DISPATCH.SELECT_CENTER_FIRST_BUS' | translate)) }}
               </span>
               @if (form().busId) {
                 <i class="pi pi-times ss__clear" (click)="clearModalBus($event)"></i>
@@ -119,7 +119,7 @@
                 @if (modalBusLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (modalBusList().length === 0) {
-                  <div class="ss__state">لا توجد حافلات متاحة</div>
+                  <div class="ss__state">{{ 'DISPATCH.NO_BUSES' | translate }}</div>
                 } @else {
                   <ul class="ss__list">
                     @for (bus of modalBusList(); track bus.Id) {
@@ -139,7 +139,7 @@
         </div>
 
         <div class="form-field">
-          <label class="form-label">موعد الانطلاق <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'DISPATCH.DEPARTURE_TIME' | translate }} <span class="form-req">*</span></label>
           <p-datepicker
             [ngModel]="form().departureTime"
             (ngModelChange)="patchForm({ departureTime: $event })"
@@ -151,18 +151,18 @@
             [disabled]="saving()"
             appendTo="body"
             [baseZIndex]="3000"
-            placeholder="اختر موعد الانطلاق">
+            [placeholder]="'DISPATCH.DEPARTURE_TIME_PLACEHOLDER' | translate">
           </p-datepicker>
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">من <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'DISPATCH.FROM' | translate }} <span class="form-req">*</span></label>
           <input
             class="form-input"
             type="text"
-            placeholder="أدخل موقع الانطلاق"
+            [placeholder]="'DISPATCH.FROM_PLACEHOLDER' | translate"
             [disabled]="saving()"
             [value]="form().fromLocation"
             (input)="patchForm({ fromLocation: $any($event.target).value })"
@@ -170,11 +170,11 @@
         </div>
 
         <div class="form-field">
-          <label class="form-label">إلى <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'DISPATCH.TO' | translate }} <span class="form-req">*</span></label>
           <input
             class="form-input"
             type="text"
-            placeholder="أدخل موقع الوصول"
+            [placeholder]="'DISPATCH.TO_PLACEHOLDER' | translate"
             [disabled]="saving()"
             [value]="form().toLocation"
             (input)="patchForm({ toLocation: $any($event.target).value })"
@@ -183,11 +183,11 @@
       </div>
 
       <div class="form-field">
-        <label class="form-label">ملاحظات</label>
+        <label class="form-label">{{ 'DISPATCH.NOTES' | translate }}</label>
         <textarea
           class="form-input form-input--textarea"
           rows="4"
-          placeholder="أدخل أي ملاحظات إضافية"
+          [placeholder]="'DISPATCH.NOTES_PLACEHOLDER' | translate"
           [disabled]="saving()"
           [value]="form().notes"
           (input)="patchForm({ notes: $any($event.target).value })"
@@ -200,14 +200,14 @@
     </div>
 
     <div class="dialog__footer">
-      <button class="btn btn--outline" type="button" (click)="closeModal()" [disabled]="saving()">إلغاء</button>
+      <button class="btn btn--outline" type="button" (click)="closeModal()" [disabled]="saving()">{{ 'COMMON.CANCEL' | translate }}</button>
       <button class="btn btn--primary" type="button" (click)="submitForm()" [disabled]="saving() || !isCreateFormValid()">
         @if (saving()) {
           <span class="btn-spinner"></span>
-          {{ editingSchedule() ? 'جاري الحفظ...' : 'جاري الإضافة...' }}
+          {{ (editingSchedule() ? 'DISPATCH.SAVING' : 'DISPATCH.ADDING') | translate }}
         } @else {
           <i class="pi" [class.pi-save]="editingSchedule()" [class.pi-plus]="!editingSchedule()"></i>
-          {{ editingSchedule() ? 'حفظ التعديلات' : 'إضافة الرحلة' }}
+          {{ (editingSchedule() ? 'DISPATCH.SAVE_CHANGES' : 'DISPATCH.ADD_TRIP_FULL') | translate }}
         }
       </button>
     </div>
@@ -217,24 +217,24 @@
 <div class="dispatch">
   <div class="dispatch__header">
     <div class="dispatch__title">
-      <h1 class="dispatch__title-text">{{ title }}</h1>
-      <span class="dispatch__title-count">{{ subtitle }}</span>
+      <h1 class="dispatch__title-text">{{ 'DISPATCH.TITLE' | translate }}</h1>
+      <span class="dispatch__title-count">{{ 'DISPATCH.SUBTITLE' | translate }}</span>
     </div>
 
     <div class="dispatch__actions">
       <button class="btn btn--primary" type="button" (click)="openCreateModal()">
         <i class="pi pi-plus"></i>
-        <span>إضافة رحلة</span>
+        <span>{{ 'DISPATCH.ADD_TRIP' | translate }}</span>
       </button>
     </div>
   </div>
 
   <div class="dispatch__stats">
-    @for (stat of stats(); track stat.label) {
+    @for (stat of stats(); track stat.labelKey) {
       <article class="dispatch-stat">
         <i class="pi {{ stat.icon }} dispatch-stat__icon dispatch-stat__icon--{{ stat.tone }}"></i>
         <strong class="dispatch-stat__value dispatch-stat__value--{{ stat.tone }}">{{ stat.value }}</strong>
-        <span class="dispatch-stat__label">{{ stat.label }}</span>
+        <span class="dispatch-stat__label">{{ stat.labelKey | translate }}</span>
       </article>
     }
   </div>
@@ -245,7 +245,7 @@
       <input
         class="dispatch__search-input"
         type="text"
-        placeholder="بحث..."
+        [placeholder]="'DISPATCH.SEARCH_PLACEHOLDER' | translate"
         [ngModel]="searchQuery()"
         (ngModelChange)="onSearch($event)"
       />
@@ -261,7 +261,7 @@
     <div class="dropdown" [class.dropdown--open]="openCampaignDrop()">
       <button class="dropdown__trigger" type="button" (click)="toggleCampaignDrop($event)">
         <i class="pi pi-building"></i>
-        <span>{{ campaignFilterLabel() }}</span>
+        <span>{{ campaignFilterLabel() | translate }}</span>
         @if (selectedCampaignId()) {
           <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectCampaignFilter()"></i>
         } @else {
@@ -293,7 +293,7 @@
     <div class="dropdown" [class.dropdown--open]="openGroupDrop()" [class.dropdown--disabled]="!selectedCampaignId()">
       <button class="dropdown__trigger" type="button" [disabled]="!selectedCampaignId()" (click)="toggleGroupDrop($event)">
         <i class="pi pi-users"></i>
-        <span>{{ selectedGroupName() || (selectedCampaignId() ? 'اختر المجموعة' : 'اختر المركز أولًا') }}</span>
+        <span>{{ selectedGroupName() || (selectedCampaignId() ? ('DISPATCH.SELECT_GROUP' | translate) : ('DISPATCH.SELECT_CENTER_FIRST' | translate)) }}</span>
         @if (selectedGroupId()) {
           <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectGroupFilter()"></i>
         } @else {
@@ -325,7 +325,7 @@
     <div class="dropdown" [class.dropdown--open]="openBusDrop()" [class.dropdown--disabled]="!selectedCampaignId()">
       <button class="dropdown__trigger" type="button" [disabled]="!selectedCampaignId()" (click)="toggleBusDrop($event)">
         <i class="pi pi-car"></i>
-        <span>{{ selectedBusName() || (selectedCampaignId() ? 'اختر الحافلة' : 'اختر المركز أولًا') }}</span>
+        <span>{{ selectedBusName() || (selectedCampaignId() ? ('DISPATCH.SELECT_BUS' | translate) : ('DISPATCH.SELECT_CENTER_FIRST_BUS' | translate)) }}</span>
         @if (selectedBusId()) {
           <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectBusFilter()"></i>
         } @else {
@@ -376,13 +376,13 @@
             <div class="trip-card__head-actions">
               <button class="trip-card__edit"
                       type="button"
-                      title="تعديل الرحلة"
+                      [title]="'DISPATCH.EDIT_TRIP_TOOLTIP' | translate"
                       (click)="openEditModal(item)">
                 <i class="pi pi-pencil"></i>
               </button>
               <span class="trip-card__badge trip-card__badge--{{ statusClass(item.status) }}">
                 <span class="trip-card__badge-dot"></span>
-                {{ statusLabel(item.status) }}
+                {{ statusLabel(item.status) | translate }}
               </span>
             </div>
           </div>
@@ -398,7 +398,7 @@
             <div class="trip-card__meta-box">
               <i class="pi pi-clock"></i>
               <strong>{{ item.departureTime }}</strong>
-              <span>موعد الانطلاق</span>
+              <span>{{ 'DISPATCH.DEPARTURE_LABEL' | translate }}</span>
             </div>
           </div>
 
@@ -413,7 +413,7 @@
       @if (items().length === 0) {
         <div class="dispatch__empty">
           <i class="pi pi-inbox"></i>
-          <p>لا توجد بيانات متاحة</p>
+          <p>{{ 'DISPATCH.EMPTY' | translate }}</p>
         </div>
       }
     </div>
@@ -440,7 +440,7 @@
         </button>
       </div>
       <span class="pagination-bar__info">
-        {{ items().length }} من {{ totalCount() | number }}
+        {{ items().length }} {{ 'COMMON.OF' | translate }} {{ totalCount() | number }}
       </span>
     </div>
   }

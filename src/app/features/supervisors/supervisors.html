@@ -1,4 +1,4 @@
-﻿@if (showCampDrop() || showGrpDrop() || showLangDrop()) {
+@if (showCampDrop() || showGrpDrop() || showLangDrop()) {
   <div class="backdrop" (click)="closeAllDrops()"></div>
 }
 @if (showModal()) {
@@ -12,17 +12,17 @@
   ══════════════════════════════════════════ -->
   <div class="supervisors__header">
     <div class="supervisors__title">
-      <h1 class="supervisors__title-text">إدارة المشرفين</h1>
-      <span class="supervisors__title-count">{{ totalCount() }} مشرف مسجل</span>
+      <h1 class="supervisors__title-text">{{ 'SUPERVISORS.TITLE' | translate }}</h1>
+      <span class="supervisors__title-count">{{ totalCount() }} {{ 'SUPERVISORS.REGISTERED' | translate }}</span>
     </div>
     <div class="supervisors__actions">
       <button class="btn btn--ghost" (click)="exportCurrentList()">
         <i class="pi pi-download"></i>
-        <span>تصدير</span>
+        <span>{{ 'SUPERVISORS.EXPORT' | translate }}</span>
       </button>
       <button class="btn btn--primary" (click)="openModal()">
         <i class="pi pi-user-plus"></i>
-        <span>إضافة مشرف</span>
+        <span>{{ 'SUPERVISORS.ADD' | translate }}</span>
       </button>
     </div>
   </div>
@@ -33,15 +33,15 @@
   <div class="supervisors__stats">
     <div class="stat-card stat-card--pilgrims">
       <span class="stat-card__value">{{ pilgrimCount() }}</span>
-      <span class="stat-card__label">حاج تحت الإشراف</span>
+      <span class="stat-card__label">{{ 'SUPERVISORS.PILGRIMS_SUPERVISED' | translate }}</span>
     </div>
     <div class="stat-card stat-card--online">
       <span class="stat-card__value">{{ onlineCount() }}</span>
-      <span class="stat-card__label">عاملون الآن</span>
+      <span class="stat-card__label">{{ 'SUPERVISORS.WORKING_NOW' | translate }}</span>
     </div>
     <div class="stat-card stat-card--total">
       <span class="stat-card__value">{{ totalCount() }}</span>
-      <span class="stat-card__label">إجمالي المشرفين</span>
+      <span class="stat-card__label">{{ 'SUPERVISORS.TOTAL' | translate }}</span>
     </div>
   </div>
 
@@ -54,7 +54,7 @@
       <input
         class="supervisors__search-input"
         type="text"
-        placeholder="بحث عن مشرف..."
+        [placeholder]="'SUPERVISORS.SEARCH_PLACEHOLDER' | translate"
         [value]="searchQuery()"
         (input)="onSearch($any($event.target).value)"
       />
@@ -81,14 +81,14 @@
       <table class="supervisors__table">
         <thead>
           <tr>
-            <th>المشرف</th>
-            <th>المركز</th>
-            <th>المجموعة</th>
-            <th>رقم الجواز</th>
-            <th>الجنسية</th>
-            <th>اللغات</th>
-            <th>الحالة</th>
-            <th>إجراءات</th>
+            <th>{{ 'SUPERVISORS.TABLE.SUPERVISOR' | translate }}</th>
+            <th>{{ 'SUPERVISORS.TABLE.CENTER' | translate }}</th>
+            <th>{{ 'SUPERVISORS.TABLE.GROUP' | translate }}</th>
+            <th>{{ 'SUPERVISORS.TABLE.PASSPORT' | translate }}</th>
+            <th>{{ 'SUPERVISORS.TABLE.NATIONALITY' | translate }}</th>
+            <th>{{ 'SUPERVISORS.TABLE.LANGUAGES' | translate }}</th>
+            <th>{{ 'SUPERVISORS.TABLE.STATUS' | translate }}</th>
+            <th>{{ 'SUPERVISORS.TABLE.ACTIONS' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -113,27 +113,27 @@
               <td>
                 @if (s.IsOnline) {
                   <span class="status-badge status-badge--online">
-                    <span class="status-badge__dot"></span>متصل
+                    <span class="status-badge__dot"></span>{{ 'SUPERVISORS.ONLINE' | translate }}
                   </span>
                 } @else {
                   <span class="status-badge status-badge--offline">
-                    <span class="status-badge__dot"></span>غير متصل
+                    <span class="status-badge__dot"></span>{{ 'SUPERVISORS.OFFLINE' | translate }}
                   </span>
                 }
               </td>
               <td>
                 <div class="row-actions">
-                  <button class="row-actions__btn" title="تعديل المشرف" (click)="openEditModal(s)" [disabled]="!!editLoadingId()">
+                  <button class="row-actions__btn" [title]="'SUPERVISORS.EDIT' | translate" (click)="openEditModal(s)" [disabled]="!!editLoadingId()">
                     @if (editLoadingId() === s.Id) {
                       <i class="pi pi-spin pi-spinner"></i>
                     } @else {
                       <i class="pi pi-pencil"></i>
                     }
                   </button>
-                  <button class="row-actions__btn" title="فتح المحادثة" (click)="openChat(s.UserId, s.DisplayName)">
+                  <button class="row-actions__btn" [title]="'SUPERVISORS.OPEN_CHAT' | translate" (click)="openChat(s.UserId, s.DisplayName)">
                     <i class="pi pi-comment"></i>
                   </button>
-                  <button class="row-actions__btn" title="عرض التفاصيل" (click)="goToDetail(s.Id)">
+                  <button class="row-actions__btn" [title]="'SUPERVISORS.VIEW_DETAILS' | translate" (click)="goToDetail(s.Id)">
                     <i class="pi pi-eye"></i>
                   </button>
                 </div>
@@ -145,7 +145,7 @@
             <tr>
               <td colspan="8" class="supervisors__empty">
                 <i class="pi pi-inbox"></i>
-                <p>لا توجد نتائج</p>
+                <p>{{ 'SUPERVISORS.EMPTY' | translate }}</p>
               </td>
             </tr>
           }
@@ -173,7 +173,7 @@
         </button>
       </div>
       <span class="pagination-bar__info">
-        {{ supervisors().length }} من {{ totalCount() | number }}
+        {{ supervisors().length }} {{ 'COMMON.OF' | translate }} {{ totalCount() | number }}
       </span>
     </div>
   }
@@ -189,8 +189,8 @@
 
     <div class="dialog__header">
       <div>
-        <h2 class="dialog__title">{{ modalTitle() }}</h2>
-        <p class="dialog__sub">{{ modalSubtitle() }}</p>
+        <h2 class="dialog__title">{{ (editingSupervisor() ? 'SUPERVISORS.EDIT' : 'SUPERVISORS.ADD') | translate }}</h2>
+        <p class="dialog__sub">{{ (editingSupervisor() ? 'SUPERVISORS.MODAL_SUBTITLE_EDIT' : 'SUPERVISORS.MODAL_SUBTITLE_ADD') | translate }}</p>
       </div>
       <button class="dialog__close" (click)="closeModal()" [disabled]="submitting()">
         <i class="pi pi-times"></i>
@@ -199,37 +199,35 @@
 
     <div class="dialog__body">
 
-      <!-- الاسم + البريد -->
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">الاسم الكامل <span class="form-req">*</span></label>
-          <input class="form-input" type="text" placeholder="أدخل اسم المشرف"
+          <label class="form-label">{{ 'SUPERVISORS.FORM.FULL_NAME' | translate }} <span class="form-req">*</span></label>
+          <input class="form-input" type="text" [placeholder]="'SUPERVISORS.FORM.FULL_NAME_PLACEHOLDER' | translate"
             [value]="formData().displayName" [disabled]="submitting()"
             (input)="patchForm({ displayName: $any($event.target).value })" />
         </div>
         <div class="form-field">
-          <label class="form-label">البريد الإلكتروني <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'SUPERVISORS.FORM.EMAIL' | translate }} <span class="form-req">*</span></label>
           <input class="form-input" type="email" placeholder="example@gmail.com"
             [value]="formData().email" [disabled]="submitting()"
             (input)="patchForm({ email: $any($event.target).value })" />
         </div>
       </div>
 
-      <!-- الهاتف + كلمة المرور -->
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">رقم الهاتف <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'SUPERVISORS.FORM.PHONE' | translate }} <span class="form-req">*</span></label>
           <input class="form-input" type="tel" placeholder="+966"
             [value]="formData().phone" [disabled]="submitting()"
             [class.form-input--error]="phoneInvalid()"
             (input)="phoneTouched.set(true); patchForm({ phone: $any($event.target).value })" />
           @if (phoneInvalid()) {
-            <span class="form-hint form-hint--error">يجب أن يكون رقم جوال سعودي صالح</span>
+            <span class="form-hint form-hint--error">{{ 'SUPERVISORS.FORM.PHONE_INVALID' | translate }}</span>
           }
         </div>
         @if (!editingSupervisor()) {
           <div class="form-field">
-            <label class="form-label">كلمة المرور <span class="form-req">*</span></label>
+            <label class="form-label">{{ 'SUPERVISORS.FORM.PASSWORD' | translate }} <span class="form-req">*</span></label>
             <input class="form-input" type="password" placeholder="••••••••"
               [value]="formData().password" [disabled]="submitting()"
               (input)="patchForm({ password: $any($event.target).value })" />
@@ -237,14 +235,13 @@
         }
       </div>
 
-      <!-- المركز + المجموعة -->
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">المركز <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'SUPERVISORS.FORM.CENTER' | translate }} <span class="form-req">*</span></label>
           <div class="ss" [class.ss--disabled]="submitting() || editingSupervisor()">
             <button type="button" class="ss__trigger" [disabled]="submitting() || !!editingSupervisor()" (click)="toggleCampDrop()">
               <span [class.ss__placeholder]="!selectedCampName()">
-                {{ selectedCampName() || 'اختر المركز' }}
+                {{ selectedCampName() || ('SUPERVISORS.FORM.SELECT_CENTER' | translate) }}
               </span>
               @if (selectedCampName() && !editingSupervisor()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearCamp()"></i>
@@ -257,7 +254,7 @@
                 @if (campLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (campList().length === 0) {
-                  <div class="ss__state">لا توجد مراكز</div>
+                  <div class="ss__state">{{ 'SUPERVISORS.FORM.NO_CENTERS' | translate }}</div>
                 } @else {
                   <ul class="ss__list">
                     @for (c of campList(); track c.Id) {
@@ -272,13 +269,13 @@
         </div>
 
         <div class="form-field">
-          <label class="form-label">المجموعة <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'SUPERVISORS.FORM.GROUP' | translate }} <span class="form-req">*</span></label>
           <div class="ss" [class.ss--disabled]="!formData().campaignId || submitting() || editingSupervisor()">
             <button type="button" class="ss__trigger"
               [disabled]="!formData().campaignId || submitting() || !!editingSupervisor()"
               (click)="toggleGrpDrop()">
               <span [class.ss__placeholder]="!selectedGrpName()">
-                {{ selectedGrpName() || (formData().campaignId ? 'اختر المجموعة' : 'اختر المركز أولاً') }}
+                {{ selectedGrpName() || (formData().campaignId ? ('SUPERVISORS.FORM.SELECT_GROUP' | translate) : ('SUPERVISORS.FORM.SELECT_CENTER_FIRST' | translate)) }}
               </span>
               @if (selectedGrpName() && !editingSupervisor()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearGrp()"></i>
@@ -291,7 +288,7 @@
                 @if (grpLoading()) {
                   <div class="ss__state"><span class="ss-spinner"></span></div>
                 } @else if (grpList().length === 0) {
-                  <div class="ss__state">لا توجد مجموعات</div>
+                  <div class="ss__state">{{ 'SUPERVISORS.FORM.NO_GROUPS' | translate }}</div>
                 } @else {
                   <ul class="ss__list">
                     @for (g of grpList(); track g.Id) {
@@ -306,68 +303,64 @@
         </div>
       </div>
 
-      <!-- رقم الجواز + الجنسية -->
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">رقم جواز السفر <span class="form-req">*</span></label>
-          <input class="form-input" type="text" placeholder="رقم الجواز"
+          <label class="form-label">{{ 'SUPERVISORS.FORM.PASSPORT' | translate }} <span class="form-req">*</span></label>
+          <input class="form-input" type="text" [placeholder]="'SUPERVISORS.FORM.PASSPORT' | translate"
             [value]="formData().passportNumber" [disabled]="submitting()"
             (input)="patchForm({ passportNumber: $any($event.target).value })" />
         </div>
         <div class="form-field">
-          <label class="form-label">الجنسية <span class="form-req">*</span></label>
-          <input class="form-input" type="text" placeholder="الجنسية"
+          <label class="form-label">{{ 'SUPERVISORS.FORM.NATIONALITY' | translate }} <span class="form-req">*</span></label>
+          <input class="form-input" type="text" [placeholder]="'SUPERVISORS.FORM.NATIONALITY' | translate"
             [value]="formData().nationality" [disabled]="submitting()"
             (input)="patchForm({ nationality: $any($event.target).value })" />
         </div>
       </div>
 
-      <!-- تاريخ الميلاد + الجنس -->
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">تاريخ الميلاد <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'SUPERVISORS.FORM.DATE_OF_BIRTH' | translate }} <span class="form-req">*</span></label>
           <p-datepicker
             [ngModel]="formData().dateOfBirth"
             (ngModelChange)="patchForm({ dateOfBirth: $event })"
             dateFormat="yy-mm-dd" [disabled]="submitting()"
-            placeholder="اختر التاريخ" [showIcon]="true" [inline]="false">
+            [placeholder]="'SUPERVISORS.FORM.SELECT_DATE' | translate" [showIcon]="true" [inline]="false">
           </p-datepicker>
         </div>
         <div class="form-field">
-          <label class="form-label">الجنس <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'SUPERVISORS.FORM.GENDER' | translate }} <span class="form-req">*</span></label>
           <select class="form-select" [disabled]="submitting()"
             (change)="patchForm({ gender: $any($event.target).value })">
-            <option value="" [selected]="formData().gender === ''">اختر الجنس</option>
-            <option value="0" [selected]="formData().gender === '0'">ذكر</option>
-            <option value="1" [selected]="formData().gender === '1'">أنثى</option>
+            <option value="" [selected]="formData().gender === ''">{{ 'SUPERVISORS.FORM.SELECT_GENDER' | translate }}</option>
+            <option value="0" [selected]="formData().gender === '0'">{{ 'COMMON.MALE' | translate }}</option>
+            <option value="1" [selected]="formData().gender === '1'">{{ 'COMMON.FEMALE' | translate }}</option>
           </select>
         </div>
       </div>
 
-      <!-- التخصص + سنوات الخبرة -->
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">التخصص</label>
-          <input class="form-input" type="text" placeholder="مثال: إدارة أعمال"
+          <label class="form-label">{{ 'SUPERVISORS.FORM.SPECIALIZATION' | translate }}</label>
+          <input class="form-input" type="text" [placeholder]="'SUPERVISORS.FORM.SPECIALIZATION_PLACEHOLDER' | translate"
             [value]="formData().specialization" [disabled]="submitting()"
             (input)="patchForm({ specialization: $any($event.target).value })" />
         </div>
         <div class="form-field">
-          <label class="form-label">سنوات الخبرة</label>
+          <label class="form-label">{{ 'SUPERVISORS.FORM.YEARS_EXPERIENCE' | translate }}</label>
           <input class="form-input" type="number" min="0" placeholder="0"
             [value]="formData().yearsOfExperience" [disabled]="submitting()"
             (input)="patchForm({ yearsOfExperience: $any($event.target).value })" />
         </div>
       </div>
 
-      <!-- اللغات -->
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">اللغات <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'SUPERVISORS.FORM.LANGUAGES' | translate }} <span class="form-req">*</span></label>
           <div class="ss" [class.ss--disabled]="submitting()">
             <button type="button" class="ss__trigger" [disabled]="submitting()" (click)="toggleLangDrop()">
               <span [class.ss__placeholder]="!langTriggerLabel()">
-                {{ langTriggerLabel() || 'اختر اللغات' }}
+                {{ langTriggerLabel() || ('SUPERVISORS.FORM.SELECT_LANGUAGES' | translate) }}
               </span>
               <i class="pi pi-angle-down"></i>
             </button>
@@ -392,10 +385,9 @@
           </div>
         </div>
 
-        <!-- ملاحظات -->
         <div class="form-field">
-          <label class="form-label">ملاحظات</label>
-          <textarea class="form-input form-input--textarea" rows="3" placeholder="ملاحظات إضافية"
+          <label class="form-label">{{ 'SUPERVISORS.FORM.NOTES' | translate }}</label>
+          <textarea class="form-input form-input--textarea" rows="3" [placeholder]="'SUPERVISORS.FORM.NOTES_PLACEHOLDER' | translate"
             [value]="formData().notes" [disabled]="submitting()"
             (input)="patchForm({ notes: $any($event.target).value })"></textarea>
         </div>
@@ -408,13 +400,13 @@
     </div>
 
     <div class="dialog__footer">
-      <button class="btn btn--outline" (click)="closeModal()" [disabled]="submitting()">إلغاء</button>
+      <button class="btn btn--outline" (click)="closeModal()" [disabled]="submitting()">{{ 'COMMON.CANCEL' | translate }}</button>
       <button class="btn btn--primary" (click)="submitForm()" [disabled]="submitting() || !isFormValid()">
         @if (submitting()) {
-          <span class="btn-spinner"></span>{{ editingSupervisor() ? 'جاري الحفظ...' : 'جاري الإضافة...' }}
+          <span class="btn-spinner"></span>{{ (editingSupervisor() ? 'SUPERVISORS.FORM.SAVING' : 'SUPERVISORS.FORM.ADDING') | translate }}
         } @else {
           <i class="pi" [class.pi-save]="editingSupervisor()" [class.pi-user-plus]="!editingSupervisor()"></i>
-          {{ editingSupervisor() ? 'حفظ التعديلات' : 'إضافة المشرف' }}
+          {{ (editingSupervisor() ? 'SUPERVISORS.FORM.SAVE' : 'SUPERVISORS.FORM.ADD') | translate }}
         }
       </button>
     </div>

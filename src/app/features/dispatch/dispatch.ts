@@ -1,4 +1,5 @@
 ﻿import { HttpClient, HttpParams } from '@angular/common/http';
+import { TranslateModule } from '@ngx-translate/core';
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -66,7 +67,7 @@ const EMPTY_FORM: DispatchForm = {
 
 @Component({
   selector: 'app-dispatch',
-  imports: [FormsModule, ProgressSpinnerModule, DatePicker, DecimalPipe],
+  imports: [TranslateModule, FormsModule, ProgressSpinnerModule, DatePicker, DecimalPipe],
   templateUrl: './dispatch.html',
   styleUrl: './dispatch.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -80,9 +81,6 @@ export class Dispatch {
   private readonly toast = inject(MessageService);
   private readonly search$ = new Subject<string>();
   readonly pageSize = signal(10);
-
-  readonly title = 'إدارة التفويج والنقل';
-  readonly subtitle = 'جدولة الحافلات ومتابعة حركة التفويج بين المشاعر';
 
   readonly loading = signal(false);
   readonly searchQuery = signal('');
@@ -141,28 +139,23 @@ export class Dispatch {
     );
   });
 
-  readonly modalTitle = computed(() => this.editingSchedule() ? 'تعديل الرحلة' : 'إضافة رحلة جديدة');
-  readonly modalSubtitle = computed(() =>
-    this.editingSchedule() ? 'عدّل بيانات الرحلة داخل النظام' : 'أدخل بيانات الرحلة لجدولتها داخل النظام'
-  );
-
   readonly stats = computed(() => {
     const items = this.items();
     return [
       {
-        label: 'قادمة',
+        labelKey: 'DISPATCH.STATS.PENDING',
         value: items.filter((item) => item.status === 'pending').length,
         icon: 'pi-clock',
         tone: 'pending',
       },
       {
-        label: 'انطلقت',
+        labelKey: 'DISPATCH.STATS.ACTIVE',
         value: items.filter((item) => item.status === 'active').length,
         icon: 'pi-check-circle',
         tone: 'active',
       },
       {
-        label: 'وصلت الرحلات',
+        labelKey: 'DISPATCH.STATS.ARRIVED',
         value: items.filter((item) => item.status === 'arrived').length,
         icon: 'pi-car',
         tone: 'arrived',
@@ -203,9 +196,9 @@ export class Dispatch {
 
   statusLabel(status: TripStatus): string {
     return {
-      pending: 'قادمة',
-      active: 'انطلقت',
-      arrived: 'وصلت',
+      pending: 'DISPATCH.STATUS.PENDING',
+      active: 'DISPATCH.STATUS.ACTIVE',
+      arrived: 'DISPATCH.STATUS.ARRIVED',
     }[status];
   }
 
@@ -214,7 +207,7 @@ export class Dispatch {
   }
 
   campaignFilterLabel(): string {
-    return this.selectedCampaignName() || 'اختر مركز';
+    return this.selectedCampaignName() || 'DISPATCH.SELECT_CAMPAIGN';
   }
 
   onSearch(value: string): void {
