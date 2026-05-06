@@ -672,7 +672,29 @@
     "CENTERS": "المراكز",
     "PILGRIM_UNIT": "حاج",
     "GROUP_UNIT": "مجموعة",
-    "CENTER_NUMBER_LABEL": "رقم المركز"
+    "CENTER_NUMBER_LABEL": "رقم المركز",
+    "METER_UNIT": "م",
+    "ALERT_TYPE": {
+      "EXIT": "خروج",
+      "ENTER": "دخول"
+    },
+    "TOAST": {
+      "DELETED_SUMMARY": "نجاح",
+      "DELETED_DETAIL": "تم الحذف بنجاح",
+      "ERROR_SUMMARY": "خطأ",
+      "ERROR_DETAIL": "لم تنجح العملية",
+      "EDIT_SUCCESS": "تم تعديل المنطقة بنجاح",
+      "CREATE_SUCCESS": "تمت إضافة المنطقة بنجاح",
+      "CREATE_ERROR": "تعذرت إضافة المنطقة",
+      "MAP_NOT_READY": "الخريطة غير جاهزة بعد",
+      "LOAD_GROUP_ERROR": "تعذر عرض الحجاج على الخريطة"
+    },
+    "POPUP": {
+      "PILGRIMS_INSIDE": "الحجاج داخل المنطقة",
+      "OPACITY": "الشفافية",
+      "RADIUS": "نصف القطر: {{value}} متر",
+      "GROUP": "المجموعة"
+    }
   },
   "ACCOMMODATION": {
     "TITLE": "تحديث موقع السكن",

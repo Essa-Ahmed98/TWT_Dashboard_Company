@@ -672,7 +672,29 @@
     "CENTERS": "Centers",
     "PILGRIM_UNIT": "pilgrim",
     "GROUP_UNIT": "group",
-    "CENTER_NUMBER_LABEL": "Center number"
+    "CENTER_NUMBER_LABEL": "Center number",
+    "METER_UNIT": "m",
+    "ALERT_TYPE": {
+      "EXIT": "Exit",
+      "ENTER": "Entry"
+    },
+    "TOAST": {
+      "DELETED_SUMMARY": "Success",
+      "DELETED_DETAIL": "Zone deleted successfully",
+      "ERROR_SUMMARY": "Error",
+      "ERROR_DETAIL": "Operation failed",
+      "EDIT_SUCCESS": "Zone updated successfully",
+      "CREATE_SUCCESS": "Zone added successfully",
+      "CREATE_ERROR": "Failed to add zone",
+      "MAP_NOT_READY": "Map is not ready yet",
+      "LOAD_GROUP_ERROR": "Failed to show pilgrims on map"
+    },
+    "POPUP": {
+      "PILGRIMS_INSIDE": "Pilgrims inside the area",
+      "OPACITY": "Opacity",
+      "RADIUS": "Radius: {{value}} m",
+      "GROUP": "Group"
+    }
   },
   "ACCOMMODATION": {
     "TITLE": "Update Accommodation Location",

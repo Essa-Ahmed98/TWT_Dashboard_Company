@@ -672,7 +672,29 @@
     "CENTERS": "Centres",
     "PILGRIM_UNIT": "pèlerin",
     "GROUP_UNIT": "groupe",
-    "CENTER_NUMBER_LABEL": "Numéro du centre"
+    "CENTER_NUMBER_LABEL": "Numéro du centre",
+    "METER_UNIT": "m",
+    "ALERT_TYPE": {
+      "EXIT": "Sortie",
+      "ENTER": "Entrée"
+    },
+    "TOAST": {
+      "DELETED_SUMMARY": "Succès",
+      "DELETED_DETAIL": "Zone supprimée avec succès",
+      "ERROR_SUMMARY": "Erreur",
+      "ERROR_DETAIL": "Opération échouée",
+      "EDIT_SUCCESS": "Zone modifiée avec succès",
+      "CREATE_SUCCESS": "Zone ajoutée avec succès",
+      "CREATE_ERROR": "Impossible d'ajouter la zone",
+      "MAP_NOT_READY": "La carte n'est pas encore prête",
+      "LOAD_GROUP_ERROR": "Impossible d'afficher les pèlerins sur la carte"
+    },
+    "POPUP": {
+      "PILGRIMS_INSIDE": "Pèlerins dans la zone",
+      "OPACITY": "Opacité",
+      "RADIUS": "Rayon : {{value}} m",
+      "GROUP": "Groupe"
+    }
   },
   "ACCOMMODATION": {
     "TITLE": "Mise à Jour Hébergement",

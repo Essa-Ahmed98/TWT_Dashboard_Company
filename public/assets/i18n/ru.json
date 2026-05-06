@@ -672,7 +672,29 @@
     "CENTERS": "Центры",
     "PILGRIM_UNIT": "паломник",
     "GROUP_UNIT": "группа",
-    "CENTER_NUMBER_LABEL": "Номер центра"
+    "CENTER_NUMBER_LABEL": "Номер центра",
+    "METER_UNIT": "м",
+    "ALERT_TYPE": {
+      "EXIT": "Выход",
+      "ENTER": "Вход"
+    },
+    "TOAST": {
+      "DELETED_SUMMARY": "Успешно",
+      "DELETED_DETAIL": "Зона успешно удалена",
+      "ERROR_SUMMARY": "Ошибка",
+      "ERROR_DETAIL": "Операция не выполнена",
+      "EDIT_SUCCESS": "Зона успешно изменена",
+      "CREATE_SUCCESS": "Зона успешно добавлена",
+      "CREATE_ERROR": "Не удалось добавить зону",
+      "MAP_NOT_READY": "Карта ещё не готова",
+      "LOAD_GROUP_ERROR": "Не удалось отобразить паломников на карте"
+    },
+    "POPUP": {
+      "PILGRIMS_INSIDE": "Паломники в зоне",
+      "OPACITY": "Непрозрачность",
+      "RADIUS": "Радиус: {{value}} м",
+      "GROUP": "Группа"
+    }
   },
   "ACCOMMODATION": {
     "TITLE": "Обновить Место Размещения",

@@ -126,14 +126,14 @@
               <!-- Type Badge -->
               <div class="zone-card__badge">
                 <i class="pi pi-map-marker"></i>
-                {{ zone.type }}
+                {{ zoneTypeKey(zone.type) | translate }}
               </div>
 
               <!-- Stats -->
               <div class="zone-card__stats">
                 <span class="zone-card__stat">
                   <i class="pi pi-map-marker"></i>
-                  {{ zone.radius }}م
+                  {{ zone.radius }}{{ 'GEOFENCE.METER_UNIT' | translate }}
                 </span>
                 <span class="zone-card__stat">
                   <i class="pi pi-users"></i>
@@ -146,10 +146,10 @@
                 @if (zone.alertType) {
                   <span
                     class="zone-card__alert"
-                    [class.zone-card__alert--exit]="zone.alertType === 'خروج'"
-                    [class.zone-card__alert--enter]="zone.alertType === 'دخول'">
+                    [class.zone-card__alert--exit]="zone.alertType === 'exit'"
+                    [class.zone-card__alert--enter]="zone.alertType === 'enter'">
                     <i class="pi pi-bell"></i>
-                    {{ zone.alertType }}
+                    {{ alertTypeKey(zone.alertType) | translate }}
                   </span>
                 }
               </div>
@@ -375,7 +375,7 @@
             (change)="patchForm({ type: $any($event.target).value })"
           >
             @for (t of zoneTypes; track t) {
-              <option [value]="t">{{ t }}</option>
+              <option [value]="t">{{ zoneTypeKey(t) | translate }}</option>
             }
           </select>
         </div>

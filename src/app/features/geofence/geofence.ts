@@ -4,7 +4,7 @@
   ViewChild, ElementRef, AfterViewInit, OnDestroy, effect, OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { isPlatformBrowser, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
@@ -14,7 +14,7 @@ import { MessageService } from 'primeng/api';
 import {
   CampaignWithGroupsApiItem,
   GroupPilgrimMapApiItem,
-  ZONE_TYPES, GeofenceZone, ZoneType, CreateGeoZoneRequest, UpdateGeoZoneRequest, ZONE_TYPE_API_MAP, GeoZoneApiItem,
+  ZONE_TYPES, GeofenceZone, ZoneType, AlertType, CreateGeoZoneRequest, UpdateGeoZoneRequest, ZONE_TYPE_API_MAP, GeoZoneApiItem,
 } from './geofence.model';
 import { GeofenceService } from './geofence.service';
 
@@ -59,9 +59,10 @@ interface Campaign {
 export class Geofence implements AfterViewInit, OnDestroy, OnInit {
   @ViewChild('mapEl') mapEl!: ElementRef<HTMLDivElement>;
 
-  private readonly service = inject(GeofenceService);
+  private readonly service   = inject(GeofenceService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly toast = inject(MessageService);
+  private readonly toast      = inject(MessageService);
+  private readonly translate  = inject(TranslateService);
   private platformId = inject(PLATFORM_ID);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private leafletMap: any = null;
@@ -117,8 +118,8 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
 
   private readonly TYPE_FILTER_MAP: Record<string, ZoneType | null> = {
     all:    null,
-    sacred: 'مشعر مقدس',
-    camp:   'مخيم مركز',
+    sacred: 'sacred',
+    camp:   'camp',
   };
 
   private readonly LOCATION_COORDS: Record<string, [number, number]> = {
@@ -156,7 +157,7 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
   ];
 
   form = signal<AddZoneForm>({
-    name: '', type: 'مشعر مقدس', description: '',
+    name: '', type: 'sacred', description: '',
     lat: 21.3549, lng: 39.9842, radius: 500, opacity: 0.22, color: '#22c35d',
   });
 
@@ -206,9 +207,13 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
     return pages;
   });
 
-  modalTitle = computed(() =>
-    this.editingZoneId() !== null ? 'تعديل منطقة جغرافية' : 'إضافة منطقة جغرافية جديدة'
-  );
+  zoneTypeKey(type: ZoneType): string {
+    return type === 'sacred' ? 'GEOFENCE.SACRED_SITE' : 'GEOFENCE.CAMP_ZONE';
+  }
+
+  alertTypeKey(type: AlertType): string {
+    return type === 'exit' ? 'GEOFENCE.ALERT_TYPE.EXIT' : 'GEOFENCE.ALERT_TYPE.ENTER';
+  }
 
   formValid = computed(() => {
     const form = this.form();
@@ -444,14 +449,14 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
               this.selectedZoneId.set(null);
             }
             this.loadZones();
-            this.toast.add({ severity: 'success', summary: 'نجاح', detail: 'تم الحذف بنجاح' });
+            this.toast.add({ severity: 'success', summary: this.translate.instant('GEOFENCE.TOAST.DELETED_SUMMARY'), detail: this.translate.instant('GEOFENCE.TOAST.DELETED_DETAIL') });
           } else {
-            this.toast.add({ severity: 'error', summary: 'خطأ', detail: 'لم تنجح العملية' });
+            this.toast.add({ severity: 'error', summary: this.translate.instant('GEOFENCE.TOAST.ERROR_SUMMARY'), detail: this.translate.instant('GEOFENCE.TOAST.ERROR_DETAIL') });
           }
         },
         error: () => {
           this.deletingZoneId.set(null);
-          this.toast.add({ severity: 'error', summary: 'خطأ', detail: 'لم تنجح العملية' });
+          this.toast.add({ severity: 'error', summary: this.translate.instant('GEOFENCE.TOAST.ERROR_SUMMARY'), detail: this.translate.instant('GEOFENCE.TOAST.ERROR_DETAIL') });
         },
       });
   }
@@ -459,7 +464,7 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
   openModal(): void {
     this.editingZoneId.set(null);
     this.form.set({
-      name: '', type: 'مشعر مقدس', description: '',
+      name: '', type: 'sacred', description: '',
       lat: 21.3549, lng: 39.9842, radius: 500, opacity: 0.22, color: '#22c35d',
     });
     this.showModal.set(true);
@@ -483,7 +488,7 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
 
   startLocationSelection(): void {
     if (!this.leafletMap || !this.L) {
-      this.toast.add({ severity: 'error', summary: 'خطأ', detail: 'الخريطة غير جاهزة بعد' });
+      this.toast.add({ severity: 'error', summary: this.translate.instant('GEOFENCE.TOAST.ERROR_SUMMARY'), detail: this.translate.instant('GEOFENCE.TOAST.MAP_NOT_READY') });
       return;
     }
     this.showModal.set(false);
@@ -548,14 +553,14 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
             if (res.IsSuccess) {
               this.loadZones();
               this.closeModal();
-              this.toast.add({ severity: 'success', summary: 'نجاح', detail: 'تم تعديل المنطقة بنجاح' });
+              this.toast.add({ severity: 'success', summary: this.translate.instant('GEOFENCE.TOAST.DELETED_SUMMARY'), detail: this.translate.instant('GEOFENCE.TOAST.EDIT_SUCCESS') });
             } else {
-              this.toast.add({ severity: 'error', summary: 'خطأ', detail: 'لم تنجح العملية' });
+              this.toast.add({ severity: 'error', summary: this.translate.instant('GEOFENCE.TOAST.ERROR_SUMMARY'), detail: this.translate.instant('GEOFENCE.TOAST.ERROR_DETAIL') });
             }
           },
           error: () => {
             this.submitting.set(false);
-            this.toast.add({ severity: 'error', summary: 'خطأ', detail: 'لم تنجح العملية' });
+            this.toast.add({ severity: 'error', summary: this.translate.instant('GEOFENCE.TOAST.ERROR_SUMMARY'), detail: this.translate.instant('GEOFENCE.TOAST.ERROR_DETAIL') });
           },
         });
       return;
@@ -571,14 +576,14 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
           if (res.IsSuccess) {
             this.loadZones();
             this.closeModal();
-            this.toast.add({ severity: 'success', summary: 'نجاح', detail: 'تمت إضافة المنطقة بنجاح' });
+            this.toast.add({ severity: 'success', summary: this.translate.instant('GEOFENCE.TOAST.DELETED_SUMMARY'), detail: this.translate.instant('GEOFENCE.TOAST.CREATE_SUCCESS') });
           } else {
-            this.toast.add({ severity: 'error', summary: 'خطأ', detail: 'تعذرت إضافة المنطقة' });
+            this.toast.add({ severity: 'error', summary: this.translate.instant('GEOFENCE.TOAST.ERROR_SUMMARY'), detail: this.translate.instant('GEOFENCE.TOAST.CREATE_ERROR') });
           }
         },
         error: () => {
           this.submitting.set(false);
-          this.toast.add({ severity: 'error', summary: 'خطأ', detail: 'تعذرت إضافة المنطقة' });
+          this.toast.add({ severity: 'error', summary: this.translate.instant('GEOFENCE.TOAST.ERROR_SUMMARY'), detail: this.translate.instant('GEOFENCE.TOAST.CREATE_ERROR') });
         },
       });
   }
@@ -645,7 +650,7 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
     return {
       id: item.Id,
       name: item.Name,
-      type: item.GeofenceType === 0 ? 'مشعر مقدس' : 'مخيم مركز',
+      type: item.GeofenceType === 0 ? 'sacred' : 'camp',
       description: item.Description,
       lat: item.Latitude,
       lng: item.Longitude,
@@ -792,23 +797,24 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
   }
 
   private buildPopup(zone: GeofenceZone): string {
+    const t = this.translate;
     return `
       <div style="direction:rtl;font-family:inherit;min-width:200px;padding:2px 0">
         <div style="font-weight:700;color:#0b405b;font-size:.925rem;margin-bottom:2px">${zone.name}</div>
-        <div style="font-size:.78rem;color:#647b87;margin-bottom:8px">${zone.type}</div>
+        <div style="font-size:.78rem;color:#647b87;margin-bottom:8px">${t.instant(this.zoneTypeKey(zone.type))}</div>
         <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:4px">
-          <span style="color:#647b87">الحجاج داخل المنطقة</span>
+          <span style="color:#647b87">${t.instant('GEOFENCE.POPUP.PILGRIMS_INSIDE')}</span>
           <span style="font-weight:600;color:#0b405b">${zone.pilgrimsInside}</span>
         </div>
         <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:4px">
-          <span style="color:#647b87">Opacity</span>
+          <span style="color:#647b87">${t.instant('GEOFENCE.POPUP.OPACITY')}</span>
           <span style="font-weight:600;color:#0b405b">${Math.round(zone.opacity * 100)}%</span>
         </div>
         <div style="height:8px;background:#eef0f4;border-radius:100px;overflow:hidden">
           <div style="height:100%;width:${zone.opacity * 100}%;background:${zone.color};border-radius:100px"></div>
         </div>
         <div style="margin-top:8px;font-size:.78rem;color:#647b87">
-          نصف القطر: ${zone.radius} متر
+          ${t.instant('GEOFENCE.POPUP.RADIUS', { value: zone.radius })}
         </div>
       </div>`;
   }
@@ -898,7 +904,7 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
             return nextIds;
           });
           if (!this.isGroupVisible(group.id)) return;
-          this.toast.add({ severity: 'error', summary: 'خطأ', detail: 'تعذر عرض الحجاج على الخريطة' });
+          this.toast.add({ severity: 'error', summary: this.translate.instant('GEOFENCE.TOAST.ERROR_SUMMARY'), detail: this.translate.instant('GEOFENCE.TOAST.LOAD_GROUP_ERROR') });
         },
       });
   }
@@ -911,7 +917,7 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
     return `
       <div style="direction:rtl;font-family:inherit;min-width:180px">
         <div style="font-weight:700;color:#0b405b;margin-bottom:4px">${pilgrim.DisplayName}</div>
-        <div style="font-size:.8rem;color:#647b87;margin-bottom:4px">المجموعة: ${group.name}</div>
+        <div style="font-size:.8rem;color:#647b87;margin-bottom:4px">${this.translate.instant('GEOFENCE.POPUP.GROUP')}: ${group.name}</div>
       </div>`;
   }
 
