@@ -13,6 +13,7 @@ import { RitualsTab } from './tabs/rituals-tab/rituals-tab';
 import { FamilyTab } from './tabs/family-tab/family-tab';
 import { SupervisorsTab } from './tabs/supervisors-tab/supervisors-tab';
 import { RatingsTab } from './tabs/ratings-tab/ratings-tab';
+import { BagPathTab } from './tabs/bag-path-tab/bag-path-tab';
 
 interface PilgrimDetailState {
   loading: boolean;
@@ -26,7 +27,7 @@ const INITIAL_DETAIL_STATE: PilgrimDetailState = {
 
 @Component({
   selector: 'app-pilgrim-detail',
-  imports: [TranslateModule, PersonalTab, HealthTab, RitualsTab, FamilyTab, SupervisorsTab, RatingsTab],
+  imports: [TranslateModule, PersonalTab, HealthTab, RitualsTab, FamilyTab, SupervisorsTab, RatingsTab, BagPathTab],
   templateUrl: './pilgrim-detail.html',
   styleUrl: './pilgrim-detail.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,6 +55,7 @@ export class PilgrimDetail {
     { key: 'rituals', labelKey: 'PILGRIM_DETAIL.TABS.RITUALS', icon: 'pi pi-map-marker' },
     { key: 'family', labelKey: 'PILGRIM_DETAIL.TABS.FAMILY', icon: 'pi pi-users' },
     { key: 'ratings', labelKey: 'PILGRIM_DETAIL.TABS.RATINGS', icon: 'pi pi-star' },
+    { key: 'bag-path', labelKey: 'PILGRIM_DETAIL.TABS.BAG_PATH', icon: 'pi pi-briefcase' },
   ];
 
   readonly detailState = signal<PilgrimDetailState>(INITIAL_DETAIL_STATE);

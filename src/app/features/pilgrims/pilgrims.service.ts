@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { ApiResult, PaginatedResult } from '../../core/models/api.models';
-import { CreatePilgrimRequest, DrugApiItem, PilgrimApiItem, PilgrimDetailApiItem, PilgrimFamilyApiItem, PilgrimQrCodeApiItem, PilgrimRitualsApiItem, PilgrimsQuery, ReviewApiItem, UpdatePilgrimRequest } from './pilgrims.model';
+import { CreatePilgrimRequest, DrugApiItem, LuggageLocationHistoryApiData, PilgrimApiItem, PilgrimDetailApiItem, PilgrimFamilyApiItem, PilgrimQrCodeApiItem, PilgrimRitualsApiItem, PilgrimsQuery, ReviewApiItem, UpdatePilgrimRequest } from './pilgrims.model';
 
 @Injectable({ providedIn: 'root' })
 export class PilgrimsService {
@@ -40,6 +40,17 @@ export class PilgrimsService {
     });
 
     return this.http.post<ApiResult<PilgrimQrCodeApiItem>>(`${environment.apiBase}/Pilgrims/${id}/qrcode`, {}, { headers });
+  }
+
+  getLuggageQrCode(userId: string, language = 'ar'): Observable<Blob> {
+    const headers = new HttpHeaders({
+      'Accept-Language': language,
+    });
+
+    return this.http.get(`${environment.apiBase}/Luggage/qr-code/${userId}`, {
+      headers,
+      responseType: 'blob',
+    });
   }
 
   getPilgrimFamily(id: string): Observable<ApiResult<PilgrimFamilyApiItem[]>> {
@@ -111,6 +122,18 @@ export class PilgrimsService {
     });
   }
 
+  exportGroupLuggageExcel(groupId: string, language = 'ar'): Observable<HttpResponse<Blob>> {
+    const headers = new HttpHeaders({
+      'Accept-Language': language,
+    });
+
+    return this.http.get(`${environment.apiBase}/Luggage/export-group-excel/${groupId}`, {
+      headers,
+      responseType: 'blob',
+      observe: 'response',
+    });
+  }
+
   uploadPilgrimsFile(file: File, language = 'ar'): Observable<ApiResult<unknown> | { issuccess?: boolean; IsSuccess?: boolean }> {
     const formData = new FormData();
     formData.append('file', file);
@@ -123,6 +146,22 @@ export class PilgrimsService {
       `${environment.apiBase}/Pilgrims/upload`,
       formData,
       { headers },
+    );
+  }
+
+  getLuggageLocationHistory(
+    userId: string,
+    pageNumber = 1,
+    pageSize = 10,
+    language = 'ar',
+  ): Observable<ApiResult<LuggageLocationHistoryApiData>> {
+    const headers = new HttpHeaders({ 'Accept-Language': language });
+    const params = new HttpParams()
+      .set('pageNumber', String(pageNumber))
+      .set('pageSize', String(pageSize));
+    return this.http.get<ApiResult<LuggageLocationHistoryApiData>>(
+      `${environment.apiBase}/Luggage/location-history/${userId}`,
+      { headers, params },
     );
   }
 

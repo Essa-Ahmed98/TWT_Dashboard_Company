@@ -8,6 +8,7 @@ import { PilgrimsService } from '../pilgrims.service';
 import { PilgrimDetailData, STATUS_LABEL, pilgrimApiToDetailData } from '../pilgrim-detail/pilgrim-detail.model';
 import { PersonalTab } from '../pilgrim-detail/tabs/personal-tab/personal-tab';
 import { SupervisorsTab } from '../pilgrim-detail/tabs/supervisors-tab/supervisors-tab';
+import { BagPathTab } from '../pilgrim-detail/tabs/bag-path-tab/bag-path-tab';
 
 interface PilgrimProfileState {
   loading: boolean;
@@ -22,7 +23,7 @@ const INITIAL_PROFILE_STATE: PilgrimProfileState = {
 @Component({
   selector: 'app-pilgrim-profile',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslateModule, PersonalTab, SupervisorsTab],
+  imports: [TranslateModule, PersonalTab, SupervisorsTab, BagPathTab],
   templateUrl: './pilgrim-profile.html',
   styleUrl: './pilgrim-profile.scss',
 })
@@ -37,11 +38,12 @@ export class PilgrimProfile {
   readonly detailState = signal<PilgrimProfileState>(INITIAL_PROFILE_STATE);
   readonly pilgrim = computed(() => this.detailState().data);
   readonly showAccommodationLoading = signal(false);
-  readonly activeTab = signal<'personal' | 'supervisors'>('personal');
+  readonly activeTab = signal<'personal' | 'supervisors' | 'bag-path'>('personal');
 
-  readonly tabs: { key: 'personal' | 'supervisors'; labelKey: string; icon: string }[] = [
+  readonly tabs: { key: 'personal' | 'supervisors' | 'bag-path'; labelKey: string; icon: string }[] = [
     { key: 'personal', labelKey: 'PILGRIMS_PROFILE.PERSONAL_DATA', icon: 'pi pi-user' },
     { key: 'supervisors', labelKey: 'PILGRIMS_PROFILE.SUPERVISORS_DATA', icon: 'pi pi-user-edit' },
+    { key: 'bag-path', labelKey: 'PILGRIM_DETAIL.TABS.BAG_PATH', icon: 'pi pi-briefcase' },
   ];
 
   constructor() {

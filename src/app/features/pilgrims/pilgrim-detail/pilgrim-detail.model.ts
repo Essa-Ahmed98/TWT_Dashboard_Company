@@ -1,7 +1,7 @@
 ﻿import { BLOOD_TYPE_OPTIONS, PilgrimDetailApiItem } from '../pilgrims.model';
 
 export type PilgrimDetailStatus = 'safe' | 'warning' | 'danger';
-export type PilgrimTab = 'personal' | 'health' | 'rituals' | 'family' | 'supervisors' | 'ratings';
+export type PilgrimTab = 'personal' | 'health' | 'rituals' | 'family' | 'supervisors' | 'ratings' | 'bag-path';
 export type RitualStatus = 'done' | 'current' | 'pending';
 
 export interface PilgrimSupervisorData {

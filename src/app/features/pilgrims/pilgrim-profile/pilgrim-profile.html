@@ -84,6 +84,9 @@
         @case ('supervisors') {
           <app-supervisors-tab [pilgrim]="p" />
         }
+        @case ('bag-path') {
+          <app-bag-path-tab [userId]="p.userId" />
+        }
       }
     </div>
   </div>

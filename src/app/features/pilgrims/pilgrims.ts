@@ -103,6 +103,8 @@ export class Pilgrims implements OnInit {
   qrLoading = signal(false);
   qrCodeImage = signal<string | null>(null);
   qrPilgrimName = signal('');
+  qrDialogMode = signal<'pilgrim' | 'luggage'>('pilgrim');
+  private luggageQrObjectUrl: string | null = null;
 
   phoneTouched = signal(false);
 
@@ -141,6 +143,8 @@ export class Pilgrims implements OnInit {
   selectedQrDownloadGrpId = signal('');
   selectedQrDownloadGrpName = signal('');
   downloadingQrCodes = signal(false);
+  qrDownloadMode = signal<'qr' | 'luggage'>('qr');
+  downloadingLuggage = signal(false);
 
   campList = signal<CampaignApiItem[]>([]);
   campLoading = signal(false);
@@ -153,6 +157,8 @@ export class Pilgrims implements OnInit {
   selectedGrpName = signal('');
 
   constructor() {
+    this.destroyRef.onDestroy(() => this.revokeLuggageQrObjectUrl());
+
     toObservable(this.searchQuery)
       .pipe(debounceTime(400), skip(1), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.loadPilgrims(1));
@@ -188,6 +194,8 @@ export class Pilgrims implements OnInit {
   openQrCode(id: string, displayName: string): void {
     if (this.qrLoading()) return;
 
+    this.revokeLuggageQrObjectUrl();
+    this.qrDialogMode.set('pilgrim');
     this.qrPilgrimName.set(displayName);
     this.qrCodeImage.set(null);
     this.showQrDialog.set(true);
@@ -223,11 +231,69 @@ export class Pilgrims implements OnInit {
       });
   }
 
+  openLuggageQrCode(userId: string, displayName: string): void {
+    if (this.qrLoading()) return;
+
+    this.revokeLuggageQrObjectUrl();
+    this.qrDialogMode.set('luggage');
+    this.qrPilgrimName.set(displayName);
+    this.qrCodeImage.set(null);
+    this.showQrDialog.set(true);
+    this.qrLoading.set(true);
+
+    this.service.getLuggageQrCode(userId, this.currentLanguage())
+      .pipe(finalize(() => this.qrLoading.set(false)), takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: blob => {
+          if (blob.size > 0) {
+            this.luggageQrObjectUrl = URL.createObjectURL(blob);
+            this.qrCodeImage.set(this.luggageQrObjectUrl);
+            return;
+          }
+
+          this.showQrDialog.set(false);
+          this.toast.add({
+            severity: 'warn',
+            summary: this.translate.instant('COMMON.WARNING'),
+            detail: this.translate.instant('PILGRIMS.LUGGAGE_QR.NOT_FOUND'),
+          });
+        },
+        error: err => {
+          this.showQrDialog.set(false);
+          this.toast.add({
+            severity: 'error',
+            summary: this.translate.instant('COMMON.ERROR'),
+            detail: err?.status === 404
+              ? this.translate.instant('PILGRIMS.LUGGAGE_QR.NOT_FOUND')
+              : this.translate.instant('PILGRIMS.LUGGAGE_QR.ERROR'),
+          });
+        },
+      });
+  }
+
   closeQrDialog(): void {
     if (this.qrLoading()) return;
     this.showQrDialog.set(false);
     this.qrCodeImage.set(null);
     this.qrPilgrimName.set('');
+    this.qrDialogMode.set('pilgrim');
+    this.revokeLuggageQrObjectUrl();
+  }
+
+  handleLuggageQrImageError(): void {
+    this.qrCodeImage.set(null);
+    this.revokeLuggageQrObjectUrl();
+    this.toast.add({
+      severity: 'error',
+      summary: this.translate.instant('COMMON.ERROR'),
+      detail: this.translate.instant('PILGRIMS.LUGGAGE_QR.ERROR'),
+    });
+  }
+
+  private revokeLuggageQrObjectUrl(): void {
+    if (!this.luggageQrObjectUrl) return;
+    URL.revokeObjectURL(this.luggageQrObjectUrl);
+    this.luggageQrObjectUrl = null;
   }
 
   goToPage(p: number): void {
@@ -352,7 +418,18 @@ export class Pilgrims implements OnInit {
   }
 
   openQrDownloadModal(): void {
+    this.qrDownloadMode.set('qr');
+    this.resetQrDownloadModalState();
     this.showQrDownloadModal.set(true);
+  }
+
+  openLuggageDownloadModal(): void {
+    this.qrDownloadMode.set('luggage');
+    this.resetQrDownloadModalState();
+    this.showQrDownloadModal.set(true);
+  }
+
+  private resetQrDownloadModalState(): void {
     this.qrDownloadCampList.set([]);
     this.qrDownloadGrpList.set([]);
     this.qrDownloadCampLoading.set(false);
@@ -371,7 +448,7 @@ export class Pilgrims implements OnInit {
   }
 
   closeQrDownloadModal(): void {
-    if (this.downloadingQrCodes()) return;
+    if (this.downloadingQrCodes() || this.downloadingLuggage()) return;
     this.showQrDownloadModal.set(false);
   }
 
@@ -755,6 +832,64 @@ export class Pilgrims implements OnInit {
           });
         },
       });
+  }
+
+  downloadPilgrimsLuggage(): void {
+    if (!this.selectedQrDownloadGrpId()) {
+      this.toast.add({
+        severity: 'warn',
+        summary: this.translate.instant('COMMON.WARNING'),
+        detail: this.translate.instant('PILGRIMS.LUGGAGE_DOWNLOAD.ERROR'),
+      });
+      return;
+    }
+
+    this.downloadingLuggage.set(true);
+
+    this.service.exportGroupLuggageExcel(this.selectedQrDownloadGrpId(), this.currentLanguage())
+      .pipe(finalize(() => this.downloadingLuggage.set(false)), takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: response => {
+          const blob = response.body;
+          if (!blob) {
+            this.toast.add({
+              severity: 'error',
+              summary: this.translate.instant('COMMON.ERROR'),
+              detail: this.translate.instant('PILGRIMS.LUGGAGE_DOWNLOAD.ERROR'),
+            });
+            return;
+          }
+
+          const fileName = this.extractFileName(response.headers.get('content-disposition'))
+            || 'pilgrims-luggage.xlsx';
+
+          const url = window.URL.createObjectURL(blob);
+          const anchor = document.createElement('a');
+          anchor.href = url;
+          anchor.download = fileName;
+          anchor.click();
+          anchor.remove();
+          window.URL.revokeObjectURL(url);
+          this.showQrDownloadModal.set(false);
+          this.toast.add({
+            severity: 'success',
+            summary: this.translate.instant('COMMON.SUCCESS'),
+            detail: this.translate.instant('PILGRIMS.LUGGAGE_DOWNLOAD.SUCCESS'),
+          });
+        },
+        error: () => {
+          this.toast.add({
+            severity: 'error',
+            summary: this.translate.instant('COMMON.ERROR'),
+            detail: this.translate.instant('PILGRIMS.LUGGAGE_DOWNLOAD.ERROR'),
+          });
+        },
+      });
+  }
+
+  private currentLanguage(): string {
+    const lang = this.translate.currentLang || this.translate.defaultLang || 'ar';
+    return ['ar', 'en', 'fr', 'ru'].includes(lang) ? lang : 'ar';
   }
 
   private extractFileName(contentDisposition: string | null): string | null {

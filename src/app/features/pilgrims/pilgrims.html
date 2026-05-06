@@ -18,6 +18,9 @@
       <button class="btn btn--ghost" (click)="openQrDownloadModal()">
         <i class="pi pi-qrcode"></i><span>{{ 'PILGRIMS.DOWNLOAD_QR' | translate }}</span>
       </button>
+      <button class="btn btn--ghost" (click)="openLuggageDownloadModal()">
+        <i class="pi pi-qrcode"></i><span>{{ 'PILGRIMS.ACTIONS.DOWNLOAD_LUGGAGE' | translate }}</span>
+      </button>
       <button class="btn btn--ghost" (click)="openImportModal()">
         <i class="pi pi-file-excel"></i><span>{{ 'PILGRIMS.IMPORT_EXCEL' | translate }}</span>
       </button>
@@ -110,6 +113,9 @@
                 <button class="row-actions__btn" [title]="'PILGRIMS.VIEW_QR' | translate" (click)="openQrCode(p.Id, p.DisplayName)">
                   <i class="pi pi-qrcode"></i>
                 </button>
+                <button class="row-actions__btn" [title]="'PILGRIMS.ACTIONS.VIEW_LUGGAGE_QR' | translate" (click)="openLuggageQrCode(p.UserId, p.DisplayName)">
+                  <i class="pi pi-briefcase"></i>
+                </button>
                 <button class="row-actions__btn" [title]="'PILGRIMS.OPEN_CHAT' | translate" (click)="openChat(p.UserId, p.DisplayName)">
                   <i class="pi pi-comment"></i>
                 </button>
@@ -162,7 +168,7 @@
   <div class="dialog dialog--qr" (click)="$event.stopPropagation()">
     <div class="dialog__header">
       <div>
-        <h2 class="dialog__title">{{ 'PILGRIMS.QR.TITLE' | translate }}</h2>
+        <h2 class="dialog__title">{{ (qrDialogMode() === 'luggage' ? 'PILGRIMS.LUGGAGE_QR.TITLE' : 'PILGRIMS.QR.TITLE') | translate }}</h2>
         <p class="dialog__sub">{{ qrPilgrimName() }}</p>
       </div>
       <button class="dialog__close" (click)="closeQrDialog()" [disabled]="qrLoading()">
@@ -174,21 +180,25 @@
       @if (qrLoading()) {
         <div class="qr-dialog__state">
           <span class="pilgrims__spinner"></span>
-          <p>{{ 'PILGRIMS.QR.LOADING' | translate }}</p>
+          <p>{{ (qrDialogMode() === 'luggage' ? 'PILGRIMS.LUGGAGE_QR.LOADING' : 'PILGRIMS.QR.LOADING') | translate }}</p>
         </div>
       } @else if (qrCodeImage(); as image) {
         <div class="qr-dialog">
           <div class="qr-dialog__content">
             <div class="qr-dialog__image-wrap">
-              <img class="qr-dialog__image" [src]="image" alt="Pilgrim QR Code" />
+              <img
+                class="qr-dialog__image"
+                [src]="image"
+                [alt]="(qrDialogMode() === 'luggage' ? 'PILGRIMS.LUGGAGE_QR.TITLE' : 'PILGRIMS.QR.TITLE') | translate"
+                (error)="qrDialogMode() === 'luggage' && handleLuggageQrImageError()" />
             </div>
-            <p class="qr-dialog__hint">{{ 'PILGRIMS.QR.HINT' | translate }}</p>
+            <p class="qr-dialog__hint">{{ (qrDialogMode() === 'luggage' ? 'PILGRIMS.LUGGAGE_QR.DESCRIPTION' : 'PILGRIMS.QR.HINT') | translate }}</p>
           </div>
         </div>
       } @else {
         <div class="qr-dialog__state">
           <i class="pi pi-exclamation-circle"></i>
-          <p>{{ 'PILGRIMS.QR.NO_IMAGE' | translate }}</p>
+          <p>{{ (qrDialogMode() === 'luggage' ? 'PILGRIMS.LUGGAGE_QR.NOT_FOUND' : 'PILGRIMS.QR.NO_IMAGE') | translate }}</p>
         </div>
       }
     </div>
@@ -199,10 +209,10 @@
   <div class="dialog dialog--import" (click)="$event.stopPropagation()">
     <div class="dialog__header">
       <div>
-        <h2 class="dialog__title">{{ 'PILGRIMS.QR_DOWNLOAD.TITLE' | translate }}</h2>
-        <p class="dialog__sub">{{ 'PILGRIMS.QR_DOWNLOAD.SUBTITLE' | translate }}</p>
+        <h2 class="dialog__title">{{ (qrDownloadMode() === 'luggage' ? 'PILGRIMS.LUGGAGE_DOWNLOAD.TITLE' : 'PILGRIMS.QR_DOWNLOAD.TITLE') | translate }}</h2>
+        <p class="dialog__sub">{{ (qrDownloadMode() === 'luggage' ? 'PILGRIMS.LUGGAGE_DOWNLOAD.DESCRIPTION' : 'PILGRIMS.QR_DOWNLOAD.SUBTITLE') | translate }}</p>
       </div>
-      <button class="dialog__close" (click)="closeQrDownloadModal()" [disabled]="downloadingQrCodes()">
+      <button class="dialog__close" (click)="closeQrDownloadModal()" [disabled]="downloadingQrCodes() || downloadingLuggage()">
         <i class="pi pi-times"></i>
       </button>
     </div>
@@ -214,7 +224,7 @@
           <div class="ss">
             <button type="button" class="ss__trigger" (click)="toggleQrDownloadCampDrop()">
               <span [class.ss__placeholder]="!selectedQrDownloadCampName()">
-                {{ selectedQrDownloadCampName() || ('PILGRIMS.QR_DOWNLOAD.SELECT_CENTER' | translate) }}
+                {{ selectedQrDownloadCampName() || ((qrDownloadMode() === 'luggage' ? 'COMMON.SELECT_CENTER' : 'PILGRIMS.QR_DOWNLOAD.SELECT_CENTER') | translate) }}
               </span>
               @if (selectedQrDownloadCampName()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearQrDownloadCamp()"></i>
@@ -249,7 +259,7 @@
               [disabled]="!selectedQrDownloadCampId()"
               (click)="toggleQrDownloadGrpDrop()">
               <span [class.ss__placeholder]="!selectedQrDownloadGrpName()">
-                {{ selectedQrDownloadGrpName() || (selectedQrDownloadCampId() ? ('PILGRIMS.QR_DOWNLOAD.SELECT_GROUP' | translate) : ('PILGRIMS.QR_DOWNLOAD.SELECT_CENTER_FIRST' | translate)) }}
+                {{ selectedQrDownloadGrpName() || (selectedQrDownloadCampId() ? ((qrDownloadMode() === 'luggage' ? 'COMMON.SELECT_GROUP' : 'PILGRIMS.QR_DOWNLOAD.SELECT_GROUP') | translate) : ((qrDownloadMode() === 'luggage' ? 'COMMON.SELECT_CENTER_FIRST' : 'PILGRIMS.QR_DOWNLOAD.SELECT_CENTER_FIRST') | translate)) }}
               </span>
               @if (selectedQrDownloadGrpName()) {
                 <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearQrDownloadGrp()"></i>
@@ -282,19 +292,19 @@
         <div class="import-card__head">
           <div class="import-card__icon"><i class="pi pi-info-circle"></i></div>
           <div>
-            <h3 class="import-card__title">{{ 'PILGRIMS.QR_DOWNLOAD.INFO_TITLE' | translate }}</h3>
-            <p class="import-card__text">{{ 'PILGRIMS.QR_DOWNLOAD.INFO_TEXT' | translate }}</p>
+            <h3 class="import-card__title">{{ (qrDownloadMode() === 'luggage' ? 'PILGRIMS.LUGGAGE_DOWNLOAD.FILE_TITLE' : 'PILGRIMS.QR_DOWNLOAD.INFO_TITLE') | translate }}</h3>
+            <p class="import-card__text">{{ (qrDownloadMode() === 'luggage' ? 'PILGRIMS.LUGGAGE_DOWNLOAD.FILE_DESCRIPTION' : 'PILGRIMS.QR_DOWNLOAD.INFO_TEXT') | translate }}</p>
           </div>
         </div>
         <button type="button" class="btn import-card__action"
-          [disabled]="downloadingQrCodes() || !selectedQrDownloadCampId() || !selectedQrDownloadGrpId()"
-          (click)="downloadPilgrimsQrCodes()">
-          @if (downloadingQrCodes()) {
+          [disabled]="downloadingQrCodes() || downloadingLuggage() || !selectedQrDownloadCampId() || !selectedQrDownloadGrpId()"
+          (click)="qrDownloadMode() === 'luggage' ? downloadPilgrimsLuggage() : downloadPilgrimsQrCodes()">
+          @if (downloadingQrCodes() || downloadingLuggage()) {
             <span class="btn-spinner import-card__spinner"></span>
             <span>{{ 'PILGRIMS.QR_DOWNLOAD.DOWNLOADING' | translate }}</span>
           } @else {
             <i class="pi pi-download"></i>
-            <span>{{ 'PILGRIMS.QR_DOWNLOAD.DOWNLOAD_BTN' | translate }}</span>
+            <span>{{ (qrDownloadMode() === 'luggage' ? 'PILGRIMS.LUGGAGE_DOWNLOAD.DOWNLOAD_BUTTON' : 'PILGRIMS.QR_DOWNLOAD.DOWNLOAD_BTN') | translate }}</span>
           }
         </button>
       </section>

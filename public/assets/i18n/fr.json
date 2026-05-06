@@ -10,6 +10,9 @@
     "IMPORT": "Importer",
     "UPLOAD": "Téléverser",
     "DOWNLOAD": "Télécharger",
+    "SELECT_CENTER": "Sélectionner le centre",
+    "SELECT_GROUP": "Sélectionner le groupe",
+    "SELECT_CENTER_FIRST": "Sélectionnez d'abord le centre",
     "LOADING": "Chargement...",
     "NO_RESULTS": "Aucun résultat",
     "ACTIONS": "Actions",
@@ -167,6 +170,10 @@
     "IMPORT_EXCEL": "Importer depuis Excel",
     "EXPORT": "Exporter",
     "DOWNLOAD_QR": "Télécharger QR Codes",
+    "ACTIONS": {
+      "DOWNLOAD_LUGGAGE": "Télécharger les bagages des pèlerins",
+      "VIEW_LUGGAGE_QR": "Voir le QR code du bagage"
+    },
     "SEARCH_PLACEHOLDER": "Rechercher par nom ou passeport...",
     "LOADING": "Chargement...",
     "EMPTY": "Aucun résultat",
@@ -204,6 +211,22 @@
       "INFO_TEXT": "Un fichier contenant les QR codes de tous les pèlerins du centre et groupe sélectionnés sera téléchargé.",
       "DOWNLOAD_BTN": "Télécharger Fichier QR Codes",
       "DOWNLOADING": "Téléchargement..."
+    },
+    "LUGGAGE_QR": {
+      "TITLE": "QR code du bagage",
+      "DESCRIPTION": "Veuillez scanner le code avec l’application appareil photo ou un lecteur QR.",
+      "LOADING": "Chargement du QR code du bagage...",
+      "ERROR": "Échec du chargement du QR code du bagage",
+      "NOT_FOUND": "QR code du bagage introuvable"
+    },
+    "LUGGAGE_DOWNLOAD": {
+      "TITLE": "Télécharger les bagages des pèlerins",
+      "DESCRIPTION": "Sélectionnez le centre et le groupe pour télécharger un fichier Excel contenant les données des bagages des pèlerins pour le centre et le groupe sélectionnés.",
+      "FILE_TITLE": "Télécharger le fichier des bagages",
+      "FILE_DESCRIPTION": "Un fichier Excel contenant les données des bagages des pèlerins pour le centre et le groupe sélectionnés sera téléchargé.",
+      "DOWNLOAD_BUTTON": "Télécharger le fichier Excel",
+      "SUCCESS": "Le fichier des bagages des pèlerins a été téléchargé avec succès",
+      "ERROR": "Échec du téléchargement du fichier des bagages des pèlerins"
     },
     "IMPORT": {
       "TITLE": "Importer Pèlerins depuis Excel",
@@ -910,13 +933,20 @@
     "EDIT_SUCCESS_DETAIL": "Données du pèlerin mises à jour avec succès",
     "EDIT_ERROR_DETAIL": "Impossible de mettre à jour les données du pèlerin",
     "EDIT_EXCEPTION_DETAIL": "Une erreur est survenue lors de la mise à jour des données du pèlerin",
+    "BAG_PATH": {
+      "TITLE": "Suivi du trajet du bagage du pèlerin",
+      "LOADING": "Chargement du trajet du bagage...",
+      "NO_DATA": "Aucune donnée disponible pour le trajet du bagage",
+      "ERROR": "Échec du chargement du trajet du bagage"
+    },
     "TABS": {
       "PERSONAL": "Données personnelles",
       "SUPERVISORS": "Superviseurs",
       "HEALTH": "Santé et médicaments",
       "RITUALS": "Rituels",
       "FAMILY": "Famille",
-      "RATINGS": "Évaluations"
+      "RATINGS": "Évaluations",
+      "BAG_PATH": "Trajet du bagage"
     },
     "LOG": {
       "ACTIVITY_LOG": "Journal d’activité"

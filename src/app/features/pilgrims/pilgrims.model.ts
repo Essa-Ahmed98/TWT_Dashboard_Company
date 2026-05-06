@@ -228,3 +228,25 @@ export interface PilgrimsQuery {
   PageNumber?: number;
   PageSize?:   number;
 }
+
+export interface LuggageLocationItemApiItem {
+  Id:         string;
+  Latitude:   number;
+  Longitude:  number;
+  Timestamp:  string;
+  RecordedAt: string;
+}
+
+export interface LuggageLocationHistoryApiData {
+  UserId:    string;
+  LuggageId: string;
+  Locations: {
+    Items:       LuggageLocationItemApiItem[];
+    TotalCount:  number;
+    PageSize:    number;
+    CurrentPage: number;
+    TotalPages:  number;
+    HasPrevious: boolean;
+    HasNext:     boolean;
+  };
+}

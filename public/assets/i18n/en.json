@@ -10,6 +10,9 @@
     "IMPORT": "Import",
     "UPLOAD": "Upload",
     "DOWNLOAD": "Download",
+    "SELECT_CENTER": "Select Center",
+    "SELECT_GROUP": "Select Group",
+    "SELECT_CENTER_FIRST": "Select center first",
     "LOADING": "Loading...",
     "NO_RESULTS": "No results",
     "ACTIONS": "Actions",
@@ -167,6 +170,10 @@
     "IMPORT_EXCEL": "Import from Excel",
     "EXPORT": "Export",
     "DOWNLOAD_QR": "Download QR Codes",
+    "ACTIONS": {
+      "DOWNLOAD_LUGGAGE": "Download Pilgrims Luggage",
+      "VIEW_LUGGAGE_QR": "View Luggage QR Code"
+    },
     "SEARCH_PLACEHOLDER": "Search by name or passport...",
     "LOADING": "Loading...",
     "EMPTY": "No results",
@@ -204,6 +211,22 @@
       "INFO_TEXT": "A file containing QR codes for all pilgrims in the selected center and group will be downloaded.",
       "DOWNLOAD_BTN": "Download QR Codes File",
       "DOWNLOADING": "Downloading file..."
+    },
+    "LUGGAGE_QR": {
+      "TITLE": "Luggage QR Code",
+      "DESCRIPTION": "Please scan the code using the camera app or a QR reader.",
+      "LOADING": "Loading luggage QR code...",
+      "ERROR": "Failed to load luggage QR code",
+      "NOT_FOUND": "Luggage QR code was not found"
+    },
+    "LUGGAGE_DOWNLOAD": {
+      "TITLE": "Download Pilgrims Luggage",
+      "DESCRIPTION": "Select the center and group to download an Excel file containing pilgrims luggage data for the selected center and group.",
+      "FILE_TITLE": "Download Luggage File",
+      "FILE_DESCRIPTION": "An Excel file containing pilgrims luggage data for the selected center and group will be downloaded.",
+      "DOWNLOAD_BUTTON": "Download Excel File",
+      "SUCCESS": "Pilgrims luggage file downloaded successfully",
+      "ERROR": "Failed to download pilgrims luggage file"
     },
     "IMPORT": {
       "TITLE": "Import Pilgrims from Excel",
@@ -910,13 +933,20 @@
     "EDIT_SUCCESS_DETAIL": "Pilgrim data updated successfully",
     "EDIT_ERROR_DETAIL": "Unable to update pilgrim data",
     "EDIT_EXCEPTION_DETAIL": "An error occurred while updating pilgrim data",
+    "BAG_PATH": {
+      "TITLE": "Track Pilgrim Bag Real Path",
+      "LOADING": "Loading bag path...",
+      "NO_DATA": "No bag path data available",
+      "ERROR": "Failed to load bag path data"
+    },
     "TABS": {
       "PERSONAL": "Personal data",
       "SUPERVISORS": "Supervisors",
       "HEALTH": "Health and medications",
       "RITUALS": "Rituals",
       "FAMILY": "Family",
-      "RATINGS": "Ratings"
+      "RATINGS": "Ratings",
+      "BAG_PATH": "Bag Real Path"
     },
     "LOG": {
       "ACTIVITY_LOG": "Activity log"
