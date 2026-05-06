@@ -29,18 +29,28 @@ $card-shadow: 0 4px 24px -4px hsla(200, 79%, 20%, .1);
   }
 }
 
-.bpt__map {
+.bpt__map-shell {
+  position: relative;
   height: 22rem;
+  width: 100%;
+  overflow: hidden;
+}
+
+.bpt__map {
+  height: 100%;
   width: 100%;
 }
 
 .bpt__state {
-  height: 22rem;
+  position: absolute;
+  inset: 0;
+  z-index: 500;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: .75rem;
+  background: rgb(255 255 255 / .82);
   color: #647b87;
 
   i { font-size: 2rem; color: $primary; }
@@ -48,5 +58,38 @@ $card-shadow: 0 4px 24px -4px hsla(200, 79%, 20%, .1);
 
   &--error {
     i { color: #e53935; }
+  }
+}
+
+.bpt__empty-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 450;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(255 255 255 / .78);
+  pointer-events: none;
+}
+
+.bpt__empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .55rem;
+  color: $primary;
+  text-align: center;
+
+  i {
+    font-size: 2rem;
+    line-height: 1;
+    color: $primary;
+  }
+
+  p {
+    margin: 0;
+    font-size: .9375rem;
+    font-weight: 600;
   }
 }

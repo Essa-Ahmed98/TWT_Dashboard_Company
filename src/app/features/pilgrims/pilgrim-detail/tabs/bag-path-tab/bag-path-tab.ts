@@ -47,6 +47,7 @@ export class BagPathTab implements AfterViewInit, OnDestroy {
 
   readonly loading = signal(true);
   readonly error = signal(false);
+  readonly hasValidPathPoints = signal(false);
   readonly points = signal<BagLocationPoint[]>([]);
 
   ngAfterViewInit(): void {
@@ -62,6 +63,7 @@ export class BagPathTab implements AfterViewInit, OnDestroy {
     const lang = this.translate.currentLang || 'ar';
     this.loading.set(true);
     this.error.set(false);
+    this.hasValidPathPoints.set(false);
 
     this.service
       .getLuggageLocationHistory(this.userId(), 1, 10, lang)
@@ -85,7 +87,7 @@ export class BagPathTab implements AfterViewInit, OnDestroy {
               timestamp: item.Timestamp,
               recordedAt: item.RecordedAt,
             }))
-            .filter(p => isFinite(p.latitude) && isFinite(p.longitude) && (p.latitude !== 0 || p.longitude !== 0))
+            .filter(p => this.isValidCoordinate(p.latitude, p.longitude))
             .sort((a, b) =>
               new Date(a.recordedAt || a.timestamp).getTime() -
               new Date(b.recordedAt || b.timestamp).getTime(),
@@ -93,17 +95,28 @@ export class BagPathTab implements AfterViewInit, OnDestroy {
             .map((p, i) => ({ ...p, order: i + 1 }));
 
           this.points.set(pts);
+          this.hasValidPathPoints.set(pts.length > 0);
 
-          if (pts.length > 0) {
-            // Allow Angular to render the map container before initialising Leaflet
-            setTimeout(() => void this.initMap(pts), 50);
-          }
+          // Allow Angular to render the map container before initialising Leaflet
+          setTimeout(() => void this.initMap(pts), 50);
         },
         error: () => {
           this.loading.set(false);
           this.error.set(true);
+          this.points.set([]);
+          this.hasValidPathPoints.set(false);
         },
       });
+  }
+
+  private isValidCoordinate(latitude: number, longitude: number): boolean {
+    return Number.isFinite(latitude)
+      && Number.isFinite(longitude)
+      && latitude >= -90
+      && latitude <= 90
+      && longitude >= -180
+      && longitude <= 180
+      && (latitude !== 0 || longitude !== 0);
   }
 
   private async initMap(pts: BagLocationPoint[]): Promise<void> {
@@ -132,6 +145,13 @@ export class BagPathTab implements AfterViewInit, OnDestroy {
       maxZoom:     19,
       attribution: '© OpenStreetMap',
     }).addTo(map);
+
+    if (pts.length === 0) {
+      map.setView([21.4225, 39.8262], 12);
+      this.leafletMap = map;
+      setTimeout(() => map.invalidateSize(), 150);
+      return;
+    }
 
     pts.forEach(pt => {
       const icon = L.divIcon({

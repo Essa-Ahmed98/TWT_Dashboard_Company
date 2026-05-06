@@ -937,6 +937,7 @@
       "TITLE": "Track Pilgrim Bag Real Path",
       "LOADING": "Loading bag path...",
       "NO_DATA": "No bag path data available",
+      "EMPTY_TRACKING_POINTS": "No bag tracking points",
       "ERROR": "Failed to load bag path data"
     },
     "TABS": {

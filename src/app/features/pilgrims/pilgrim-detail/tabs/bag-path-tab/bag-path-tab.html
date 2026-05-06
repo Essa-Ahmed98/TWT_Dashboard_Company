@@ -5,23 +5,27 @@
       {{ 'PILGRIM_DETAIL.BAG_PATH.TITLE' | translate }}
     </div>
 
-    @if (loading()) {
-      <div class="bpt__state">
-        <i class="pi pi-spin pi-spinner"></i>
-        <p>{{ 'PILGRIM_DETAIL.BAG_PATH.LOADING' | translate }}</p>
-      </div>
-    } @else if (error()) {
-      <div class="bpt__state bpt__state--error">
-        <i class="pi pi-exclamation-circle"></i>
-        <p>{{ 'PILGRIM_DETAIL.BAG_PATH.ERROR' | translate }}</p>
-      </div>
-    } @else if (points().length === 0) {
-      <div class="bpt__state">
-        <i class="pi pi-map"></i>
-        <p>{{ 'PILGRIM_DETAIL.BAG_PATH.NO_DATA' | translate }}</p>
-      </div>
-    } @else {
+    <div class="bpt__map-shell">
       <div #bagMapEl class="bpt__map"></div>
-    }
+
+      @if (loading()) {
+        <div class="bpt__state">
+          <i class="pi pi-spin pi-spinner"></i>
+          <p>{{ 'PILGRIM_DETAIL.BAG_PATH.LOADING' | translate }}</p>
+        </div>
+      } @else if (error()) {
+        <div class="bpt__state bpt__state--error">
+          <i class="pi pi-exclamation-circle"></i>
+          <p>{{ 'PILGRIM_DETAIL.BAG_PATH.ERROR' | translate }}</p>
+        </div>
+      } @else if (!hasValidPathPoints()) {
+        <div class="bpt__empty-overlay">
+          <div class="bpt__empty-content">
+            <i class="pi pi-map"></i>
+            <p>{{ 'PILGRIM_DETAIL.BAG_PATH.EMPTY_TRACKING_POINTS' | translate }}</p>
+          </div>
+        </div>
+      }
+    </div>
   </div>
 </div>

@@ -937,6 +937,7 @@
       "TITLE": "Suivi du trajet du bagage du pèlerin",
       "LOADING": "Chargement du trajet du bagage...",
       "NO_DATA": "Aucune donnée disponible pour le trajet du bagage",
+      "EMPTY_TRACKING_POINTS": "Aucun point de suivi du bagage",
       "ERROR": "Échec du chargement du trajet du bagage"
     },
     "TABS": {
