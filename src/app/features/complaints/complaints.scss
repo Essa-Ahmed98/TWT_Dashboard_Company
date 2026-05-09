@@ -50,10 +50,14 @@ $text-muted: #6c7a89;
 
   &__stats {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 14px;
 
-    @media (max-width: 760px) {
+    @media (max-width: 900px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 480px) {
       grid-template-columns: 1fr;
     }
   }
@@ -63,43 +67,6 @@ $text-muted: #6c7a89;
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
-  }
-
-  &__search {
-    position: relative;
-    flex: 1;
-    min-width: 260px;
-  }
-
-  &__search-icon {
-    position: absolute;
-    inset-inline-end: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: $text-muted;
-    font-size: 13px;
-    pointer-events: none;
-  }
-
-  &__search-input {
-    width: 100%;
-    height: 38px;
-    border: 1px solid $border;
-    border-radius: 12px;
-    padding: 0 40px 0 14px;
-    background: transparent;
-    color: $text-main;
-    font-family: inherit;
-    font-size: 13.5px;
-    outline: none;
-    transition: border-color .18s ease, box-shadow .18s ease;
-
-    &::placeholder { color: $text-muted; }
-
-    &:focus {
-      border-color: rgba($primary, .55);
-      box-shadow: 0 0 0 3px rgba($primary, .08);
-    }
   }
 
   &__spinner {
@@ -122,7 +89,24 @@ $text-muted: #6c7a89;
 .panel {
   background: $bg-white;
   border: 1px solid $border;
+  border-radius: 16px;
   box-shadow: 0 10px 32px rgba(11, 64, 91, .05);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 20px;
+    border-bottom: 1px solid $border;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 18px;
+    color: $primary;
+    font-weight: 700;
+  }
 }
 
 .stat-card {
@@ -188,33 +172,7 @@ $text-muted: #6c7a89;
   }
 }
 
-.panel {
-  border-radius: 16px;
-
-  &__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 18px 20px;
-    border-bottom: 1px solid $border;
-  }
-
-  &__title {
-    margin: 0;
-    font-size: 18px;
-    color: $primary;
-    font-weight: 700;
-  }
-
-  &__icon {
-    color: $primary;
-    font-size: 16px;
-  }
-}
-
 .complaints-list {
-  overflow: hidden;
 
   &__empty {
     padding: 56px 20px;
@@ -239,10 +197,10 @@ $text-muted: #6c7a89;
 .complaints-table {
   &__head {
     display: grid;
-    grid-template-columns: 1fr 200px 220px 110px;
+    grid-template-columns: 1fr 140px 160px 85px 105px 95px 115px;
     padding: 10px 20px;
     background: $bg-page;
-    gap: 16px;
+    gap: 10px;
 
     @media (max-width: 900px) {
       display: none;
@@ -259,9 +217,9 @@ $text-muted: #6c7a89;
 
   &__row {
     display: grid;
-    grid-template-columns: 1fr 200px 220px 110px;
-    padding: 16px 20px;
-    gap: 16px;
+    grid-template-columns: 1fr 140px 160px 85px 105px 95px 115px;
+    padding: 14px 20px;
+    gap: 10px;
     align-items: center;
     border-bottom: 1px solid $border;
     transition: background .12s;
@@ -319,6 +277,11 @@ $text-muted: #6c7a89;
   }
 }
 
+.complaint-company {
+  display: flex;
+  align-items: center;
+}
+
 .complaint-campaign {
   display: flex;
   flex-direction: column;
@@ -332,9 +295,34 @@ $text-muted: #6c7a89;
   white-space: nowrap;
 }
 
+.complaint-status {
+  display: flex;
+  align-items: center;
+}
+
+.complaint-assigner {
+  display: flex;
+  align-items: center;
+}
+
+.assigner {
+  &__name {
+    font-size: 13px;
+    font-weight: 500;
+    color: $text-main;
+  }
+
+  &__empty {
+    font-size: 12px;
+    color: $text-muted;
+    font-style: italic;
+  }
+}
+
 .chip {
   display: inline-flex;
   align-items: center;
+  gap: 5px;
   height: 26px;
   padding: 0 10px;
   border-radius: 999px;
@@ -342,6 +330,43 @@ $text-muted: #6c7a89;
   color: #5f7381;
   font-size: 12px;
   white-space: nowrap;
+
+  i { font-size: 11px; }
+
+  &--company {
+    background: rgba($primary, .08);
+    color: $primary;
+    font-weight: 500;
+  }
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  i { font-size: 11px; }
+
+  &--open {
+    background: rgba(#c9902e, .12);
+    color: #c9902e;
+  }
+
+  &--solved {
+    background: rgba(#22c35d, .12);
+    color: #16a34a;
+  }
+
+  &--closed {
+    background: rgba(#e53935, .12);
+    color: #e53935;
+  }
 }
 
 .dropdown {
@@ -370,6 +395,15 @@ $text-muted: #6c7a89;
   &--open .dropdown__trigger { border-color: $primary; }
   &--disabled .dropdown__trigger { opacity: .6; pointer-events: none; }
 
+  &--action {
+    .dropdown__menu {
+      inset-inline-start: auto;
+      inset-inline-end: 0;
+      min-width: 140px;
+      z-index: 200;
+    }
+  }
+
   &__arrow {
     font-size: 12px;
     color: $text-muted;
@@ -392,7 +426,7 @@ $text-muted: #6c7a89;
     position: absolute;
     top: calc(100% + 4px);
     inset-inline-start: 0;
-    min-width: 180px;
+    min-width: 200px;
     max-height: 240px;
     overflow-y: auto;
     background: $bg-white;
@@ -400,6 +434,60 @@ $text-muted: #6c7a89;
     border-radius: 10px;
     box-shadow: 0 6px 24px rgba(0, 0, 0, .1);
     z-index: 100;
+    list-style: none;
+    padding: 4px;
+    margin: 0;
+
+    &--searchable {
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      max-height: 280px;
+      padding: 0;
+    }
+  }
+
+  &__search-wrap {
+    position: relative;
+    padding: 8px;
+    border-bottom: 1px solid $border;
+    flex-shrink: 0;
+  }
+
+  &__search-icon {
+    position: absolute;
+    inset-inline-end: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $text-muted;
+    font-size: 12px;
+    pointer-events: none;
+  }
+
+  &__search-input {
+    width: 100%;
+    height: 32px;
+    border: 1px solid $border;
+    border-radius: 8px;
+    padding: 0 32px 0 10px;
+    font-family: inherit;
+    font-size: 13px;
+    color: $text-main;
+    outline: none;
+    background: $bg-page;
+
+    &::placeholder { color: $text-muted; }
+
+    &:focus {
+      border-color: rgba($primary, .55);
+      background: $bg-white;
+      box-shadow: 0 0 0 3px rgba($primary, .08);
+    }
+  }
+
+  &__list {
+    overflow-y: auto;
+    max-height: 200px;
     list-style: none;
     padding: 4px;
     margin: 0;
@@ -419,7 +507,50 @@ $text-muted: #6c7a89;
     i { color: $primary; font-size: 13px; }
     &:hover { background: $bg-page; }
     &--active { font-weight: 600; color: $primary; background: rgba($primary, .06); }
-    &--state { justify-content: center; cursor: default; }
+    &--state { justify-content: center; cursor: default; color: $text-muted; font-size: 13px; }
+  }
+}
+
+.page-size {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+
+  &__select {
+    appearance: none;
+    width: 58px;
+    height: 38px;
+    border: 1px solid $border;
+    border-radius: 8px;
+    background: transparent;
+    color: $text-main;
+    font-family: inherit;
+    font-size: .875rem;
+    font-weight: 500;
+    line-height: 1.25rem;
+    padding: 0 .75rem 0 1.75rem;
+    cursor: pointer;
+    outline: none;
+    box-shadow: none;
+    direction: rtl;
+    text-align: right;
+
+    &:focus {
+      border-color: $primary;
+      box-shadow:
+        0 0 0 2px hsl(200 15% 97%),
+        0 0 0 4px hsl(200 79% 20%),
+        0 0 #0000;
+    }
+  }
+
+  &__icon {
+    position: absolute;
+    left: .625rem;
+    color: $text-main;
+    font-size: 11px;
+    pointer-events: none;
   }
 }
 
@@ -431,6 +562,11 @@ $text-muted: #6c7a89;
   border-top-color: $primary;
   border-radius: 50%;
   animation: complaints-spin .7s linear infinite;
+
+  &--sm {
+    width: 14px;
+    height: 14px;
+  }
 }
 
 .pagination-bar {
@@ -497,4 +633,144 @@ $text-muted: #6c7a89;
 
 @keyframes complaints-spin {
   to { transform: rotate(360deg); }
+}
+
+.complaint-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 18px;
+  border-radius: 10px;
+  border: none;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, opacity .15s;
+
+  &:disabled { opacity: .55; cursor: not-allowed; }
+
+  &--primary {
+    background: $primary;
+    color: #fff;
+    &:hover:not(:disabled) { background: $primary-dark; }
+  }
+
+  &--ghost {
+    background: $bg-page;
+    color: $text-main;
+    border: 1px solid $border;
+    &:hover:not(:disabled) { background: color.adjust($bg-page, $lightness: -3%); }
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0, 0, 0, .45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.modal-card {
+  position: relative;
+  z-index: 2;
+  background: $bg-white;
+  border-radius: 20px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, .18);
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid $border;
+
+  &__title {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+    color: $text-main;
+  }
+
+  &__close {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: $text-muted;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .12s, color .12s;
+
+    &:hover { background: $bg-page; color: $text-main; }
+  }
+}
+
+.modal-body {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: visible;
+}
+
+.modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &__label {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-main;
+  }
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid $border;
+}
+
+.dropdown {
+  &__trigger--full {
+    width: 100%;
+    justify-content: flex-start;
+    span { flex: 1; text-align: start; }
+  }
+
+  &__menu--full {
+    width: 100%;
+    min-width: unset;
+  }
 }

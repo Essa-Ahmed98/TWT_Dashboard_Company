@@ -76,6 +76,7 @@
     "DEVICES": "إدارة الأجهزة",
     "TOOLS": "أدوات",
     "CHAT": "الدردشة",
+    "TASKS": "إدارة المهام",
     "NOTIFICATIONS": "الإشعارات الجماعية",
     "BROADCAST": "الرسائل الجماعية",
     "REVIEWS": "التقييمات",
@@ -114,7 +115,7 @@
     "ONLINE_SUPERVISORS": "المشرفين المتصلين",
     "TOTAL_GROUPS": "إجمالي المجموعات",
     "ONLINE_LABEL": "متصل",
-    "HEALTH_DISTRIBUTION": "توزيع الحالات الصحية",
+    "HEALTH_DISTRIBUTION": "توزيع الحالات",
     "SAFETY_INDEX": "مؤشر السلامة",
     "TOTAL_PILGRIMS_CHART": "إجمالي الحجاج",
     "STABLE": "مستقر",
@@ -174,7 +175,7 @@
       "DOWNLOAD_LUGGAGE": "تحميل أمتعة الحجاج",
       "VIEW_LUGGAGE_QR": "عرض رمز حقيبة السفر"
     },
-    "SEARCH_PLACEHOLDER": "بحث بالاسم أو رقم الجواز...",
+    "SEARCH_PLACEHOLDER": "البحث برقم الجواز...",
     "LOADING": "جاري التحميل...",
     "EMPTY": "لا توجد نتائج",
     "TABLE": {
@@ -341,6 +342,68 @@
       "ADD": "إضافة المشرف",
       "SAVING": "جاري الحفظ...",
       "ADDING": "جاري الإضافة..."
+    }
+  },
+  "TASKS": {
+    "TITLE": "إدارة المهام",
+    "SUBTITLE": "إسناد ومتابعة مهام المشرفين الميدانيين",
+    "ADD": "إسناد مهمة",
+    "SEARCH_PLACEHOLDER": "بحث في المهام...",
+    "EMPTY": "لا توجد مهام مطابقة للفلاتر الحالية",
+    "UNKNOWN_SUPERVISOR": "مشرف غير معروف",
+    "ASSIGN_SUCCESS": "تم إسناد المهمة بنجاح",
+    "STATS": {
+      "TOTAL": "إجمالي المهام",
+      "PENDING": "قيد الانتظار",
+      "COMPLETED": "مكتملة",
+      "DELAYED": "متأخرة"
+    },
+    "FILTERS": {
+      "ALL_STATUSES": "جميع الحالات",
+      "ALL_SUPERVISORS": "جميع المشرفين",
+      "PAGE_SIZE": "حجم الصفحة"
+    },
+    "STATUS": {
+      "PENDING": "قيد الانتظار",
+      "COMPLETED": "مكتملة",
+      "DELAYED": "متأخرة"
+    },
+    "CATEGORY": {
+      "GENERAL": "عام",
+      "HEALTH_CHECKUP": "فحص صحي",
+      "HEALTH": "صحة",
+      "MEALS": "وجبات",
+      "TRANSPORTATION": "نقل",
+      "LOGISTICS": "لوجستيات",
+      "REPORTS": "تقارير",
+      "UNKNOWN": "غير معروف"
+    },
+    "MODAL": {
+      "TITLE": "إسناد مهمة جديدة",
+      "SUBTITLE": "إنشاء مهمة للمشرف مع التصنيف وموعد الاستحقاق"
+    },
+    "FORM": {
+      "TITLE": "عنوان المهمة",
+      "TITLE_PLACEHOLDER": "عنوان المهمة",
+      "DESCRIPTION": "الوصف",
+      "DESCRIPTION_PLACEHOLDER": "تفاصيل المهمة...",
+      "SUPERVISOR": "المشرف",
+      "SELECT_SUPERVISOR": "اختر المشرف",
+      "SEARCH_SUPERVISOR": "ابحث عن مشرف...",
+      "NO_SUPERVISORS": "لا يوجد مشرفون",
+      "CATEGORY": "التصنيف",
+      "SELECT_CATEGORY": "اختر التصنيف",
+      "DUE_DATE": "التاريخ",
+      "SELECT_DATE": "اختر التاريخ",
+      "TIME": "الوقت",
+      "ASSIGN": "إسناد المهمة",
+      "ASSIGNING": "جارٍ الإسناد...",
+      "VALIDATION_REQUIRED": "يرجى إكمال الحقول المطلوبة.",
+      "PAST_DUE_INVALID": "لا يمكنك اختيار تاريخ أو وقت سابق"
+    },
+    "ERRORS": {
+      "LOAD": "تعذر تحميل المهام",
+      "ASSIGN": "تعذر إسناد المهمة"
     }
   },
   "DEVICES": {

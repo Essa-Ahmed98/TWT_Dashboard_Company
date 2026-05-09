@@ -76,6 +76,7 @@
     "DEVICES": "Gestion des Appareils",
     "TOOLS": "Outils",
     "CHAT": "Discussion",
+    "TASKS": "Gestion des tâches",
     "NOTIFICATIONS": "Notifications en Masse",
     "BROADCAST": "Messages Groupés",
     "REVIEWS": "Évaluations",
@@ -114,7 +115,7 @@
     "ONLINE_SUPERVISORS": "Superviseurs en ligne",
     "TOTAL_GROUPS": "Total Groupes",
     "ONLINE_LABEL": "En ligne",
-    "HEALTH_DISTRIBUTION": "Distribution État de Santé",
+    "HEALTH_DISTRIBUTION": "Distribution des statuts",
     "SAFETY_INDEX": "Indice de Sécurité",
     "TOTAL_PILGRIMS_CHART": "Total Pèlerins",
     "STABLE": "Stable",
@@ -174,7 +175,7 @@
       "DOWNLOAD_LUGGAGE": "Télécharger les bagages des pèlerins",
       "VIEW_LUGGAGE_QR": "Voir le QR code du bagage"
     },
-    "SEARCH_PLACEHOLDER": "Rechercher par nom ou passeport...",
+    "SEARCH_PLACEHOLDER": "Rechercher par numéro de passeport...",
     "LOADING": "Chargement...",
     "EMPTY": "Aucun résultat",
     "TABLE": {
@@ -341,6 +342,68 @@
       "ADD": "Ajouter Superviseur",
       "SAVING": "Enregistrement...",
       "ADDING": "Ajout..."
+    }
+  },
+  "TASKS": {
+    "TITLE": "Gestion des tâches",
+    "SUBTITLE": "Attribuer et suivre les tâches des superviseurs terrain",
+    "ADD": "Ajouter une tâche",
+    "SEARCH_PLACEHOLDER": "Rechercher dans les tâches...",
+    "EMPTY": "Aucune tâche ne correspond aux filtres actuels",
+    "UNKNOWN_SUPERVISOR": "Superviseur inconnu",
+    "ASSIGN_SUCCESS": "Tâche attribuée avec succès",
+    "STATS": {
+      "TOTAL": "Total des tâches",
+      "PENDING": "En attente",
+      "COMPLETED": "Terminées",
+      "DELAYED": "En retard"
+    },
+    "FILTERS": {
+      "ALL_STATUSES": "Tous les statuts",
+      "ALL_SUPERVISORS": "Tous les superviseurs",
+      "PAGE_SIZE": "Taille de page"
+    },
+    "STATUS": {
+      "PENDING": "En attente",
+      "COMPLETED": "Terminée",
+      "DELAYED": "En retard"
+    },
+    "CATEGORY": {
+      "GENERAL": "Général",
+      "HEALTH_CHECKUP": "Bilan de santé",
+      "HEALTH": "Santé",
+      "MEALS": "Repas",
+      "TRANSPORTATION": "Transport",
+      "LOGISTICS": "Logistique",
+      "REPORTS": "Rapports",
+      "UNKNOWN": "Inconnu"
+    },
+    "MODAL": {
+      "TITLE": "Attribuer une nouvelle tâche",
+      "SUBTITLE": "Créer une tâche superviseur avec catégorie et échéance"
+    },
+    "FORM": {
+      "TITLE": "Titre de la tâche",
+      "TITLE_PLACEHOLDER": "Titre de la tâche",
+      "DESCRIPTION": "Description",
+      "DESCRIPTION_PLACEHOLDER": "Détails de la tâche...",
+      "SUPERVISOR": "Superviseur",
+      "SELECT_SUPERVISOR": "Choisir un superviseur",
+      "SEARCH_SUPERVISOR": "Rechercher un superviseur...",
+      "NO_SUPERVISORS": "Aucun superviseur",
+      "CATEGORY": "Catégorie",
+      "SELECT_CATEGORY": "Choisir une catégorie",
+      "DUE_DATE": "Date",
+      "SELECT_DATE": "Choisir une date",
+      "TIME": "Heure",
+      "ASSIGN": "Attribuer la tâche",
+      "ASSIGNING": "Attribution...",
+      "VALIDATION_REQUIRED": "Veuillez compléter les champs obligatoires.",
+      "PAST_DUE_INVALID": "Vous ne pouvez pas sélectionner une date ou une heure passée"
+    },
+    "ERRORS": {
+      "LOAD": "Impossible de charger les tâches",
+      "ASSIGN": "Impossible d'attribuer la tâche"
     }
   },
   "DEVICES": {

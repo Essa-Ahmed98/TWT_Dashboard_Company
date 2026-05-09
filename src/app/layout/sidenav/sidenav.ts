@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../core/auth/services/auth';
+import { SettingsService } from '../../features/settings/settings.service';
 
 export interface NavItem {
   labelKey: string;
@@ -21,9 +22,14 @@ export interface NavGroup {
   styleUrl: './sidenav.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Sidenav {
+export class Sidenav implements OnInit {
   collapsed = input(false);
   readonly auth = inject(AuthService);
+  readonly settingsService = inject(SettingsService);
+
+  ngOnInit(): void {
+    this.settingsService.loadSettings();
+  }
 
   navGroups: NavGroup[] = [
     {
@@ -48,6 +54,7 @@ export class Sidenav {
       labelKey: 'SIDENAV.TOOLS',
       items: [
         { labelKey: 'SIDENAV.CHAT',          icon: 'pi pi-comments',           route: '/chat' },
+        { labelKey: 'SIDENAV.TASKS',         icon: 'pi pi-briefcase',          route: '/tasks' },
         { labelKey: 'SIDENAV.NOTIFICATIONS', icon: 'pi pi-bell',               route: '/notifications' },
         { labelKey: 'SIDENAV.BROADCAST',     icon: 'pi pi-send',               route: '/broadcast' },
         { labelKey: 'SIDENAV.REVIEWS',       icon: 'pi pi-star',               route: '/reviews' },

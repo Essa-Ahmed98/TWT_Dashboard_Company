@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
@@ -17,8 +17,15 @@ export class SettingsService {
 
   readonly settings = this._settings.asReadonly();
   readonly loading = this._loading.asReadonly();
+  readonly iconUrl = computed(() => {
+    const path = this._settings()?.IconPath;
+    if (!path?.trim()) return '';
+    if (path.startsWith('http')) return path;
+    return environment.uploadsBase + path.trim();
+  });
 
   loadSettings(): void {
+    if (this._settings()) return;
     const companyId = this.auth.currentUser()?.companyId;
     if (!companyId) return;
 

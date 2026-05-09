@@ -1,19 +1,19 @@
-﻿@if (hasAnyFilterDropdownOpen()) {
+@if (hasAnyFilterDropdownOpen()) {
   <div class="backdrop" (click)="closeAllDropdowns()"></div>
 }
 
 <div class="complaints">
   <div class="complaints__header">
     <div class="complaints__title">
-      <h1 class="complaints__title-text">{{ 'COMPLAINTS.TITLE' | translate }}</h1>
-      <span class="complaints__title-sub">{{ 'COMPLAINTS.SUBTITLE' | translate }}</span>
+      <h1 class="complaints__title-text">الشكاوى</h1>
+      <span class="complaints__title-sub">متابعة شكاوى الحجاج داخل المراكز والمجموعات</span>
     </div>
   </div>
 
   <div class="complaints__stats">
     <article class="stat-card stat-card--primary">
       <div class="stat-card__info">
-        <span class="stat-card__label">{{ 'COMPLAINTS.TOTAL_LABEL' | translate }}</span>
+        <span class="stat-card__label">إجمالي الشكاوى</span>
         <span class="stat-card__value">{{ totalCount() }}</span>
       </div>
       <div class="stat-card__icon-wrap">
@@ -22,29 +22,51 @@
     </article>
     <article class="stat-card stat-card--amber">
       <div class="stat-card__info">
-        <span class="stat-card__label">{{ 'COMPLAINTS.AFFECTED_CENTERS' | translate }}</span>
-        <span class="stat-card__value">{{ affectedCampaignsCount() }}</span>
+        <span class="stat-card__label">مفتوحة</span>
+        <span class="stat-card__value">{{ openCount() }}</span>
       </div>
       <div class="stat-card__icon-wrap">
-        <i class="pi pi-flag"></i>
+        <i class="pi pi-clipboard"></i>
       </div>
     </article>
     <article class="stat-card stat-card--light">
       <div class="stat-card__info">
-        <span class="stat-card__label">{{ 'COMPLAINTS.AFFECTED_GROUPS' | translate }}</span>
-        <span class="stat-card__value">{{ affectedGroupsCount() }}</span>
+        <span class="stat-card__label">تم حلها</span>
+        <span class="stat-card__value">{{ solvedCount() }}</span>
       </div>
       <div class="stat-card__icon-wrap">
-        <i class="pi pi-users"></i>
+        <i class="pi pi-check-circle"></i>
+      </div>
+    </article>
+    <article class="stat-card stat-card--light">
+      <div class="stat-card__info">
+        <span class="stat-card__label">مغلقة بدون حل</span>
+        <span class="stat-card__value">{{ closedCount() }}</span>
+      </div>
+      <div class="stat-card__icon-wrap">
+        <i class="pi pi-times-circle"></i>
       </div>
     </article>
   </div>
 
   <div class="complaints__filters">
+    <div class="page-size">
+      <select
+        class="page-size__select"
+        [ngModel]="pageSize()"
+        (ngModelChange)="onPageSizeChange(+$event)"
+        aria-label="Page size">
+        @for (size of pageSizeOptions; track size) {
+          <option [ngValue]="size">{{ size }}</option>
+        }
+      </select>
+      <i class="pi pi-chevron-down page-size__icon"></i>
+    </div>
+
     <div class="dropdown" [class.dropdown--open]="openCampaignDrop()">
       <button class="dropdown__trigger" type="button" (click)="toggleCampaignDrop($event)">
-        <i class="pi pi-building"></i>
-        <span>{{ selectedCampaignId() ? campaignFilterLabel() : ('COMPLAINTS.ALL_CENTERS' | translate) }}</span>
+        <i class="pi pi-flag"></i>
+        <span>{{ selectedCampaignId() ? campaignFilterLabel() : 'جميع المراكز' }}</span>
         @if (selectedCampaignId()) {
           <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectCampaignFilter()"></i>
         } @else {
@@ -55,6 +77,8 @@
         <ul class="dropdown__menu">
           @if (campaignLoading()) {
             <li class="dropdown__item dropdown__item--state"><span class="ss-spinner"></span></li>
+          } @else if (campaignList().length === 0) {
+            <li class="dropdown__item dropdown__item--state">لا توجد بيانات</li>
           } @else {
             @for (campaign of campaignList(); track campaign.Id) {
               <li
@@ -74,7 +98,7 @@
     <div class="dropdown" [class.dropdown--open]="openGroupDrop()" [class.dropdown--disabled]="!selectedCampaignId()">
       <button class="dropdown__trigger" type="button" [disabled]="!selectedCampaignId()" (click)="toggleGroupDrop($event)">
         <i class="pi pi-users"></i>
-        <span>{{ selectedGroupId() ? groupFilterLabel() : (selectedCampaignId() ? ('COMPLAINTS.ALL_GROUPS' | translate) : ('COMPLAINTS.SELECT_CENTER_FIRST' | translate)) }}</span>
+        <span>{{ selectedGroupId() ? groupFilterLabel() : (selectedCampaignId() ? 'جميع المجموعات' : 'اختر المركز أولا') }}</span>
         @if (selectedGroupId()) {
           <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectGroupFilter()"></i>
         } @else {
@@ -85,6 +109,8 @@
         <ul class="dropdown__menu">
           @if (groupLoading()) {
             <li class="dropdown__item dropdown__item--state"><span class="ss-spinner"></span></li>
+          } @else if (groupList().length === 0) {
+            <li class="dropdown__item dropdown__item--state">لا توجد بيانات</li>
           } @else {
             @for (group of groupList(); track group.Id) {
               <li
@@ -100,11 +126,82 @@
         </ul>
       }
     </div>
+
+    <div class="dropdown" [class.dropdown--open]="openSupervisorDrop()" [class.dropdown--disabled]="!selectedGroupId()">
+      <button class="dropdown__trigger" type="button" [disabled]="!selectedGroupId()" (click)="toggleSupervisorDrop($event)">
+        <i class="pi pi-user"></i>
+        <span>{{ selectedSupervisorId() ? selectedSupervisorName() : (selectedGroupId() ? 'جميع المشرفين' : 'اختر المجموعة أولا') }}</span>
+        @if (selectedSupervisorId()) {
+          <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); clearSupervisorFilter()"></i>
+        } @else {
+          <i class="pi pi-angle-down dropdown__arrow"></i>
+        }
+      </button>
+      @if (openSupervisorDrop()) {
+        <div class="dropdown__menu dropdown__menu--searchable">
+          <div class="dropdown__search-wrap" (click)="$event.stopPropagation()">
+            <i class="pi pi-search dropdown__search-icon"></i>
+            <input
+              class="dropdown__search-input"
+              type="text"
+              placeholder="بحث في المشرفين..."
+              [ngModel]="supervisorSearch()"
+              (ngModelChange)="onSupervisorSearch($event)"
+              autofocus
+            />
+          </div>
+          <ul class="dropdown__list">
+            @if (supervisorLoading()) {
+              <li class="dropdown__item dropdown__item--state"><span class="ss-spinner"></span></li>
+            } @else if (supervisorList().length === 0) {
+              <li class="dropdown__item dropdown__item--state">لا توجد نتائج</li>
+            } @else {
+              @for (supervisor of supervisorList(); track supervisor.Id) {
+                <li
+                  class="dropdown__item"
+                  [class.dropdown__item--active]="selectedSupervisorId() === supervisor.Id"
+                  (click)="selectSupervisorFilter(supervisor)"
+                >
+                  @if (selectedSupervisorId() === supervisor.Id) { <i class="pi pi-check"></i> }
+                  {{ supervisor.Name }}
+                </li>
+              }
+            }
+          </ul>
+        </div>
+      }
+    </div>
+
+    <div class="dropdown" [class.dropdown--open]="openStatusDrop()">
+      <button class="dropdown__trigger" type="button" (click)="toggleStatusDrop($event)">
+        <i class="pi pi-filter"></i>
+        <span>{{ statusFilterLabel() }}</span>
+        @if (selectedStatusFilter() !== null) {
+          <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectStatusFilter(null)"></i>
+        } @else {
+          <i class="pi pi-angle-down dropdown__arrow"></i>
+        }
+      </button>
+      @if (openStatusDrop()) {
+        <ul class="dropdown__menu">
+          @for (opt of statusOptions; track opt.value) {
+            <li
+              class="dropdown__item"
+              [class.dropdown__item--active]="selectedStatusFilter() === opt.value"
+              (click)="selectStatusFilter(opt.value)"
+            >
+              @if (selectedStatusFilter() === opt.value) { <i class="pi pi-check"></i> }
+              {{ opt.label }}
+            </li>
+          }
+        </ul>
+      }
+    </div>
   </div>
 
   <section class="complaints-list panel">
     <div class="panel__header">
-      <h2 class="panel__title">{{ 'COMPLAINTS.LIST_WITH_COUNT' | translate:{ value: totalCount() } }}</h2>
+      <h2 class="panel__title">قائمة الشكاوى ({{ listTotalCount() }})</h2>
     </div>
 
     @if (loading()) {
@@ -114,15 +211,18 @@
     } @else if (complaints().length === 0) {
       <div class="complaints-list__empty">
         <i class="pi pi-inbox"></i>
-        <p>{{ 'COMPLAINTS.EMPTY' | translate }}</p>
+        <p>لا توجد شكاوى مطابقة للفلاتر الحالية</p>
       </div>
     } @else {
       <div class="complaints-table">
         <div class="complaints-table__head">
-          <span class="complaints-table__col-label">{{ 'COMPLAINTS.TITLE' | translate }}</span>
-          <span class="complaints-table__col-label">{{ 'PILGRIMS.TABLE.PILGRIM' | translate }}</span>
-          <span class="complaints-table__col-label">{{ 'COMPLAINTS.CENTER_GROUP' | translate }}</span>
-          <span class="complaints-table__col-label">{{ 'COMPLAINTS.DATE' | translate }}</span>
+          <span class="complaints-table__col-label">الشكوى</span>
+          <span class="complaints-table__col-label">معلومات الحاج</span>
+          <span class="complaints-table__col-label">الحملة / المجموعة</span>
+          <span class="complaints-table__col-label">التاريخ</span>
+          <span class="complaints-table__col-label">الحالة</span>
+          <span class="complaints-table__col-label">المشرف المسند</span>
+          <span class="complaints-table__col-label">الإجراءات</span>
         </div>
         @for (complaint of complaints(); track complaint.Id) {
           <div class="complaints-table__row">
@@ -148,13 +248,61 @@
             <div class="complaint-date">
               {{ formatDate(complaint.CreatedAt) }}
             </div>
+            <div class="complaint-status">
+              <span [class]="statusBadgeClass(complaint.Status)">
+                <i [class]="statusIcon(complaint.Status)"></i>
+                {{ statusLabel(complaint.Status) }}
+              </span>
+            </div>
+            <div class="complaint-assigner">
+              @if (complaint.AssignerName) {
+                <span class="assigner__name">{{ complaint.AssignerName }}</span>
+              } @else {
+                <span class="assigner__empty">غير مسند</span>
+              }
+            </div>
+            <div class="complaint-actions">
+              <div class="dropdown dropdown--action" [class.dropdown--open]="openActionDrop() === complaint.Id">
+                <button
+                  class="dropdown__trigger"
+                  type="button"
+                  [disabled]="updatingRows().has(complaint.Id)"
+                  (click)="toggleActionDrop(complaint.Id, $event)"
+                >
+                  <span>{{ statusLabel(complaint.Status) }}</span>
+                  @if (updatingRows().has(complaint.Id)) {
+                    <span class="ss-spinner ss-spinner--sm"></span>
+                  } @else {
+                    <i class="pi pi-angle-down dropdown__arrow"></i>
+                  }
+                </button>
+                @if (openActionDrop() === complaint.Id) {
+                  <ul class="dropdown__menu">
+                    @for (opt of statusChangeOptions; track opt.value) {
+                      <li
+                        class="dropdown__item"
+                        [class.dropdown__item--active]="complaint.Status === opt.value"
+                        (click)="changeStatus(complaint, opt.value)"
+                      >
+                        @if (complaint.Status === opt.value) { <i class="pi pi-check"></i> }
+                        {{ opt.label }}
+                      </li>
+                    }
+                  </ul>
+                }
+              </div>
+              <button class="dropdown__trigger" type="button" (click)="openAssignModal(complaint)">
+                <i class="pi pi-user-plus"></i>
+                إسناد
+              </button>
+            </div>
           </div>
         }
       </div>
     }
   </section>
 
-  @if (totalCount() > 0) {
+  @if (listTotalCount() > 0) {
     <div class="pagination-bar">
       <div class="pagination-bar__controls">
         <button class="pagination__btn" type="button" [disabled]="!hasPrevious()" (click)="prevPage()">
@@ -162,7 +310,7 @@
         </button>
         @for (p of visiblePages(); track $index) {
           @if (p === '...') {
-            <span class="pagination__ellipsis">…</span>
+            <span class="pagination__ellipsis">...</span>
           } @else {
             <button
               class="pagination__btn"
@@ -177,8 +325,159 @@
         </button>
       </div>
       <span class="pagination-bar__info">
-        {{ complaints().length }} {{ 'COMMON.OF' | translate }} {{ totalCount() | number }}
+        {{ complaints().length }} من {{ listTotalCount() | number }}
       </span>
     </div>
   }
 </div>
+
+@if (showAssignModal()) {
+  <div class="modal-overlay" (click)="closeAssignModal()">
+    @if (hasAnyModalDropdownOpen()) {
+      <div class="modal-backdrop" (click)="$event.stopPropagation(); closeModalDropdowns()"></div>
+    }
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-header__title">إسناد لمشرف</h3>
+        <button class="modal-header__close" type="button" (click)="closeAssignModal()">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-field">
+          <label class="modal-field__label">المركز</label>
+          <div class="dropdown" [class.dropdown--open]="modalOpenCampaignDrop()">
+            <button class="dropdown__trigger dropdown__trigger--full" type="button" (click)="toggleModalCampaignDrop($event)">
+              <i class="pi pi-flag"></i>
+              <span>{{ modalCampaignId() ? modalCampaignName() : 'اختر المركز' }}</span>
+              @if (modalCampaignId()) {
+                <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectModalCampaign()"></i>
+              } @else {
+                <i class="pi pi-angle-down dropdown__arrow"></i>
+              }
+            </button>
+            @if (modalOpenCampaignDrop()) {
+              <ul class="dropdown__menu dropdown__menu--full">
+                @if (modalCampaignLoading()) {
+                  <li class="dropdown__item dropdown__item--state"><span class="ss-spinner"></span></li>
+                } @else if (modalCampaignList().length === 0) {
+                  <li class="dropdown__item dropdown__item--state">لا توجد بيانات</li>
+                } @else {
+                  @for (campaign of modalCampaignList(); track campaign.Id) {
+                    <li
+                      class="dropdown__item"
+                      [class.dropdown__item--active]="modalCampaignId() === campaign.Id"
+                      (click)="selectModalCampaign(campaign)"
+                    >
+                      @if (modalCampaignId() === campaign.Id) { <i class="pi pi-check"></i> }
+                      {{ campaign.Name }}
+                    </li>
+                  }
+                }
+              </ul>
+            }
+          </div>
+        </div>
+
+        <div class="modal-field">
+          <label class="modal-field__label">المجموعة</label>
+          <div class="dropdown" [class.dropdown--open]="modalOpenGroupDrop()" [class.dropdown--disabled]="!modalCampaignId()">
+            <button class="dropdown__trigger dropdown__trigger--full" type="button" [disabled]="!modalCampaignId()" (click)="toggleModalGroupDrop($event)">
+              <i class="pi pi-users"></i>
+              <span>{{ modalGroupId() ? modalGroupName() : (modalCampaignId() ? 'اختر المجموعة' : 'اختر المركز أولا') }}</span>
+              @if (modalGroupId()) {
+                <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectModalGroup()"></i>
+              } @else {
+                <i class="pi pi-angle-down dropdown__arrow"></i>
+              }
+            </button>
+            @if (modalOpenGroupDrop()) {
+              <ul class="dropdown__menu dropdown__menu--full">
+                @if (modalGroupLoading()) {
+                  <li class="dropdown__item dropdown__item--state"><span class="ss-spinner"></span></li>
+                } @else if (modalGroupList().length === 0) {
+                  <li class="dropdown__item dropdown__item--state">لا توجد بيانات</li>
+                } @else {
+                  @for (group of modalGroupList(); track group.Id) {
+                    <li
+                      class="dropdown__item"
+                      [class.dropdown__item--active]="modalGroupId() === group.Id"
+                      (click)="selectModalGroup(group)"
+                    >
+                      @if (modalGroupId() === group.Id) { <i class="pi pi-check"></i> }
+                      {{ group.Name }}
+                    </li>
+                  }
+                }
+              </ul>
+            }
+          </div>
+        </div>
+
+        <div class="modal-field">
+          <label class="modal-field__label">المشرف</label>
+          <div class="dropdown" [class.dropdown--open]="modalOpenSupervisorDrop()" [class.dropdown--disabled]="!modalGroupId()">
+            <button class="dropdown__trigger dropdown__trigger--full" type="button" [disabled]="!modalGroupId()" (click)="toggleModalSupervisorDrop($event)">
+              <i class="pi pi-user"></i>
+              <span>{{ modalSupervisorId() ? modalSupervisorName() : (modalGroupId() ? 'اختر المشرف' : 'اختر المجموعة أولا') }}</span>
+              @if (modalSupervisorId()) {
+                <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); clearModalSupervisor()"></i>
+              } @else {
+                <i class="pi pi-angle-down dropdown__arrow"></i>
+              }
+            </button>
+            @if (modalOpenSupervisorDrop()) {
+              <div class="dropdown__menu dropdown__menu--searchable dropdown__menu--full">
+                <div class="dropdown__search-wrap" (click)="$event.stopPropagation()">
+                  <i class="pi pi-search dropdown__search-icon"></i>
+                  <input
+                    class="dropdown__search-input"
+                    type="text"
+                    placeholder="بحث في المشرفين..."
+                    [ngModel]="modalSupervisorSearch()"
+                    (ngModelChange)="onModalSupervisorSearch($event)"
+                    autofocus
+                  />
+                </div>
+                <ul class="dropdown__list">
+                  @if (modalSupervisorLoading()) {
+                    <li class="dropdown__item dropdown__item--state"><span class="ss-spinner"></span></li>
+                  } @else if (modalSupervisorList().length === 0) {
+                    <li class="dropdown__item dropdown__item--state">لا توجد نتائج</li>
+                  } @else {
+                    @for (supervisor of modalSupervisorList(); track supervisor.Id) {
+                      <li
+                        class="dropdown__item"
+                        [class.dropdown__item--active]="modalSupervisorId() === supervisor.UserId"
+                        (click)="selectModalSupervisor(supervisor)"
+                      >
+                        @if (modalSupervisorId() === supervisor.UserId) { <i class="pi pi-check"></i> }
+                        {{ supervisor.Name }}
+                      </li>
+                    }
+                  }
+                </ul>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn--ghost" type="button" (click)="closeAssignModal()">إلغاء</button>
+        <button
+          class="btn btn--primary"
+          type="button"
+          [disabled]="!modalSupervisorId() || assignSubmitting()"
+          (click)="submitAssign()"
+        >
+          @if (assignSubmitting()) {
+            <span class="ss-spinner ss-spinner--sm"></span>
+          }
+          إسناد المشرف
+        </button>
+      </div>
+    </div>
+  </div>
+}

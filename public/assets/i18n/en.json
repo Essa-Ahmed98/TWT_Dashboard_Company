@@ -76,6 +76,7 @@
     "DEVICES": "Devices Management",
     "TOOLS": "Tools",
     "CHAT": "Chat",
+    "TASKS": "Task Management",
     "NOTIFICATIONS": "Push Notifications",
     "BROADCAST": "Broadcast Messages",
     "REVIEWS": "Reviews",
@@ -114,7 +115,7 @@
     "ONLINE_SUPERVISORS": "Online Supervisors",
     "TOTAL_GROUPS": "Total Groups",
     "ONLINE_LABEL": "Online",
-    "HEALTH_DISTRIBUTION": "Health Status Distribution",
+    "HEALTH_DISTRIBUTION": "Status Distribution",
     "SAFETY_INDEX": "Safety Index",
     "TOTAL_PILGRIMS_CHART": "Total Pilgrims",
     "STABLE": "Stable",
@@ -174,7 +175,7 @@
       "DOWNLOAD_LUGGAGE": "Download Pilgrims Luggage",
       "VIEW_LUGGAGE_QR": "View Luggage QR Code"
     },
-    "SEARCH_PLACEHOLDER": "Search by name or passport...",
+    "SEARCH_PLACEHOLDER": "Search by passport number...",
     "LOADING": "Loading...",
     "EMPTY": "No results",
     "TABLE": {
@@ -341,6 +342,68 @@
       "ADD": "Add Supervisor",
       "SAVING": "Saving...",
       "ADDING": "Adding..."
+    }
+  },
+  "TASKS": {
+    "TITLE": "Task Management",
+    "SUBTITLE": "Assign and track field supervisor tasks",
+    "ADD": "Add Task",
+    "SEARCH_PLACEHOLDER": "Search tasks...",
+    "EMPTY": "No tasks match the current filters",
+    "UNKNOWN_SUPERVISOR": "Unknown supervisor",
+    "ASSIGN_SUCCESS": "Task assigned successfully",
+    "STATS": {
+      "TOTAL": "Total Tasks",
+      "PENDING": "Pending",
+      "COMPLETED": "Completed",
+      "DELAYED": "Delayed"
+    },
+    "FILTERS": {
+      "ALL_STATUSES": "All statuses",
+      "ALL_SUPERVISORS": "All supervisors",
+      "PAGE_SIZE": "Page size"
+    },
+    "STATUS": {
+      "PENDING": "Pending",
+      "COMPLETED": "Completed",
+      "DELAYED": "Delayed"
+    },
+    "CATEGORY": {
+      "GENERAL": "General",
+      "HEALTH_CHECKUP": "Health Checkup",
+      "HEALTH": "Health",
+      "MEALS": "Meals",
+      "TRANSPORTATION": "Transportation",
+      "LOGISTICS": "Logistics",
+      "REPORTS": "Reports",
+      "UNKNOWN": "Unknown"
+    },
+    "MODAL": {
+      "TITLE": "Assign New Task",
+      "SUBTITLE": "Create a supervisor task with category and due date"
+    },
+    "FORM": {
+      "TITLE": "Task Title",
+      "TITLE_PLACEHOLDER": "Task title",
+      "DESCRIPTION": "Description",
+      "DESCRIPTION_PLACEHOLDER": "Task details...",
+      "SUPERVISOR": "Supervisor",
+      "SELECT_SUPERVISOR": "Select supervisor",
+      "SEARCH_SUPERVISOR": "Search supervisor...",
+      "NO_SUPERVISORS": "No supervisors",
+      "CATEGORY": "Category",
+      "SELECT_CATEGORY": "Select category",
+      "DUE_DATE": "Date",
+      "SELECT_DATE": "Select date",
+      "TIME": "Time",
+      "ASSIGN": "Assign Task",
+      "ASSIGNING": "Assigning...",
+      "VALIDATION_REQUIRED": "Please complete the required fields.",
+      "PAST_DUE_INVALID": "You cannot select a past date or time"
+    },
+    "ERRORS": {
+      "LOAD": "Unable to load tasks",
+      "ASSIGN": "Unable to assign task"
     }
   },
   "DEVICES": {

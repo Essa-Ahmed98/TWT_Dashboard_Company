@@ -7,7 +7,11 @@
     </button>
     <div class="header__title">
       <div class="header__title-icon">
-        <i class="pi pi-shield"></i>
+        @if (settingsService.iconUrl()) {
+          <img class="header__company-icon" [src]="settingsService.iconUrl()" [alt]="'HEADER.TITLE' | translate" />
+        } @else {
+          <i class="pi pi-shield"></i>
+        }
       </div>
       <span>{{ 'HEADER.TITLE' | translate }}</span>
     </div>

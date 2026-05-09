@@ -1,5 +1,11 @@
 import { PaginatedResult } from '../../core/models/api.models';
 
+export enum ComplaintStatus {
+  Open = 0,
+  Solved = 1,
+  Closed = 2,
+}
+
 export interface ComplaintApiItem {
   Id: string;
   Title: string;
@@ -10,15 +16,40 @@ export interface ComplaintApiItem {
   CampaignName: string;
   GroupName: string;
   CreatedAt: string;
+  Status: ComplaintStatus;
+  AssignerId: string;
+  AssignerName: string;
 }
 
-export type ComplaintsApiData = PaginatedResult<ComplaintApiItem>;
+export interface ComplaintsResponseData {
+  OpenCount: number;
+  SolvedCount: number;
+  ClosedCount: number;
+  Complaints: PaginatedResult<ComplaintApiItem>;
+}
 
 export interface ComplaintsQuery {
-  CompanyId: string;
+  CompanyId?: string;
   CampaignId?: string;
   GroupId?: string;
-  SortBy?: number;
+  SupervisorId?: string;
+  StatusFilter?: number;
   PageNumber: number;
   PageSize: number;
+}
+
+export interface CampaignDropdownItem {
+  Id: string;
+  Name: string;
+}
+
+export interface GroupDropdownItem {
+  Id: string;
+  Name: string;
+}
+
+export interface SupervisorDropdownItem {
+  Id: string;
+  UserId: string;
+  Name: string;
 }

@@ -10,6 +10,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../core/auth/services/auth';
 import { TranslationService, SUPPORTED_LANGUAGES } from '../../core/services/translation.service';
+import { SettingsService } from '../../features/settings/settings.service';
 
 @Component({
   selector: 'app-header',
@@ -21,12 +22,17 @@ import { TranslationService, SUPPORTED_LANGUAGES } from '../../core/services/tra
 export class Header {
   auth = inject(AuthService);
   translation = inject(TranslationService);
+  settingsService = inject(SettingsService);
   toggleSidenav = output<void>();
 
   readonly languages = SUPPORTED_LANGUAGES;
   readonly langDropOpen = signal(false);
 
   private elRef = inject(ElementRef);
+
+  constructor() {
+    this.settingsService.loadSettings();
+  }
 
   toggleLangDrop(): void {
     this.langDropOpen.update(v => !v);

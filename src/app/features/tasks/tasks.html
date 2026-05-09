@@ -1,0 +1,382 @@
+@if (showModal()) {
+  <div class="modal-backdrop" (click)="closeModal()"></div>
+}
+
+@if (showSupervisorDrop() || showFilterSupervisorDrop() || showStatusDrop() || showCategoryDrop()) {
+  <div class="backdrop" (click)="closeAllDrops()"></div>
+}
+
+<div class="tasks">
+  <div class="tasks__header">
+    <div>
+      <h1 class="tasks__title">{{ 'TASKS.TITLE' | translate }}</h1>
+      <p class="tasks__subtitle">{{ 'TASKS.SUBTITLE' | translate }}</p>
+    </div>
+    <button class="btn btn--primary" type="button" (click)="openModal()">
+      <i class="pi pi-plus"></i>
+      <span>{{ 'TASKS.ADD' | translate }}</span>
+    </button>
+  </div>
+
+  <div class="tasks__stats">
+    <div class="stat-card stat-card--total">
+      <span class="stat-card__value">{{ totalCount() | number }}</span>
+      <span class="stat-card__label">{{ 'TASKS.STATS.TOTAL' | translate }}</span>
+    </div>
+    <div class="stat-card stat-card--pending">
+      <span class="stat-card__value">{{ pendingCount() | number }}</span>
+      <span class="stat-card__label">{{ 'TASKS.STATS.PENDING' | translate }}</span>
+    </div>
+    <div class="stat-card stat-card--completed">
+      <span class="stat-card__value">{{ completedCount() | number }}</span>
+      <span class="stat-card__label">{{ 'TASKS.STATS.COMPLETED' | translate }}</span>
+    </div>
+    <div class="stat-card stat-card--delayed">
+      <span class="stat-card__value">{{ delayedCount() | number }}</span>
+      <span class="stat-card__label">{{ 'TASKS.STATS.DELAYED' | translate }}</span>
+    </div>
+  </div>
+
+  <div class="tasks__filters">
+    <div class="ss ss--filter">
+      <button type="button" class="ss__trigger" (click)="toggleFilterSupervisorDrop()">
+        <span [class.ss__placeholder]="!filterSupervisorName()">
+          {{ filterSupervisorName() || ('TASKS.FILTERS.ALL_SUPERVISORS' | translate) }}
+        </span>
+        @if (filterSupervisorName()) {
+          <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearFilterSupervisor()"></i>
+        } @else {
+          <i class="pi pi-angle-down"></i>
+        }
+      </button>
+      @if (showFilterSupervisorDrop()) {
+        <div class="ss__dropdown">
+          <div class="ss__search">
+            <i class="pi pi-search"></i>
+            <input
+              type="text"
+              [placeholder]="'TASKS.FORM.SEARCH_SUPERVISOR' | translate"
+              [value]="filterSupervisorSearch()"
+              (input)="onFilterSupervisorSearch($any($event.target).value)"
+            />
+          </div>
+          @if (filterSupervisorLoading()) {
+            <div class="ss__state"><span class="ss-spinner"></span></div>
+          } @else if (filterSupervisorList().length === 0) {
+            <div class="ss__state">{{ 'TASKS.FORM.NO_SUPERVISORS' | translate }}</div>
+          } @else {
+            <ul class="ss__list">
+              @for (supervisor of filterSupervisorList(); track supervisor.Id) {
+                <li class="ss__item" [class.ss__item--active]="filterSupervisorId() === supervisor.Id" (click)="selectFilterSupervisor(supervisor)">
+                  {{ supervisor.DisplayName || supervisor.UserId }}
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="ss ss--filter ss--status-filter">
+      <button type="button" class="ss__trigger" (click)="toggleStatusDrop()">
+        <span>{{ statusFilterLabelKey() | translate }}</span>
+        <i class="pi pi-angle-down"></i>
+      </button>
+      @if (showStatusDrop()) {
+        <div class="ss__dropdown">
+          <ul class="ss__list">
+            <li class="ss__item" [class.ss__item--active]="statusFilter() === ''" (click)="selectStatusFilter('')">
+              @if (statusFilter() === '') { <i class="pi pi-check"></i> }
+              {{ 'TASKS.FILTERS.ALL_STATUSES' | translate }}
+            </li>
+            @for (status of statusOptions; track status.value) {
+              <li class="ss__item" [class.ss__item--active]="statusFilter() === status.value" (click)="selectStatusFilter(status.value)">
+                @if (statusFilter() === status.value) { <i class="pi pi-check"></i> }
+                {{ status.labelKey | translate }}
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+
+    <select
+      class="page-size-select"
+      [title]="'TASKS.FILTERS.PAGE_SIZE' | translate"
+      [value]="pageSize()"
+      (change)="onPageSizeChange(+$any($event.target).value)"
+    >
+      <option [value]="10">10</option>
+      <option [value]="20">20</option>
+      <option [value]="30">30</option>
+      <option [value]="40">40</option>
+      <option [value]="50">50</option>
+    </select>
+  </div>
+
+  <div class="tasks__list">
+    @if (loading()) {
+      <div class="tasks__state">
+        <p-progressSpinner strokeWidth="4" styleClass="tasks__spinner" />
+      </div>
+    } @else if (loadError()) {
+      <div class="tasks__state tasks__state--error">
+        <i class="pi pi-exclamation-circle"></i>
+        <span>{{ loadError() }}</span>
+      </div>
+    } @else if (filteredTasks().length === 0) {
+      <div class="tasks__state">
+        <i class="pi pi-inbox"></i>
+        <span>{{ 'TASKS.EMPTY' | translate }}</span>
+      </div>
+    } @else {
+      @for (task of filteredTasks(); track task.Id) {
+        <article class="task-card">
+          <div class="task-card__status">
+            <span class="task-card__check" [class.task-card__check--completed]="task.Status === TaskSupervisorStatus.Completed">
+              <i class="pi" [class.pi-check]="task.Status === TaskSupervisorStatus.Completed" [class.pi-clock]="task.Status !== TaskSupervisorStatus.Completed"></i>
+            </span>
+          </div>
+          <div class="task-card__content">
+            <div class="task-card__top">
+              <h2 class="task-card__title">{{ task.Title }}</h2>
+              <div class="task-card__badges">
+                <span class="category-pill category-pill--{{ categoryTone(task.Category) }}">
+                  {{ categoryLabelKey(task.Category) | translate }}
+                </span>
+                <span class="status-badge {{ statusClass(task) }}">
+                  {{ statusDisplayKey(task) | translate }}
+                </span>
+              </div>
+            </div>
+
+            @if (task.Description) {
+              <p class="task-card__description">{{ task.Description }}</p>
+            }
+
+            <div class="task-card__meta">
+              <span>
+                <i class="pi pi-user"></i>
+                {{ task.AssignerName || ('TASKS.UNKNOWN_SUPERVISOR' | translate) }}
+              </span>
+              <span>
+                <i class="pi pi-calendar"></i>
+                {{ task.DueDate | date:'mediumDate' }}
+              </span>
+              <span>
+                <i class="pi pi-clock"></i>
+                {{ task.DueDate | date:'shortTime' }}
+              </span>
+            </div>
+          </div>
+        </article>
+      }
+    }
+  </div>
+
+  @if (totalCount() > 0) {
+    <div class="pagination-bar">
+      <div class="pagination-bar__controls">
+        <button class="pagination__btn" type="button" [disabled]="!hasPrevious()" (click)="prevPage()">
+          <i class="pi pi-angle-right"></i>
+        </button>
+        @for (page of visiblePages(); track $index) {
+          @if (page === '...') {
+            <span class="pagination__ellipsis">...</span>
+          } @else {
+            <button class="pagination__btn" type="button" [class.pagination__btn--active]="page === currentPage()" (click)="goToPage(page)">
+              {{ page }}
+            </button>
+          }
+        }
+        <button class="pagination__btn" type="button" [disabled]="!hasNext()" (click)="nextPage()">
+          <i class="pi pi-angle-left"></i>
+        </button>
+      </div>
+      <span class="pagination-bar__info">
+        {{ filteredTasks().length | number }} {{ 'COMMON.OF' | translate }} {{ totalCount() | number }}
+      </span>
+    </div>
+  }
+</div>
+
+@if (showModal()) {
+  <div class="dialog" (click)="$event.stopPropagation()">
+    @if (showSupervisorDrop() || showCategoryDrop()) {
+      <div class="dialog__drop-backdrop" (click)="closeAllDrops()"></div>
+    }
+
+    <div class="dialog__header">
+      <div>
+        <h2 class="dialog__title">{{ 'TASKS.MODAL.TITLE' | translate }}</h2>
+        <p class="dialog__sub">{{ 'TASKS.MODAL.SUBTITLE' | translate }}</p>
+      </div>
+      <button class="dialog__close" type="button" (click)="closeModal()" [disabled]="submitting()">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <div class="dialog__body">
+      <div class="form-field">
+        <label class="form-label">{{ 'TASKS.FORM.TITLE' | translate }} <span class="form-req">*</span></label>
+        <input
+          class="form-input"
+          [class.form-input--error]="touched() && !formData().title.trim()"
+          type="text"
+          [placeholder]="'TASKS.FORM.TITLE_PLACEHOLDER' | translate"
+          [value]="formData().title"
+          [disabled]="submitting()"
+          (input)="patchForm({ title: $any($event.target).value })"
+        />
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">{{ 'TASKS.FORM.DESCRIPTION' | translate }}</label>
+        <textarea
+          class="form-input form-input--textarea"
+          rows="4"
+          [placeholder]="'TASKS.FORM.DESCRIPTION_PLACEHOLDER' | translate"
+          [value]="formData().description"
+          [disabled]="submitting()"
+          (input)="patchForm({ description: $any($event.target).value })"
+        ></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">{{ 'TASKS.FORM.SUPERVISOR' | translate }} <span class="form-req">*</span></label>
+          <div class="ss" [class.ss--disabled]="submitting()">
+            <button
+              class="ss__trigger"
+              [class.ss__trigger--error]="touched() && !formData().supervisorId"
+              type="button"
+              [disabled]="submitting()"
+              (click)="toggleSupervisorDrop()"
+            >
+              <span [class.ss__placeholder]="!selectedSupervisorName()">
+                {{ selectedSupervisorName() || ('TASKS.FORM.SELECT_SUPERVISOR' | translate) }}
+              </span>
+              @if (selectedSupervisorName()) {
+                <i class="pi pi-times ss__clear" (click)="$event.stopPropagation(); clearSupervisor()"></i>
+              } @else {
+                <i class="pi pi-angle-down"></i>
+              }
+            </button>
+            @if (showSupervisorDrop()) {
+              <div class="ss__dropdown">
+                <div class="ss__search">
+                  <i class="pi pi-search"></i>
+                  <input
+                    type="text"
+                    [placeholder]="'TASKS.FORM.SEARCH_SUPERVISOR' | translate"
+                    [value]="supervisorSearch()"
+                    (input)="onSupervisorSearch($any($event.target).value)"
+                  />
+                </div>
+                @if (supervisorLoading()) {
+                  <div class="ss__state"><span class="ss-spinner"></span></div>
+                } @else if (supervisorList().length === 0) {
+                  <div class="ss__state">{{ 'TASKS.FORM.NO_SUPERVISORS' | translate }}</div>
+                } @else {
+                  <ul class="ss__list">
+                    @for (supervisor of supervisorList(); track supervisor.Id) {
+                      <li class="ss__item" [class.ss__item--active]="formData().supervisorId === supervisor.Id" (click)="selectSupervisor(supervisor)">
+                        {{ supervisor.DisplayName || supervisor.UserId }}
+                      </li>
+                    }
+                  </ul>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">{{ 'TASKS.FORM.CATEGORY' | translate }} <span class="form-req">*</span></label>
+          <div class="ss" [class.ss--disabled]="submitting()">
+            <button
+              class="ss__trigger"
+              [class.ss__trigger--error]="touched() && formData().category === ''"
+              type="button"
+              [disabled]="submitting()"
+              (click)="toggleCategoryDrop()"
+            >
+              <span [class.ss__placeholder]="formData().category === ''">
+                {{ formData().category === '' ? ('TASKS.FORM.SELECT_CATEGORY' | translate) : (categoryLabelKey(formData().category) | translate) }}
+              </span>
+              <i class="pi pi-angle-down"></i>
+            </button>
+            @if (showCategoryDrop()) {
+              <div class="ss__dropdown">
+                <ul class="ss__list">
+                  @for (category of categoryOptions; track category.value) {
+                    <li class="ss__item" [class.ss__item--active]="formData().category === category.value" (click)="selectCategory(category.value)">
+                      {{ category.labelKey | translate }}
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">{{ 'TASKS.FORM.DUE_DATE' | translate }} <span class="form-req">*</span></label>
+          <p-datepicker
+            [ngModel]="formData().dueDate"
+            (ngModelChange)="patchForm({ dueDate: $event })"
+            (onSelect)="patchForm({ dueDate: $event })"
+            dateFormat="yy-mm-dd"
+            [minDate]="minDueDate"
+            [disabled]="submitting()"
+            [placeholder]="'TASKS.FORM.SELECT_DATE' | translate"
+            [inputStyleClass]="touched() && (!formData().dueDate || isDueDateInPast()) ? 'form-input--error' : ''"
+            [showIcon]="true"
+            [inline]="false"
+            appendTo="body"
+            [baseZIndex]="3000">
+          </p-datepicker>
+        </div>
+        <div class="form-field">
+          <label class="form-label">{{ 'TASKS.FORM.TIME' | translate }}</label>
+          <input
+            class="form-input"
+            type="time"
+            [value]="formData().dueTime"
+            [disabled]="submitting()"
+            (input)="patchForm({ dueTime: $any($event.target).value })"
+          />
+        </div>
+      </div>
+
+      @if (touched() && !hasRequiredFormFields()) {
+        <p class="form-error">{{ 'TASKS.FORM.VALIDATION_REQUIRED' | translate }}</p>
+      }
+
+      @if (touched() && isDueDateInPast()) {
+        <p class="form-error">{{ 'TASKS.FORM.PAST_DUE_INVALID' | translate }}</p>
+      }
+
+      @if (submitError()) {
+        <p class="form-error">{{ submitError() }}</p>
+      }
+    </div>
+
+    <div class="dialog__footer">
+      <button class="btn btn--outline" type="button" (click)="closeModal()" [disabled]="submitting()">
+        {{ 'COMMON.CANCEL' | translate }}
+      </button>
+      <button class="btn btn--primary" type="button" (click)="submit()" [disabled]="submitting() || !isFormValid()">
+        @if (submitting()) {
+          <span class="btn-spinner"></span>
+          {{ 'TASKS.FORM.ASSIGNING' | translate }}
+        } @else {
+          <i class="pi pi-check"></i>
+          {{ 'TASKS.FORM.ASSIGN' | translate }}
+        }
+      </button>
+    </div>
+  </div>
+}

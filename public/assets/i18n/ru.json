@@ -76,6 +76,7 @@
     "DEVICES": "Управление Устройствами",
     "TOOLS": "Инструменты",
     "CHAT": "Чат",
+    "TASKS": "Управление задачами",
     "NOTIFICATIONS": "Массовые Уведомления",
     "BROADCAST": "Групповые Сообщения",
     "REVIEWS": "Отзывы",
@@ -114,7 +115,7 @@
     "ONLINE_SUPERVISORS": "Супервизоры Онлайн",
     "TOTAL_GROUPS": "Всего Групп",
     "ONLINE_LABEL": "В сети",
-    "HEALTH_DISTRIBUTION": "Распределение Состояния Здоровья",
+    "HEALTH_DISTRIBUTION": "Распределение статусов",
     "SAFETY_INDEX": "Индекс Безопасности",
     "TOTAL_PILGRIMS_CHART": "Всего Паломников",
     "STABLE": "Стабильный",
@@ -174,7 +175,7 @@
       "DOWNLOAD_LUGGAGE": "Скачать багаж паломников",
       "VIEW_LUGGAGE_QR": "Показать QR-код багажа"
     },
-    "SEARCH_PLACEHOLDER": "Поиск по имени или паспорту...",
+    "SEARCH_PLACEHOLDER": "Поиск по номеру паспорта...",
     "LOADING": "Загрузка...",
     "EMPTY": "Нет результатов",
     "TABLE": {
@@ -341,6 +342,68 @@
       "ADD": "Добавить Супервизора",
       "SAVING": "Сохранение...",
       "ADDING": "Добавление..."
+    }
+  },
+  "TASKS": {
+    "TITLE": "Управление задачами",
+    "SUBTITLE": "Назначение и отслеживание задач полевых супервайзеров",
+    "ADD": "Добавить задачу",
+    "SEARCH_PLACEHOLDER": "Поиск задач...",
+    "EMPTY": "Нет задач по текущим фильтрам",
+    "UNKNOWN_SUPERVISOR": "Неизвестный супервайзер",
+    "ASSIGN_SUCCESS": "Задача успешно назначена",
+    "STATS": {
+      "TOTAL": "Всего задач",
+      "PENDING": "В ожидании",
+      "COMPLETED": "Выполнено",
+      "DELAYED": "Просрочено"
+    },
+    "FILTERS": {
+      "ALL_STATUSES": "Все статусы",
+      "ALL_SUPERVISORS": "Все супервайзеры",
+      "PAGE_SIZE": "Размер страницы"
+    },
+    "STATUS": {
+      "PENDING": "В ожидании",
+      "COMPLETED": "Выполнено",
+      "DELAYED": "Просрочено"
+    },
+    "CATEGORY": {
+      "GENERAL": "Общее",
+      "HEALTH_CHECKUP": "Медосмотр",
+      "HEALTH": "Здоровье",
+      "MEALS": "Питание",
+      "TRANSPORTATION": "Транспорт",
+      "LOGISTICS": "Логистика",
+      "REPORTS": "Отчеты",
+      "UNKNOWN": "Неизвестно"
+    },
+    "MODAL": {
+      "TITLE": "Назначить новую задачу",
+      "SUBTITLE": "Создайте задачу супервайзера с категорией и сроком"
+    },
+    "FORM": {
+      "TITLE": "Название задачи",
+      "TITLE_PLACEHOLDER": "Название задачи",
+      "DESCRIPTION": "Описание",
+      "DESCRIPTION_PLACEHOLDER": "Детали задачи...",
+      "SUPERVISOR": "Супервайзер",
+      "SELECT_SUPERVISOR": "Выберите супервайзера",
+      "SEARCH_SUPERVISOR": "Поиск супервайзера...",
+      "NO_SUPERVISORS": "Нет супервайзеров",
+      "CATEGORY": "Категория",
+      "SELECT_CATEGORY": "Выберите категорию",
+      "DUE_DATE": "Дата",
+      "SELECT_DATE": "Выберите дату",
+      "TIME": "Время",
+      "ASSIGN": "Назначить задачу",
+      "ASSIGNING": "Назначение...",
+      "VALIDATION_REQUIRED": "Заполните обязательные поля.",
+      "PAST_DUE_INVALID": "Нельзя выбрать прошедшую дату или время"
+    },
+    "ERRORS": {
+      "LOAD": "Не удалось загрузить задачи",
+      "ASSIGN": "Не удалось назначить задачу"
     }
   },
   "DEVICES": {

@@ -75,7 +75,7 @@ export class Settings implements OnInit {
       );
 
       if (!this.selectedIcon()) {
-        this.iconPreviewUrl.set(this.resolveIconUrl(settings.IconPath));
+        this.iconPreviewUrl.set(this.settingsService.iconUrl());
       }
     });
 
@@ -116,7 +116,7 @@ export class Settings implements OnInit {
   clearSelectedIcon(input?: HTMLInputElement): void {
     this.selectedIcon.set(null);
     this.revokeObjectIconUrl();
-    this.iconPreviewUrl.set(this.resolveIconUrl(this.settingsService.settings()?.IconPath));
+    this.iconPreviewUrl.set(this.settingsService.iconUrl());
     if (input) input.value = '';
   }
 
@@ -167,8 +167,8 @@ export class Settings implements OnInit {
           this.revokeObjectIconUrl();
 
           if (res.Data) {
-            this.iconPreviewUrl.set(this.resolveIconUrl(res.Data.IconPath));
             this.settingsService.setSettings(res.Data);
+            this.iconPreviewUrl.set(this.settingsService.iconUrl());
             return;
           }
 
@@ -180,10 +180,6 @@ export class Settings implements OnInit {
           }
         },
       });
-  }
-
-  private resolveIconUrl(path?: string | null): string {
-    return path?.trim() ?? '';
   }
 
   private revokeObjectIconUrl(): void {

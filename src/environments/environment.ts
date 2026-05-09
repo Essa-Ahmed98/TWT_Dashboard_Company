@@ -4,5 +4,6 @@ export const environment = {
   chatApiBase: '/api',
   hubUrl: '/api/chat/chatHub',
   chatMediaBase: '',
+  uploadsBase: '',
 };
 
