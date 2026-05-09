@@ -230,7 +230,7 @@ export class Tasks implements OnInit {
   }
 
   selectFilterSupervisor(supervisor: SupervisorItem): void {
-    this.filterSupervisorId.set(supervisor.Id);
+    this.filterSupervisorId.set(supervisor.UserId);
     this.filterSupervisorName.set(supervisor.DisplayName || supervisor.UserId);
     this.showFilterSupervisorDrop.set(false);
     this.currentPage.set(1);
@@ -302,7 +302,7 @@ export class Tasks implements OnInit {
   }
 
   selectSupervisor(supervisor: SupervisorItem): void {
-    this.patchForm({ supervisorId: supervisor.Id });
+    this.patchForm({ supervisorId: supervisor.UserId });
     this.selectedSupervisorName.set(supervisor.DisplayName || supervisor.UserId);
     this.showSupervisorDrop.set(false);
   }

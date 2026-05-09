@@ -25,7 +25,7 @@ export class SettingsService {
   });
 
   loadSettings(): void {
-    if (this._settings()) return;
+    if (this._settings() || this._loading()) return;
     const companyId = this.auth.currentUser()?.companyId;
     if (!companyId) return;
 

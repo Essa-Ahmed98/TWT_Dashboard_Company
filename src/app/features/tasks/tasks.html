@@ -66,8 +66,8 @@
             <div class="ss__state">{{ 'TASKS.FORM.NO_SUPERVISORS' | translate }}</div>
           } @else {
             <ul class="ss__list">
-              @for (supervisor of filterSupervisorList(); track supervisor.Id) {
-                <li class="ss__item" [class.ss__item--active]="filterSupervisorId() === supervisor.Id" (click)="selectFilterSupervisor(supervisor)">
+              @for (supervisor of filterSupervisorList(); track supervisor.UserId) {
+                <li class="ss__item" [class.ss__item--active]="filterSupervisorId() === supervisor.UserId" (click)="selectFilterSupervisor(supervisor)">
                   {{ supervisor.DisplayName || supervisor.UserId }}
                 </li>
               }
@@ -279,8 +279,8 @@
                   <div class="ss__state">{{ 'TASKS.FORM.NO_SUPERVISORS' | translate }}</div>
                 } @else {
                   <ul class="ss__list">
-                    @for (supervisor of supervisorList(); track supervisor.Id) {
-                      <li class="ss__item" [class.ss__item--active]="formData().supervisorId === supervisor.Id" (click)="selectSupervisor(supervisor)">
+                    @for (supervisor of supervisorList(); track supervisor.UserId) {
+                      <li class="ss__item" [class.ss__item--active]="formData().supervisorId === supervisor.UserId" (click)="selectSupervisor(supervisor)">
                         {{ supervisor.DisplayName || supervisor.UserId }}
                       </li>
                     }
