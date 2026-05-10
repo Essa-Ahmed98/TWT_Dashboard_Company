@@ -81,6 +81,7 @@
     "BROADCAST": "الرسائل الجماعية",
     "REVIEWS": "التقييمات",
     "COMPLAINTS": "الشكاوى",
+    "PROFILE": "الملف الشخصي",
     "SETTINGS": "الإعدادات"
   },
   "LOGIN": {
@@ -850,6 +851,49 @@
         "TITLE": "التواصل",
         "DESC": "قنوات التواصل مع الحجاج"
       }
+    }
+  },
+  "PROFILE": {
+    "TITLE": "الملف الشخصي",
+    "SUBTITLE": "إدارة بيانات حسابك الشخصي",
+    "PERSONAL_INFORMATION": "البيانات الشخصية",
+    "FULL_NAME": "الاسم الكامل",
+    "EMAIL": "البريد الإلكتروني",
+    "PHONE": "رقم الهاتف",
+    "SAVE_CHANGES": "حفظ التغييرات",
+    "CHANGE_PASSWORD": "تغيير كلمة المرور",
+    "CHANGING_PASSWORD": "جاري تغيير كلمة المرور...",
+    "CURRENT_PASSWORD": "كلمة المرور الحالية",
+    "NEW_PASSWORD": "كلمة المرور الجديدة",
+    "CONFIRM_PASSWORD": "تأكيد كلمة المرور",
+    "ACCOUNT_INFORMATION": "معلومات الحساب",
+    "COMPANY": "الشركة",
+    "ROLE": "الدور",
+    "CREATED_AT": "تاريخ الإنشاء",
+    "LAST_LOGIN_AT": "آخر تسجيل دخول",
+    "CHANGE_IMAGE": "تغيير الصورة",
+    "UPLOAD_IMAGE": "رفع الصورة",
+    "SHOW_PASSWORD": "إظهار كلمة المرور",
+    "HIDE_PASSWORD": "إخفاء كلمة المرور",
+    "AVATAR_ALT": "صورة المستخدم",
+    "REQUIRED_FIELD": "هذا الحقل مطلوب",
+    "INVALID_EMAIL": "يرجى إدخال بريد إلكتروني صحيح",
+    "LOAD_ERROR": "حدث خطأ أثناء تحميل بيانات الملف الشخصي",
+    "UPDATE_SUCCESS": "تم تحديث البيانات بنجاح",
+    "UPDATE_ERROR": "حدث خطأ أثناء تحديث البيانات",
+    "IMAGE_UPLOAD_SUCCESS": "تم تحديث الصورة بنجاح",
+    "IMAGE_UPLOAD_ERROR": "حدث خطأ أثناء رفع الصورة",
+    "PASSWORD_RESET_SUCCESS": "تم تغيير كلمة المرور بنجاح",
+    "PASSWORD_RESET_ERROR": "حدث خطأ أثناء تغيير كلمة المرور",
+    "PASSWORD_MISMATCH": "كلمة المرور غير متطابقة",
+    "INVALID_IMAGE_TYPE": "يرجى اختيار ملف صورة صالح",
+    "ROLES": {
+      "PILGRIM": "حاج",
+      "FAMILY": "عائلة",
+      "SUPERVISOR": "مشرف",
+      "COMPANY_ADMIN": "مسؤول الشركة",
+      "SUPER_ADMIN": "مسؤول النظام",
+      "UNKNOWN": "غير معروف"
     }
   },
   "CAMPAIGN_DETAIL": {

@@ -81,6 +81,7 @@
     "BROADCAST": "Messages Groupés",
     "REVIEWS": "Évaluations",
     "COMPLAINTS": "Plaintes",
+    "PROFILE": "Profil utilisateur",
     "SETTINGS": "Paramètres"
   },
   "LOGIN": {
@@ -850,6 +851,49 @@
         "TITLE": "Communication",
         "DESC": "Canaux de communication avec les pèlerins"
       }
+    }
+  },
+  "PROFILE": {
+    "TITLE": "Profil utilisateur",
+    "SUBTITLE": "Gérer les données de votre compte personnel",
+    "PERSONAL_INFORMATION": "Informations personnelles",
+    "FULL_NAME": "Nom complet",
+    "EMAIL": "Email",
+    "PHONE": "Numéro de téléphone",
+    "SAVE_CHANGES": "Enregistrer les modifications",
+    "CHANGE_PASSWORD": "Changer le mot de passe",
+    "CHANGING_PASSWORD": "Changement en cours...",
+    "CURRENT_PASSWORD": "Mot de passe actuel",
+    "NEW_PASSWORD": "Nouveau mot de passe",
+    "CONFIRM_PASSWORD": "Confirmer le mot de passe",
+    "ACCOUNT_INFORMATION": "Informations du compte",
+    "COMPANY": "Entreprise",
+    "ROLE": "Rôle",
+    "CREATED_AT": "Date de création",
+    "LAST_LOGIN_AT": "Dernière connexion",
+    "CHANGE_IMAGE": "Changer l'image",
+    "UPLOAD_IMAGE": "Téléverser l'image",
+    "SHOW_PASSWORD": "Afficher le mot de passe",
+    "HIDE_PASSWORD": "Masquer le mot de passe",
+    "AVATAR_ALT": "Avatar utilisateur",
+    "REQUIRED_FIELD": "Ce champ est obligatoire",
+    "INVALID_EMAIL": "Veuillez saisir un email valide",
+    "LOAD_ERROR": "Impossible de charger les données du profil",
+    "UPDATE_SUCCESS": "Profil mis à jour avec succès",
+    "UPDATE_ERROR": "Une erreur s'est produite lors de la mise à jour du profil",
+    "IMAGE_UPLOAD_SUCCESS": "Image mise à jour avec succès",
+    "IMAGE_UPLOAD_ERROR": "Une erreur s'est produite lors du téléversement de l'image",
+    "PASSWORD_RESET_SUCCESS": "Mot de passe changé avec succès",
+    "PASSWORD_RESET_ERROR": "Une erreur s'est produite lors du changement du mot de passe",
+    "PASSWORD_MISMATCH": "Les mots de passe ne correspondent pas",
+    "INVALID_IMAGE_TYPE": "Veuillez sélectionner une image valide",
+    "ROLES": {
+      "PILGRIM": "Pèlerin",
+      "FAMILY": "Famille",
+      "SUPERVISOR": "Superviseur",
+      "COMPANY_ADMIN": "Administrateur de l'entreprise",
+      "SUPER_ADMIN": "Administrateur système",
+      "UNKNOWN": "Inconnu"
     }
   },
   "CAMPAIGN_DETAIL": {

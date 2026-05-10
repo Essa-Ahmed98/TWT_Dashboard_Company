@@ -81,6 +81,7 @@
     "BROADCAST": "Групповые Сообщения",
     "REVIEWS": "Отзывы",
     "COMPLAINTS": "Жалобы",
+    "PROFILE": "Профиль пользователя",
     "SETTINGS": "Настройки"
   },
   "LOGIN": {
@@ -850,6 +851,49 @@
         "TITLE": "Связь",
         "DESC": "Каналы связи с паломниками"
       }
+    }
+  },
+  "PROFILE": {
+    "TITLE": "Профиль пользователя",
+    "SUBTITLE": "Управление данными личного аккаунта",
+    "PERSONAL_INFORMATION": "Личная информация",
+    "FULL_NAME": "Полное имя",
+    "EMAIL": "Email",
+    "PHONE": "Номер телефона",
+    "SAVE_CHANGES": "Сохранить изменения",
+    "CHANGE_PASSWORD": "Изменить пароль",
+    "CHANGING_PASSWORD": "Изменение пароля...",
+    "CURRENT_PASSWORD": "Текущий пароль",
+    "NEW_PASSWORD": "Новый пароль",
+    "CONFIRM_PASSWORD": "Подтвердите пароль",
+    "ACCOUNT_INFORMATION": "Информация аккаунта",
+    "COMPANY": "Компания",
+    "ROLE": "Роль",
+    "CREATED_AT": "Дата создания",
+    "LAST_LOGIN_AT": "Последний вход",
+    "CHANGE_IMAGE": "Изменить изображение",
+    "UPLOAD_IMAGE": "Загрузить изображение",
+    "SHOW_PASSWORD": "Показать пароль",
+    "HIDE_PASSWORD": "Скрыть пароль",
+    "AVATAR_ALT": "Аватар пользователя",
+    "REQUIRED_FIELD": "Это поле обязательно",
+    "INVALID_EMAIL": "Введите корректный email",
+    "LOAD_ERROR": "Не удалось загрузить данные профиля",
+    "UPDATE_SUCCESS": "Профиль успешно обновлен",
+    "UPDATE_ERROR": "Произошла ошибка при обновлении данных профиля",
+    "IMAGE_UPLOAD_SUCCESS": "Изображение успешно обновлено",
+    "IMAGE_UPLOAD_ERROR": "Произошла ошибка при загрузке изображения",
+    "PASSWORD_RESET_SUCCESS": "Пароль успешно изменен",
+    "PASSWORD_RESET_ERROR": "Произошла ошибка при изменении пароля",
+    "PASSWORD_MISMATCH": "Пароли не совпадают",
+    "INVALID_IMAGE_TYPE": "Выберите корректный файл изображения",
+    "ROLES": {
+      "PILGRIM": "Паломник",
+      "FAMILY": "Семья",
+      "SUPERVISOR": "Супервизор",
+      "COMPANY_ADMIN": "Администратор компании",
+      "SUPER_ADMIN": "Системный администратор",
+      "UNKNOWN": "Неизвестно"
     }
   },
   "CAMPAIGN_DETAIL": {

@@ -46,10 +46,10 @@
     </div>
 
     <!-- User pill -->
-    <div class="header__user">
+    <a class="header__user" routerLink="/profile" [title]="'PROFILE.TITLE' | translate">
       <i class="pi pi-user"></i>
       <span class="header__user-name">{{ auth.currentUser()?.displayName }}</span>
-    </div>
+    </a>
 
     <!-- Logout -->
     <button class="header__icon-btn header__logout" (click)="auth.logout()" [title]="'HEADER.LOGOUT' | translate">

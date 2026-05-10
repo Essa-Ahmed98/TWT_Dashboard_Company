@@ -1257,6 +1257,13 @@ $danger:      #e53935;
   }
 }
 
+:host-context(html[dir='ltr']) {
+  .pagination__btn--prev .pi,
+  .pagination__btn--next .pi {
+    transform: scaleX(-1);
+  }
+}
+
 .pagination__ellipsis {
   min-width: 32px;
   height: 32px;

@@ -115,6 +115,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/settings/settings').then((m) => m.Settings),
       },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./features/profile/profile').then((m) => m.Profile),
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },

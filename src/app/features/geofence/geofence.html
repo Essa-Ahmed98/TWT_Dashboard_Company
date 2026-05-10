@@ -55,27 +55,6 @@
 
         <!-- Search + Filter -->
         <div class="gf__search-bar">
-          <!-- Filter Dropdown -->
-          <div class="gf__filter" (click)="showFilterDropdown.update(v => !v)">
-            <span>{{ filterLabelKey(filterType()) | translate }}</span>
-            <i class="pi pi-chevron-down gf__filter__arrow"
-               [class.gf__filter__arrow--open]="showFilterDropdown()"></i>
-            @if (showFilterDropdown()) {
-              <div class="gf__filter__menu">
-                @for (opt of filterOptions; track opt) {
-                  <div
-                    class="gf__filter__item"
-                    [class.gf__filter__item--active]="filterType() === opt"
-                    (click)="selectFilter(opt); $event.stopPropagation()">
-                    @if (filterType() === opt) {
-                      <i class="pi pi-check"></i>
-                    }
-                    {{ filterLabelKey(opt) | translate }}
-                  </div>
-                }
-              </div>
-            }
-          </div>
           <!-- Search -->
           <div class="gf__search">
             <i class="pi pi-search gf__search__icon"></i>
@@ -182,7 +161,7 @@
           <div class="pagination-bar">
             <div class="pagination-bar__controls">
               <button class="pagination__btn pagination__btn--prev" [disabled]="!hasPrevious()" (click)="prevPage()">
-                <i class="pi pi-angle-left"></i>
+                <i class="pi pi-angle-right"></i>
               </button>
               @for (p of visiblePages(); track $index) {
                 @if (p === '...') {
@@ -194,7 +173,7 @@
                 }
               }
               <button class="pagination__btn pagination__btn--next" [disabled]="!hasNext()" (click)="nextPage()">
-                <i class="pi pi-angle-right"></i>
+                <i class="pi pi-angle-left"></i>
               </button>
             </div>
             <span class="pagination-bar__info">
@@ -296,7 +275,7 @@
             <div class="pagination-bar">
               <div class="pagination-bar__controls">
                 <button class="pagination__btn pagination__btn--prev" [disabled]="!campaignsHasPrevious()" (click)="prevCampaignsPage()">
-                  <i class="pi pi-angle-left"></i>
+                  <i class="pi pi-angle-right"></i>
                 </button>
                 @for (p of campaignVisiblePages(); track $index) {
                   @if (p === '...') {
@@ -308,7 +287,7 @@
                   }
                 }
                 <button class="pagination__btn pagination__btn--next" [disabled]="!campaignsHasNext()" (click)="nextCampaignsPage()">
-                  <i class="pi pi-angle-right"></i>
+                  <i class="pi pi-angle-left"></i>
                 </button>
               </div>
               <span class="pagination-bar__info">

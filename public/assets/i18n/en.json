@@ -81,6 +81,7 @@
     "BROADCAST": "Broadcast Messages",
     "REVIEWS": "Reviews",
     "COMPLAINTS": "Complaints",
+    "PROFILE": "User Profile",
     "SETTINGS": "Settings"
   },
   "LOGIN": {
@@ -850,6 +851,49 @@
         "TITLE": "Communication",
         "DESC": "Communication channels with pilgrims"
       }
+    }
+  },
+  "PROFILE": {
+    "TITLE": "User Profile",
+    "SUBTITLE": "Manage your personal account data",
+    "PERSONAL_INFORMATION": "Personal Information",
+    "FULL_NAME": "Full Name",
+    "EMAIL": "Email",
+    "PHONE": "Phone Number",
+    "SAVE_CHANGES": "Save Changes",
+    "CHANGE_PASSWORD": "Change Password",
+    "CHANGING_PASSWORD": "Changing password...",
+    "CURRENT_PASSWORD": "Current Password",
+    "NEW_PASSWORD": "New Password",
+    "CONFIRM_PASSWORD": "Confirm Password",
+    "ACCOUNT_INFORMATION": "Account Information",
+    "COMPANY": "Company",
+    "ROLE": "Role",
+    "CREATED_AT": "Created Date",
+    "LAST_LOGIN_AT": "Last Login",
+    "CHANGE_IMAGE": "Change Image",
+    "UPLOAD_IMAGE": "Upload Image",
+    "SHOW_PASSWORD": "Show password",
+    "HIDE_PASSWORD": "Hide password",
+    "AVATAR_ALT": "User avatar",
+    "REQUIRED_FIELD": "This field is required",
+    "INVALID_EMAIL": "Please enter a valid email",
+    "LOAD_ERROR": "Unable to load profile data",
+    "UPDATE_SUCCESS": "Profile updated successfully",
+    "UPDATE_ERROR": "An error occurred while updating profile data",
+    "IMAGE_UPLOAD_SUCCESS": "Image updated successfully",
+    "IMAGE_UPLOAD_ERROR": "An error occurred while uploading the image",
+    "PASSWORD_RESET_SUCCESS": "Password changed successfully",
+    "PASSWORD_RESET_ERROR": "An error occurred while changing the password",
+    "PASSWORD_MISMATCH": "Passwords do not match",
+    "INVALID_IMAGE_TYPE": "Please select a valid image file",
+    "ROLES": {
+      "PILGRIM": "Pilgrim",
+      "FAMILY": "Family",
+      "SUPERVISOR": "Supervisor",
+      "COMPANY_ADMIN": "Company Admin",
+      "SUPER_ADMIN": "System Admin",
+      "UNKNOWN": "Unknown"
     }
   },
   "CAMPAIGN_DETAIL": {

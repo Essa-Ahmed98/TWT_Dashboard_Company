@@ -73,6 +73,17 @@ export class AuthService {
     return this.isBrowser ? localStorage.getItem(this.TOKEN_KEY) : null;
   }
 
+  updateCurrentUser(patch: Partial<StoredUser>): void {
+    const current = this.currentUser();
+    if (!current) return;
+
+    const updated = { ...current, ...patch };
+    if (this.isBrowser) {
+      localStorage.setItem(this.USER_KEY, JSON.stringify(updated));
+    }
+    this.currentUser.set(updated);
+  }
+
   private decodeToken(token: string): Record<string, unknown> {
     try {
       const payload = token.split('.')[1];

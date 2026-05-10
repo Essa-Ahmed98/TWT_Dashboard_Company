@@ -7,6 +7,7 @@ import {
   output,
   signal,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../core/auth/services/auth';
 import { TranslationService, SUPPORTED_LANGUAGES } from '../../core/services/translation.service';
@@ -14,7 +15,7 @@ import { SettingsService } from '../../features/settings/settings.service';
 
 @Component({
   selector: 'app-header',
-  imports: [TranslateModule],
+  imports: [RouterLink, TranslateModule],
   templateUrl: './header.html',
   styleUrl: './header.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

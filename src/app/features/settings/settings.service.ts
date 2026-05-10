@@ -20,8 +20,11 @@ export class SettingsService {
   readonly iconUrl = computed(() => {
     const path = this._settings()?.IconPath;
     if (!path?.trim()) return '';
-    if (path.startsWith('http')) return path;
-    return environment.uploadsBase + path.trim();
+    const trimmed = path.trim();
+    if (/^(https?:)?\/\//i.test(trimmed) || trimmed.startsWith('data:') || trimmed.startsWith('blob:')) return trimmed;
+    const base = environment.uploadsBase.replace(/\/$/, '');
+    const relativePath = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+    return `${base}${relativePath}`;
   });
 
   loadSettings(): void {

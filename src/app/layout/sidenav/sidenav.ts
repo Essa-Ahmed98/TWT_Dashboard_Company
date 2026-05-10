@@ -59,6 +59,7 @@ export class Sidenav implements OnInit {
         { labelKey: 'SIDENAV.BROADCAST',     icon: 'pi pi-send',               route: '/broadcast' },
         { labelKey: 'SIDENAV.REVIEWS',       icon: 'pi pi-star',               route: '/reviews' },
         { labelKey: 'SIDENAV.COMPLAINTS',    icon: 'pi pi-exclamation-circle', route: '/complaints' },
+        { labelKey: 'SIDENAV.PROFILE',       icon: 'pi pi-user-plus',          route: '/profile' },
         { labelKey: 'SIDENAV.SETTINGS',      icon: 'pi pi-cog',                route: '/settings' },
       ],
     },

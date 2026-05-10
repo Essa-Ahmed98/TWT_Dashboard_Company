@@ -1,0 +1,287 @@
+<div class="profile-page">
+  <div class="profile-page__inner">
+    <header class="profile-page__header">
+      <h1>{{ 'PROFILE.TITLE' | translate }}</h1>
+      <p>{{ 'PROFILE.SUBTITLE' | translate }}</p>
+    </header>
+
+    @if (pageLoading()) {
+      <div class="profile-card profile-card--summary profile-skeleton profile-skeleton--summary"></div>
+      <div class="profile-card profile-skeleton profile-skeleton--form"></div>
+      <div class="profile-card profile-skeleton profile-skeleton--form"></div>
+    } @else {
+      <section class="profile-card profile-card--summary">
+        <div class="profile-summary">
+          <div class="profile-summary__avatar-wrap">
+            <div class="profile-summary__avatar">
+              @if (avatarPreviewUrl()) {
+                <img [src]="avatarPreviewUrl()" [alt]="'PROFILE.AVATAR_ALT' | translate" />
+              } @else {
+                <i class="pi pi-user"></i>
+              }
+            </div>
+
+            <input
+              #avatarInput
+              class="profile-summary__file-input"
+              type="file"
+              accept="image/*"
+              [disabled]="imageUploading()"
+              (change)="onAvatarSelected($event)" />
+
+            <button
+              class="profile-summary__camera"
+              type="button"
+              [disabled]="imageUploading()"
+              [title]="'PROFILE.CHANGE_IMAGE' | translate"
+              (click)="avatarInput.click()">
+              @if (imageUploading()) {
+                <span class="profile-spinner profile-spinner--light"></span>
+              } @else {
+                <i class="pi pi-camera"></i>
+              }
+            </button>
+          </div>
+
+          <div class="profile-summary__content">
+            <h2>{{ displayValue(profile()?.DisplayName) }}</h2>
+            <span class="profile-summary__role">
+              <i class="pi pi-shield"></i>
+              {{ roleLabelKey() | translate }}
+            </span>
+            <span class="profile-summary__email">{{ displayValue(profile()?.Email) }}</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="profile-card">
+        <div class="profile-card__header">
+          <h2>
+            <i class="pi pi-user"></i>
+            {{ 'PROFILE.PERSONAL_INFORMATION' | translate }}
+          </h2>
+        </div>
+
+        <form class="profile-form" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+          <div class="profile-form__grid">
+            <div class="profile-field">
+              <label for="profile-display-name">{{ 'PROFILE.FULL_NAME' | translate }}</label>
+              <input
+                id="profile-display-name"
+                class="profile-input"
+                type="text"
+                formControlName="DisplayName"
+                [class.profile-input--error]="fieldInvalid('DisplayName') || validationError('DisplayName')" />
+              @if (fieldInvalid('DisplayName')) {
+                <span class="profile-field__error">{{ 'PROFILE.REQUIRED_FIELD' | translate }}</span>
+              } @else if (validationError('DisplayName')) {
+                <span class="profile-field__error">{{ validationError('DisplayName') }}</span>
+              }
+            </div>
+
+            <div class="profile-field">
+              <label for="profile-email">{{ 'PROFILE.EMAIL' | translate }}</label>
+              <input
+                id="profile-email"
+                class="profile-input"
+                type="email"
+                formControlName="Email"
+                [class.profile-input--error]="fieldInvalid('Email') || validationError('Email')" />
+              @if (fieldInvalid('Email')) {
+                <span class="profile-field__error">{{ 'PROFILE.INVALID_EMAIL' | translate }}</span>
+              } @else if (validationError('Email')) {
+                <span class="profile-field__error">{{ validationError('Email') }}</span>
+              }
+            </div>
+
+            <div class="profile-field">
+              <label for="profile-phone">{{ 'PROFILE.PHONE' | translate }}</label>
+              <input
+                id="profile-phone"
+                class="profile-input"
+                type="tel"
+                formControlName="Phone"
+                [class.profile-input--error]="fieldInvalid('Phone') || validationError('Phone')" />
+              @if (fieldInvalid('Phone')) {
+                <span class="profile-field__error">{{ 'PROFILE.REQUIRED_FIELD' | translate }}</span>
+              } @else if (validationError('Phone')) {
+                <span class="profile-field__error">{{ validationError('Phone') }}</span>
+              }
+            </div>
+          </div>
+
+          <div class="profile-actions">
+            <button class="profile-btn profile-btn--primary" type="submit" [disabled]="profileSaving() || profileForm.invalid">
+              @if (profileSaving()) {
+                <span class="profile-spinner profile-spinner--light"></span>
+                {{ 'COMMON.SAVING' | translate }}
+              } @else {
+                <i class="pi pi-save"></i>
+                {{ 'PROFILE.SAVE_CHANGES' | translate }}
+              }
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="profile-card">
+        <div class="profile-card__header">
+          <h2>
+            <i class="pi pi-key"></i>
+            {{ 'PROFILE.CHANGE_PASSWORD' | translate }}
+          </h2>
+        </div>
+
+        <form class="profile-form" [formGroup]="passwordForm" (ngSubmit)="resetPassword()">
+          <div class="profile-form__grid profile-form__grid--three">
+            <div class="profile-field">
+              <label for="profile-old-password">{{ 'PROFILE.CURRENT_PASSWORD' | translate }}</label>
+              <div class="profile-password">
+                <input
+                  id="profile-old-password"
+                  class="profile-input profile-input--password"
+                  [type]="showOldPassword() ? 'text' : 'password'"
+                  formControlName="OldPassword"
+                  [class.profile-input--error]="passwordFieldInvalid('OldPassword')" />
+                <button
+                  class="profile-password__toggle"
+                  type="button"
+                  [disabled]="passwordSaving()"
+                  [title]="(showOldPassword() ? 'PROFILE.HIDE_PASSWORD' : 'PROFILE.SHOW_PASSWORD') | translate"
+                  (click)="showOldPassword.update(value => !value)">
+                  <i class="pi" [class.pi-eye]="!showOldPassword()" [class.pi-eye-slash]="showOldPassword()"></i>
+                </button>
+              </div>
+              @if (passwordFieldInvalid('OldPassword')) {
+                <span class="profile-field__error">{{ 'PROFILE.REQUIRED_FIELD' | translate }}</span>
+              }
+            </div>
+
+            <div class="profile-field">
+              <label for="profile-new-password">{{ 'PROFILE.NEW_PASSWORD' | translate }}</label>
+              <div class="profile-password">
+                <input
+                  id="profile-new-password"
+                  class="profile-input profile-input--password"
+                  [type]="showNewPassword() ? 'text' : 'password'"
+                  formControlName="NewPassword"
+                  [class.profile-input--error]="passwordFieldInvalid('NewPassword')" />
+                <button
+                  class="profile-password__toggle"
+                  type="button"
+                  [disabled]="passwordSaving()"
+                  [title]="(showNewPassword() ? 'PROFILE.HIDE_PASSWORD' : 'PROFILE.SHOW_PASSWORD') | translate"
+                  (click)="showNewPassword.update(value => !value)">
+                  <i class="pi" [class.pi-eye]="!showNewPassword()" [class.pi-eye-slash]="showNewPassword()"></i>
+                </button>
+              </div>
+              @if (passwordFieldInvalid('NewPassword')) {
+                <span class="profile-field__error">{{ 'PROFILE.REQUIRED_FIELD' | translate }}</span>
+              }
+            </div>
+
+            <div class="profile-field">
+              <label for="profile-confirm-password">{{ 'PROFILE.CONFIRM_PASSWORD' | translate }}</label>
+              <div class="profile-password">
+                <input
+                  id="profile-confirm-password"
+                  class="profile-input profile-input--password"
+                  [type]="showConfirmPassword() ? 'text' : 'password'"
+                  formControlName="ConfirmPassword"
+                  [class.profile-input--error]="passwordFieldInvalid('ConfirmPassword') || passwordMismatch()" />
+                <button
+                  class="profile-password__toggle"
+                  type="button"
+                  [disabled]="passwordSaving()"
+                  [title]="(showConfirmPassword() ? 'PROFILE.HIDE_PASSWORD' : 'PROFILE.SHOW_PASSWORD') | translate"
+                  (click)="showConfirmPassword.update(value => !value)">
+                  <i class="pi" [class.pi-eye]="!showConfirmPassword()" [class.pi-eye-slash]="showConfirmPassword()"></i>
+                </button>
+              </div>
+              @if (passwordFieldInvalid('ConfirmPassword')) {
+                <span class="profile-field__error">{{ 'PROFILE.REQUIRED_FIELD' | translate }}</span>
+              } @else if (passwordMismatch()) {
+                <span class="profile-field__error">{{ 'PROFILE.PASSWORD_MISMATCH' | translate }}</span>
+              }
+            </div>
+          </div>
+
+          <div class="profile-actions">
+            <button class="profile-btn profile-btn--outline" type="submit" [disabled]="passwordSaving() || passwordForm.invalid || passwordMismatch()">
+              @if (passwordSaving()) {
+                <span class="profile-spinner"></span>
+                {{ 'PROFILE.CHANGING_PASSWORD' | translate }}
+              } @else {
+                <i class="pi pi-key"></i>
+                {{ 'PROFILE.CHANGE_PASSWORD' | translate }}
+              }
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="profile-card">
+        <div class="profile-card__header">
+          <h2>
+            <i class="pi pi-wave-pulse"></i>
+            {{ 'PROFILE.ACCOUNT_INFORMATION' | translate }}
+          </h2>
+        </div>
+
+        <div class="profile-info-grid">
+          <div class="profile-info">
+            <span>{{ 'PROFILE.COMPANY' | translate }}</span>
+            <strong>
+              <i class="pi pi-building"></i>
+              {{ displayValue(profile()?.CompanyName) }}
+            </strong>
+          </div>
+
+          <div class="profile-info">
+            <span>{{ 'PROFILE.ROLE' | translate }}</span>
+            <strong>
+              <i class="pi pi-shield"></i>
+              {{ roleLabelKey() | translate }}
+            </strong>
+          </div>
+
+          <div class="profile-info">
+            <span>{{ 'PROFILE.EMAIL' | translate }}</span>
+            <strong>
+              <i class="pi pi-envelope"></i>
+              {{ displayValue(profile()?.Email) }}
+            </strong>
+          </div>
+
+          <div class="profile-info">
+            <span>{{ 'PROFILE.PHONE' | translate }}</span>
+            <strong>
+              <i class="pi pi-phone"></i>
+              {{ displayValue(profile()?.Phone) }}
+            </strong>
+          </div>
+
+          @if (formatDate(profile()?.CreatedAt); as createdAt) {
+            <div class="profile-info">
+              <span>{{ 'PROFILE.CREATED_AT' | translate }}</span>
+              <strong>
+                <i class="pi pi-clock"></i>
+                {{ createdAt }}
+              </strong>
+            </div>
+          }
+
+          @if (formatDate(profile()?.LastLoginAt); as lastLoginAt) {
+            <div class="profile-info">
+              <span>{{ 'PROFILE.LAST_LOGIN_AT' | translate }}</span>
+              <strong>
+                <i class="pi pi-clock"></i>
+                {{ lastLoginAt }}
+              </strong>
+            </div>
+          }
+        </div>
+      </section>
+    }
+  </div>
+</div>
