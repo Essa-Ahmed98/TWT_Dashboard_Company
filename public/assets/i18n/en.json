@@ -275,7 +275,7 @@
       "SELECT_GROUP": "Select group",
       "SELECT_CENTER_FIRST": "Select center first",
       "NO_GROUPS": "No groups",
-      "RITUAL_CARD": "Ritual Card Number",
+      "RITUAL_CARD": "Guest Journey Card Number",
       "PERMIT": "Permit Number",
       "CANCEL": "Cancel",
       "SAVE": "Save Changes",
@@ -567,7 +567,7 @@
       "LOCATION": "Location / Geofence",
       "EMERGENCY": "Emergency",
       "DISPATCH": "Dispatch / Transport",
-      "RELIGIOUS": "Religious / Rituals",
+      "RELIGIOUS": "Religious / Guest Journey",
       "SCHEDULE": "Schedule / Appointment",
       "MESSAGE": "Message"
     },
@@ -578,7 +578,7 @@
       "DISPATCH_BODY": "Please gather at the designated meeting point 15 minutes before dispatch",
       "SUPERVISOR_MEETING_TITLE": "Supervisors meeting",
       "SUPERVISOR_MEETING_BODY": "All supervisors should attend the meeting at the scheduled time to review today's plan",
-      "RITUAL_TITLE": "Today's rituals reminder",
+      "RITUAL_TITLE": "Today's Guest Journey reminder",
       "RITUAL_BODY": "Today is the Day of Tarwiyah. Head to Mina and keep up remembrance and supplication",
       "GEOFENCE_TITLE": "Geofence alert",
       "GEOFENCE_BODY": "Some pilgrims have left the safe zone. Please follow up immediately",
@@ -832,8 +832,8 @@
         "DESC": "Upload and manage pilgrim documents"
       },
       "RITUALS": {
-        "TITLE": "Rituals",
-        "DESC": "Track Hajj rituals"
+        "TITLE": "Guest Journey",
+        "DESC": "Track Guest Journey"
       },
       "REVIEWS": {
         "TITLE": "Reviews",
@@ -996,13 +996,13 @@
       "CURRENT_STATUS": "Current status"
     },
     "RITUALS": {
-      "LOADING": "Loading ritual data...",
-      "EMPTY": "No ritual data available for this pilgrim",
+      "LOADING": "Loading Guest Journey data...",
+      "EMPTY": "No Guest Journey data available for this pilgrim",
       "CURRENT": "Current ritual",
       "HAJJ_TYPE": "Hajj type",
       "PROGRESS": "Progress",
-      "COMPLETED": "Completed rituals",
-      "RITUAL_PROGRESS": "Ritual progress",
+      "COMPLETED": "Completed Guest Journeys",
+      "RITUAL_PROGRESS": "Guest Journey progress",
       "STATUS_NUMBER": "Status #"
     },
     "RATINGS": {
@@ -1051,7 +1051,7 @@
       "PERSONAL": "Personal data",
       "SUPERVISORS": "Supervisors",
       "HEALTH": "Health and medications",
-      "RITUALS": "Rituals",
+      "RITUALS": "Guest Journey",
       "FAMILY": "Family",
       "RATINGS": "Ratings",
       "BAG_PATH": "Bag Real Path"

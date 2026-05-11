@@ -275,7 +275,7 @@
       "SELECT_GROUP": "Sélectionner Groupe",
       "SELECT_CENTER_FIRST": "Sélectionner d'abord le centre",
       "NO_GROUPS": "Aucun groupe",
-      "RITUAL_CARD": "Numéro Carte Rituels",
+      "RITUAL_CARD": "Numéro Carte Parcours du Pèlerin",
       "PERMIT": "Numéro de Permis",
       "CANCEL": "Annuler",
       "SAVE": "Sauvegarder",
@@ -567,7 +567,7 @@
       "LOCATION": "Position / Géorepérage",
       "EMERGENCY": "Urgence",
       "DISPATCH": "Répartition / Transport",
-      "RELIGIOUS": "Religieux / Rites",
+      "RELIGIOUS": "Religieux / Parcours du Pèlerin",
       "SCHEDULE": "Planning / Rendez-vous",
       "MESSAGE": "Message"
     },
@@ -578,7 +578,7 @@
       "DISPATCH_BODY": "Veuillez vous rassembler au point indiqué 15 minutes avant le départ",
       "SUPERVISOR_MEETING_TITLE": "Réunion des superviseurs",
       "SUPERVISOR_MEETING_BODY": "Tous les superviseurs doivent assister à la réunion prévue pour revoir le plan du jour",
-      "RITUAL_TITLE": "Rappel des rites du jour",
+      "RITUAL_TITLE": "Rappel du Parcours du Pèlerin",
       "RITUAL_BODY": "Aujourd’hui est le jour de Tarwiyah. Rendez-vous à Mina et poursuivez les invocations",
       "GEOFENCE_TITLE": "Alerte géorepérage",
       "GEOFENCE_BODY": "Certains pèlerins ont quitté la zone sûre. Veuillez intervenir immédiatement",
@@ -832,8 +832,8 @@
         "DESC": "Téléverser et gérer les documents des pèlerins"
       },
       "RITUALS": {
-        "TITLE": "Rites",
-        "DESC": "Suivre les rites du Hajj"
+        "TITLE": "Parcours du Pèlerin",
+        "DESC": "Suivre le Parcours du Pèlerin"
       },
       "REVIEWS": {
         "TITLE": "Avis",
@@ -996,13 +996,13 @@
       "CURRENT_STATUS": "Statut actuel"
     },
     "RITUALS": {
-      "LOADING": "Chargement des données des rites...",
-      "EMPTY": "Aucune donnée de rites disponible pour ce pèlerin",
+      "LOADING": "Chargement des données du Parcours du Pèlerin...",
+      "EMPTY": "Aucune donnée de Parcours du Pèlerin disponible pour ce pèlerin",
       "CURRENT": "Rite actuel",
       "HAJJ_TYPE": "Type de Hajj",
       "PROGRESS": "Progression",
-      "COMPLETED": "Rites terminés",
-      "RITUAL_PROGRESS": "Progression des rituels",
+      "COMPLETED": "Parcours du Pèlerin terminés",
+      "RITUAL_PROGRESS": "Progression du Parcours du Pèlerin",
       "STATUS_NUMBER": "Statut n°"
     },
     "RATINGS": {
@@ -1051,7 +1051,7 @@
       "PERSONAL": "Données personnelles",
       "SUPERVISORS": "Superviseurs",
       "HEALTH": "Santé et médicaments",
-      "RITUALS": "Rituels",
+      "RITUALS": "Parcours du Pèlerin",
       "FAMILY": "Famille",
       "RATINGS": "Évaluations",
       "BAG_PATH": "Trajet du bagage"
