@@ -1,0 +1,192 @@
+@if (hasAnyDropdownOpen()) {
+  <div class="backdrop" (click)="closeAllDropdowns()"></div>
+}
+
+<div class="rc">
+
+  <div class="rc__header">
+    <h1 class="rc__title">{{ 'RITUALS_CONTROL.TITLE' | translate }}</h1>
+    <p class="rc__subtitle">{{ 'RITUALS_CONTROL.SUBTITLE' | translate }}</p>
+  </div>
+
+  <!-- Selection Card -->
+  <div class="rc__card">
+    <div class="rc__filters">
+
+      <!-- Campaign -->
+      <div class="rc__filter-col">
+        <label class="rc__filter-label">{{ 'RITUALS_CONTROL.CAMPAIGN_LABEL' | translate }}</label>
+        <div class="dropdown" [class.dropdown--open]="openCampaignDrop()">
+          <button class="dropdown__trigger dropdown__trigger--full" type="button" (click)="toggleCampaignDrop($event)">
+            <span>{{ selectedCampaignId() ? selectedCampaignName() : ('RITUALS_CONTROL.CAMPAIGN_PLACEHOLDER' | translate) }}</span>
+            @if (selectedCampaignId()) {
+              <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectCampaign()"></i>
+            } @else {
+              <i class="pi pi-angle-down dropdown__arrow"></i>
+            }
+          </button>
+          @if (openCampaignDrop()) {
+            <ul class="dropdown__menu dropdown__menu--full">
+              @if (campaignLoading()) {
+                <li class="dropdown__item dropdown__item--state"><span class="ss-spinner"></span></li>
+              } @else if (campaignList().length === 0) {
+                <li class="dropdown__item dropdown__item--state">{{ 'COMMON.NO_DATA' | translate }}</li>
+              } @else {
+                @for (campaign of campaignList(); track campaign.Id) {
+                  <li
+                    class="dropdown__item"
+                    [class.dropdown__item--active]="selectedCampaignId() === campaign.Id"
+                    (click)="selectCampaign(campaign)"
+                  >
+                    @if (selectedCampaignId() === campaign.Id) { <i class="pi pi-check"></i> }
+                    {{ campaign.Name }}
+                  </li>
+                }
+              }
+            </ul>
+          }
+        </div>
+      </div>
+
+      <!-- Group -->
+      <div class="rc__filter-col">
+        <label class="rc__filter-label">{{ 'RITUALS_CONTROL.GROUP_LABEL' | translate }}</label>
+        <div class="dropdown"
+             [class.dropdown--open]="openGroupDrop()"
+             [class.dropdown--disabled]="!selectedCampaignId()">
+          <button class="dropdown__trigger dropdown__trigger--full" type="button"
+                  [disabled]="!selectedCampaignId()"
+                  (click)="toggleGroupDrop($event)">
+            <span>{{
+              selectedGroupId()
+                ? selectedGroupName()
+                : (selectedCampaignId()
+                    ? ('RITUALS_CONTROL.GROUP_PLACEHOLDER' | translate)
+                    : ('RITUALS_CONTROL.GROUP_DISABLED_PLACEHOLDER' | translate))
+            }}</span>
+            @if (selectedGroupId()) {
+              <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectGroup()"></i>
+            } @else {
+              <i class="pi pi-angle-down dropdown__arrow"></i>
+            }
+          </button>
+          @if (openGroupDrop()) {
+            <ul class="dropdown__menu dropdown__menu--full">
+              @if (groupLoading()) {
+                <li class="dropdown__item dropdown__item--state"><span class="ss-spinner"></span></li>
+              } @else if (groupList().length === 0) {
+                <li class="dropdown__item dropdown__item--state">{{ 'COMMON.NO_DATA' | translate }}</li>
+              } @else {
+                @for (group of groupList(); track group.Id) {
+                  <li
+                    class="dropdown__item"
+                    [class.dropdown__item--active]="selectedGroupId() === group.Id"
+                    (click)="selectGroup(group)"
+                  >
+                    @if (selectedGroupId() === group.Id) { <i class="pi pi-check"></i> }
+                    {{ group.Name }}
+                  </li>
+                }
+              }
+            </ul>
+          }
+        </div>
+      </div>
+
+      <!-- Ritual -->
+      <div class="rc__filter-col">
+        <label class="rc__filter-label">{{ 'RITUALS_CONTROL.RITUAL_LABEL' | translate }}</label>
+        <div class="dropdown" [class.dropdown--open]="openRitualDrop()">
+          <button class="dropdown__trigger dropdown__trigger--full" type="button" (click)="toggleRitualDrop($event)">
+            <span>{{ selectedRitualId() ? selectedRitual()!.Name : ('RITUALS_CONTROL.RITUAL_PLACEHOLDER' | translate) }}</span>
+            @if (selectedRitualId()) {
+              <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectRitual()"></i>
+            } @else {
+              <i class="pi pi-angle-down dropdown__arrow"></i>
+            }
+          </button>
+          @if (openRitualDrop()) {
+            <ul class="dropdown__menu dropdown__menu--full">
+              @if (ritualsLoading()) {
+                <li class="dropdown__item dropdown__item--state"><span class="ss-spinner"></span></li>
+              } @else if (rituals().length === 0) {
+                <li class="dropdown__item dropdown__item--state">{{ 'RITUALS_CONTROL.NO_RITUALS' | translate }}</li>
+              } @else {
+                @for (ritual of rituals(); track ritual.Id) {
+                  <li
+                    class="dropdown__item"
+                    [class.dropdown__item--active]="selectedRitualId() === ritual.Id"
+                    (click)="selectRitual(ritual)"
+                  >
+                    @if (selectedRitualId() === ritual.Id) { <i class="pi pi-check"></i> }
+                    {{ ritual.Name }}
+                  </li>
+                }
+              }
+            </ul>
+          }
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Ritual Detail Card -->
+  @if (selectedRitual()) {
+    <div class="rc__card rc-ritual">
+      <div class="rc-ritual__body">
+        <div class="rc-ritual__info">
+          <div class="rc-ritual__title-row">
+            <h3 class="rc-ritual__name">{{ selectedRitual()!.Name }}</h3>
+            @if (selectedStatus() !== null) {
+              <span [class]="statusBadgeClass(selectedStatus())">{{ statusLabelKey(selectedStatus()) | translate }}</span>
+            }
+          </div>
+          <p class="rc-ritual__desc">{{ selectedRitual()!.Description }}</p>
+          @if (selectedRitual()!.HijriDay || selectedRitual()!.HijriMonth) {
+            <span class="rc-ritual__date">
+              <i class="pi pi-calendar"></i>
+              {{ formatHijriDate(selectedRitual()!.HijriDay, selectedRitual()!.HijriMonth) }}
+            </span>
+          }
+        </div>
+        <div class="rc-ritual__status">
+          <div class="dropdown" [class.dropdown--open]="openStatusDrop()">
+            <button class="dropdown__trigger" type="button" (click)="toggleStatusDrop($event)">
+              <span>{{ statusLabelKey(selectedStatus()) | translate }}</span>
+              <i class="pi pi-angle-down dropdown__arrow"></i>
+            </button>
+            @if (openStatusDrop()) {
+              <ul class="dropdown__menu dropdown__menu--end">
+                @for (option of statusOptions; track option.value) {
+                  <li
+                    class="dropdown__item"
+                    [class.dropdown__item--active]="selectedStatus() === option.value"
+                    (click)="selectStatus(option.value)"
+                  >
+                    @if (selectedStatus() === option.value) { <i class="pi pi-check"></i> }
+                    {{ option.labelKey | translate }}
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Save Button -->
+  <div class="rc__actions">
+    <button class="btn btn--primary" type="button" [disabled]="saving()" (click)="save()">
+      @if (saving()) {
+        <span class="ss-spinner ss-spinner--sm"></span>
+        <span>{{ 'COMMON.SAVING' | translate }}</span>
+      } @else {
+        <i class="pi pi-save"></i>
+        <span>{{ 'COMMON.SAVE_CHANGES' | translate }}</span>
+      }
+    </button>
+  </div>
+
+</div>

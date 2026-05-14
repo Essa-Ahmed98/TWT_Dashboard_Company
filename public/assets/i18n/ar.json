@@ -81,6 +81,7 @@
     "BROADCAST": "الرسائل الجماعية",
     "REVIEWS": "التقييمات",
     "COMPLAINTS": "الشكاوى",
+    "RITUALS_CONTROL": "تحديد المناسك",
     "PROFILE": "الملف الشخصي",
     "SETTINGS": "الإعدادات"
   },
@@ -1155,5 +1156,27 @@
     "ACCOMMODATION_NOT_SET": "لم يتم تحديد مكان السكن",
     "ACCOMMODATION_OPEN_ERROR": "تعذر عرض مكان السكن",
     "AGE_UNIT": "سنة"
+  },
+  "RITUALS_CONTROL": {
+    "TITLE": "تحديد المناسك للمجموعات",
+    "SUBTITLE": "اختر الحملة والمجموعة والمنسك، ثم حدد حالته (لم يبدأ / جاري الآن / انتهى)",
+    "CAMPAIGN_LABEL": "الحملة",
+    "CAMPAIGN_PLACEHOLDER": "اختر الحملة",
+    "GROUP_LABEL": "المجموعة",
+    "GROUP_PLACEHOLDER": "اختر المجموعة",
+    "GROUP_DISABLED_PLACEHOLDER": "اختر الحملة أولاً",
+    "RITUAL_LABEL": "المنسك",
+    "RITUAL_PLACEHOLDER": "اختر المنسك",
+    "NO_RITUALS": "لا توجد مناسك",
+    "STATUS_PLACEHOLDER": "اختر الحالة",
+    "STATUS_NOT_STARTED": "لم يبدأ",
+    "STATUS_IN_PROGRESS": "جاري الآن",
+    "STATUS_COMPLETED": "تم الانتهاء",
+    "SAVE_SUCCESS": "تم حفظ التغييرات بنجاح",
+    "SAVE_ERROR": "تعذر حفظ التغييرات",
+    "VALIDATION_CAMPAIGN": "يرجى اختيار الحملة",
+    "VALIDATION_GROUP": "يرجى اختيار المجموعة",
+    "VALIDATION_RITUAL": "يرجى اختيار المنسك",
+    "VALIDATION_STATUS": "يرجى اختيار الحالة"
   }
 }

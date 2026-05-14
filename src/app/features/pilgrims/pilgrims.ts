@@ -813,7 +813,7 @@ export class Pilgrims implements OnInit {
           }
 
           const fileName = this.extractFileName(response.headers.get('content-disposition'))
-            || `pilgrims-qrcodes-${this.selectedQrDownloadGrpId()}.zip`;
+            || `pilgrims-qrcodes-${this.selectedQrDownloadGrpId()}.xlsx`;
 
           const url = window.URL.createObjectURL(blob);
           const anchor = document.createElement('a');

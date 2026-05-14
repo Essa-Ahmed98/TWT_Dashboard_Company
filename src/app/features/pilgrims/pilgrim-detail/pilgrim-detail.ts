@@ -88,7 +88,7 @@ export class PilgrimDetail {
       this.savedData.set(null);
       this.editData.set(null);
       this.isEditing.set(false);
-    }, { allowSignalWrites: true });
+    });
   }
 
   goBack(): void {

@@ -81,6 +81,7 @@
     "BROADCAST": "Broadcast Messages",
     "REVIEWS": "Reviews",
     "COMPLAINTS": "Complaints",
+    "RITUALS_CONTROL": "Ritual Control",
     "PROFILE": "User Profile",
     "SETTINGS": "Settings"
   },
@@ -1155,5 +1156,27 @@
     "ACCOMMODATION_NOT_SET": "Accommodation location has not been set",
     "ACCOMMODATION_OPEN_ERROR": "Unable to show accommodation location",
     "AGE_UNIT": "years old"
+  },
+  "RITUALS_CONTROL": {
+    "TITLE": "Set Rituals for Groups",
+    "SUBTITLE": "Select the campaign, group, and ritual, then set its status (Not Started / In Progress / Completed)",
+    "CAMPAIGN_LABEL": "Campaign",
+    "CAMPAIGN_PLACEHOLDER": "Select Campaign",
+    "GROUP_LABEL": "Group",
+    "GROUP_PLACEHOLDER": "Select Group",
+    "GROUP_DISABLED_PLACEHOLDER": "Select Campaign First",
+    "RITUAL_LABEL": "Ritual",
+    "RITUAL_PLACEHOLDER": "Select Ritual",
+    "NO_RITUALS": "No rituals found",
+    "STATUS_PLACEHOLDER": "Select Status",
+    "STATUS_NOT_STARTED": "Not Started",
+    "STATUS_IN_PROGRESS": "In Progress",
+    "STATUS_COMPLETED": "Completed",
+    "SAVE_SUCCESS": "Changes saved successfully",
+    "SAVE_ERROR": "Failed to save changes",
+    "VALIDATION_CAMPAIGN": "Please select a campaign",
+    "VALIDATION_GROUP": "Please select a group",
+    "VALIDATION_RITUAL": "Please select a ritual",
+    "VALIDATION_STATUS": "Please select a status"
   }
 }

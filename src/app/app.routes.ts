@@ -106,6 +106,11 @@ export const routes: Routes = [
           import('./features/tasks/tasks').then((m) => m.Tasks),
       },
       {
+        path: 'rituals-control',
+        loadComponent: () =>
+          import('./features/rituals-control/rituals-control').then((m) => m.RitualsControl),
+      },
+      {
         path: 'accommodation-location',
         loadComponent: () =>
           import('./features/accommodation-location/accommodation-location').then((m) => m.AccommodationLocation),

@@ -1,0 +1,299 @@
+@use 'sass:color';
+
+$primary: #0b405b;
+$primary-dark: #0a3550;
+$green: #22c35d;
+$border: #e9edf2;
+$bg-white: #ffffff;
+$bg-page: #f4f6f9;
+$text-main: #1a2e3b;
+$text-muted: #6c7a89;
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+}
+
+.rc {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__title {
+    margin: 0;
+    color: $text-main;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  &__subtitle {
+    margin: 0;
+    color: $text-muted;
+    font-size: 13px;
+  }
+
+  &__card {
+    background: $bg-white;
+    border: 1px solid $border;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(11, 64, 91, .05);
+    padding: 24px;
+  }
+
+  &__filters {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__filter-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__filter-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-main;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+  }
+}
+
+// Ritual detail card
+.rc-ritual {
+  &__body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+
+  &__title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  &__name {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: $text-main;
+  }
+
+  &__desc {
+    margin: 0;
+    font-size: 14px;
+    color: $text-muted;
+    line-height: 1.6;
+  }
+
+  &__date {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: $text-muted;
+
+    i { font-size: 12px; }
+  }
+
+  &__status {
+    flex-shrink: 0;
+    align-self: center;
+  }
+}
+
+// Badge
+.badge {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &--notstarted {
+    background: rgba(#6c7a89, .12);
+    color: #6c7a89;
+  }
+
+  &--inprogress {
+    background: rgba(#22c35d, .12);
+    color: #16a34a;
+  }
+
+  &--completed {
+    background: rgba(#0b405b, .12);
+    color: #0b405b;
+  }
+}
+
+// Dropdown (same pattern as complaints)
+.dropdown {
+  position: relative;
+
+  &__trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 38px;
+    padding: 0 12px;
+    border: 1px solid $border;
+    border-radius: 12px;
+    background: transparent;
+    font-family: inherit;
+    font-size: 13.5px;
+    color: $text-main;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color .18s;
+
+    &:hover:not(:disabled) { border-color: color.adjust($border, $lightness: -10%); }
+    &:disabled { opacity: .6; cursor: not-allowed; background: $bg-page; }
+
+    &--full {
+      width: 100%;
+      justify-content: flex-start;
+      span { flex: 1; text-align: start; }
+    }
+  }
+
+  &--open .dropdown__trigger { border-color: $primary; }
+  &--disabled .dropdown__trigger { opacity: .6; pointer-events: none; }
+
+  &__arrow {
+    font-size: 12px;
+    color: $text-muted;
+    transition: transform .2s;
+    margin-inline-start: auto;
+  }
+
+  &--open &__arrow { transform: rotate(180deg); }
+
+  &__clear {
+    font-size: 11px;
+    color: $text-muted;
+    padding: 3px 5px;
+    border-radius: 4px;
+    transition: background .12s, color .12s;
+    margin-inline-start: auto;
+
+    &:hover { background: rgba(0, 0, 0, .08); color: $text-main; }
+  }
+
+  &__menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    inset-inline-start: 0;
+    min-width: 200px;
+    max-height: 240px;
+    overflow-y: auto;
+    background: $bg-white;
+    border: 1px solid $border;
+    border-radius: 10px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, .1);
+    z-index: 100;
+    list-style: none;
+    padding: 4px;
+    margin: 0;
+
+    &--full {
+      width: 100%;
+      min-width: unset;
+    }
+
+    &--end {
+      inset-inline-start: auto;
+      inset-inline-end: 0;
+    }
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    font-size: 13.5px;
+    color: $text-main;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background .12s;
+
+    i { color: $primary; font-size: 13px; }
+    &:hover { background: $bg-page; }
+    &--active { font-weight: 600; color: $primary; background: rgba($primary, .06); }
+    &--state { justify-content: center; cursor: default; color: $text-muted; font-size: 13px; }
+  }
+}
+
+// Button
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 10px;
+  border: none;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, opacity .15s;
+
+  &:disabled { opacity: .55; cursor: not-allowed; }
+
+  &--primary {
+    background: $primary;
+    color: #fff;
+
+    &:hover:not(:disabled) { background: $primary-dark; }
+  }
+}
+
+// Spinner
+.ss-spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba($primary, .2);
+  border-top-color: $primary;
+  border-radius: 50%;
+  animation: rc-spin .7s linear infinite;
+
+  &--sm {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+@keyframes rc-spin {
+  to { transform: rotate(360deg); }
+}

@@ -81,6 +81,7 @@
     "BROADCAST": "Групповые Сообщения",
     "REVIEWS": "Отзывы",
     "COMPLAINTS": "Жалобы",
+    "RITUALS_CONTROL": "Управление Ритуалами",
     "PROFILE": "Профиль пользователя",
     "SETTINGS": "Настройки"
   },
@@ -1155,5 +1156,27 @@
     "ACCOMMODATION_NOT_SET": "Местоположение проживания не указано",
     "ACCOMMODATION_OPEN_ERROR": "Не удалось показать местоположение проживания",
     "AGE_UNIT": "лет"
+  },
+  "RITUALS_CONTROL": {
+    "TITLE": "Назначить Ритуалы Группам",
+    "SUBTITLE": "Выберите кампанию, группу и ритуал, затем установите его статус (Не начат / В процессе / Завершён)",
+    "CAMPAIGN_LABEL": "Кампания",
+    "CAMPAIGN_PLACEHOLDER": "Выберите кампанию",
+    "GROUP_LABEL": "Группа",
+    "GROUP_PLACEHOLDER": "Выберите группу",
+    "GROUP_DISABLED_PLACEHOLDER": "Сначала выберите кампанию",
+    "RITUAL_LABEL": "Ритуал",
+    "RITUAL_PLACEHOLDER": "Выберите ритуал",
+    "NO_RITUALS": "Ритуалы не найдены",
+    "STATUS_PLACEHOLDER": "Выберите статус",
+    "STATUS_NOT_STARTED": "Не начат",
+    "STATUS_IN_PROGRESS": "В процессе",
+    "STATUS_COMPLETED": "Завершён",
+    "SAVE_SUCCESS": "Изменения успешно сохранены",
+    "SAVE_ERROR": "Не удалось сохранить изменения",
+    "VALIDATION_CAMPAIGN": "Пожалуйста, выберите кампанию",
+    "VALIDATION_GROUP": "Пожалуйста, выберите группу",
+    "VALIDATION_RITUAL": "Пожалуйста, выберите ритуал",
+    "VALIDATION_STATUS": "Пожалуйста, выберите статус"
   }
 }

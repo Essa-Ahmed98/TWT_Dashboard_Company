@@ -81,6 +81,7 @@
     "BROADCAST": "Messages Groupés",
     "REVIEWS": "Évaluations",
     "COMPLAINTS": "Plaintes",
+    "RITUALS_CONTROL": "Contrôle des Rites",
     "PROFILE": "Profil utilisateur",
     "SETTINGS": "Paramètres"
   },
@@ -1155,5 +1156,27 @@
     "ACCOMMODATION_NOT_SET": "L’emplacement du logement n’a pas été défini",
     "ACCOMMODATION_OPEN_ERROR": "Impossible d’afficher l’emplacement du logement",
     "AGE_UNIT": "ans"
+  },
+  "RITUALS_CONTROL": {
+    "TITLE": "Définir les Rites pour les Groupes",
+    "SUBTITLE": "Sélectionnez la campagne, le groupe et le rite, puis définissez son statut (Non commencé / En cours / Terminé)",
+    "CAMPAIGN_LABEL": "Campagne",
+    "CAMPAIGN_PLACEHOLDER": "Sélectionner la campagne",
+    "GROUP_LABEL": "Groupe",
+    "GROUP_PLACEHOLDER": "Sélectionner le groupe",
+    "GROUP_DISABLED_PLACEHOLDER": "Sélectionner la campagne d'abord",
+    "RITUAL_LABEL": "Rite",
+    "RITUAL_PLACEHOLDER": "Sélectionner le rite",
+    "NO_RITUALS": "Aucun rite trouvé",
+    "STATUS_PLACEHOLDER": "Sélectionner le statut",
+    "STATUS_NOT_STARTED": "Non commencé",
+    "STATUS_IN_PROGRESS": "En cours",
+    "STATUS_COMPLETED": "Terminé",
+    "SAVE_SUCCESS": "Modifications enregistrées avec succès",
+    "SAVE_ERROR": "Échec de l'enregistrement des modifications",
+    "VALIDATION_CAMPAIGN": "Veuillez sélectionner une campagne",
+    "VALIDATION_GROUP": "Veuillez sélectionner un groupe",
+    "VALIDATION_RITUAL": "Veuillez sélectionner un rite",
+    "VALIDATION_STATUS": "Veuillez sélectionner un statut"
   }
 }
