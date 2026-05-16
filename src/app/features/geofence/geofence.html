@@ -28,7 +28,7 @@
   </div>
 
   <!-- ── Main Content ──────────────────────────────────────── -->
-  <div class="gf__content">
+  <div class="gf__content" [class.gf__content--map-full]="isMapFullWidth()">
 
     <!-- Zones Sidebar -->
     <div class="gf__sidebar">
@@ -305,6 +305,13 @@
     <div class="gf__map">
       <div class="map-header">
         <h2 class="map-header-title">{{ 'GEOFENCE.MAP_TITLE' | translate }}</h2>
+        <button
+          type="button"
+          class="map-full-toggle"
+          (click)="toggleMapFullWidth()">
+          <i class="pi" [class.pi-expand]="!isMapFullWidth()" [class.pi-compress]="isMapFullWidth()"></i>
+          {{ (isMapFullWidth() ? 'monitoringRoom.showList' : 'monitoringRoom.showFullMap') | translate }}
+        </button>
       </div>
       @if (selectingLocation()) {
         <div class="gf__map-picker">

@@ -107,7 +107,18 @@ $danger:      #e53935;
     gap: 12px;
     flex: 1;
     min-height: 0;
-   
+    transition: grid-template-columns .3s ease;
+
+    &--map-full {
+      grid-template-columns: 0 1fr;
+
+      .gf__sidebar {
+        overflow: hidden;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity .25s ease, visibility .25s ease;
+      }
+    }
   }
 
   // ── Map ──────────────────────────────────────────────────────
@@ -1003,6 +1014,34 @@ $danger:      #e53935;
 }
 .map-header {
   padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.map-full-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  padding: .3rem .75rem;
+  border: 1px solid #dce2e5;
+  border-radius: .5rem;
+  background: transparent;
+  color: $primary;
+  font-size: .8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background .15s, border-color .15s;
+
+  i { font-size: .75rem; }
+
+  &:hover {
+    background: #f0f2f5;
+    border-color: $primary;
+  }
 }
 
 // ── Campaign Accordion ────────────────────────────────────────────

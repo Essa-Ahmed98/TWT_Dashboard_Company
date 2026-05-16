@@ -1178,5 +1178,9 @@
     "VALIDATION_GROUP": "Please select a group",
     "VALIDATION_RITUAL": "Please select a ritual",
     "VALIDATION_STATUS": "Please select a status"
+  },
+  "monitoringRoom": {
+    "showFullMap": "Show full map",
+    "showList": "Show list"
   }
 }

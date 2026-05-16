@@ -1178,5 +1178,9 @@
     "VALIDATION_GROUP": "Veuillez sélectionner un groupe",
     "VALIDATION_RITUAL": "Veuillez sélectionner un rite",
     "VALIDATION_STATUS": "Veuillez sélectionner un statut"
+  },
+  "monitoringRoom": {
+    "showFullMap": "Afficher la carte complète",
+    "showList": "Afficher la liste"
   }
 }

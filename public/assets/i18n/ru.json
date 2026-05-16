@@ -1178,5 +1178,9 @@
     "VALIDATION_GROUP": "Пожалуйста, выберите группу",
     "VALIDATION_RITUAL": "Пожалуйста, выберите ритуал",
     "VALIDATION_STATUS": "Пожалуйста, выберите статус"
+  },
+  "monitoringRoom": {
+    "showFullMap": "Показать карту полностью",
+    "showList": "Показать список"
   }
 }

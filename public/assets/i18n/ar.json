@@ -1178,5 +1178,9 @@
     "VALIDATION_GROUP": "يرجى اختيار المجموعة",
     "VALIDATION_RITUAL": "يرجى اختيار المنسك",
     "VALIDATION_STATUS": "يرجى اختيار الحالة"
+  },
+  "monitoringRoom": {
+    "showFullMap": "عرض الخريطة كاملة",
+    "showList": "إظهار القائمة"
   }
 }

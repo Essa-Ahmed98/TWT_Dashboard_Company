@@ -74,6 +74,7 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
   private L: any = null;
 
   readonly pageSize = signal(10);
+  isMapFullWidth   = signal(false);
 
   zones           = signal<GeofenceZone[]>([]);
   zoneTypes       = ZONE_TYPES;
@@ -284,6 +285,11 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
 
     // Safety net: recalculate size in case the container was still reflowing.
     setTimeout(() => map.invalidateSize(), 150);
+  }
+
+  toggleMapFullWidth(): void {
+    this.isMapFullWidth.update(v => !v);
+    setTimeout(() => this.leafletMap?.invalidateSize(), 320);
   }
 
   togglePilgrims(): void {
