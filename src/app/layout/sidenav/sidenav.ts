@@ -40,6 +40,7 @@ export class Sidenav implements OnInit {
         { labelKey: 'SIDENAV.DISPATCH',     icon: 'pi pi-car',               route: '/dispatch' },
         { labelKey: 'SIDENAV.GEOFENCE',         icon: 'pi pi-map-marker',  route: '/geo-fence' },
         { labelKey: 'SIDENAV.RITUALS_CONTROL', icon: 'pi pi-list-check', route: '/rituals-control' },
+        { labelKey: 'SIDENAV.CRITICAL_HEALTH', icon: 'pi pi-heart', route: '/critical-health-cases' },
         { labelKey: 'SIDENAV.ACCOMMODATION',   icon: 'pi pi-home',       route: '/accommodation-location' },
       ],
     },

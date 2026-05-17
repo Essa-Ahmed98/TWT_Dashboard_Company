@@ -20,6 +20,7 @@ import {
   TransportationScheduleApiItem,
 } from './dispatch.model';
 import { DispatchService } from './dispatch.service';
+import { SsDropdownDirective } from '../../shared/directives/ss-dropdown.directive';
 
 type TripStatus = 'pending' | 'active' | 'arrived';
 
@@ -67,7 +68,7 @@ const EMPTY_FORM: DispatchForm = {
 
 @Component({
   selector: 'app-dispatch',
-  imports: [TranslateModule, FormsModule, ProgressSpinnerModule, DatePicker, DecimalPipe],
+  imports: [TranslateModule, FormsModule, ProgressSpinnerModule, DatePicker, DecimalPipe, SsDropdownDirective],
   templateUrl: './dispatch.html',
   styleUrl: './dispatch.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -24,6 +24,7 @@ import { AuthService } from '../../core/auth/services/auth';
 import { CampaignsService } from '../campaigns/campaigns.service';
 import { environment } from '../../../environments/environment';
 import { TranslationService as AppTranslationService } from '../../core/services/translation.service';
+import { SsDropdownDirective } from '../../shared/directives/ss-dropdown.directive';
 
 const API_ERRORS: Record<string, string> = {
   'This username is already taken.': 'LOGIN.ERROR_DETAIL',
@@ -31,7 +32,7 @@ const API_ERRORS: Record<string, string> = {
 
 @Component({
   selector: 'app-broadcast',
-  imports: [TranslateModule, ],
+  imports: [TranslateModule, SsDropdownDirective],
   templateUrl: './broadcast.html',
   styleUrl: './broadcast.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

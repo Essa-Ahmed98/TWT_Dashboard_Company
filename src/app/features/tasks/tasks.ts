@@ -19,6 +19,7 @@ import {
   TaskSupervisorStatus,
 } from './tasks.model';
 import { TasksService } from './tasks.service';
+import { SsDropdownDirective } from '../../shared/directives/ss-dropdown.directive';
 
 interface TaskOption<T> {
   value: T;
@@ -36,7 +37,7 @@ const EMPTY_FORM: TaskForm = {
 
 @Component({
   selector: 'app-tasks',
-  imports: [DatePipe, DecimalPipe, FormsModule, DatePicker, ProgressSpinnerModule, TranslateModule],
+  imports: [DatePipe, DecimalPipe, FormsModule, DatePicker, ProgressSpinnerModule, TranslateModule, SsDropdownDirective],
   templateUrl: './tasks.html',
   styleUrl: './tasks.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

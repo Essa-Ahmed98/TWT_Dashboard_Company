@@ -432,7 +432,7 @@ $text-label:   #374151;
   display: flex;
   flex-direction: column;
   box-shadow: 0 20px 60px rgba(0, 0, 0, .2);
-  overflow: hidden;
+  // overflow: hidden;
 
   &--import {
     width: min(560px, calc(100vw - 32px));
@@ -711,6 +711,53 @@ $text-label:   #374151;
     box-shadow: 0 6px 22px rgba(0,0,0,.11);
     z-index: 300;
     overflow: hidden;
+  }
+
+  &__search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    border-bottom: 1px solid $border;
+
+    > .pi-search {
+      position: absolute;
+      inset-inline-start: 18px;
+      color: $text-muted;
+      font-size: 12px;
+      pointer-events: none;
+    }
+
+    input {
+      width: 100%;
+      height: 34px;
+      border: 1px solid $border;
+      border-radius: 6px;
+      padding: 0 30px;
+      font-family: inherit;
+      font-size: 13px;
+      color: $text-main;
+      background: $bg-white;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color .15s;
+
+      &:focus { border-color: $primary; }
+      &::placeholder { color: $text-muted; }
+    }
+  }
+
+  &__search-clear {
+    position: absolute;
+    inset-inline-end: 18px;
+    color: $text-muted;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 3px;
+    border-radius: 4px;
+    transition: background .12s, color .12s;
+
+    &:hover { background: rgba(0,0,0,.07); color: $text-main; }
   }
 
   &__state {

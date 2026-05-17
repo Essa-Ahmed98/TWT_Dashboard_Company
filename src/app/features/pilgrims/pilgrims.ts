@@ -16,6 +16,7 @@ import { PilgrimsService } from './pilgrims.service';
 import { AuthService } from '../../core/auth/services/auth';
 import { CampaignsService } from '../campaigns/campaigns.service';
 import { exportRowsToExcel } from '../../core/utils/excel-export';
+import { SsDropdownDirective } from '../../shared/directives/ss-dropdown.directive';
 
 const API_ERRORS: Record<string, string> = {
   'This username is already taken.': 'البريد الإلكتروني أو رقم الهاتف مستخدم بالفعل',
@@ -45,7 +46,7 @@ const EMPTY_FORM: PilgrimForm = {
 
 @Component({
   selector: 'app-pilgrims',
-  imports: [FormsModule, DatePicker, DecimalPipe, TranslateModule],
+  imports: [FormsModule, DatePicker, DecimalPipe, TranslateModule, SsDropdownDirective],
   templateUrl: './pilgrims.html',
   styleUrl: './pilgrims.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -201,7 +202,7 @@ export class Pilgrims implements OnInit {
     this.showQrDialog.set(true);
     this.qrLoading.set(true);
 
-    this.service.getPilgrimQrCode(id, 'ar')
+    this.service.getPilgrimQrCode(id)
       .pipe(finalize(() => this.qrLoading.set(false)), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: res => {
@@ -241,7 +242,7 @@ export class Pilgrims implements OnInit {
     this.showQrDialog.set(true);
     this.qrLoading.set(true);
 
-    this.service.getLuggageQrCode(userId, this.currentLanguage())
+    this.service.getLuggageQrCode(userId)
       .pipe(finalize(() => this.qrLoading.set(false)), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: blob => {
@@ -691,7 +692,7 @@ export class Pilgrims implements OnInit {
 
     this.uploadingImportFile.set(true);
 
-    this.service.uploadPilgrimsFile(selectedFile, 'ar')
+    this.service.uploadPilgrimsFile(selectedFile)
       .pipe(finalize(() => this.uploadingImportFile.set(false)), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: response => {
@@ -751,7 +752,7 @@ export class Pilgrims implements OnInit {
 
     this.downloadingTemplate.set(true);
 
-    this.service.downloadTemplate(this.selectedImportCampId(), this.selectedImportGrpId(), 'ar')
+    this.service.downloadTemplate(this.selectedImportCampId(), this.selectedImportGrpId())
       .pipe(finalize(() => this.downloadingTemplate.set(false)), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: response => {
@@ -798,7 +799,7 @@ export class Pilgrims implements OnInit {
 
     this.downloadingQrCodes.set(true);
 
-    this.service.downloadQrCodes(this.selectedQrDownloadCampId(), this.selectedQrDownloadGrpId(), 'ar')
+    this.service.downloadQrCodes(this.selectedQrDownloadCampId(), this.selectedQrDownloadGrpId())
       .pipe(finalize(() => this.downloadingQrCodes.set(false)), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: response => {
@@ -846,7 +847,7 @@ export class Pilgrims implements OnInit {
 
     this.downloadingLuggage.set(true);
 
-    this.service.exportGroupLuggageExcel(this.selectedQrDownloadGrpId(), this.currentLanguage())
+    this.service.exportGroupLuggageExcel(this.selectedQrDownloadGrpId())
       .pipe(finalize(() => this.downloadingLuggage.set(false)), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: response => {
@@ -885,11 +886,6 @@ export class Pilgrims implements OnInit {
           });
         },
       });
-  }
-
-  private currentLanguage(): string {
-    const lang = this.translate.currentLang || this.translate.defaultLang || 'ar';
-    return ['ar', 'en', 'fr', 'ru'].includes(lang) ? lang : 'ar';
   }
 
   private extractFileName(contentDisposition: string | null): string | null {

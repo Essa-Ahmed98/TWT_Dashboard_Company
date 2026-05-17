@@ -26,6 +26,7 @@ import { CampaignsService } from '../campaigns/campaigns.service';
 import { environment } from '../../../environments/environment';
 import { MessageService } from 'primeng/api';
 import { exportRowsToExcel } from '../../core/utils/excel-export';
+import { SsDropdownDirective } from '../../shared/directives/ss-dropdown.directive';
 
 const EMPTY_FORM: SupervisorForm = {
   email: '', displayName: '', phone: '+966', password: '',
@@ -37,7 +38,7 @@ const EMPTY_FORM: SupervisorForm = {
 
 @Component({
   selector:    'app-supervisors',
-  imports:     [ProgressSpinnerModule, FormsModule, DatePicker, DecimalPipe, TranslateModule],
+  imports:     [ProgressSpinnerModule, FormsModule, DatePicker, DecimalPipe, TranslateModule, SsDropdownDirective],
   templateUrl: './supervisors.html',
   styleUrl:    './supervisors.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

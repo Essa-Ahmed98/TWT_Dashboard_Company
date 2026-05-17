@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpResponse, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpResponse, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResult, PaginatedResult } from '../../core/models/api.models';
 import { DeviceItem, CreateDeviceRequest, UpdateDeviceRequest, UpdateDeviceConnectionRequest, PilgrimOption } from './devices.model';
@@ -61,30 +61,20 @@ export class DevicesService {
     );
   }
 
-  downloadTemplate(language = 'ar'): Observable<HttpResponse<Blob>> {
-    const headers = new HttpHeaders({
-      'Accept-Language': language,
-    });
-
+  downloadTemplate(): Observable<HttpResponse<Blob>> {
     return this.http.get(`${environment.apiBase}/Devices/template`, {
-      headers,
       responseType: 'blob',
       observe: 'response',
     });
   }
 
-  uploadDevicesFile(file: File, language = 'ar'): Observable<ApiResult<unknown> | { issuccess?: boolean; IsSuccess?: boolean }> {
+  uploadDevicesFile(file: File): Observable<ApiResult<unknown> | { issuccess?: boolean; IsSuccess?: boolean }> {
     const formData = new FormData();
     formData.append('file', file);
-
-    const headers = new HttpHeaders({
-      'Accept-Language': language,
-    });
 
     return this.http.post<ApiResult<unknown> | { issuccess?: boolean; IsSuccess?: boolean }>(
       `${environment.apiBase}/Devices/upload`,
       formData,
-      { headers },
     );
   }
 }

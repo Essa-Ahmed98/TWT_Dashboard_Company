@@ -82,6 +82,7 @@
     "REVIEWS": "التقييمات",
     "COMPLAINTS": "الشكاوى",
     "RITUALS_CONTROL": "تحديد المناسك",
+    "CRITICAL_HEALTH": "الحالات الحرجة",
     "PROFILE": "الملف الشخصي",
     "SETTINGS": "الإعدادات"
   },
@@ -456,6 +457,7 @@
       "SUBTITLE": "اختر الحاج الذي سيرتبط بهذا الجهاز",
       "SELECT_PILGRIM": "اختر الحاج",
       "SELECT_PILGRIM_PLACEHOLDER": "اختر الحاج",
+      "SEARCH_PILGRIM": "ابحث عن حاج",
       "NO_PILGRIMS": "لا يوجد حجاج",
       "CANCEL": "إلغاء",
       "CONFIRM": "تأكيد الربط"
@@ -1182,5 +1184,38 @@
   "monitoringRoom": {
     "showFullMap": "عرض الخريطة كاملة",
     "showList": "إظهار القائمة"
+  },
+  "CRITICAL_HEALTH": {
+    "TITLE": "الحالات الحرجة",
+    "SUBTITLE": "متابعة الحجاج ذوي المؤشرات الحيوية الحرجة والتعامل معهم بسرعة من لوحة التحكم",
+    "LIST_TITLE": "قائمة الحالات",
+    "SEARCH_PLACEHOLDER": "ابحث بالاسم...",
+    "ALL_CAMPAIGNS": "جميع المراكز",
+    "ALL_GROUPS": "جميع المجموعات",
+    "SELECT_CAMPAIGN_FIRST": "اختر المركز أولًا",
+    "PAGE_SIZE": "عدد العناصر",
+    "RETRY": "إعادة المحاولة",
+    "EMPTY": "لا توجد حالات صحية مطابقة",
+    "LOAD_ERROR": "تعذر تحميل قائمة الحالات",
+    "UNKNOWN_PILGRIM": "حاج غير محدد",
+    "NO_PILGRIM": "لا يوجد ملف حاج مرتبط بهذه الحالة",
+    "NOT_AVAILABLE": "غير متوفر",
+    "AGE_UNAVAILABLE": "العمر غير متوفر",
+    "AGE_VALUE": "{{value}} سنة",
+    "JUST_NOW": "الآن",
+    "MINUTES_AGO": "منذ {{value}} دقيقة",
+    "HOURS_AGO": "منذ {{value}} ساعة",
+    "DAYS_AGO": "منذ {{value}} يوم",
+    "COL_PILGRIM": "الحاج",
+    "COL_VITALS": "المؤشرات الحيوية",
+    "COL_LOCATION": "الموقع",
+    "COL_SEVERITY": "الخطورة",
+    "COL_LAST_UPDATE": "آخر تحديث",
+    "HEART_RATE": "نبض",
+    "PRESSURE": "ضغط",
+    "TEMP": "حرارة",
+    "SEVERITY_VERY_CRITICAL": "حرجة جدًا",
+    "SEVERITY_CRITICAL": "حرجة",
+    "SEVERITY_MEDIUM": "متوسطة"
   }
 }

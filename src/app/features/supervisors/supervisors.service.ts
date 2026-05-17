@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResult, PaginatedResult } from '../../core/models/api.models';
 import { CreateSupervisorRequest, PilgrimGroupItem, PilgrimGroupQuery, SupervisorDetailApiItem, SupervisorReviewsApiData, SupervisorsPageData, SupervisorsQuery, UpdateSupervisorRequest } from './supervisors.model';
@@ -64,13 +64,9 @@ export class SupervisorsService {
       .set('PageNumber', 1)
       .set('PageSize', 10);
 
-    const headers = new HttpHeaders({
-      'Accept-Language': 'ar',
-    });
-
     return this.http.get<ApiResult<SupervisorReviewsApiData>>(
       `${environment.apiBase}/Reviews/supervisor`,
-      { params, headers },
+      { params },
     );
   }
 }

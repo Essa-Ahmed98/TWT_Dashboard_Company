@@ -82,6 +82,7 @@
     "REVIEWS": "Évaluations",
     "COMPLAINTS": "Plaintes",
     "RITUALS_CONTROL": "Contrôle des Rites",
+    "CRITICAL_HEALTH": "Cas de Santé Critiques",
     "PROFILE": "Profil utilisateur",
     "SETTINGS": "Paramètres"
   },
@@ -456,6 +457,7 @@
       "SUBTITLE": "Sélectionnez le pèlerin à associer",
       "SELECT_PILGRIM": "Sélectionner Pèlerin",
       "SELECT_PILGRIM_PLACEHOLDER": "Sélectionner pèlerin",
+      "SEARCH_PILGRIM": "Rechercher pèlerin",
       "NO_PILGRIMS": "Aucun pèlerin",
       "CANCEL": "Annuler",
       "CONFIRM": "Confirmer"
@@ -1182,5 +1184,38 @@
   "monitoringRoom": {
     "showFullMap": "Afficher la carte complète",
     "showList": "Afficher la liste"
+  },
+  "CRITICAL_HEALTH": {
+    "TITLE": "Cas de Santé Critiques",
+    "SUBTITLE": "Surveillez les pèlerins aux signes vitaux critiques et réagissez rapidement depuis le tableau de bord",
+    "LIST_TITLE": "Liste des Cas",
+    "SEARCH_PLACEHOLDER": "Rechercher par nom...",
+    "ALL_CAMPAIGNS": "Toutes les campagnes",
+    "ALL_GROUPS": "Tous les groupes",
+    "SELECT_CAMPAIGN_FIRST": "Sélectionnez d'abord une campagne",
+    "PAGE_SIZE": "Taille de page",
+    "RETRY": "Réessayer",
+    "EMPTY": "Aucun cas de santé correspondant",
+    "LOAD_ERROR": "Échec du chargement des cas",
+    "UNKNOWN_PILGRIM": "Pèlerin inconnu",
+    "NO_PILGRIM": "Aucun profil de pèlerin lié à ce cas",
+    "NOT_AVAILABLE": "Non disponible",
+    "AGE_UNAVAILABLE": "Âge non disponible",
+    "AGE_VALUE": "{{value}} ans",
+    "JUST_NOW": "À l'instant",
+    "MINUTES_AGO": "il y a {{value}} min",
+    "HOURS_AGO": "il y a {{value}} h",
+    "DAYS_AGO": "il y a {{value}} j",
+    "COL_PILGRIM": "Pèlerin",
+    "COL_VITALS": "Signes vitaux",
+    "COL_LOCATION": "Lieu",
+    "COL_SEVERITY": "Gravité",
+    "COL_LAST_UPDATE": "Dernière mise à jour",
+    "HEART_RATE": "Pouls",
+    "PRESSURE": "Tension",
+    "TEMP": "Temp",
+    "SEVERITY_VERY_CRITICAL": "Très critique",
+    "SEVERITY_CRITICAL": "Critique",
+    "SEVERITY_MEDIUM": "Moyenne"
   }
 }

@@ -12,7 +12,7 @@ import {
   signal,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PilgrimsService } from '../../../pilgrims.service';
 import { loadLeaflet } from '../../../../../shared/utils/leaflet-loader';
@@ -38,7 +38,6 @@ export class BagPathTab implements AfterViewInit, OnDestroy {
 
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly service = inject(PilgrimsService);
-  private readonly translate = inject(TranslateService);
   private readonly destroyRef = inject(DestroyRef);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private leafletMap: any = null;
@@ -60,13 +59,12 @@ export class BagPathTab implements AfterViewInit, OnDestroy {
   }
 
   private loadPath(): void {
-    const lang = this.translate.currentLang || 'ar';
     this.loading.set(true);
     this.error.set(false);
     this.hasValidPathPoints.set(false);
 
     this.service
-      .getLuggageLocationHistory(this.userId(), 1, 10, lang)
+      .getLuggageLocationHistory(this.userId(), 1, 10)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: res => {

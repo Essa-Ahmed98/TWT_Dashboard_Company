@@ -82,6 +82,7 @@
     "REVIEWS": "Reviews",
     "COMPLAINTS": "Complaints",
     "RITUALS_CONTROL": "Ritual Control",
+    "CRITICAL_HEALTH": "Critical Health Cases",
     "PROFILE": "User Profile",
     "SETTINGS": "Settings"
   },
@@ -456,6 +457,7 @@
       "SUBTITLE": "Select the pilgrim to link with this device",
       "SELECT_PILGRIM": "Select Pilgrim",
       "SELECT_PILGRIM_PLACEHOLDER": "Select pilgrim",
+      "SEARCH_PILGRIM": "Search pilgrim",
       "NO_PILGRIMS": "No pilgrims",
       "CANCEL": "Cancel",
       "CONFIRM": "Confirm Link"
@@ -1182,5 +1184,38 @@
   "monitoringRoom": {
     "showFullMap": "Show full map",
     "showList": "Show list"
+  },
+  "CRITICAL_HEALTH": {
+    "TITLE": "Critical Health Cases",
+    "SUBTITLE": "Monitor pilgrims with critical vital signs and respond quickly from the dashboard",
+    "LIST_TITLE": "Cases List",
+    "SEARCH_PLACEHOLDER": "Search by name...",
+    "ALL_CAMPAIGNS": "All Campaigns",
+    "ALL_GROUPS": "All Groups",
+    "SELECT_CAMPAIGN_FIRST": "Select campaign first",
+    "PAGE_SIZE": "Page size",
+    "RETRY": "Retry",
+    "EMPTY": "No matching health cases",
+    "LOAD_ERROR": "Failed to load cases",
+    "UNKNOWN_PILGRIM": "Unnamed pilgrim",
+    "NO_PILGRIM": "No pilgrim profile linked to this case",
+    "NOT_AVAILABLE": "Not available",
+    "AGE_UNAVAILABLE": "Age unavailable",
+    "AGE_VALUE": "{{value}} years",
+    "JUST_NOW": "Just now",
+    "MINUTES_AGO": "{{value}} min ago",
+    "HOURS_AGO": "{{value}} h ago",
+    "DAYS_AGO": "{{value}} d ago",
+    "COL_PILGRIM": "Pilgrim",
+    "COL_VITALS": "Vital Signs",
+    "COL_LOCATION": "Location",
+    "COL_SEVERITY": "Severity",
+    "COL_LAST_UPDATE": "Last Update",
+    "HEART_RATE": "Heart",
+    "PRESSURE": "Pressure",
+    "TEMP": "Temp",
+    "SEVERITY_VERY_CRITICAL": "Very Critical",
+    "SEVERITY_CRITICAL": "Critical",
+    "SEVERITY_MEDIUM": "Medium"
   }
 }

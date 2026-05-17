@@ -13,6 +13,7 @@ import { environment } from '../../../environments/environment';
 import { NotificationAudienceRole, NotificationType, SendNotificationRequest, SentNotificationItem } from './notifications.model';
 import { NotificationsService } from './notifications.service';
 import { TranslationService as AppTranslationService } from '../../core/services/translation.service';
+import { SsDropdownDirective } from '../../shared/directives/ss-dropdown.directive';
 
 type NotificationsTab = 'send' | 'templates' | 'sent';
 
@@ -38,7 +39,7 @@ interface NotificationTemplate {
 
 @Component({
   selector: 'app-notifications',
-  imports: [TranslateModule, ],
+  imports: [TranslateModule, SsDropdownDirective],
   templateUrl: './notifications.html',
   styleUrl: './notifications.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

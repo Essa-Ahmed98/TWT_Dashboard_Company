@@ -111,6 +111,11 @@ export const routes: Routes = [
           import('./features/rituals-control/rituals-control').then((m) => m.RitualsControl),
       },
       {
+        path: 'critical-health-cases',
+        loadComponent: () =>
+          import('./features/critical-health-cases/critical-health-cases').then((m) => m.CriticalHealthCases),
+      },
+      {
         path: 'accommodation-location',
         loadComponent: () =>
           import('./features/accommodation-location/accommodation-location').then((m) => m.AccommodationLocation),

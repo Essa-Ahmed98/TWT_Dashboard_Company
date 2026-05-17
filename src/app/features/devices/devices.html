@@ -313,13 +313,26 @@
           </button>
           @if (showPilgrimDrop()) {
             <div class="ss__dropdown">
+              <div class="ss__search">
+                <i class="pi pi-search"></i>
+                <input
+                  type="text"
+                  [value]="pilgrimSearch()"
+                  (input)="pilgrimSearch.set($any($event.target).value)"
+                  [placeholder]="'DEVICES.LINK_MODAL.SEARCH_PILGRIM' | translate"
+                  (click)="$event.stopPropagation()" />
+                @if (pilgrimSearch()) {
+                  <i class="pi pi-times ss__search-clear"
+                     (click)="$event.stopPropagation(); pilgrimSearch.set('')"></i>
+                }
+              </div>
               @if (loadingPilgrims()) {
                 <div class="ss__state"><span class="ss-spinner"></span></div>
-              } @else if (pilgrims().length === 0) {
+              } @else if (filteredPilgrims().length === 0) {
                 <div class="ss__state">{{ 'DEVICES.LINK_MODAL.NO_PILGRIMS' | translate }}</div>
               } @else {
                 <ul class="ss__list">
-                  @for (p of pilgrims(); track p.Id) {
+                  @for (p of filteredPilgrims(); track p.Id) {
                     <li class="ss__item"
                         [class.ss__item--active]="selectedPilgrimId() === p.Id"
                         (click)="selectPilgrim(p)">{{ p.Name }}</li>

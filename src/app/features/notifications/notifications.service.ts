@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { ApiResult, PaginatedResult } from '../../core/models/api.models';
@@ -17,8 +17,7 @@ export class NotificationsService {
   private readonly http = inject(HttpClient);
 
   send(payload: SendNotificationRequest): Observable<ApiResult<unknown>> {
-    const headers = new HttpHeaders({ 'Accept-Language': 'ar' });
-    return this.http.post<ApiResult<unknown>>(`${environment.apiBase}/Notifications/send`, payload, { headers });
+    return this.http.post<ApiResult<unknown>>(`${environment.apiBase}/Notifications/send`, payload);
   }
 
   getSent(query: SentNotificationsQuery): Observable<ApiResult<PaginatedResult<SentNotificationItem>>> {
@@ -28,10 +27,9 @@ export class NotificationsService {
 
     if (query.Type !== undefined) params = params.set('Type', String(query.Type));
 
-    const headers = new HttpHeaders({ 'Accept-Language': 'ar' });
     return this.http.get<ApiResult<PaginatedResult<SentNotificationItem>>>(
       `${environment.apiBase}/Notifications/sent`,
-      { params, headers },
+      { params },
     );
   }
 }

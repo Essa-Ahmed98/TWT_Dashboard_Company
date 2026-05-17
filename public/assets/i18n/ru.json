@@ -82,6 +82,7 @@
     "REVIEWS": "Отзывы",
     "COMPLAINTS": "Жалобы",
     "RITUALS_CONTROL": "Управление Ритуалами",
+    "CRITICAL_HEALTH": "Критические случаи",
     "PROFILE": "Профиль пользователя",
     "SETTINGS": "Настройки"
   },
@@ -456,6 +457,7 @@
       "SUBTITLE": "Выберите паломника для привязки",
       "SELECT_PILGRIM": "Выбрать Паломника",
       "SELECT_PILGRIM_PLACEHOLDER": "Выбрать паломника",
+      "SEARCH_PILGRIM": "Поиск паломника",
       "NO_PILGRIMS": "Нет паломников",
       "CANCEL": "Отмена",
       "CONFIRM": "Подтвердить"
@@ -1182,5 +1184,38 @@
   "monitoringRoom": {
     "showFullMap": "Показать карту полностью",
     "showList": "Показать список"
+  },
+  "CRITICAL_HEALTH": {
+    "TITLE": "Критические случаи",
+    "SUBTITLE": "Отслеживайте паломников с критическими показателями здоровья и быстро реагируйте с панели управления",
+    "LIST_TITLE": "Список случаев",
+    "SEARCH_PLACEHOLDER": "Поиск по имени...",
+    "ALL_CAMPAIGNS": "Все кампании",
+    "ALL_GROUPS": "Все группы",
+    "SELECT_CAMPAIGN_FIRST": "Сначала выберите кампанию",
+    "PAGE_SIZE": "Размер страницы",
+    "RETRY": "Повторить",
+    "EMPTY": "Нет подходящих случаев",
+    "LOAD_ERROR": "Не удалось загрузить список случаев",
+    "UNKNOWN_PILGRIM": "Неизвестный паломник",
+    "NO_PILGRIM": "Профиль паломника не связан с этим случаем",
+    "NOT_AVAILABLE": "Недоступно",
+    "AGE_UNAVAILABLE": "Возраст недоступен",
+    "AGE_VALUE": "{{value}} лет",
+    "JUST_NOW": "Только что",
+    "MINUTES_AGO": "{{value}} мин назад",
+    "HOURS_AGO": "{{value}} ч назад",
+    "DAYS_AGO": "{{value}} д назад",
+    "COL_PILGRIM": "Паломник",
+    "COL_VITALS": "Жизненные показатели",
+    "COL_LOCATION": "Местоположение",
+    "COL_SEVERITY": "Серьёзность",
+    "COL_LAST_UPDATE": "Последнее обновление",
+    "HEART_RATE": "Пульс",
+    "PRESSURE": "Давление",
+    "TEMP": "Темп",
+    "SEVERITY_VERY_CRITICAL": "Очень критично",
+    "SEVERITY_CRITICAL": "Критично",
+    "SEVERITY_MEDIUM": "Средне"
   }
 }

@@ -1,0 +1,187 @@
+@if (hasAnyDropdownOpen()) {
+  <div class="backdrop" (click)="closeDrops()"></div>
+}
+
+<div class="critical">
+  <div class="critical__header">
+    <div class="critical__title">
+      <h1 class="critical__title-text">{{ 'CRITICAL_HEALTH.TITLE' | translate }}</h1>
+      <span class="critical__title-sub">{{ 'CRITICAL_HEALTH.SUBTITLE' | translate }}</span>
+    </div>
+  </div>
+
+  <section class="health-conditions">
+    <div class="health-conditions__header">
+      <h2 class="health-conditions__title">
+        {{ 'CRITICAL_HEALTH.LIST_TITLE' | translate }} ({{ totalCount() | number }})
+      </h2>
+    </div>
+
+    <div class="health-conditions__filters">
+      <div class="health-conditions__search">
+        <i class="pi pi-search health-conditions__search-icon"></i>
+        <input
+          class="health-conditions__search-input"
+          type="text"
+          [placeholder]="'CRITICAL_HEALTH.SEARCH_PLACEHOLDER' | translate"
+          [value]="searchInput()"
+          (input)="onSearch($event)"
+        />
+      </div>
+
+      <div class="dropdown" [class.dropdown--open]="showCampDrop()">
+        <button class="dropdown__trigger" type="button" (click)="toggleCampDrop($event)">
+          <i class="pi pi-flag"></i>
+          <span>{{ campId() ? campName() : ('CRITICAL_HEALTH.ALL_CAMPAIGNS' | translate) }}</span>
+          @if (campId()) {
+            <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectCamp()"></i>
+          } @else {
+            <i class="pi pi-angle-down dropdown__arrow"></i>
+          }
+        </button>
+        @if (showCampDrop()) {
+          <ul class="dropdown__menu" (click)="$event.stopPropagation()">
+            @if (campLoading()) {
+              <li class="dropdown__item dropdown__item--state"><span class="ss-spinner"></span></li>
+            } @else if (campList().length === 0) {
+              <li class="dropdown__item dropdown__item--state">{{ 'COMMON.NO_RESULTS' | translate }}</li>
+            } @else {
+              @for (camp of campList(); track camp.Id) {
+                <li class="dropdown__item" [class.dropdown__item--active]="campId() === camp.Id" (click)="selectCamp(camp)">
+                  @if (campId() === camp.Id) { <i class="pi pi-check"></i> }
+                  {{ camp.Name }}
+                </li>
+              }
+            }
+          </ul>
+        }
+      </div>
+
+      <div class="dropdown" [class.dropdown--open]="showGrpDrop()" [class.dropdown--disabled]="!campId()">
+        <button class="dropdown__trigger" type="button" [disabled]="!campId()" (click)="toggleGrpDrop($event)">
+          <i class="pi pi-users"></i>
+          <span>{{ groupId() ? groupName() : (campId() ? ('CRITICAL_HEALTH.ALL_GROUPS' | translate) : ('CRITICAL_HEALTH.SELECT_CAMPAIGN_FIRST' | translate)) }}</span>
+          @if (groupId()) {
+            <i class="pi pi-times dropdown__clear" (click)="$event.stopPropagation(); selectGrp()"></i>
+          } @else {
+            <i class="pi pi-angle-down dropdown__arrow"></i>
+          }
+        </button>
+        @if (showGrpDrop()) {
+          <ul class="dropdown__menu" (click)="$event.stopPropagation()">
+            @if (grpLoading()) {
+              <li class="dropdown__item dropdown__item--state"><span class="ss-spinner"></span></li>
+            } @else if (grpList().length === 0) {
+              <li class="dropdown__item dropdown__item--state">{{ 'COMMON.NO_RESULTS' | translate }}</li>
+            } @else {
+              @for (group of grpList(); track group.Id) {
+                <li class="dropdown__item" [class.dropdown__item--active]="groupId() === group.Id" (click)="selectGrp(group)">
+                  @if (groupId() === group.Id) { <i class="pi pi-check"></i> }
+                  {{ group.Name }}
+                </li>
+              }
+            }
+          </ul>
+        }
+      </div>
+
+      <select
+        class="page-size-select"
+        [title]="'CRITICAL_HEALTH.PAGE_SIZE' | translate"
+        [value]="pageSize()"
+        (change)="onPageSizeChange(+$any($event.target).value)"
+      >
+        @for (size of pageSizeOptions; track size) {
+          <option [value]="size">{{ size }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="health-table-wrap">
+      @if (loading()) {
+        <div class="health-conditions__state">
+          <p-progressSpinner strokeWidth="4" styleClass="critical__spinner" />
+        </div>
+      } @else if (loadError()) {
+        <div class="health-conditions__state health-conditions__state--error">
+          <i class="pi pi-exclamation-circle"></i>
+          <span>{{ loadError() }}</span>
+          <button class="btn btn--ghost" type="button" (click)="load(currentPage())">
+            {{ 'CRITICAL_HEALTH.RETRY' | translate }}
+          </button>
+        </div>
+      } @else if (healthConditions().length === 0) {
+        <div class="health-conditions__state">
+          <i class="pi pi-inbox"></i>
+          <span>{{ 'CRITICAL_HEALTH.EMPTY' | translate }}</span>
+        </div>
+      } @else {
+        <table class="health-table">
+          <thead>
+            <tr>
+              <th>{{ 'CRITICAL_HEALTH.COL_PILGRIM' | translate }}</th>
+              <th>{{ 'CRITICAL_HEALTH.COL_VITALS' | translate }}</th>
+              <th>{{ 'CRITICAL_HEALTH.COL_LOCATION' | translate }}</th>
+              <th>{{ 'CRITICAL_HEALTH.COL_SEVERITY' | translate }}</th>
+              <th>{{ 'CRITICAL_HEALTH.COL_LAST_UPDATE' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of healthConditions(); track item.Id) {
+              <tr class="health-table__row" [class.health-table__row--clickable]="item.PilgrimId" (click)="openPilgrimProfile(item)">
+                <td>
+                  <div class="pilgrim-cell">
+                    <span class="pilgrim-cell__avatar">{{ initial(item.DisplayName) }}</span>
+                    <div class="pilgrim-cell__info">
+                      <button class="pilgrim-cell__name" type="button" [disabled]="!item.PilgrimId" (click)="$event.stopPropagation(); openPilgrimProfile(item)">
+                        {{ item.DisplayName || ('CRITICAL_HEALTH.UNKNOWN_PILGRIM' | translate) }}
+                      </button>
+                      <span>{{ ageLabel(item.DateOfBirth) }}</span>
+                      <span>{{ item.Nationality || ('CRITICAL_HEALTH.NOT_AVAILABLE' | translate) }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="vitals">
+                    <span><i class="pi pi-heart"></i> {{ 'CRITICAL_HEALTH.HEART_RATE' | translate }}: <strong>{{ item.HeartRate }}</strong> bpm</span>
+                    <span><i class="pi pi-tint"></i> {{ 'CRITICAL_HEALTH.PRESSURE' | translate }}: <strong>{{ item.SystolicPressure }}/{{ item.DiastolicPressure }}</strong></span>
+                    <span><i class="pi pi-sun"></i> {{ 'CRITICAL_HEALTH.TEMP' | translate }}: <strong>{{ item.Temperature }}</strong>°</span>
+                    <span><i class="pi pi-cloud"></i> O₂: <strong>{{ item.OxygenSaturation }}%</strong></span>
+                  </div>
+                </td>
+                <td><span class="location-text">{{ locationLabel(item) }}</span></td>
+                <td><span [class]="severityClass(item)">{{ severityLabelKey(item) | translate }}</span></td>
+                <td><span class="muted-text">{{ measuredAtLabel(item.MeasuredAt) }}</span></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+
+    @if (totalCount() > 0) {
+      <div class="pagination-bar">
+        <div class="pagination-bar__controls">
+          <button class="pagination__btn" type="button" [disabled]="!hasPrevious()" (click)="prevPage()">
+            <i class="pi pi-angle-right"></i>
+          </button>
+          @for (page of visiblePages(); track $index) {
+            @if (page === '...') {
+              <span class="pagination__ellipsis">...</span>
+            } @else {
+              <button class="pagination__btn" type="button" [class.pagination__btn--active]="page === currentPage()" (click)="goToPage(page)">
+                {{ page }}
+              </button>
+            }
+          }
+          <button class="pagination__btn" type="button" [disabled]="!hasNext()" (click)="nextPage()">
+            <i class="pi pi-angle-left"></i>
+          </button>
+        </div>
+        <span class="pagination-bar__info">
+          {{ healthConditions().length | number }} {{ 'COMMON.OF' | translate }} {{ totalCount() | number }}
+        </span>
+      </div>
+    }
+  </section>
+</div>

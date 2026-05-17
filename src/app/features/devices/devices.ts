@@ -20,12 +20,13 @@ import { AuthService } from '../../core/auth/services/auth';
 import { ApiResult } from '../../core/models/api.models';
 import { DevicesService } from './devices.service';
 import { DeviceItem, DeviceForm, PilgrimOption } from './devices.model';
+import { SsDropdownDirective } from '../../shared/directives/ss-dropdown.directive';
 
 const EMPTY_FORM: DeviceForm = { imeiNumber: '', simNumber: '', notes: '' };
 
 @Component({
   selector:    'app-devices',
-  imports:     [FormsModule, ProgressSpinnerModule, TooltipModule, DecimalPipe, TranslateModule],
+  imports:     [FormsModule, ProgressSpinnerModule, TooltipModule, DecimalPipe, TranslateModule, SsDropdownDirective],
   templateUrl: './devices.html',
   styleUrl:    './devices.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -80,7 +81,15 @@ export class Devices implements OnInit {
   selectedPilgrimId  = signal('');
   selectedPilgrimName = signal('');
   showPilgrimDrop    = signal(false);
+  pilgrimSearch      = signal('');
   savingLink         = signal(false);
+
+  readonly filteredPilgrims = computed(() => {
+    const q = this.pilgrimSearch().trim().toLowerCase();
+    const list = this.pilgrims();
+    if (!q) return list;
+    return list.filter(p => (p.Name ?? '').toLowerCase().includes(q));
+  });
 
   private readonly search$ = new Subject<string>();
 
@@ -183,7 +192,7 @@ export class Devices implements OnInit {
     if (this.downloadingTemplate()) return;
 
     this.downloadingTemplate.set(true);
-    this.service.downloadTemplate('ar')
+    this.service.downloadTemplate()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: response => {
@@ -222,7 +231,7 @@ export class Devices implements OnInit {
     }
 
     this.uploadingImportFile.set(true);
-    this.service.uploadDevicesFile(selectedFile, 'ar')
+    this.service.uploadDevicesFile(selectedFile)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: response => {
@@ -322,6 +331,7 @@ export class Devices implements OnInit {
     this.selectedPilgrimId.set('');
     this.selectedPilgrimName.set('');
     this.showPilgrimDrop.set(false);
+    this.pilgrimSearch.set('');
     this.showLinkModal.set(true);
 
     const companyId = this.auth.currentUser()?.companyId ?? '';

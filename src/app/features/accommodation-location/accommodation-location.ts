@@ -25,6 +25,7 @@ import { CampaignsService } from '../campaigns/campaigns.service';
 import { CampaignApiItem, GroupApiItem } from '../campaigns/campaigns.model';
 import { ApiResult } from '../../core/models/api.models';
 import { environment } from '../../../environments/environment';
+import { SsDropdownDirective } from '../../shared/directives/ss-dropdown.directive';
 
 interface AccommodationLocationRequest {
   GroupId:               string;
@@ -35,7 +36,7 @@ interface AccommodationLocationRequest {
 
 @Component({
   selector: 'app-accommodation-location',
-  imports: [TranslateModule, FormsModule],
+  imports: [TranslateModule, FormsModule, SsDropdownDirective],
   templateUrl: './accommodation-location.html',
   styleUrl: './accommodation-location.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

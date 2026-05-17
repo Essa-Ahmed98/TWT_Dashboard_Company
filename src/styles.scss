@@ -73,6 +73,17 @@ body {
   pointer-events: auto;
 }
 
+// ── Smart-select (.ss) dropdown — visual polish ────────────────
+// SsDropdownDirective repositions every .ss__dropdown at runtime as
+// position:fixed anchored to its .ss__trigger — that is what makes
+// the panel escape .dialog / .dialog__body overflow without breaking
+// dialog scroll. Here we just ensure z-index and a stronger shadow
+// so the floating panel reads as a popup above the dialog.
+.ss__dropdown {
+  z-index: 10000;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, .22);
+}
+
 // ── PrimeNG DatePicker RTL icon fix ─────────────────────────────
 .p-datepicker-prev-button svg,
 .p-datepicker-next-button svg {

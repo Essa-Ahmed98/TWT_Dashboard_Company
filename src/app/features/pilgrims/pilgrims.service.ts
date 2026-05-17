@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
@@ -34,21 +34,12 @@ export class PilgrimsService {
     return this.http.get<ApiResult<PilgrimDetailApiItem>>(`${environment.apiBase}/Pilgrims/${id}`);
   }
 
-  getPilgrimQrCode(id: string, language = 'ar'): Observable<ApiResult<PilgrimQrCodeApiItem>> {
-    const headers = new HttpHeaders({
-      'Accept-Language': language,
-    });
-
-    return this.http.post<ApiResult<PilgrimQrCodeApiItem>>(`${environment.apiBase}/Pilgrims/${id}/qrcode`, {}, { headers });
+  getPilgrimQrCode(id: string): Observable<ApiResult<PilgrimQrCodeApiItem>> {
+    return this.http.post<ApiResult<PilgrimQrCodeApiItem>>(`${environment.apiBase}/Pilgrims/${id}/qrcode`, {});
   }
 
-  getLuggageQrCode(userId: string, language = 'ar'): Observable<Blob> {
-    const headers = new HttpHeaders({
-      'Accept-Language': language,
-    });
-
+  getLuggageQrCode(userId: string): Observable<Blob> {
     return this.http.get(`${environment.apiBase}/Luggage/qr-code/${userId}`, {
-      headers,
       responseType: 'blob',
     });
   }
@@ -62,90 +53,60 @@ export class PilgrimsService {
     return this.http.get<ApiResult<string>>(`${environment.apiBase}/Pilgrims/accommodation-map-url`, { params });
   }
 
-  getReviewsByUserId(userId: string, language = 'ar'): Observable<ApiResult<ReviewApiItem[]>> {
-    const headers = new HttpHeaders({
-      'Accept-Language': language,
-    });
-
-    return this.http.get<ApiResult<ReviewApiItem[]>>(`${environment.apiBase}/Reviews/${userId}`, { headers });
+  getReviewsByUserId(userId: string): Observable<ApiResult<ReviewApiItem[]>> {
+    return this.http.get<ApiResult<ReviewApiItem[]>>(`${environment.apiBase}/Reviews/${userId}`);
   }
 
-  getDrugsByUserId(userId: string, language = 'ar'): Observable<ApiResult<DrugApiItem[]>> {
-    const headers = new HttpHeaders({ 'Accept-Language': language });
-    return this.http.get<ApiResult<DrugApiItem[]>>(`${environment.apiBase}/Drugs/user/${userId}`, { headers });
+  getDrugsByUserId(userId: string): Observable<ApiResult<DrugApiItem[]>> {
+    return this.http.get<ApiResult<DrugApiItem[]>>(`${environment.apiBase}/Drugs/user/${userId}`);
   }
 
-  getRitualsByUserId(userId: string, language = 'ar'): Observable<ApiResult<PilgrimRitualsApiItem>> {
-    const headers = new HttpHeaders({
-      'Accept-Language': language,
-    });
-
+  getRitualsByUserId(userId: string): Observable<ApiResult<PilgrimRitualsApiItem>> {
     const params = new HttpParams().set('userId', userId);
 
     return this.http.get<ApiResult<PilgrimRitualsApiItem>>(`${environment.apiBase}/Rituals/pilgrim`, {
-      headers,
       params,
     });
   }
 
-  downloadTemplate(campaignId: string, groupId: string, language = 'ar'): Observable<HttpResponse<Blob>> {
+  downloadTemplate(campaignId: string, groupId: string): Observable<HttpResponse<Blob>> {
     const params = new HttpParams()
       .set('campaignId', campaignId)
       .set('groupId', groupId);
-
-    const headers = new HttpHeaders({
-      'Accept-Language': language,
-    });
 
     return this.http.get(`${environment.apiBase}/Pilgrims/template`, {
       params,
-      headers,
       responseType: 'blob',
       observe: 'response',
     });
   }
 
-  downloadQrCodes(campaignId: string, groupId: string, language = 'ar'): Observable<HttpResponse<Blob>> {
+  downloadQrCodes(campaignId: string, groupId: string): Observable<HttpResponse<Blob>> {
     const params = new HttpParams()
       .set('campaignId', campaignId)
       .set('groupId', groupId);
 
-    const headers = new HttpHeaders({
-      'Accept-Language': language,
-    });
-
     return this.http.get(`${environment.apiBase}/Pilgrims/qrcodes/download`, {
       params,
-      headers,
       responseType: 'blob',
       observe: 'response',
     });
   }
 
-  exportGroupLuggageExcel(groupId: string, language = 'ar'): Observable<HttpResponse<Blob>> {
-    const headers = new HttpHeaders({
-      'Accept-Language': language,
-    });
-
+  exportGroupLuggageExcel(groupId: string): Observable<HttpResponse<Blob>> {
     return this.http.get(`${environment.apiBase}/Luggage/export-group-excel/${groupId}`, {
-      headers,
       responseType: 'blob',
       observe: 'response',
     });
   }
 
-  uploadPilgrimsFile(file: File, language = 'ar'): Observable<ApiResult<unknown> | { issuccess?: boolean; IsSuccess?: boolean }> {
+  uploadPilgrimsFile(file: File): Observable<ApiResult<unknown> | { issuccess?: boolean; IsSuccess?: boolean }> {
     const formData = new FormData();
     formData.append('file', file);
-
-    const headers = new HttpHeaders({
-      'Accept-Language': language,
-    });
 
     return this.http.post<ApiResult<unknown> | { issuccess?: boolean; IsSuccess?: boolean }>(
       `${environment.apiBase}/Pilgrims/upload`,
       formData,
-      { headers },
     );
   }
 
@@ -153,15 +114,13 @@ export class PilgrimsService {
     userId: string,
     pageNumber = 1,
     pageSize = 10,
-    language = 'ar',
   ): Observable<ApiResult<LuggageLocationHistoryApiData>> {
-    const headers = new HttpHeaders({ 'Accept-Language': language });
     const params = new HttpParams()
       .set('pageNumber', String(pageNumber))
       .set('pageSize', String(pageSize));
     return this.http.get<ApiResult<LuggageLocationHistoryApiData>>(
       `${environment.apiBase}/Luggage/location-history/${userId}`,
-      { headers, params },
+      { params },
     );
   }
 
