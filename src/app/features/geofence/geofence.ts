@@ -893,13 +893,18 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
           const L = this.L;
           const layer = L.layerGroup().addTo(this.leafletMap);
           for (const pilgrim of res.Data) {
-            L.circleMarker([pilgrim.Latitude, pilgrim.Longitude] as [number, number], {
-              radius: 7,
-              color: '#fff',
-              fillColor: group.color,
-              fillOpacity: 0.9,
-              weight: 1.5,
-            }).bindPopup(this.buildPilgrimPopup(pilgrim, group)).addTo(layer);
+            if (!pilgrim.Latitude || !pilgrim.Longitude) continue;
+            const latLng: [number, number] = [pilgrim.Latitude, pilgrim.Longitude];
+            const marker = pilgrim.IsSupervisor
+              ? L.marker(latLng, { icon: this.buildSupervisorIcon(group.color) })
+              : L.circleMarker(latLng, {
+                  radius: 7,
+                  color: '#fff',
+                  fillColor: group.color,
+                  fillOpacity: 0.9,
+                  weight: 1.5,
+                });
+            marker.bindPopup(this.buildPilgrimPopup(pilgrim, group)).addTo(layer);
           }
           this.groupLayers.set(group.id, layer);
         },
@@ -920,11 +925,34 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
   }
 
   private buildPilgrimPopup(pilgrim: GroupPilgrimMapApiItem, group: CampaignGroup): string {
+    const supervisorBadge = pilgrim.IsSupervisor
+      ? `<div style="display:inline-block;background:#f5b400;color:#0b405b;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:6px">${this.translate.instant('GEOFENCE.POPUP.SUPERVISOR')}</div>`
+      : '';
     return `
       <div style="direction:rtl;font-family:inherit;min-width:180px">
+        ${supervisorBadge}
         <div style="font-weight:700;color:#0b405b;margin-bottom:4px">${pilgrim.DisplayName}</div>
         <div style="font-size:.8rem;color:#647b87;margin-bottom:4px">${this.translate.instant('GEOFENCE.POPUP.GROUP')}: ${group.name}</div>
       </div>`;
+  }
+
+  private buildSupervisorIcon(color: string): any {
+    const L = this.L;
+    const html = `
+      <div style="position:relative;width:28px;height:28px;display:flex;align-items:center;justify-content:center;
+                  background:${color};border:2px solid #f5b400;border-radius:50%;
+                  box-shadow:0 2px 6px rgba(0,0,0,.35)">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="#fff" aria-hidden="true">
+          <path d="M12 2l2.39 4.84L20 7.62l-3.86 3.76.91 5.3L12 14.77 6.95 16.68l.91-5.3L4 7.62l5.61-.78L12 2z"/>
+        </svg>
+      </div>`;
+    return L.divIcon({
+      html,
+      className: 'geofence-supervisor-marker',
+      iconSize: [28, 28],
+      iconAnchor: [14, 14],
+      popupAnchor: [0, -14],
+    });
   }
 
   ngOnDestroy(): void {

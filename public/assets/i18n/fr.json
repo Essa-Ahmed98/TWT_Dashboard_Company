@@ -783,7 +783,8 @@
       "PILGRIMS_INSIDE": "Pèlerins dans la zone",
       "OPACITY": "Opacité",
       "RADIUS": "Rayon : {{value}} m",
-      "GROUP": "Groupe"
+      "GROUP": "Groupe",
+      "SUPERVISOR": "Superviseur"
     }
   },
   "ACCOMMODATION": {

@@ -783,7 +783,8 @@
       "PILGRIMS_INSIDE": "Pilgrims inside the area",
       "OPACITY": "Opacity",
       "RADIUS": "Radius: {{value}} m",
-      "GROUP": "Group"
+      "GROUP": "Group",
+      "SUPERVISOR": "Supervisor"
     }
   },
   "ACCOMMODATION": {

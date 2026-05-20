@@ -783,7 +783,8 @@
       "PILGRIMS_INSIDE": "الحجاج داخل المنطقة",
       "OPACITY": "الشفافية",
       "RADIUS": "نصف القطر: {{value}} متر",
-      "GROUP": "المجموعة"
+      "GROUP": "المجموعة",
+      "SUPERVISOR": "مشرف"
     }
   },
   "ACCOMMODATION": {

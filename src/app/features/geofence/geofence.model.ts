@@ -75,6 +75,8 @@ export interface GroupPilgrimMapApiItem {
   DisplayName: string;
   Longitude: number;
   Latitude: number;
+  IsSupervisor?: boolean;
+  ZoneName?: string | null;
 }
 
 export const MOCK_ZONES: GeofenceZone[] = [

@@ -783,7 +783,8 @@
       "PILGRIMS_INSIDE": "Паломники в зоне",
       "OPACITY": "Непрозрачность",
       "RADIUS": "Радиус: {{value}} м",
-      "GROUP": "Группа"
+      "GROUP": "Группа",
+      "SUPERVISOR": "Руководитель"
     }
   },
   "ACCOMMODATION": {
