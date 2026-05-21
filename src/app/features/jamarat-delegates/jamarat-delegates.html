@@ -1,0 +1,473 @@
+<div class="delegates" dir="rtl">
+  <!-- Header -->
+  <div class="delegates__header">
+    <div>
+      <h1 class="delegates__title">موكلين رمي الجمرات</h1>
+      <p class="delegates__subtitle">إدارة الأشخاص الذين يرمون الجمرات بالنيابة عن الحجاج كبار السن</p>
+    </div>
+
+    <div class="delegates__actions">
+      <button type="button" class="btn btn--primary" (click)="openAddDialog()">
+        <i class="pi pi-plus"></i>
+        <span>إضافة موكل</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-card__info">
+        <span class="stat-card__label">إجمالي الموكلين</span>
+        <strong class="stat-card__value">{{ totalCount() | number }}</strong>
+      </div>
+      <div class="stat-card__icon stat-card__icon--total"><i class="pi pi-users"></i></div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card__info">
+        <span class="stat-card__label">متاحين الآن</span>
+        <strong class="stat-card__value">{{ availableNowCount() | number }}</strong>
+      </div>
+      <div class="stat-card__icon stat-card__icon--active"><i class="pi pi-user-plus"></i></div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card__info">
+        <span class="stat-card__label">توكيلات نشطة</span>
+        <strong class="stat-card__value">{{ activeRequestsCount() | number }}</strong>
+      </div>
+      <div class="stat-card__icon stat-card__icon--phone"><i class="pi pi-phone"></i></div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="delegates__tabs">
+    <button
+      type="button"
+      class="delegates__tab"
+      [class.delegates__tab--active]="activeTab() === 'delegates'"
+      (click)="setTab('delegates')">
+      <i class="pi pi-users"></i>
+      الموكلين
+    </button>
+    <button
+      type="button"
+      class="delegates__tab"
+      [class.delegates__tab--active]="activeTab() === 'requests'"
+      (click)="setTab('requests')">
+      <i class="pi pi-inbox"></i>
+      طلبات الحجاج
+    </button>
+  </div>
+
+  @if (activeTab() === 'delegates') {
+    <div class="table-card">
+      <!-- Filters -->
+      <div class="delegates__toolbar">
+        <div class="search-box">
+          <i class="pi pi-search search-box__icon"></i>
+          <input
+            type="text"
+            class="search-box__input"
+            placeholder="بحث بالاسم أو الهاتف أو الإيميل..."
+            (input)="onSearch($event)" />
+        </div>
+
+        <div class="filter-group">
+          <select
+            class="filter-select"
+            [value]="affiliationFilter() || 'الجميع'"
+            (change)="onAffiliationChange(($any($event.target)).value)"
+            aria-label="الجهة">
+            @for (option of affiliationOptions; track option) {
+              <option [value]="option">{{ option }}</option>
+            }
+          </select>
+
+          <div class="page-size">
+            <select
+              class="page-size__select"
+              [value]="pageSize()"
+              (change)="onPageSizeChange(+($any($event.target)).value)"
+              aria-label="عدد العناصر">
+              @for (size of pageSizeOptions; track size) {
+                <option [value]="size">{{ size }}</option>
+              }
+            </select>
+            <i class="pi pi-chevron-down page-size__icon"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="delegates__table-wrap">
+        <table class="delegates-table">
+          <thead>
+            <tr>
+              <th>الموكل</th>
+              <th>الجهة</th>
+              <th>الهاتف</th>
+              <th>الهوية</th>
+              <th>العمر</th>
+              <th>الدوام</th>
+              <th>التوكيلات النشطة</th>
+              <th>الحالة</th>
+              <th>إجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (listLoading()) {
+              <tr>
+                <td colspan="9" class="state-cell">
+                  <p-progress-spinner strokeWidth="4" [style]="{ width: '46px', height: '46px' }" />
+                </td>
+              </tr>
+            } @else if (loadError()) {
+              <tr>
+                <td colspan="9" class="state-cell state-cell--error">
+                  <i class="pi pi-exclamation-triangle"></i>
+                  <p>{{ loadError() }}</p>
+                  <button type="button" class="state-retry" (click)="loadDelegates()">إعادة المحاولة</button>
+                </td>
+              </tr>
+            } @else if (delegates().length === 0) {
+              <tr>
+                <td colspan="9" class="state-cell">
+                  <i class="pi pi-users"></i>
+                  <p>لا يوجد موكلين لعرضهم</p>
+                </td>
+              </tr>
+            } @else {
+              @for (delegate of delegates(); track delegate.DelegateId) {
+                <tr>
+                  <td>
+                    <div class="delegate-cell">
+                      <span class="delegate-cell__avatar">
+                        @if (mediaUrl(delegate.ImageUrl); as photo) {
+                          <img [src]="photo" [alt]="delegate.FullName" />
+                        } @else {
+                          {{ initials(delegate.FullName) }}
+                        }
+                      </span>
+                      <div class="delegate-cell__info">
+                        <span class="delegate-cell__name">{{ delegate.FullName || '—' }}</span>
+                        <span class="delegate-cell__email">{{ delegate.Email || '—' }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    @if (delegate.Affiliation) {
+                      <span class="chip">{{ delegate.Affiliation }}</span>
+                    } @else {
+                      —
+                    }
+                  </td>
+                  <td><span class="phone-cell">{{ delegate.Phone || '—' }}</span></td>
+                  <td>{{ delegate.IdNumber || '—' }}</td>
+                  <td>{{ delegate.Age || '—' }}</td>
+                  <td>{{ formatWork(delegate) }}</td>
+                  <td>
+                    <span class="chip chip--neutral">
+                      {{ delegate.Stats.ActiveRequests }} / {{ delegate.Work.MaxConcurrent }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="status-badge" [class.status-badge--active]="delegate.Work.IsAvailable" [class.status-badge--inactive]="!delegate.Work.IsAvailable">
+                      {{ delegate.Work.IsAvailable ? 'متاح' : 'غير متاح' }}
+                    </span>
+                  </td>
+                  <td>
+                    <button type="button" class="action-btn" (click)="openEditDialog(delegate)">
+                      <i class="pi pi-pencil"></i>
+                    </button>
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+
+        @if (!listLoading() && totalCount() > 0) {
+          <div class="pagination">
+            <span class="pagination__info">إجمالي {{ totalCount() }} موكل</span>
+            <div class="pagination__controls">
+              <button class="pg-btn" (click)="prevPage()" [disabled]="currentPage() === 1">
+                <i class="pi pi-angle-right"></i>
+              </button>
+              @for (page of visiblePages(); track $index) {
+                @if (page === -1) {
+                  <span class="pg-ellipsis">…</span>
+                } @else {
+                  <button
+                    class="pg-btn pg-btn--num"
+                    [class.pg-btn--active]="page === currentPage()"
+                    (click)="goToPage(page)">
+                    {{ page }}
+                  </button>
+                }
+              }
+              <button class="pg-btn" (click)="nextPage()" [disabled]="currentPage() === totalPages()">
+                <i class="pi pi-angle-left"></i>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="table-card">
+      <div class="delegates__table-wrap">
+        <table class="delegates-table">
+          <thead>
+            <tr>
+              <th>الحاج</th>
+              <th>المركز</th>
+              <th>الموكل</th>
+              <th>اليوم المستهدف</th>
+              <th>ملاحظات الحاج</th>
+              <th>تاريخ الطلب</th>
+              <th>الحالة</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (requestsLoading()) {
+              <tr>
+                <td colspan="7" class="state-cell">
+                  <p-progress-spinner strokeWidth="4" [style]="{ width: '46px', height: '46px' }" />
+                </td>
+              </tr>
+            } @else if (requestsError()) {
+              <tr>
+                <td colspan="7" class="state-cell state-cell--error">
+                  <i class="pi pi-exclamation-triangle"></i>
+                  <p>{{ requestsError() }}</p>
+                  <button type="button" class="state-retry" (click)="loadRequests()">إعادة المحاولة</button>
+                </td>
+              </tr>
+            } @else if (requests().length === 0) {
+              <tr>
+                <td colspan="7" class="state-cell">
+                  <i class="pi pi-inbox"></i>
+                  <p>لا توجد طلبات حجاج حالياً</p>
+                </td>
+              </tr>
+            } @else {
+              @for (request of requests(); track request.Id) {
+                <tr>
+                  <td>
+                    <div class="delegate-cell">
+                      <span class="delegate-cell__avatar">
+                        @if (mediaUrl(request.Pilgrim.PhotoUrl); as photo) {
+                          <img [src]="photo" [alt]="request.Pilgrim.FullName" />
+                        } @else {
+                          {{ initials(request.Pilgrim.FullName) }}
+                        }
+                      </span>
+                      <div class="delegate-cell__info">
+                        <span class="delegate-cell__name">{{ request.Pilgrim.FullName || '—' }}</span>
+                        <span class="delegate-cell__email phone-cell">{{ request.Pilgrim.Phone || '—' }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>{{ request.Pilgrim.CampaignName || '—' }}</td>
+                  <td>{{ request.Delegate?.DelegateName || '—' }}</td>
+                  <td>{{ request.TargetDay || '—' }}</td>
+                  <td class="cell-notes" [title]="request.PilgrimNotes">{{ request.PilgrimNotes || '—' }}</td>
+                  <td>{{ (request.CreatedAt | date:'yyyy-MM-dd HH:mm') || '—' }}</td>
+                  <td>
+                    <span class="status-badge" [ngClass]="requestStatusClass(request.Status)">
+                      {{ requestStatusLabel(request.Status) }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>
+
+<!-- Add / Edit Dialog -->
+<p-dialog
+  [visible]="showDialog()"
+  (visibleChange)="$event ? showDialog.set(true) : closeDialog()"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [showHeader]="false"
+  styleClass="delegate-dialog">
+  <form class="dlg" [formGroup]="delegateForm" (ngSubmit)="submitDelegate()" dir="rtl">
+    <div class="dlg__header">
+      <div>
+        <h2 class="dlg__title">{{ dialogTitle() }}</h2>
+        <p class="dlg__subtitle">حدد بيانات الموكل والدوام والصلاحيات للعمل</p>
+      </div>
+      <button type="button" class="dlg__close" (click)="closeDialog()" [disabled]="savingDelegate()">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <div class="dlg__body">
+      @if (loadingDelegateDetails()) {
+        <div class="dlg__loading">
+          <p-progress-spinner strokeWidth="4" [style]="{ width: '40px', height: '40px' }" />
+          <span>جارٍ تحميل بيانات الموكل...</span>
+        </div>
+      }
+
+      @if (backendErrors().length) {
+        <div class="form-alert">
+          @for (error of backendErrors(); track error) {
+            <p>{{ error }}</p>
+          }
+        </div>
+      }
+
+      <div class="image-row">
+        <div class="image-row__preview">
+          @if (imagePreview()) {
+            <img [src]="imagePreview()" alt="image" />
+          } @else {
+            <i class="pi pi-upload"></i>
+          }
+        </div>
+        <label class="image-row__pick">
+          <input type="file" accept="image/*" (change)="onImageSelected($event)" hidden />
+          <span>اختيار صورة</span>
+        </label>
+        @if (imagePreview()) {
+          <button type="button" class="image-row__clear" (click)="clearImage()">إزالة</button>
+        }
+      </div>
+
+      <div class="form-grid">
+        <label class="dlg__field">
+          <span class="dlg__label">الاسم الكامل <b>*</b></span>
+          <input class="dlg__input" type="text" formControlName="DisplayName" placeholder="الاسم الكامل" />
+          @if (hasFieldError('DisplayName')) {
+            <span class="field-error">الاسم الكامل مطلوب</span>
+          }
+        </label>
+
+        <label class="dlg__field">
+          <span class="dlg__label">رقم الهوية <b>*</b></span>
+          <input class="dlg__input" type="text" inputmode="numeric" maxlength="10" formControlName="IdNumber" placeholder="رقم الهوية" />
+          @if (hasFieldError('IdNumber')) {
+            @if (delegateForm.controls.IdNumber.errors?.['required']) {
+              <span class="field-error">رقم الهوية مطلوب</span>
+            } @else {
+              <span class="field-error">يجب أن يكون رقم الهوية 10 أرقام</span>
+            }
+          }
+        </label>
+
+        <label class="dlg__field">
+          <span class="dlg__label">الهاتف <b>*</b></span>
+          <input class="dlg__input" type="tel" formControlName="Phone" placeholder="رقم الهاتف" />
+          @if (hasFieldError('Phone')) {
+            <span class="field-error">رقم الهاتف مطلوب</span>
+          }
+        </label>
+
+        <label class="dlg__field">
+          <span class="dlg__label">العمر <b>*</b></span>
+          <input class="dlg__input" type="number" min="1" formControlName="Age" placeholder="العمر" />
+          @if (hasFieldError('Age')) {
+            <span class="field-error">أدخل عمراً صحيحاً</span>
+          }
+        </label>
+
+        <label class="dlg__field">
+          <span class="dlg__label">البريد الإلكتروني</span>
+          <input class="dlg__input" type="email" formControlName="Email" placeholder="البريد الإلكتروني" />
+          @if (hasFieldError('Email')) {
+            <span class="field-error">أدخل بريداً إلكترونياً صحيحاً</span>
+          }
+        </label>
+
+        @if (!isEditMode()) {
+          <label class="dlg__field">
+            <span class="dlg__label">كلمة السر <b>*</b></span>
+            <div class="password-field">
+              <input
+                class="dlg__input"
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="Password"
+                placeholder="كلمة السر"
+                autocomplete="new-password" />
+              <button type="button" class="password-field__toggle" (click)="togglePasswordVisibility()">
+                <i [class]="showPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+              </button>
+            </div>
+            @if (hasFieldError('Password')) {
+              <span class="field-error">كلمة السر مطلوبة</span>
+            }
+          </label>
+        }
+
+        <label class="dlg__field">
+          <span class="dlg__label">الجنسية</span>
+          <input class="dlg__input" type="text" formControlName="Nationality" placeholder="الجنسية" />
+        </label>
+
+        <label class="dlg__field">
+          <span class="dlg__label">الجهة التابع لها <b>*</b></span>
+          <select class="dlg__input" formControlName="Affiliation">
+            <option value="" disabled>اختر الجهة</option>
+            <option value="جمعية">جمعية</option>
+            <option value="بعثة">بعثة</option>
+          </select>
+          @if (hasFieldError('Affiliation')) {
+            <span class="field-error">حدد الجهة التابع لها</span>
+          }
+        </label>
+
+        <label class="dlg__field">
+          <span class="dlg__label">بداية الدوام</span>
+          <input class="dlg__input" type="time" formControlName="WorkFrom" />
+        </label>
+
+        <label class="dlg__field">
+          <span class="dlg__label">نهاية الدوام</span>
+          <input class="dlg__input" type="time" formControlName="WorkTo" />
+        </label>
+
+        <label class="dlg__field">
+          <span class="dlg__label">الحد الأقصى للتوكيلات المتزامنة</span>
+          <input class="dlg__input" type="number" min="0" formControlName="MaxConcurrent" />
+        </label>
+
+        <label class="dlg__field dlg__field--switch">
+          <span class="dlg__label">متاح للعمل</span>
+          <label class="toggle-switch">
+            <input type="checkbox" formControlName="IsAvailable" />
+            <span class="toggle-switch__slider"></span>
+          </label>
+        </label>
+
+        <label class="dlg__field dlg__field--full">
+          <span class="dlg__label">ملاحظات</span>
+          <textarea class="dlg__input" rows="3" formControlName="Notes" placeholder="ملاحظات إضافية"></textarea>
+        </label>
+      </div>
+
+      @if (delegateForm.errors?.['workRange'] && (delegateForm.touched || formSubmitted())) {
+        <span class="field-error">نهاية الدوام يجب أن تكون بعد بدايته</span>
+      }
+    </div>
+
+    <div class="dlg__footer">
+      <button type="submit" class="dlg__btn dlg__btn--submit" [disabled]="savingDelegate() || loadingDelegateDetails()">
+        @if (savingDelegate()) {
+          <i class="pi pi-spin pi-spinner"></i>
+        } @else {
+          {{ submitLabel() }}
+        }
+      </button>
+      <button type="button" class="dlg__btn dlg__btn--cancel" (click)="closeDialog()" [disabled]="savingDelegate()">إلغاء</button>
+    </div>
+  </form>
+</p-dialog>

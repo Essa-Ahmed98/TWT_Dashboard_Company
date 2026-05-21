@@ -116,6 +116,11 @@ export const routes: Routes = [
           import('./features/critical-health-cases/critical-health-cases').then((m) => m.CriticalHealthCases),
       },
       {
+        path: 'jamarat-delegates',
+        loadComponent: () =>
+          import('./features/jamarat-delegates/jamarat-delegates').then((m) => m.JamaratDelegates),
+      },
+      {
         path: 'accommodation-location',
         loadComponent: () =>
           import('./features/accommodation-location/accommodation-location').then((m) => m.AccommodationLocation),

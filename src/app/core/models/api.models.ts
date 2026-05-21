@@ -13,6 +13,7 @@ export interface ValidationError {
 
 export interface ApiError {
   message?: string;
+  Message?: string;
   code?: string;
   Code?: number;
   MessageKey?: string;
