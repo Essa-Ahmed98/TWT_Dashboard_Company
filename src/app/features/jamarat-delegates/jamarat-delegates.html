@@ -1,15 +1,15 @@
-<div class="delegates" dir="rtl">
+<div class="delegates">
   <!-- Header -->
   <div class="delegates__header">
     <div>
-      <h1 class="delegates__title">موكلين رمي الجمرات</h1>
-      <p class="delegates__subtitle">إدارة الأشخاص الذين يرمون الجمرات بالنيابة عن الحجاج كبار السن</p>
+      <h1 class="delegates__title">{{ 'JAMARAT_DELEGATES.TITLE' | translate }}</h1>
+      <p class="delegates__subtitle">{{ 'JAMARAT_DELEGATES.SUBTITLE' | translate }}</p>
     </div>
 
     <div class="delegates__actions">
       <button type="button" class="btn btn--primary" (click)="openAddDialog()">
         <i class="pi pi-plus"></i>
-        <span>إضافة موكل</span>
+        <span>{{ 'JAMARAT_DELEGATES.ADD_BUTTON' | translate }}</span>
       </button>
     </div>
   </div>
@@ -18,7 +18,7 @@
   <div class="stats-grid">
     <div class="stat-card">
       <div class="stat-card__info">
-        <span class="stat-card__label">إجمالي الموكلين</span>
+        <span class="stat-card__label">{{ 'JAMARAT_DELEGATES.STATS_TOTAL' | translate }}</span>
         <strong class="stat-card__value">{{ totalCount() | number }}</strong>
       </div>
       <div class="stat-card__icon stat-card__icon--total"><i class="pi pi-users"></i></div>
@@ -26,7 +26,7 @@
 
     <div class="stat-card">
       <div class="stat-card__info">
-        <span class="stat-card__label">متاحين الآن</span>
+        <span class="stat-card__label">{{ 'JAMARAT_DELEGATES.STATS_AVAILABLE' | translate }}</span>
         <strong class="stat-card__value">{{ availableNowCount() | number }}</strong>
       </div>
       <div class="stat-card__icon stat-card__icon--active"><i class="pi pi-user-plus"></i></div>
@@ -34,7 +34,7 @@
 
     <div class="stat-card">
       <div class="stat-card__info">
-        <span class="stat-card__label">توكيلات نشطة</span>
+        <span class="stat-card__label">{{ 'JAMARAT_DELEGATES.STATS_ACTIVE_REQUESTS' | translate }}</span>
         <strong class="stat-card__value">{{ activeRequestsCount() | number }}</strong>
       </div>
       <div class="stat-card__icon stat-card__icon--phone"><i class="pi pi-phone"></i></div>
@@ -49,7 +49,7 @@
       [class.delegates__tab--active]="activeTab() === 'delegates'"
       (click)="setTab('delegates')">
       <i class="pi pi-users"></i>
-      الموكلين
+      {{ 'JAMARAT_DELEGATES.TAB_DELEGATES' | translate }}
     </button>
     <button
       type="button"
@@ -57,7 +57,7 @@
       [class.delegates__tab--active]="activeTab() === 'requests'"
       (click)="setTab('requests')">
       <i class="pi pi-inbox"></i>
-      طلبات الحجاج
+      {{ 'JAMARAT_DELEGATES.TAB_REQUESTS' | translate }}
     </button>
   </div>
 
@@ -70,18 +70,18 @@
           <input
             type="text"
             class="search-box__input"
-            placeholder="بحث بالاسم أو الهاتف أو الإيميل..."
+            [placeholder]="'JAMARAT_DELEGATES.SEARCH_PLACEHOLDER' | translate"
             (input)="onSearch($event)" />
         </div>
 
         <div class="filter-group">
           <select
             class="filter-select"
-            [value]="affiliationFilter() || 'الجميع'"
+            [value]="affiliationFilter()"
             (change)="onAffiliationChange(($any($event.target)).value)"
-            aria-label="الجهة">
-            @for (option of affiliationOptions; track option) {
-              <option [value]="option">{{ option }}</option>
+            [attr.aria-label]="'JAMARAT_DELEGATES.AFFILIATION_ARIA' | translate">
+            @for (option of affiliationOptions; track option.value) {
+              <option [value]="option.value">{{ option.labelKey | translate }}</option>
             }
           </select>
 
@@ -90,7 +90,7 @@
               class="page-size__select"
               [value]="pageSize()"
               (change)="onPageSizeChange(+($any($event.target)).value)"
-              aria-label="عدد العناصر">
+              [attr.aria-label]="'JAMARAT_DELEGATES.PAGE_SIZE_ARIA' | translate">
               @for (size of pageSizeOptions; track size) {
                 <option [value]="size">{{ size }}</option>
               }
@@ -105,15 +105,15 @@
         <table class="delegates-table">
           <thead>
             <tr>
-              <th>الموكل</th>
-              <th>الجهة</th>
-              <th>الهاتف</th>
-              <th>الهوية</th>
-              <th>العمر</th>
-              <th>الدوام</th>
-              <th>التوكيلات النشطة</th>
-              <th>الحالة</th>
-              <th>إجراءات</th>
+              <th>{{ 'JAMARAT_DELEGATES.TABLE_DELEGATE' | translate }}</th>
+              <th>{{ 'JAMARAT_DELEGATES.TABLE_AFFILIATION' | translate }}</th>
+              <th>{{ 'JAMARAT_DELEGATES.TABLE_PHONE' | translate }}</th>
+              <th>{{ 'JAMARAT_DELEGATES.TABLE_ID' | translate }}</th>
+              <th>{{ 'JAMARAT_DELEGATES.TABLE_AGE' | translate }}</th>
+              <th>{{ 'JAMARAT_DELEGATES.TABLE_WORK' | translate }}</th>
+              <th>{{ 'JAMARAT_DELEGATES.TABLE_ACTIVE_REQUESTS' | translate }}</th>
+              <th>{{ 'JAMARAT_DELEGATES.TABLE_STATUS' | translate }}</th>
+              <th>{{ 'JAMARAT_DELEGATES.TABLE_ACTIONS' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -128,14 +128,14 @@
                 <td colspan="9" class="state-cell state-cell--error">
                   <i class="pi pi-exclamation-triangle"></i>
                   <p>{{ loadError() }}</p>
-                  <button type="button" class="state-retry" (click)="loadDelegates()">إعادة المحاولة</button>
+                  <button type="button" class="state-retry" (click)="loadDelegates()">{{ 'JAMARAT_DELEGATES.RETRY' | translate }}</button>
                 </td>
               </tr>
             } @else if (delegates().length === 0) {
               <tr>
                 <td colspan="9" class="state-cell">
                   <i class="pi pi-users"></i>
-                  <p>لا يوجد موكلين لعرضهم</p>
+                  <p>{{ 'JAMARAT_DELEGATES.EMPTY_DELEGATES' | translate }}</p>
                 </td>
               </tr>
             } @else {
@@ -174,7 +174,7 @@
                   </td>
                   <td>
                     <span class="status-badge" [class.status-badge--active]="delegate.Work.IsAvailable" [class.status-badge--inactive]="!delegate.Work.IsAvailable">
-                      {{ delegate.Work.IsAvailable ? 'متاح' : 'غير متاح' }}
+                      {{ (delegate.Work.IsAvailable ? 'JAMARAT_DELEGATES.STATUS_AVAILABLE' : 'JAMARAT_DELEGATES.STATUS_UNAVAILABLE') | translate }}
                     </span>
                   </td>
                   <td>
@@ -190,7 +190,7 @@
 
         @if (!listLoading() && totalCount() > 0) {
           <div class="pagination">
-            <span class="pagination__info">إجمالي {{ totalCount() }} موكل</span>
+            <span class="pagination__info">{{ 'JAMARAT_DELEGATES.PAGINATION_INFO' | translate:{ count: totalCount() } }}</span>
             <div class="pagination__controls">
               <button class="pg-btn" (click)="prevPage()" [disabled]="currentPage() === 1">
                 <i class="pi pi-angle-right"></i>
@@ -221,13 +221,13 @@
         <table class="delegates-table">
           <thead>
             <tr>
-              <th>الحاج</th>
-              <th>المركز</th>
-              <th>الموكل</th>
-              <th>اليوم المستهدف</th>
-              <th>ملاحظات الحاج</th>
-              <th>تاريخ الطلب</th>
-              <th>الحالة</th>
+              <th>{{ 'JAMARAT_DELEGATES.TABLE_PILGRIM' | translate }}</th>
+              <th>{{ 'JAMARAT_DELEGATES.TABLE_CENTER' | translate }}</th>
+              <th>{{ 'JAMARAT_DELEGATES.TABLE_DELEGATE' | translate }}</th>
+              <th>{{ 'JAMARAT_DELEGATES.TABLE_TARGET_DAY' | translate }}</th>
+              <th>{{ 'JAMARAT_DELEGATES.TABLE_PILGRIM_NOTES' | translate }}</th>
+              <th>{{ 'JAMARAT_DELEGATES.TABLE_CREATED_AT' | translate }}</th>
+              <th>{{ 'JAMARAT_DELEGATES.TABLE_STATUS' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -242,14 +242,14 @@
                 <td colspan="7" class="state-cell state-cell--error">
                   <i class="pi pi-exclamation-triangle"></i>
                   <p>{{ requestsError() }}</p>
-                  <button type="button" class="state-retry" (click)="loadRequests()">إعادة المحاولة</button>
+                  <button type="button" class="state-retry" (click)="loadRequests()">{{ 'JAMARAT_DELEGATES.RETRY' | translate }}</button>
                 </td>
               </tr>
             } @else if (requests().length === 0) {
               <tr>
                 <td colspan="7" class="state-cell">
                   <i class="pi pi-inbox"></i>
-                  <p>لا توجد طلبات حجاج حالياً</p>
+                  <p>{{ 'JAMARAT_DELEGATES.EMPTY_REQUESTS' | translate }}</p>
                 </td>
               </tr>
             } @else {
@@ -277,7 +277,11 @@
                   <td>{{ (request.CreatedAt | date:'yyyy-MM-dd HH:mm') || '—' }}</td>
                   <td>
                     <span class="status-badge" [ngClass]="requestStatusClass(request.Status)">
-                      {{ requestStatusLabel(request.Status) }}
+                      @if (requestStatusKey(request.Status); as key) {
+                        {{ key | translate }}
+                      } @else {
+                        {{ requestStatusFallback(request.Status) }}
+                      }
                     </span>
                   </td>
                 </tr>
@@ -299,11 +303,11 @@
   [resizable]="false"
   [showHeader]="false"
   styleClass="delegate-dialog">
-  <form class="dlg" [formGroup]="delegateForm" (ngSubmit)="submitDelegate()" dir="rtl">
+  <form class="dlg" [formGroup]="delegateForm" (ngSubmit)="submitDelegate()">
     <div class="dlg__header">
       <div>
-        <h2 class="dlg__title">{{ dialogTitle() }}</h2>
-        <p class="dlg__subtitle">حدد بيانات الموكل والدوام والصلاحيات للعمل</p>
+        <h2 class="dlg__title">{{ (isEditMode() ? 'JAMARAT_DELEGATES.DIALOG_EDIT_TITLE' : 'JAMARAT_DELEGATES.DIALOG_ADD_TITLE') | translate }}</h2>
+        <p class="dlg__subtitle">{{ 'JAMARAT_DELEGATES.DIALOG_SUBTITLE' | translate }}</p>
       </div>
       <button type="button" class="dlg__close" (click)="closeDialog()" [disabled]="savingDelegate()">
         <i class="pi pi-times"></i>
@@ -314,7 +318,7 @@
       @if (loadingDelegateDetails()) {
         <div class="dlg__loading">
           <p-progress-spinner strokeWidth="4" [style]="{ width: '40px', height: '40px' }" />
-          <span>جارٍ تحميل بيانات الموكل...</span>
+          <span>{{ 'JAMARAT_DELEGATES.DIALOG_LOADING' | translate }}</span>
         </div>
       }
 
@@ -336,112 +340,112 @@
         </div>
         <label class="image-row__pick">
           <input type="file" accept="image/*" (change)="onImageSelected($event)" hidden />
-          <span>اختيار صورة</span>
+          <span>{{ 'JAMARAT_DELEGATES.IMAGE_PICK' | translate }}</span>
         </label>
         @if (imagePreview()) {
-          <button type="button" class="image-row__clear" (click)="clearImage()">إزالة</button>
+          <button type="button" class="image-row__clear" (click)="clearImage()">{{ 'JAMARAT_DELEGATES.IMAGE_REMOVE' | translate }}</button>
         }
       </div>
 
       <div class="form-grid">
         <label class="dlg__field">
-          <span class="dlg__label">الاسم الكامل <b>*</b></span>
-          <input class="dlg__input" type="text" formControlName="DisplayName" placeholder="الاسم الكامل" />
+          <span class="dlg__label">{{ 'JAMARAT_DELEGATES.FIELD_FULL_NAME' | translate }} <b>*</b></span>
+          <input class="dlg__input" type="text" formControlName="DisplayName" [placeholder]="'JAMARAT_DELEGATES.FIELD_FULL_NAME' | translate" />
           @if (hasFieldError('DisplayName')) {
-            <span class="field-error">الاسم الكامل مطلوب</span>
+            <span class="field-error">{{ 'JAMARAT_DELEGATES.ERROR_FULL_NAME_REQUIRED' | translate }}</span>
           }
         </label>
 
         <label class="dlg__field">
-          <span class="dlg__label">رقم الهوية <b>*</b></span>
-          <input class="dlg__input" type="text" inputmode="numeric" maxlength="10" formControlName="IdNumber" placeholder="رقم الهوية" />
+          <span class="dlg__label">{{ 'JAMARAT_DELEGATES.FIELD_ID' | translate }} <b>*</b></span>
+          <input class="dlg__input" type="text" inputmode="numeric" maxlength="10" formControlName="IdNumber" [placeholder]="'JAMARAT_DELEGATES.FIELD_ID' | translate" />
           @if (hasFieldError('IdNumber')) {
             @if (delegateForm.controls.IdNumber.errors?.['required']) {
-              <span class="field-error">رقم الهوية مطلوب</span>
+              <span class="field-error">{{ 'JAMARAT_DELEGATES.ERROR_ID_REQUIRED' | translate }}</span>
             } @else {
-              <span class="field-error">يجب أن يكون رقم الهوية 10 أرقام</span>
+              <span class="field-error">{{ 'JAMARAT_DELEGATES.ERROR_ID_INVALID' | translate }}</span>
             }
           }
         </label>
 
         <label class="dlg__field">
-          <span class="dlg__label">الهاتف <b>*</b></span>
-          <input class="dlg__input" type="tel" formControlName="Phone" placeholder="رقم الهاتف" />
+          <span class="dlg__label">{{ 'JAMARAT_DELEGATES.FIELD_PHONE' | translate }} <b>*</b></span>
+          <input class="dlg__input" type="tel" formControlName="Phone" [placeholder]="'JAMARAT_DELEGATES.FIELD_PHONE' | translate" />
           @if (hasFieldError('Phone')) {
-            <span class="field-error">رقم الهاتف مطلوب</span>
+            <span class="field-error">{{ 'JAMARAT_DELEGATES.ERROR_PHONE_REQUIRED' | translate }}</span>
           }
         </label>
 
         <label class="dlg__field">
-          <span class="dlg__label">العمر <b>*</b></span>
-          <input class="dlg__input" type="number" min="1" formControlName="Age" placeholder="العمر" />
+          <span class="dlg__label">{{ 'JAMARAT_DELEGATES.FIELD_AGE' | translate }} <b>*</b></span>
+          <input class="dlg__input" type="number" min="1" formControlName="Age" [placeholder]="'JAMARAT_DELEGATES.FIELD_AGE' | translate" />
           @if (hasFieldError('Age')) {
-            <span class="field-error">أدخل عمراً صحيحاً</span>
+            <span class="field-error">{{ 'JAMARAT_DELEGATES.ERROR_AGE_INVALID' | translate }}</span>
           }
         </label>
 
         <label class="dlg__field">
-          <span class="dlg__label">البريد الإلكتروني</span>
-          <input class="dlg__input" type="email" formControlName="Email" placeholder="البريد الإلكتروني" />
+          <span class="dlg__label">{{ 'JAMARAT_DELEGATES.FIELD_EMAIL' | translate }}</span>
+          <input class="dlg__input" type="email" formControlName="Email" [placeholder]="'JAMARAT_DELEGATES.FIELD_EMAIL' | translate" />
           @if (hasFieldError('Email')) {
-            <span class="field-error">أدخل بريداً إلكترونياً صحيحاً</span>
+            <span class="field-error">{{ 'JAMARAT_DELEGATES.ERROR_EMAIL_INVALID' | translate }}</span>
           }
         </label>
 
         @if (!isEditMode()) {
           <label class="dlg__field">
-            <span class="dlg__label">كلمة السر <b>*</b></span>
+            <span class="dlg__label">{{ 'JAMARAT_DELEGATES.FIELD_PASSWORD' | translate }} <b>*</b></span>
             <div class="password-field">
               <input
                 class="dlg__input"
                 [type]="showPassword() ? 'text' : 'password'"
                 formControlName="Password"
-                placeholder="كلمة السر"
+                [placeholder]="'JAMARAT_DELEGATES.FIELD_PASSWORD' | translate"
                 autocomplete="new-password" />
               <button type="button" class="password-field__toggle" (click)="togglePasswordVisibility()">
                 <i [class]="showPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
               </button>
             </div>
             @if (hasFieldError('Password')) {
-              <span class="field-error">كلمة السر مطلوبة</span>
+              <span class="field-error">{{ 'JAMARAT_DELEGATES.ERROR_PASSWORD_REQUIRED' | translate }}</span>
             }
           </label>
         }
 
         <label class="dlg__field">
-          <span class="dlg__label">الجنسية</span>
-          <input class="dlg__input" type="text" formControlName="Nationality" placeholder="الجنسية" />
+          <span class="dlg__label">{{ 'JAMARAT_DELEGATES.FIELD_NATIONALITY' | translate }}</span>
+          <input class="dlg__input" type="text" formControlName="Nationality" [placeholder]="'JAMARAT_DELEGATES.FIELD_NATIONALITY' | translate" />
         </label>
 
         <label class="dlg__field">
-          <span class="dlg__label">الجهة التابع لها <b>*</b></span>
+          <span class="dlg__label">{{ 'JAMARAT_DELEGATES.FIELD_AFFILIATION' | translate }} <b>*</b></span>
           <select class="dlg__input" formControlName="Affiliation">
-            <option value="" disabled>اختر الجهة</option>
-            <option value="جمعية">جمعية</option>
-            <option value="بعثة">بعثة</option>
+            <option value="" disabled>{{ 'JAMARAT_DELEGATES.FIELD_AFFILIATION_PLACEHOLDER' | translate }}</option>
+            <option value="جمعية">{{ 'JAMARAT_DELEGATES.AFFILIATION_ASSOCIATION' | translate }}</option>
+            <option value="بعثة">{{ 'JAMARAT_DELEGATES.AFFILIATION_MISSION' | translate }}</option>
           </select>
           @if (hasFieldError('Affiliation')) {
-            <span class="field-error">حدد الجهة التابع لها</span>
+            <span class="field-error">{{ 'JAMARAT_DELEGATES.ERROR_AFFILIATION_REQUIRED' | translate }}</span>
           }
         </label>
 
         <label class="dlg__field">
-          <span class="dlg__label">بداية الدوام</span>
+          <span class="dlg__label">{{ 'JAMARAT_DELEGATES.FIELD_WORK_FROM' | translate }}</span>
           <input class="dlg__input" type="time" formControlName="WorkFrom" />
         </label>
 
         <label class="dlg__field">
-          <span class="dlg__label">نهاية الدوام</span>
+          <span class="dlg__label">{{ 'JAMARAT_DELEGATES.FIELD_WORK_TO' | translate }}</span>
           <input class="dlg__input" type="time" formControlName="WorkTo" />
         </label>
 
         <label class="dlg__field">
-          <span class="dlg__label">الحد الأقصى للتوكيلات المتزامنة</span>
+          <span class="dlg__label">{{ 'JAMARAT_DELEGATES.FIELD_MAX_CONCURRENT' | translate }}</span>
           <input class="dlg__input" type="number" min="0" formControlName="MaxConcurrent" />
         </label>
 
         <label class="dlg__field dlg__field--switch">
-          <span class="dlg__label">متاح للعمل</span>
+          <span class="dlg__label">{{ 'JAMARAT_DELEGATES.FIELD_IS_AVAILABLE' | translate }}</span>
           <label class="toggle-switch">
             <input type="checkbox" formControlName="IsAvailable" />
             <span class="toggle-switch__slider"></span>
@@ -449,13 +453,13 @@
         </label>
 
         <label class="dlg__field dlg__field--full">
-          <span class="dlg__label">ملاحظات</span>
-          <textarea class="dlg__input" rows="3" formControlName="Notes" placeholder="ملاحظات إضافية"></textarea>
+          <span class="dlg__label">{{ 'JAMARAT_DELEGATES.FIELD_NOTES' | translate }}</span>
+          <textarea class="dlg__input" rows="3" formControlName="Notes" [placeholder]="'JAMARAT_DELEGATES.PLACEHOLDER_NOTES' | translate"></textarea>
         </label>
       </div>
 
       @if (delegateForm.errors?.['workRange'] && (delegateForm.touched || formSubmitted())) {
-        <span class="field-error">نهاية الدوام يجب أن تكون بعد بدايته</span>
+        <span class="field-error">{{ 'JAMARAT_DELEGATES.ERROR_WORK_RANGE' | translate }}</span>
       }
     </div>
 
@@ -464,10 +468,10 @@
         @if (savingDelegate()) {
           <i class="pi pi-spin pi-spinner"></i>
         } @else {
-          {{ submitLabel() }}
+          {{ (isEditMode() ? 'JAMARAT_DELEGATES.BTN_SUBMIT_EDIT' : 'JAMARAT_DELEGATES.BTN_SUBMIT_ADD') | translate }}
         }
       </button>
-      <button type="button" class="dlg__btn dlg__btn--cancel" (click)="closeDialog()" [disabled]="savingDelegate()">إلغاء</button>
+      <button type="button" class="dlg__btn dlg__btn--cancel" (click)="closeDialog()" [disabled]="savingDelegate()">{{ 'JAMARAT_DELEGATES.BTN_CANCEL' | translate }}</button>
     </div>
   </form>
 </p-dialog>

@@ -18,6 +18,7 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { Dialog } from 'primeng/dialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -50,9 +51,19 @@ type ActiveTab = 'delegates' | 'requests';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100] as const;
 
+const T = (key: string) => `JAMARAT_DELEGATES.${key}`;
+
 @Component({
   selector: 'app-jamarat-delegates',
-  imports: [DatePipe, DecimalPipe, NgClass, Dialog, ProgressSpinnerModule, ReactiveFormsModule],
+  imports: [
+    DatePipe,
+    DecimalPipe,
+    NgClass,
+    Dialog,
+    ProgressSpinnerModule,
+    ReactiveFormsModule,
+    TranslateModule,
+  ],
   templateUrl: './jamarat-delegates.html',
   styleUrl: './jamarat-delegates.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -60,12 +71,17 @@ const PAGE_SIZE_OPTIONS = [10, 20, 50, 100] as const;
 export class JamaratDelegates implements OnInit {
   private readonly service = inject(JamaratDelegatesService);
   private readonly toast = inject(MessageService);
+  private readonly translate = inject(TranslateService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly platformId = inject(PLATFORM_ID);
 
   readonly pageSizeOptions = PAGE_SIZE_OPTIONS;
 
-  readonly affiliationOptions = ['الجميع', 'جمعية', 'بعثة'];
+  readonly affiliationOptions = [
+    { value: '', labelKey: T('AFFILIATION_ALL') },
+    { value: 'جمعية', labelKey: T('AFFILIATION_ASSOCIATION') },
+    { value: 'بعثة', labelKey: T('AFFILIATION_MISSION') },
+  ];
 
   readonly activeTab = signal<ActiveTab>('delegates');
 
@@ -117,8 +133,6 @@ export class JamaratDelegates implements OnInit {
   });
 
   readonly isEditMode = computed(() => !!this.selectedDelegate());
-  readonly dialogTitle = computed(() => this.isEditMode() ? 'تعديل بيانات الموكل' : 'إضافة موكل جديد');
-  readonly submitLabel = computed(() => this.isEditMode() ? 'حفظ التعديلات' : 'إضافة الموكل');
 
   readonly availableNowCount = computed(() => this.delegates().filter(d => d.Work?.IsAvailable).length);
   readonly activeRequestsCount = computed(
@@ -151,6 +165,10 @@ export class JamaratDelegates implements OnInit {
     this.loadDelegates();
   }
 
+  private t(key: string, params?: Record<string, unknown>): string {
+    return this.translate.instant(T(key), params);
+  }
+
   // ── Data ─────────────────────────────────────────────────────
   loadDelegates(): void {
     this.listLoading.set(true);
@@ -166,12 +184,12 @@ export class JamaratDelegates implements OnInit {
       .subscribe({
         next: res => {
           if (!res.IsSuccess) {
-            const message = this.resolveApiErrorMessage(res, 'تعذر تحميل قائمة الموكلين');
+            const message = this.resolveApiErrorMessage(res, this.t('MSG_LOAD_LIST_FAIL'));
             this.delegates.set([]);
             this.totalCount.set(0);
             this.totalPages.set(1);
             this.loadError.set(message);
-            this.toast.add({ severity: 'error', summary: 'خطأ', detail: message });
+            this.toast.add({ severity: 'error', summary: this.t('TOAST_ERROR'), detail: message });
             return;
           }
 
@@ -181,12 +199,12 @@ export class JamaratDelegates implements OnInit {
           this.totalPages.set(Math.max(data?.TotalPages ?? 1, 1));
         },
         error: err => {
-          const message = this.resolveApiErrorMessage(err?.error, 'تعذر تحميل قائمة الموكلين');
+          const message = this.resolveApiErrorMessage(err?.error, this.t('MSG_LOAD_LIST_FAIL'));
           this.delegates.set([]);
           this.totalCount.set(0);
           this.totalPages.set(1);
           this.loadError.set(message);
-          this.toast.add({ severity: 'error', summary: 'خطأ', detail: message });
+          this.toast.add({ severity: 'error', summary: this.t('TOAST_ERROR'), detail: message });
         },
       });
   }
@@ -197,7 +215,7 @@ export class JamaratDelegates implements OnInit {
   }
 
   onAffiliationChange(value: string): void {
-    this.affiliationFilter.set(value === 'الجميع' ? '' : value);
+    this.affiliationFilter.set(value);
     this.currentPage.set(1);
     this.loadDelegates();
   }
@@ -250,33 +268,37 @@ export class JamaratDelegates implements OnInit {
       .subscribe({
         next: res => {
           if (!res.IsSuccess) {
-            const message = this.resolveApiErrorMessage(res, 'تعذر تحميل طلبات الحجاج');
+            const message = this.resolveApiErrorMessage(res, this.t('MSG_LOAD_REQUESTS_FAIL'));
             this.requests.set([]);
             this.requestsTotal.set(0);
             this.requestsError.set(message);
-            this.toast.add({ severity: 'error', summary: 'خطأ', detail: message });
+            this.toast.add({ severity: 'error', summary: this.t('TOAST_ERROR'), detail: message });
             return;
           }
           this.requests.set(res.Data?.Requests ?? []);
           this.requestsTotal.set(res.Data?.TotalCount ?? 0);
         },
         error: err => {
-          const message = this.resolveApiErrorMessage(err?.error, 'تعذر تحميل طلبات الحجاج');
+          const message = this.resolveApiErrorMessage(err?.error, this.t('MSG_LOAD_REQUESTS_FAIL'));
           this.requests.set([]);
           this.requestsTotal.set(0);
           this.requestsError.set(message);
-          this.toast.add({ severity: 'error', summary: 'خطأ', detail: message });
+          this.toast.add({ severity: 'error', summary: this.t('TOAST_ERROR'), detail: message });
         },
       });
   }
 
-  requestStatusLabel(status: string): string {
+  requestStatusKey(status: string): string {
     const key = (status ?? '').toLowerCase();
-    if (key === 'pending') return 'قيد الانتظار';
-    if (key === 'accepted') return 'مقبول';
-    if (key === 'completed') return 'مكتمل';
-    if (key === 'rejected') return 'مرفوض';
-    if (key === 'cancelled' || key === 'canceled') return 'ملغي';
+    if (key === 'pending') return T('STATUS_PENDING');
+    if (key === 'accepted') return T('STATUS_ACCEPTED');
+    if (key === 'completed') return T('STATUS_COMPLETED');
+    if (key === 'rejected') return T('STATUS_REJECTED');
+    if (key === 'cancelled' || key === 'canceled') return T('STATUS_CANCELLED');
+    return '';
+  }
+
+  requestStatusFallback(status: string): string {
     return status || '—';
   }
 
@@ -316,8 +338,8 @@ export class JamaratDelegates implements OnInit {
             this.patchFormFromDelegate(delegate);
             this.toast.add({
               severity: 'warn',
-              summary: 'تنبيه',
-              detail: this.resolveApiErrorMessage(res, 'تعذر تحميل تفاصيل الموكل'),
+              summary: this.t('TOAST_WARNING'),
+              detail: this.resolveApiErrorMessage(res, this.t('MSG_LOAD_DETAILS_FAIL')),
             });
             return;
           }
@@ -327,8 +349,8 @@ export class JamaratDelegates implements OnInit {
           this.patchFormFromDelegate(delegate);
           this.toast.add({
             severity: 'warn',
-            summary: 'تنبيه',
-            detail: this.resolveApiErrorMessage(err?.error, 'تعذر تحميل تفاصيل الموكل'),
+            summary: this.t('TOAST_WARNING'),
+            detail: this.resolveApiErrorMessage(err?.error, this.t('MSG_LOAD_DETAILS_FAIL')),
           });
         },
       });
@@ -406,20 +428,20 @@ export class JamaratDelegates implements OnInit {
       .subscribe({
         next: res => {
           if (!res.IsSuccess) {
-            this.handleSubmitError(res, selected ? 'تعذر حفظ التعديلات' : 'تعذر إضافة الموكل');
+            this.handleSubmitError(res, this.t(selected ? 'MSG_SAVE_ERROR_EDIT' : 'MSG_SAVE_ERROR_ADD'));
             return;
           }
           this.toast.add({
             severity: 'success',
-            summary: 'تم',
-            detail: selected ? 'تم حفظ تعديلات الموكل بنجاح' : 'تمت إضافة الموكل بنجاح',
+            summary: this.t('TOAST_SUCCESS'),
+            detail: this.t(selected ? 'MSG_SAVED_EDIT' : 'MSG_SAVED_ADD'),
           });
           this.showDialog.set(false);
           this.selectedDelegate.set(null);
           this.resetForm();
           this.loadDelegates();
         },
-        error: err => this.handleSubmitError(err?.error, selected ? 'تعذر حفظ التعديلات' : 'تعذر إضافة الموكل'),
+        error: err => this.handleSubmitError(err?.error, this.t(selected ? 'MSG_SAVE_ERROR_EDIT' : 'MSG_SAVE_ERROR_ADD')),
       });
   }
 
@@ -506,7 +528,7 @@ export class JamaratDelegates implements OnInit {
   private handleSubmitError(error: ApiResult<unknown> | undefined, fallback: string): void {
     const messages = this.resolveApiErrorMessages(error, fallback);
     this.backendErrors.set(messages);
-    messages.forEach(detail => this.toast.add({ severity: 'error', summary: 'خطأ', detail, life: 6000 }));
+    messages.forEach(detail => this.toast.add({ severity: 'error', summary: this.t('TOAST_ERROR'), detail, life: 6000 }));
   }
 
   private resolveApiErrorMessages(error: ApiResult<unknown> | undefined, fallback: string): string[] {

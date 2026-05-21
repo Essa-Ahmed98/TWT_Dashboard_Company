@@ -8,7 +8,6 @@ $card-shadow: 0 4px 24px -4px hsla(200, 79%, 20%, .1);
   display: flex;
   flex-direction: column;
   gap: 16px;
-  direction: rtl;
 }
 
 .delegates__header {
@@ -253,8 +252,6 @@ $card-shadow: 0 4px 24px -4px hsla(200, 79%, 20%, .1);
     padding: 0 1.5rem 0 .75rem;
     cursor: pointer;
     outline: none;
-    text-align: right;
-    direction: rtl;
   }
 
   &__icon {
@@ -272,7 +269,6 @@ $card-shadow: 0 4px 24px -4px hsla(200, 79%, 20%, .1);
 .delegates-table {
   width: 100%;
   border-collapse: collapse;
-  direction: rtl;
   font-size: .8125rem;
   table-layout: auto;
 
@@ -280,7 +276,7 @@ $card-shadow: 0 4px 24px -4px hsla(200, 79%, 20%, .1);
 
   th {
     padding: .75rem .5rem;
-    text-align: right;
+    text-align: start;
     font-weight: 600;
     color: $muted;
     white-space: nowrap;
@@ -546,10 +542,9 @@ $card-shadow: 0 4px 24px -4px hsla(200, 79%, 20%, .1);
     font-family: inherit;
     font-size: .875rem;
     outline: none;
-    direction: rtl;
-    text-align: right;
+    text-align: start;
 
-    &::placeholder { text-align: right; }
+    &::placeholder { text-align: start; }
     &:focus { border-color: $primary; }
   }
 
