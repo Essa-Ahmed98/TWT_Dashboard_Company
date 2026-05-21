@@ -198,7 +198,8 @@ $card-shadow: 0 4px 24px -4px hsla(200, 79%, 20%, .1);
     width: 100%;
     border: 1px solid #dce2e5;
     border-radius: $card-radius;
-    padding: .55rem 2.5rem .55rem .75rem;
+    padding: .55rem .75rem;
+    padding-inline-start: 2.5rem;
     font-size: .875rem;
     color: $primary;
     background: transparent;
@@ -249,14 +250,15 @@ $card-shadow: 0 4px 24px -4px hsla(200, 79%, 20%, .1);
     font-family: inherit;
     font-size: .875rem;
     font-weight: 500;
-    padding: 0 1.5rem 0 .75rem;
+    padding: 0 .75rem;
+    padding-inline-end: 1.5rem;
     cursor: pointer;
     outline: none;
   }
 
   &__icon {
     position: absolute;
-    left: .625rem;
+    inset-inline-end: .625rem;
     color: $primary;
     font-size: 11px;
     pointer-events: none;
