@@ -20,7 +20,6 @@ import {
 } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { Dialog } from 'primeng/dialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { Subject, debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 
@@ -59,7 +58,6 @@ const T = (key: string) => `JAMARAT_DELEGATES.${key}`;
     DatePipe,
     DecimalPipe,
     NgClass,
-    Dialog,
     ProgressSpinnerModule,
     ReactiveFormsModule,
     TranslateModule,
