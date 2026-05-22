@@ -11,7 +11,7 @@ import {
   output,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PilgrimDetailData } from '../../pilgrim-detail.model';
 import { loadLeaflet } from '../../../../../shared/utils/leaflet-loader';
 
@@ -26,6 +26,7 @@ export class PersonalTab implements AfterViewInit, OnDestroy {
   @ViewChild('currentLocationMapEl') mapEl?: ElementRef<HTMLDivElement>;
 
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  private readonly translate = inject(TranslateService);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private leafletMap: any = null;
 
@@ -35,9 +36,14 @@ export class PersonalTab implements AfterViewInit, OnDestroy {
   fieldChanged = output<Partial<PilgrimDetailData>>();
 
   ngAfterViewInit(): void {
-    const location = this.pilgrim().currentLocation;
-    if (location) {
-      void this.initMap(location.lat, location.lng);
+    const p = this.pilgrim();
+    const current = p.currentLocation;
+    const accommodation = p.accommodationLat != null && p.accommodationLng != null
+      ? { lat: p.accommodationLat, lng: p.accommodationLng }
+      : null;
+
+    if (current || accommodation) {
+      void this.initMap(current, accommodation);
     }
   }
 
@@ -46,23 +52,21 @@ export class PersonalTab implements AfterViewInit, OnDestroy {
     this.leafletMap = null;
   }
 
-  private async initMap(lat: number, lng: number): Promise<void> {
+  private async initMap(
+    current: { lat: number; lng: number } | null,
+    accommodation: { lat: number; lng: number } | null,
+  ): Promise<void> {
     if (!this.isBrowser || !this.mapEl?.nativeElement) return;
 
     const L = await loadLeaflet();
-    delete (L.Icon.Default.prototype as { _getIconUrl?: unknown })._getIconUrl;
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl: 'assets/leaflet/marker-icon-2x.png',
-      iconUrl:       'assets/leaflet/marker-icon.png',
-      shadowUrl:     'assets/leaflet/marker-shadow.png',
-    });
 
+    const center = current ?? accommodation!;
     const map = L.map(this.mapEl.nativeElement, {
-      center:          [lat, lng],
+      center:          [center.lat, center.lng],
       zoom:            15,
       zoomControl:     true,
       dragging:        true,
-      scrollWheelZoom: false,
+      scrollWheelZoom: true,
     });
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -70,7 +74,35 @@ export class PersonalTab implements AfterViewInit, OnDestroy {
       attribution: '© OpenStreetMap',
     }).addTo(map);
 
-    L.marker([lat, lng]).addTo(map);
+    const buildIcon = (color: string, glyph: string) => L.divIcon({
+      className: 'pilgrim-map-marker',
+      html: `<div class="pilgrim-map-marker__pin" style="background:${color}"><i class="pi ${glyph}"></i></div>`,
+      iconSize:   [34, 42],
+      iconAnchor: [17, 40],
+      popupAnchor: [0, -36],
+    });
+
+    const markers = [];
+    if (current) {
+      markers.push(
+        L.marker([current.lat, current.lng], { icon: buildIcon('#22c35d', 'pi-map-marker') })
+          .addTo(map)
+          .bindTooltip(this.translate.instant('PILGRIM_DETAIL.PERSONAL.CURRENT_LOCATION')),
+      );
+    }
+    if (accommodation) {
+      markers.push(
+        L.marker([accommodation.lat, accommodation.lng], { icon: buildIcon('#0b405b', 'pi-home') })
+          .addTo(map)
+          .bindTooltip(this.translate.instant('PILGRIM_DETAIL.PERSONAL.ACCOMMODATION')),
+      );
+    }
+
+    if (markers.length === 2) {
+      const group = L.featureGroup(markers);
+      map.fitBounds(group.getBounds().pad(0.3));
+    }
+
     this.leafletMap = map;
     setTimeout(() => map.invalidateSize(), 150);
   }

@@ -104,13 +104,66 @@ $card-shadow: 0 4px 24px -4px hsla(200, 79%, 20%, .1);
 
 // ── Accommodation Map ─────────────────────────────────────────
 .accommodation-map {
-  height: 13rem;
+  height: 22rem;
   width: 100%;
+}
+
+// ── Map Marker Pins ───────────────────────────────────────────
+:host ::ng-deep .pilgrim-map-marker {
+  background: transparent;
+  border: none;
+}
+
+:host ::ng-deep .pilgrim-map-marker__pin {
+  width: 32px;
+  height: 32px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .3);
+
+  i {
+    transform: rotate(45deg);
+    color: #fff;
+    font-size: 1rem;
+  }
+}
+
+// ── Map Legend ────────────────────────────────────────────────
+.map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: .625rem 1.25rem;
+  font-size: .8125rem;
+  color: $primary;
+  border-top: 1px solid #f0f2f5;
+  background: #fafbfc;
+
+  &__item {
+    display: inline-flex;
+    align-items: center;
+    gap: .375rem;
+    font-weight: 500;
+  }
+
+  &__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+
+    &--current      { background: #22c35d; }
+    &--accommodation { background: $primary; }
+  }
 }
 
 // ── Map Placeholder ───────────────────────────────────────────
 .map-placeholder {
-  height: 13rem;
+  height: 22rem;
   background-color: #f0f4f7;
   background-image:
     linear-gradient(rgba(11, 64, 91, .07) 1px, transparent 1px),

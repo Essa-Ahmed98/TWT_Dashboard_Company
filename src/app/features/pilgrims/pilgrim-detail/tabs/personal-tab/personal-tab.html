@@ -130,14 +130,28 @@
         <i class="pi pi-map-marker"></i>
         {{ 'PILGRIM_DETAIL.PERSONAL.CURRENT_LOCATION' | translate }}
       </div>
-      @if (pilgrim().currentLocation; as location) {
-        @if (location.zoneName) {
-          <div class="info-row">
-            <span class="info-row__label">{{ 'PILGRIM_DETAIL.PERSONAL.ZONE' | translate }}</span>
-            <span class="info-row__value">{{ location.zoneName }}</span>
-          </div>
-        }
+      @if (pilgrim().currentLocation?.zoneName) {
+        <div class="info-row">
+          <span class="info-row__label">{{ 'PILGRIM_DETAIL.PERSONAL.ZONE' | translate }}</span>
+          <span class="info-row__value">{{ pilgrim().currentLocation!.zoneName }}</span>
+        </div>
+      }
+      @if (pilgrim().currentLocation || (pilgrim().accommodationLat != null && pilgrim().accommodationLng != null)) {
         <div #currentLocationMapEl class="accommodation-map"></div>
+        <div class="map-legend">
+          @if (pilgrim().currentLocation) {
+            <span class="map-legend__item">
+              <span class="map-legend__dot map-legend__dot--current"></span>
+              {{ 'PILGRIM_DETAIL.PERSONAL.CURRENT_LOCATION' | translate }}
+            </span>
+          }
+          @if (pilgrim().accommodationLat != null && pilgrim().accommodationLng != null) {
+            <span class="map-legend__item">
+              <span class="map-legend__dot map-legend__dot--accommodation"></span>
+              {{ 'PILGRIM_DETAIL.PERSONAL.ACCOMMODATION' | translate }}
+            </span>
+          }
+        </div>
       } @else {
         <div class="map-placeholder">
           <i class="pi pi-map-marker map-placeholder__pin"></i>
