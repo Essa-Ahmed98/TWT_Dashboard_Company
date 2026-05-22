@@ -6,12 +6,12 @@
       <p class="delegates__subtitle">{{ 'JAMARAT_DELEGATES.SUBTITLE' | translate }}</p>
     </div>
 
-    <div class="delegates__actions">
+    <!-- <div class="delegates__actions">
       <button type="button" class="btn btn--primary" (click)="openAddDialog()">
         <i class="pi pi-plus"></i>
         <span>{{ 'JAMARAT_DELEGATES.ADD_BUTTON' | translate }}</span>
       </button>
-    </div>
+    </div> -->
   </div>
 
   <!-- Stats -->
@@ -34,7 +34,9 @@
 
     <div class="stat-card">
       <div class="stat-card__info">
-        <span class="stat-card__label">{{ 'JAMARAT_DELEGATES.STATS_ACTIVE_REQUESTS' | translate }}</span>
+        <span class="stat-card__label">{{
+          'JAMARAT_DELEGATES.STATS_ACTIVE_REQUESTS' | translate
+        }}</span>
         <strong class="stat-card__value">{{ activeRequestsCount() | number }}</strong>
       </div>
       <div class="stat-card__icon stat-card__icon--phone"><i class="pi pi-phone"></i></div>
@@ -47,18 +49,19 @@
       type="button"
       class="delegates__tab"
       [class.delegates__tab--active]="activeTab() === 'delegates'"
-      (click)="setTab('delegates')">
+      (click)="setTab('delegates')"
+    >
       <i class="pi pi-users"></i>
       {{ 'JAMARAT_DELEGATES.TAB_DELEGATES' | translate }}
     </button>
-    <button
+    <!-- <button
       type="button"
       class="delegates__tab"
       [class.delegates__tab--active]="activeTab() === 'requests'"
       (click)="setTab('requests')">
       <i class="pi pi-inbox"></i>
       {{ 'JAMARAT_DELEGATES.TAB_REQUESTS' | translate }}
-    </button>
+    </button> -->
   </div>
 
   @if (activeTab() === 'delegates') {
@@ -71,15 +74,17 @@
             type="text"
             class="search-box__input"
             [placeholder]="'JAMARAT_DELEGATES.SEARCH_PLACEHOLDER' | translate"
-            (input)="onSearch($event)" />
+            (input)="onSearch($event)"
+          />
         </div>
 
         <div class="filter-group">
           <select
             class="filter-select"
             [value]="affiliationFilter()"
-            (change)="onAffiliationChange(($any($event.target)).value)"
-            [attr.aria-label]="'JAMARAT_DELEGATES.AFFILIATION_ARIA' | translate">
+            (change)="onAffiliationChange($any($event.target).value)"
+            [attr.aria-label]="'JAMARAT_DELEGATES.AFFILIATION_ARIA' | translate"
+          >
             @for (option of affiliationOptions; track option.value) {
               <option [value]="option.value">{{ option.labelKey | translate }}</option>
             }
@@ -89,8 +94,9 @@
             <select
               class="page-size__select"
               [value]="pageSize()"
-              (change)="onPageSizeChange(+($any($event.target)).value)"
-              [attr.aria-label]="'JAMARAT_DELEGATES.PAGE_SIZE_ARIA' | translate">
+              (change)="onPageSizeChange(+$any($event.target).value)"
+              [attr.aria-label]="'JAMARAT_DELEGATES.PAGE_SIZE_ARIA' | translate"
+            >
               @for (size of pageSizeOptions; track size) {
                 <option [value]="size">{{ size }}</option>
               }
@@ -128,7 +134,9 @@
                 <td colspan="9" class="state-cell state-cell--error">
                   <i class="pi pi-exclamation-triangle"></i>
                   <p>{{ loadError() }}</p>
-                  <button type="button" class="state-retry" (click)="loadDelegates()">{{ 'JAMARAT_DELEGATES.RETRY' | translate }}</button>
+                  <button type="button" class="state-retry" (click)="loadDelegates()">
+                    {{ 'JAMARAT_DELEGATES.RETRY' | translate }}
+                  </button>
                 </td>
               </tr>
             } @else if (delegates().length === 0) {
@@ -163,7 +171,9 @@
                       —
                     }
                   </td>
-                  <td><span class="phone-cell">{{ delegate.Phone || '—' }}</span></td>
+                  <td>
+                    <span class="phone-cell">{{ delegate.Phone || '—' }}</span>
+                  </td>
                   <td>{{ delegate.IdNumber || '—' }}</td>
                   <td>{{ delegate.Age || '—' }}</td>
                   <td>{{ formatWork(delegate) }}</td>
@@ -173,14 +183,24 @@
                     </span>
                   </td>
                   <td>
-                    <span class="status-badge" [class.status-badge--active]="delegate.Work.IsAvailable" [class.status-badge--inactive]="!delegate.Work.IsAvailable">
-                      {{ (delegate.Work.IsAvailable ? 'JAMARAT_DELEGATES.STATUS_AVAILABLE' : 'JAMARAT_DELEGATES.STATUS_UNAVAILABLE') | translate }}
+                    <span
+                      class="status-badge"
+                      [class.status-badge--active]="delegate.Work.IsAvailable"
+                      [class.status-badge--inactive]="!delegate.Work.IsAvailable"
+                    >
+                      {{
+                        (delegate.Work.IsAvailable
+                          ? 'JAMARAT_DELEGATES.STATUS_AVAILABLE'
+                          : 'JAMARAT_DELEGATES.STATUS_UNAVAILABLE'
+                        ) | translate
+                      }}
                     </span>
                   </td>
                   <td>
-                    <button type="button" class="action-btn" (click)="openEditDialog(delegate)">
+                    _
+                    <!-- <button type="button" class="action-btn" (click)="openEditDialog(delegate)">
                       <i class="pi pi-pencil"></i>
-                    </button>
+                    </button> -->
                   </td>
                 </tr>
               }
@@ -190,7 +210,9 @@
 
         @if (!listLoading() && totalCount() > 0) {
           <div class="pagination">
-            <span class="pagination__info">{{ 'JAMARAT_DELEGATES.PAGINATION_INFO' | translate:{ count: totalCount() } }}</span>
+            <span class="pagination__info">{{
+              'JAMARAT_DELEGATES.PAGINATION_INFO' | translate: { count: totalCount() }
+            }}</span>
             <div class="pagination__controls">
               <button class="pg-btn" (click)="prevPage()" [disabled]="currentPage() === 1">
                 <i class="pi pi-angle-right"></i>
@@ -202,12 +224,17 @@
                   <button
                     class="pg-btn pg-btn--num"
                     [class.pg-btn--active]="page === currentPage()"
-                    (click)="goToPage(page)">
+                    (click)="goToPage(page)"
+                  >
                     {{ page }}
                   </button>
                 }
               }
-              <button class="pg-btn" (click)="nextPage()" [disabled]="currentPage() === totalPages()">
+              <button
+                class="pg-btn"
+                (click)="nextPage()"
+                [disabled]="currentPage() === totalPages()"
+              >
                 <i class="pi pi-angle-left"></i>
               </button>
             </div>
@@ -242,7 +269,9 @@
                 <td colspan="7" class="state-cell state-cell--error">
                   <i class="pi pi-exclamation-triangle"></i>
                   <p>{{ requestsError() }}</p>
-                  <button type="button" class="state-retry" (click)="loadRequests()">{{ 'JAMARAT_DELEGATES.RETRY' | translate }}</button>
+                  <button type="button" class="state-retry" (click)="loadRequests()">
+                    {{ 'JAMARAT_DELEGATES.RETRY' | translate }}
+                  </button>
                 </td>
               </tr>
             } @else if (requests().length === 0) {
@@ -265,16 +294,22 @@
                         }
                       </span>
                       <div class="delegate-cell__info">
-                        <span class="delegate-cell__name">{{ request.Pilgrim.FullName || '—' }}</span>
-                        <span class="delegate-cell__email phone-cell">{{ request.Pilgrim.Phone || '—' }}</span>
+                        <span class="delegate-cell__name">{{
+                          request.Pilgrim.FullName || '—'
+                        }}</span>
+                        <span class="delegate-cell__email phone-cell">{{
+                          request.Pilgrim.Phone || '—'
+                        }}</span>
                       </div>
                     </div>
                   </td>
                   <td>{{ request.Pilgrim.CampaignName || '—' }}</td>
                   <td>{{ request.Delegate?.DelegateName || '—' }}</td>
                   <td>{{ request.TargetDay || '—' }}</td>
-                  <td class="cell-notes" [title]="request.PilgrimNotes">{{ request.PilgrimNotes || '—' }}</td>
-                  <td>{{ (request.CreatedAt | date:'yyyy-MM-dd HH:mm') || '—' }}</td>
+                  <td class="cell-notes" [title]="request.PilgrimNotes">
+                    {{ request.PilgrimNotes || '—' }}
+                  </td>
+                  <td>{{ (request.CreatedAt | date: 'yyyy-MM-dd HH:mm') || '—' }}</td>
                   <td>
                     <span class="status-badge" [ngClass]="requestStatusClass(request.Status)">
                       @if (requestStatusKey(request.Status); as key) {
@@ -295,7 +330,7 @@
 </div>
 
 <!-- Add / Edit Dialog -->
-<p-dialog
+<!-- <p-dialog
   [visible]="showDialog()"
   (visibleChange)="$event ? showDialog.set(true) : closeDialog()"
   [modal]="true"
@@ -474,4 +509,4 @@
       <button type="button" class="dlg__btn dlg__btn--cancel" (click)="closeDialog()" [disabled]="savingDelegate()">{{ 'JAMARAT_DELEGATES.BTN_CANCEL' | translate }}</button>
     </div>
   </form>
-</p-dialog>
+</p-dialog> -->

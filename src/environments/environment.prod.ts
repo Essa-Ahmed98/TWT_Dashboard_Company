@@ -1,8 +1,8 @@
 export const environment = {
   production: true,
-  apiBase: '/api',
-  chatApiBase: '/api',
-  hubUrl: '/api/chat/chatHub',
+  apiBase: 'https://API.TWTH.lamarpro.com/api',
+  chatApiBase: 'https://Chat.TWTH.lamarpro.com/api',
+  hubUrl: 'https://Chat.TWTH.lamarpro.com/api/chat/chatHub',
   chatMediaBase: 'https://Chat.TWTH.lamarpro.com',
-  uploadsBase: 'https://TWTH.lamarpro.com',
+  uploadsBase: 'https://API.TWTH.lamarpro.com',
 };
