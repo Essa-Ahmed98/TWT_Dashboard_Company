@@ -23,7 +23,7 @@ import { loadLeaflet } from '../../../../../shared/utils/leaflet-loader';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalTab implements AfterViewInit, OnDestroy {
-  @ViewChild('accommodationMapEl') mapEl?: ElementRef<HTMLDivElement>;
+  @ViewChild('currentLocationMapEl') mapEl?: ElementRef<HTMLDivElement>;
 
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,9 +35,9 @@ export class PersonalTab implements AfterViewInit, OnDestroy {
   fieldChanged = output<Partial<PilgrimDetailData>>();
 
   ngAfterViewInit(): void {
-    const { accommodationLat: lat, accommodationLng: lng } = this.pilgrim();
-    if (lat != null && lng != null) {
-      void this.initMap(lat, lng);
+    const location = this.pilgrim().currentLocation;
+    if (location) {
+      void this.initMap(location.lat, location.lng);
     }
   }
 

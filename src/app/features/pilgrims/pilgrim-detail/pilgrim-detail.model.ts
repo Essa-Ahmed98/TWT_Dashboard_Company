@@ -35,8 +35,7 @@ export interface PilgrimDetailData {
   supervisor: string;
   supervisors: PilgrimSupervisorData[];
   accommodation: string;
-  accommodationLat: number | null;
-  accommodationLng: number | null;
+  currentLocation: { lat: number; lng: number; zoneName: string } | null;
   nusukCard: string;
   permitNumber: string;
   hajjYear: string;
@@ -164,8 +163,15 @@ export function pilgrimApiToDetailData(pilgrim: PilgrimDetailApiItem): PilgrimDe
     supervisor: supervisors.map(supervisor => supervisor.displayName).join('، ') || 'COMMON.NOT_AVAILABLE',
     supervisors,
     accommodation: pilgrim.Accommodation,
-    accommodationLat: pilgrim.AccommodationLat ?? null,
-    accommodationLng: pilgrim.AccommodationLong ?? null,
+    currentLocation: pilgrim.CurrentLocation
+      && pilgrim.CurrentLocation.Latitude != null
+      && pilgrim.CurrentLocation.Longitude != null
+      ? {
+          lat: pilgrim.CurrentLocation.Latitude,
+          lng: pilgrim.CurrentLocation.Longitude,
+          zoneName: pilgrim.CurrentLocation.ZoneName ?? '',
+        }
+      : null,
     nusukCard: pilgrim.NuskCardNumber,
     permitNumber: pilgrim.PermitNumber,
     hajjYear: '1447',

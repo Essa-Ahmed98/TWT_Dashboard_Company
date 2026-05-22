@@ -1032,10 +1032,11 @@
       "NUSUK_CARD": "Nusuk card",
       "PERMIT_NUMBER": "Permit number",
       "HAJJ_YEAR": "Hajj year",
-      "ACCOMMODATION_NOT_SET": "Accommodation location has not been set",
+      "CURRENT_LOCATION_NOT_SET": "Current location has not been set",
       "IDENTITY_DATA": "Identity data",
       "CONTACT_DATA": "Contact data",
-      "ACCOMMODATION_LOCATION": "Accommodation location",
+      "CURRENT_LOCATION": "Current location",
+      "ZONE": "Zone",
       "CENTER_GROUP_DATA": "Center and group data"
     },
     "CHAT": "Message",

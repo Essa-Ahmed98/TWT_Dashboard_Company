@@ -154,10 +154,17 @@ export interface PilgrimDetailApiItem {
   Accommodation:            string;
   AccommodationLat:         number | null;
   AccommodationLong:        number | null;
+  CurrentLocation?:         PilgrimCurrentLocationApiItem | null;
   NuskCardNumber:           string;
   PermitNumber:             string;
   BloodType:                number;
   Supervisors?:             PilgrimSupervisorApiItem[];
+}
+
+export interface PilgrimCurrentLocationApiItem {
+  Longitude: number;
+  Latitude:  number;
+  ZoneName:  string;
 }
 
 export interface PilgrimSupervisorApiItem {

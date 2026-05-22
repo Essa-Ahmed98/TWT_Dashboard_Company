@@ -127,15 +127,21 @@
   <div class="pt__two-cols">
     <div class="info-card">
       <div class="info-card__header">
-        <i class="pi pi-home"></i>
-        {{ 'PILGRIM_DETAIL.PERSONAL.ACCOMMODATION_LOCATION' | translate }}
+        <i class="pi pi-map-marker"></i>
+        {{ 'PILGRIM_DETAIL.PERSONAL.CURRENT_LOCATION' | translate }}
       </div>
-      @if (pilgrim().accommodationLat != null && pilgrim().accommodationLng != null) {
-        <div #accommodationMapEl class="accommodation-map"></div>
+      @if (pilgrim().currentLocation; as location) {
+        @if (location.zoneName) {
+          <div class="info-row">
+            <span class="info-row__label">{{ 'PILGRIM_DETAIL.PERSONAL.ZONE' | translate }}</span>
+            <span class="info-row__value">{{ location.zoneName }}</span>
+          </div>
+        }
+        <div #currentLocationMapEl class="accommodation-map"></div>
       } @else {
         <div class="map-placeholder">
-          <i class="pi pi-home map-placeholder__pin"></i>
-          <span class="map-placeholder__location">{{ pilgrim().accommodation || ('PILGRIM_DETAIL.PERSONAL.ACCOMMODATION_NOT_SET' | translate) }}</span>
+          <i class="pi pi-map-marker map-placeholder__pin"></i>
+          <span class="map-placeholder__location">{{ 'PILGRIM_DETAIL.PERSONAL.CURRENT_LOCATION_NOT_SET' | translate }}</span>
         </div>
       }
     </div>

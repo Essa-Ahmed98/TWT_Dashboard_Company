@@ -1032,10 +1032,11 @@
       "NUSUK_CARD": "بطاقة نسك",
       "PERMIT_NUMBER": "رقم التصريح",
       "HAJJ_YEAR": "سنة الحج",
-      "ACCOMMODATION_NOT_SET": "لم يتم تحديد موقع السكن",
+      "CURRENT_LOCATION_NOT_SET": "لم يتم تحديد الموقع الحالي",
       "IDENTITY_DATA": "بيانات الهوية",
       "CONTACT_DATA": "بيانات التواصل",
-      "ACCOMMODATION_LOCATION": "موقع السكن",
+      "CURRENT_LOCATION": "الموقع الحالي",
+      "ZONE": "المنطقة",
       "CENTER_GROUP_DATA": "بيانات المركز والمجموعة"
     },
     "CHAT": "رسالة",
