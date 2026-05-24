@@ -73,6 +73,8 @@
     "PERSONNEL": "Gestion du Personnel",
     "PILGRIMS": "Gestion des Pèlerins",
     "SUPERVISORS": "Gestion des Superviseurs",
+    "TOUR_LEADERS": "Gestion des guides de groupe",
+    "TOUR_GROUPS": "Gestion des groupes de tournée",
     "DEVICES": "Gestion des Appareils",
     "TOOLS": "Outils",
     "CHAT": "Discussion",
@@ -346,6 +348,49 @@
       "ADD": "Ajouter Superviseur",
       "SAVING": "Enregistrement...",
       "ADDING": "Ajout..."
+    }
+  },
+  "TOUR_LEADERS": {
+    "TITLE": "Gestion des guides de groupe",
+    "SUBTITLE": "Gérer les guides responsables des groupes de pèlerins",
+    "STATS_TOTAL": "Total des guides",
+    "SEARCH_PLACEHOLDER": "Rechercher...",
+    "PAGE_SIZE_ARIA": "Éléments par page",
+    "EMPTY": "Aucun guide à afficher",
+    "RETRY": "Réessayer",
+    "PAGINATION_INFO": "Total {{count}} guides",
+    "TABLE": {
+      "LEADER": "Guide",
+      "CENTER_MANAGER": "Responsable du centre",
+      "GROUP_SUPERVISOR": "Superviseur du groupe",
+      "PHONE": "Téléphone",
+      "NATIONALITY": "Nationalité",
+      "GROUPS_COUNT": "Nombre de groupes"
+    },
+    "ERRORS": {
+      "LOAD": "Impossible de charger la liste des guides"
+    }
+  },
+  "TOUR_GROUPS": {
+    "TITLE": "Gestion des groupes de tournée",
+    "SUBTITLE": "Gérer les groupes de pèlerins liés aux guides",
+    "STATS_TOTAL": "Total des groupes",
+    "SEARCH_PLACEHOLDER": "Rechercher...",
+    "PAGE_SIZE_ARIA": "Éléments par page",
+    "EMPTY": "Aucun groupe à afficher",
+    "RETRY": "Réessayer",
+    "PAGINATION_INFO": "Total {{count}} groupes",
+    "TABLE": {
+      "COLOR": "Couleur",
+      "GROUP_NUMBER": "Numéro du groupe",
+      "PILGRIM_COUNT": "Nombre de pèlerins",
+      "TOUR_LEADER": "Guide",
+      "CENTER_MANAGER": "Responsable du centre",
+      "GROUP_SUPERVISOR": "Superviseur du groupe",
+      "DATE_TIME": "Date et heure"
+    },
+    "ERRORS": {
+      "LOAD": "Impossible de charger la liste des groupes"
     }
   },
   "TASKS": {

@@ -73,6 +73,8 @@
     "PERSONNEL": "Personnel Management",
     "PILGRIMS": "Pilgrims Management",
     "SUPERVISORS": "Supervisors Management",
+    "TOUR_LEADERS": "Tour Leaders Management",
+    "TOUR_GROUPS": "Tour Groups Management",
     "DEVICES": "Devices Management",
     "TOOLS": "Tools",
     "CHAT": "Chat",
@@ -346,6 +348,49 @@
       "ADD": "Add Supervisor",
       "SAVING": "Saving...",
       "ADDING": "Adding..."
+    }
+  },
+  "TOUR_LEADERS": {
+    "TITLE": "Tour Leaders Management",
+    "SUBTITLE": "Manage tour leaders responsible for pilgrim tour groups",
+    "STATS_TOTAL": "Total Tour Leaders",
+    "SEARCH_PLACEHOLDER": "Search...",
+    "PAGE_SIZE_ARIA": "Items per page",
+    "EMPTY": "No tour leaders to display",
+    "RETRY": "Retry",
+    "PAGINATION_INFO": "Total {{count}} tour leaders",
+    "TABLE": {
+      "LEADER": "Tour Leader",
+      "CENTER_MANAGER": "Center Manager",
+      "GROUP_SUPERVISOR": "Group Supervisor",
+      "PHONE": "Phone",
+      "NATIONALITY": "Nationality",
+      "GROUPS_COUNT": "Groups Count"
+    },
+    "ERRORS": {
+      "LOAD": "Unable to load tour leaders list"
+    }
+  },
+  "TOUR_GROUPS": {
+    "TITLE": "Tour Groups Management",
+    "SUBTITLE": "Manage pilgrim tour groups linked to tour leaders",
+    "STATS_TOTAL": "Total Tour Groups",
+    "SEARCH_PLACEHOLDER": "Search...",
+    "PAGE_SIZE_ARIA": "Items per page",
+    "EMPTY": "No tour groups to display",
+    "RETRY": "Retry",
+    "PAGINATION_INFO": "Total {{count}} tour groups",
+    "TABLE": {
+      "COLOR": "Color",
+      "GROUP_NUMBER": "Group Number",
+      "PILGRIM_COUNT": "Pilgrim Count",
+      "TOUR_LEADER": "Tour Leader",
+      "CENTER_MANAGER": "Center Manager",
+      "GROUP_SUPERVISOR": "Group Supervisor",
+      "DATE_TIME": "Date and Time"
+    },
+    "ERRORS": {
+      "LOAD": "Unable to load tour groups list"
     }
   },
   "TASKS": {

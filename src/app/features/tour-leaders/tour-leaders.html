@@ -1,0 +1,142 @@
+<div class="tleaders">
+  <div class="tleaders__header">
+    <div>
+      <h1 class="tleaders__title">{{ 'TOUR_LEADERS.TITLE' | translate }}</h1>
+      <p class="tleaders__subtitle">{{ 'TOUR_LEADERS.SUBTITLE' | translate }}</p>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-card__info">
+        <span class="stat-card__label">{{ 'TOUR_LEADERS.STATS_TOTAL' | translate }}</span>
+        <strong class="stat-card__value">{{ totalCount() | number }}</strong>
+      </div>
+      <div class="stat-card__icon stat-card__icon--total"><i class="pi pi-users"></i></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <div class="tleaders__toolbar">
+      <div class="search-box">
+        <i class="pi pi-search search-box__icon"></i>
+        <input
+          type="text"
+          class="search-box__input"
+          [placeholder]="'TOUR_LEADERS.SEARCH_PLACEHOLDER' | translate"
+          (input)="onSearch($event)" />
+      </div>
+
+      <div class="filter-group">
+        <div class="page-size">
+          <select
+            class="page-size__select"
+            [value]="pageSize()"
+            (change)="onPageSizeChange(+($any($event.target)).value)"
+            [attr.aria-label]="'TOUR_LEADERS.PAGE_SIZE_ARIA' | translate">
+            @for (size of pageSizeOptions; track size) {
+              <option [value]="size">{{ size }}</option>
+            }
+          </select>
+          <i class="pi pi-chevron-down page-size__icon"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="tleaders__table-wrap">
+      <table class="tleaders-table">
+        <thead>
+          <tr>
+            <th>{{ 'TOUR_LEADERS.TABLE.LEADER' | translate }}</th>
+            <th>{{ 'TOUR_LEADERS.TABLE.CENTER_MANAGER' | translate }}</th>
+            <th>{{ 'TOUR_LEADERS.TABLE.GROUP_SUPERVISOR' | translate }}</th>
+            <th>{{ 'TOUR_LEADERS.TABLE.PHONE' | translate }}</th>
+            <th>{{ 'TOUR_LEADERS.TABLE.NATIONALITY' | translate }}</th>
+            <th>{{ 'TOUR_LEADERS.TABLE.GROUPS_COUNT' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (listLoading()) {
+            <tr>
+              <td colspan="6" class="state-cell">
+                <p-progress-spinner strokeWidth="4" [style]="{ width: '46px', height: '46px' }" />
+              </td>
+            </tr>
+          } @else if (loadError()) {
+            <tr>
+              <td colspan="6" class="state-cell state-cell--error">
+                <i class="pi pi-exclamation-triangle"></i>
+                <p>{{ loadError() }}</p>
+                <button type="button" class="state-retry" (click)="loadTourLeaders()">
+                  {{ 'TOUR_LEADERS.RETRY' | translate }}
+                </button>
+              </td>
+            </tr>
+          } @else if (tourLeaders().length === 0) {
+            <tr>
+              <td colspan="6" class="state-cell">
+                <i class="pi pi-users"></i>
+                <p>{{ 'TOUR_LEADERS.EMPTY' | translate }}</p>
+              </td>
+            </tr>
+          } @else {
+            @for (leader of tourLeaders(); track leader.Id) {
+              <tr>
+                <td>
+                  <div class="leader-cell">
+                    <span class="leader-cell__avatar">
+                      @if (hasValidAvatar(leader); as photo) {
+                        <img [src]="photo" [alt]="leader.DisplayName" (error)="onAvatarError(leader.Id)" />
+                      } @else {
+                        {{ initials(leader.DisplayName) }}
+                      }
+                    </span>
+                    <div class="leader-cell__info">
+                      <span class="leader-cell__name">{{ leader.DisplayName || '-' }}</span>
+                      <span class="leader-cell__email">{{ leader.Email || '-' }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td>{{ leader.CenterManagerName || '-' }}</td>
+                <td>{{ leader.GroupSupervisorName || '-' }}</td>
+                <td><span class="phone-cell">{{ leader.Phone || '-' }}</span></td>
+                <td>{{ leader.Nationality || '-' }}</td>
+                <td>
+                  <span class="chip chip--neutral">{{ leader.TourGroupsCount }}</span>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+
+      @if (!listLoading() && totalCount() > 0) {
+        <div class="pagination">
+          <span class="pagination__info">
+            {{ 'TOUR_LEADERS.PAGINATION_INFO' | translate: { count: (totalCount() | number) } }}
+          </span>
+          <div class="pagination__controls">
+            <button class="pg-btn" (click)="prevPage()" [disabled]="currentPage() === 1" [attr.aria-label]="'COMMON.PREVIOUS' | translate">
+              <i class="pi pi-angle-right"></i>
+            </button>
+            @for (page of visiblePages(); track $index) {
+              @if (page === -1) {
+                <span class="pg-ellipsis">...</span>
+              } @else {
+                <button
+                  class="pg-btn pg-btn--num"
+                  [class.pg-btn--active]="page === currentPage()"
+                  (click)="goToPage(page)">
+                  {{ page }}
+                </button>
+              }
+            }
+            <button class="pg-btn" (click)="nextPage()" [disabled]="currentPage() === totalPages()" [attr.aria-label]="'COMMON.NEXT' | translate">
+              <i class="pi pi-angle-left"></i>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

@@ -50,6 +50,8 @@ export class Sidenav implements OnInit {
       items: [
         { labelKey: 'SIDENAV.PILGRIMS',    icon: 'pi pi-users',   route: '/pilgrims' },
         { labelKey: 'SIDENAV.SUPERVISORS', icon: 'pi pi-user',    route: '/supervisors' },
+        { labelKey: 'SIDENAV.TOUR_LEADERS', icon: 'pi pi-user-edit', route: '/tour-leaders' },
+        { labelKey: 'SIDENAV.TOUR_GROUPS',  icon: 'pi pi-list',      route: '/tour-groups' },
         { labelKey: 'SIDENAV.DEVICES',     icon: 'pi pi-mobile',  route: '/devices' },
       ],
     },

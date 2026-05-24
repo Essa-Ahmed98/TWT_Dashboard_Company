@@ -73,6 +73,8 @@
     "PERSONNEL": "إدارة الأفراد",
     "PILGRIMS": "إدارة الحجاج",
     "SUPERVISORS": "إدارة المشرفين",
+    "TOUR_LEADERS": "إدارة المفوجين",
+    "TOUR_GROUPS": "إدارة التفويجات",
     "DEVICES": "إدارة الأجهزة",
     "TOOLS": "أدوات",
     "CHAT": "الدردشة",
@@ -346,6 +348,49 @@
       "ADD": "إضافة المشرف",
       "SAVING": "جاري الحفظ...",
       "ADDING": "جاري الإضافة..."
+    }
+  },
+  "TOUR_LEADERS": {
+    "TITLE": "إدارة المفوجين",
+    "SUBTITLE": "إدارة المفوجين المسؤولين عن تفويج الحجاج",
+    "STATS_TOTAL": "إجمالي المفوجين",
+    "SEARCH_PLACEHOLDER": "بحث...",
+    "PAGE_SIZE_ARIA": "عدد العناصر",
+    "EMPTY": "لا يوجد مفوجين لعرضهم",
+    "RETRY": "إعادة المحاولة",
+    "PAGINATION_INFO": "إجمالي {{count}} مفوج",
+    "TABLE": {
+      "LEADER": "المفوج",
+      "CENTER_MANAGER": "مدير المركز",
+      "GROUP_SUPERVISOR": "مشرف التفويج",
+      "PHONE": "الهاتف",
+      "NATIONALITY": "الجنسية",
+      "GROUPS_COUNT": "عدد المجموعات"
+    },
+    "ERRORS": {
+      "LOAD": "تعذر تحميل قائمة المفوجين"
+    }
+  },
+  "TOUR_GROUPS": {
+    "TITLE": "إدارة التفويجات",
+    "SUBTITLE": "إدارة أفواج الحجاج المرتبطة بالمفوجين",
+    "STATS_TOTAL": "إجمالي التفويجات",
+    "SEARCH_PLACEHOLDER": "بحث...",
+    "PAGE_SIZE_ARIA": "عدد العناصر",
+    "EMPTY": "لا يوجد تفويجات لعرضها",
+    "RETRY": "إعادة المحاولة",
+    "PAGINATION_INFO": "إجمالي {{count}} تفويج",
+    "TABLE": {
+      "COLOR": "اللون",
+      "GROUP_NUMBER": "رقم الفوج",
+      "PILGRIM_COUNT": "عدد الحجاج",
+      "TOUR_LEADER": "المفوج",
+      "CENTER_MANAGER": "مدير المركز",
+      "GROUP_SUPERVISOR": "مشرف الفوج",
+      "DATE_TIME": "التاريخ والوقت"
+    },
+    "ERRORS": {
+      "LOAD": "تعذر تحميل قائمة التفويجات"
     }
   },
   "TASKS": {

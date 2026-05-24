@@ -99,11 +99,14 @@ html[dir='ltr'] {
   }
 
   .pagination__controls,
+  .pagination-bar__controls,
   .plt__pagination {
-    > .pagination__btn:first-child .pi,
-    > .pagination__btn:last-child .pi,
-    > .plt__page-btn:first-child .pi,
-    > .plt__page-btn:last-child .pi {
+    > .pagination__btn:first-child .pi-angle-right,
+    > .pagination__btn:last-child .pi-angle-left,
+    > .pg-btn:first-child .pi-angle-right,
+    > .pg-btn:last-child .pi-angle-left,
+    > .plt__pg-btn:first-child .pi-angle-right,
+    > .plt__pg-btn:last-child .pi-angle-left {
       transform: scaleX(-1);
     }
   }

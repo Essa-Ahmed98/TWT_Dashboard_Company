@@ -71,6 +71,16 @@ export const routes: Routes = [
           import('./features/supervisors/supervisor-detail/supervisor-detail').then((m) => m.SupervisorDetail),
       },
       {
+        path: 'tour-leaders',
+        loadComponent: () =>
+          import('./features/tour-leaders/tour-leaders').then((m) => m.TourLeaders),
+      },
+      {
+        path: 'tour-groups',
+        loadComponent: () =>
+          import('./features/tour-groups/tour-groups').then((m) => m.TourGroups),
+      },
+      {
         path: 'devices',
         loadComponent: () =>
           import('./features/devices/devices').then((m) => m.Devices),

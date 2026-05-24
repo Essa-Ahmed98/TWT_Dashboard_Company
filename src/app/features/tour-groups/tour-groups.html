@@ -1,0 +1,130 @@
+<div class="tgroups">
+  <div class="tgroups__header">
+    <div>
+      <h1 class="tgroups__title">{{ 'TOUR_GROUPS.TITLE' | translate }}</h1>
+      <p class="tgroups__subtitle">{{ 'TOUR_GROUPS.SUBTITLE' | translate }}</p>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-card__info">
+        <span class="stat-card__label">{{ 'TOUR_GROUPS.STATS_TOTAL' | translate }}</span>
+        <strong class="stat-card__value">{{ totalCount() | number }}</strong>
+      </div>
+      <div class="stat-card__icon stat-card__icon--total"><i class="pi pi-list"></i></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <div class="tgroups__toolbar">
+      <div class="search-box">
+        <i class="pi pi-search search-box__icon"></i>
+        <input
+          type="text"
+          class="search-box__input"
+          [placeholder]="'TOUR_GROUPS.SEARCH_PLACEHOLDER' | translate"
+          (input)="onSearch($event)" />
+      </div>
+
+      <div class="filter-group">
+        <div class="page-size">
+          <select
+            class="page-size__select"
+            [value]="pageSize()"
+            (change)="onPageSizeChange(+($any($event.target)).value)"
+            [attr.aria-label]="'TOUR_GROUPS.PAGE_SIZE_ARIA' | translate">
+            @for (size of pageSizeOptions; track size) {
+              <option [value]="size">{{ size }}</option>
+            }
+          </select>
+          <i class="pi pi-chevron-down page-size__icon"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="tgroups__table-wrap">
+      <table class="tgroups-table">
+        <thead>
+          <tr>
+            <th>{{ 'TOUR_GROUPS.TABLE.COLOR' | translate }}</th>
+            <th>{{ 'TOUR_GROUPS.TABLE.GROUP_NUMBER' | translate }}</th>
+            <th>{{ 'TOUR_GROUPS.TABLE.PILGRIM_COUNT' | translate }}</th>
+            <th>{{ 'TOUR_GROUPS.TABLE.TOUR_LEADER' | translate }}</th>
+            <th>{{ 'TOUR_GROUPS.TABLE.CENTER_MANAGER' | translate }}</th>
+            <th>{{ 'TOUR_GROUPS.TABLE.GROUP_SUPERVISOR' | translate }}</th>
+            <th>{{ 'TOUR_GROUPS.TABLE.DATE_TIME' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (listLoading()) {
+            <tr>
+              <td colspan="7" class="state-cell">
+                <p-progress-spinner strokeWidth="4" [style]="{ width: '46px', height: '46px' }" />
+              </td>
+            </tr>
+          } @else if (loadError()) {
+            <tr>
+              <td colspan="7" class="state-cell state-cell--error">
+                <i class="pi pi-exclamation-triangle"></i>
+                <p>{{ loadError() }}</p>
+                <button type="button" class="state-retry" (click)="loadTourGroups()">
+                  {{ 'TOUR_GROUPS.RETRY' | translate }}
+                </button>
+              </td>
+            </tr>
+          } @else if (tourGroups().length === 0) {
+            <tr>
+              <td colspan="7" class="state-cell">
+                <i class="pi pi-list"></i>
+                <p>{{ 'TOUR_GROUPS.EMPTY' | translate }}</p>
+              </td>
+            </tr>
+          } @else {
+            @for (group of tourGroups(); track group.Id) {
+              <tr>
+                <td>
+                  <span class="color-dot" [style.background]="group.GroupColor || '#94a3b8'"></span>
+                </td>
+                <td>{{ group.GroupNumber || '-' }}</td>
+                <td><span class="chip chip--neutral">{{ group.PilgrimCount }}</span></td>
+                <td>{{ group.TourLeaderName || '-' }}</td>
+                <td>{{ group.CenterManagerName || '-' }}</td>
+                <td>{{ group.GroupSupervisorName || '-' }}</td>
+                <td>{{ formatDateTime(group.TourDateTime) }}</td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+
+      @if (!listLoading() && totalCount() > 0) {
+        <div class="pagination">
+          <span class="pagination__info">
+            {{ 'TOUR_GROUPS.PAGINATION_INFO' | translate: { count: (totalCount() | number) } }}
+          </span>
+          <div class="pagination__controls">
+            <button class="pg-btn" (click)="prevPage()" [disabled]="currentPage() === 1" [attr.aria-label]="'COMMON.PREVIOUS' | translate">
+              <i class="pi pi-angle-right"></i>
+            </button>
+            @for (page of visiblePages(); track $index) {
+              @if (page === -1) {
+                <span class="pg-ellipsis">...</span>
+              } @else {
+                <button
+                  class="pg-btn pg-btn--num"
+                  [class.pg-btn--active]="page === currentPage()"
+                  (click)="goToPage(page)">
+                  {{ page }}
+                </button>
+              }
+            }
+            <button class="pg-btn" (click)="nextPage()" [disabled]="currentPage() === totalPages()" [attr.aria-label]="'COMMON.NEXT' | translate">
+              <i class="pi pi-angle-left"></i>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
