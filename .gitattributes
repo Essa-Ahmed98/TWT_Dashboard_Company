@@ -1,0 +1,6 @@
+
+# Shell scripts and container files must keep LF line endings (they run on Linux)
+*.sh text eol=lf
+Dockerfile text eol=lf
+*.yml text eol=lf
+nginx.conf text eol=lf

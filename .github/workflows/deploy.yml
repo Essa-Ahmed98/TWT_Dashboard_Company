@@ -1,0 +1,37 @@
+# CD: automatic deploy of the Company dashboard - each branch deploys to its environment
+#   Dev  -> dev   https://dev.twth.lamarpro.com
+#   live -> live  https://twth.lamarpro.com
+#
+# Runs on the server itself (self-hosted runner) - no GitHub Actions minutes used.
+# The image is fully built before the deploy (any code error = no deploy); after the deploy the page
+# must open, otherwise the previous version comes back automatically.
+name: Deploy
+
+on:
+  push:
+    branches: [Dev, live]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy ${{ github.ref_name }}
+    runs-on: [self-hosted, linux, twt-server]
+    timeout-minutes: 30
+    steps:
+      - name: Resolve environment
+        id: target
+        run: |
+          case "$GITHUB_REF_NAME" in
+            Dev)  echo "env=dev"  >> "$GITHUB_OUTPUT" ;;
+            live) echo "env=live" >> "$GITHUB_OUTPUT" ;;
+            *) echo "branch $GITHUB_REF_NAME is not a deploy branch"; exit 1 ;;
+          esac
+
+      - uses: actions/checkout@v4
+
+      - name: Build and deploy
+        run: bash deploy/deploy.sh "${{ steps.target.outputs.env }}" "${{ steps.target.outputs.env }}-${GITHUB_SHA::7}"

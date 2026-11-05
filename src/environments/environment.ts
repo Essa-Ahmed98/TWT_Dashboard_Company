@@ -1,17 +1,17 @@
-// export const environment = {
-//   production: false,
-//   apiBase: '/api',
-//   chatApiBase: '/api',
-//   hubUrl: '/api/chat/chatHub',
-//   chatMediaBase: '',
-//   uploadsBase: 'https://API.TWTH.lamarpro.com/',
-// };
+// The server addresses are read at runtime from env.js (written by the Docker container when it starts),
+// so the same build works for dev and live. The values below are only used by `ng serve`.
+const defaults = {
+  apiBase: 'https://dev-api.twth.lamarpro.com/api',
+  chatApiBase: 'https://dev-chat.twth.lamarpro.com/api',
+  hubUrl: 'https://dev-chat.twth.lamarpro.com/api/chat/chatHub',
+  chatMediaBase: 'https://dev-chat.twth.lamarpro.com',
+  uploadsBase: 'https://dev-api.twth.lamarpro.com',
+};
+
+const runtimeEnv = (globalThis as { __env?: Partial<typeof defaults> }).__env ?? {};
 
 export const environment = {
   production: true,
-  apiBase: 'https://API.TWTH.lamarpro.com/api',
-  chatApiBase: 'https://Chat.TWTH.lamarpro.com/api',
-  hubUrl: 'https://Chat.TWTH.lamarpro.com/api/chat/chatHub',
-  chatMediaBase: 'https://Chat.TWTH.lamarpro.com',
-  uploadsBase: 'https://API.TWTH.lamarpro.com',
+  ...defaults,
+  ...runtimeEnv,
 };

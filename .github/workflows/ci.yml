@@ -1,0 +1,28 @@
+# CI: on every push to a non-deploy branch (master / claude/work ...) do a full production build
+# of the dashboard inside Docker, to catch errors early. Runs on our own server (self-hosted runner)
+# so it uses no GitHub Actions minutes.
+name: CI
+
+on:
+  push:
+    branches-ignore: [Dev, live]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build
+    runs-on: [self-hosted, linux, twt-server]
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Production build (inside Docker)
+        run: |
+          tag="ci-${GITHUB_SHA::7}"
+          docker build --tag "twt-hajj-ci/company:$tag" .
+          docker rmi "twt-hajj-ci/company:$tag" >/dev/null 2>&1 || true
+          docker image prune -f >/dev/null 2>&1 || true
