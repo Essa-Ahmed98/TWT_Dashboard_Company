@@ -105,6 +105,17 @@
               </span>
             </div>
           </div>
+          <!-- Voice / video call -->
+          <div class="chat__win-actions">
+            <button type="button" class="chat__call-btn" (click)="startCall(conv.FriendId, CallType.Audio)"
+                    [disabled]="callBusy()" [title]="'CHAT.VOICE_CALL' | translate">
+              <i class="pi pi-phone"></i>
+            </button>
+            <button type="button" class="chat__call-btn" (click)="startCall(conv.FriendId, CallType.Video)"
+                    [disabled]="callBusy()" [title]="'CHAT.VIDEO_CALL' | translate">
+              <i class="pi pi-video"></i>
+            </button>
+          </div>
         </div>
 
         <!-- Messages area -->
@@ -138,6 +149,13 @@
                     }
                     @case (MessageType.Audio) {
                       <audio class="chat__bubble-audio" controls [src]="resolveMediaUrl(msg.AudioUrl)"></audio>
+                    }
+                    @case (MessageType.Call) {
+                      <span class="chat__bubble-call" [class.chat__bubble-call--missed]="isMissedCall(msg)">
+                        <i class="pi" [class.pi-video]="msg.Call?.CallType === CallType.Video"
+                           [class.pi-phone]="msg.Call?.CallType !== CallType.Video"></i>
+                        <span>{{ callLogText(msg) }}</span>
+                      </span>
                     }
                     @default {
                       {{ msg.Content }}

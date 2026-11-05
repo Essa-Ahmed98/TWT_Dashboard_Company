@@ -19,7 +19,10 @@ import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../core/auth/services/auth';
 import { ChatService } from './chat.service';
+import { CallService } from './call/call.service';
 import {
+  CallStatus,
+  CallType,
   ChatTab,
   ConversationResult,
   MessageResult,
@@ -39,8 +42,12 @@ export class Chat implements OnInit, OnDestroy {
   @ViewChild('msgsEl') msgsEl!: ElementRef<HTMLDivElement>;
 
   readonly MessageType = MessageType;
+  readonly CallType = CallType;
 
   private readonly chatService = inject(ChatService);
+  private readonly calls       = inject(CallService);
+  /** في مكالمة دلوقتي (زرار الاتصال بيتقفل) */
+  readonly callBusy = computed(() => this.calls.phase() !== 'idle' && this.calls.phase() !== 'ended');
   private readonly auth        = inject(AuthService);
   private readonly route       = inject(ActivatedRoute);
   private readonly location    = inject(Location);
@@ -127,7 +134,7 @@ export class Chat implements OnInit, OnDestroy {
     this.stopRecording();
     this.discardPreview();
     this.discardImagePreview();
-    this.chatService.disconnect();
+    // الاتصال بالـ hub بيفضل مفتوح طول ما المستخدم داخل (المكالمات بترن في أي صفحة) - الـ shell بيقفله
   }
 
   // ── REST calls ─────────────────────────────────────────────────
@@ -487,6 +494,7 @@ export class Chat implements OnInit, OnDestroy {
             const preview =
               msg.MessageType === MessageType.Image ? '[صورة]'
             : msg.MessageType === MessageType.Audio ? '[رسالة صوتية]'
+            : msg.MessageType === MessageType.Call  ? (msg.Call?.CallType === CallType.Video ? '🎥' : '📞')
             : msg.Content;
             const updated = list.map(c =>
               c.ConversationId === msg.ConversationId
@@ -545,6 +553,37 @@ export class Chat implements OnInit, OnDestroy {
 
   isMine(msg: MessageResult): boolean {
     return msg.SenderId === this.auth.currentUser()?.userId;
+  }
+
+  // ── Calls ─────────────────────────────────────────────────────
+  startCall(friendId: string, type: CallType): void {
+    void this.calls.start(friendId, type);
+  }
+
+  /** مكالمة فاتتني أنا (مارد / اتلغت / كنت مشغول) */
+  isMissedCall(msg: MessageResult): boolean {
+    const s = msg.Call?.Status;
+    return !this.isMine(msg) && (s === CallStatus.Missed || s === CallStatus.Cancelled || s === CallStatus.Busy);
+  }
+
+  callLogText(msg: MessageResult): string {
+    const call = msg.Call;
+    if (!call) return msg.Content;
+    const video = call.CallType === CallType.Video;
+    const kind = video ? 'مكالمة فيديو' : 'مكالمة صوتية';
+    const mine = this.isMine(msg);
+    switch (call.Status) {
+      case CallStatus.Ended: {
+        const m = Math.floor(call.DurationSeconds / 60);
+        const s = call.DurationSeconds % 60;
+        return `${kind} • ${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      }
+      case CallStatus.Rejected:  return mine ? `${kind} - تم الرفض` : `${kind} - رفضتها`;
+      case CallStatus.Missed:    return mine ? `${kind} - لم يتم الرد` : `${kind} فائتة`;
+      case CallStatus.Cancelled: return mine ? `${kind} - تم الإلغاء` : `${kind} فائتة`;
+      case CallStatus.Busy:      return mine ? `${kind} - الطرف الآخر مشغول` : `${kind} فائتة`;
+      default:                   return kind;
+    }
   }
 
   getAvatarColor(id: string): string {

@@ -2,6 +2,7 @@ export enum MessageType {
   Text  = 0,
   Audio = 1,
   Image = 2,
+  Call  = 3,   // سجل مكالمة صوت / فيديو (السيرفر بيكتبه)
 }
 
 export enum UserRole {
@@ -62,6 +63,8 @@ export interface MessageResult {
   ImageUrl: string | null;
   SentAt: string;
   IsRead: boolean;
+  /** بيانات المكالمة - لرسائل MessageType.Call بس */
+  Call?: MessageCallInfo | null;
 }
 
 /** Returned by POST /api/chat/upload-audio */
@@ -91,3 +94,77 @@ export interface MessagesReadNotification {
 
 // ── UI-only ──────────────────────────────────────────────────────
 export type ChatTab = 'all' | 'groups' | 'supervisors';
+
+// ── Calls (voice / video over LiveKit) ───────────────────────────
+export enum CallType {
+  Audio = 1,
+  Video = 2,
+}
+
+export enum CallStatus {
+  Ringing   = 1,
+  Accepted  = 2,
+  Rejected  = 3,
+  Cancelled = 4,
+  Missed    = 5,
+  Busy      = 6,
+  Ended     = 7,
+}
+
+export enum CallEndReason {
+  CallerHangup        = 1,
+  CalleeHangup        = 2,
+  Rejected            = 3,
+  Cancelled           = 4,
+  Timeout             = 5,
+  Busy                = 6,
+  ParticipantLeft     = 7,
+  RoomFinished        = 8,
+  MaxDurationExceeded = 9,
+}
+
+/** Call log inside a chat message */
+export interface MessageCallInfo {
+  CallId: string;
+  CallType: CallType;
+  Status: CallStatus;
+  EndReason?: CallEndReason | null;
+  DurationSeconds: number;
+}
+
+/** A call, as sent by the chat hub events and returned by the hub methods / REST */
+export interface CallPayload {
+  CallId: string;
+  ConversationId: string;
+  CallType: CallType;
+  Status: CallStatus;
+  CallerId: string;
+  CallerName: string;
+  CallerAvatarUrl: string | null;
+  CalleeId: string;
+  CalleeName: string;
+  CalleeAvatarUrl: string | null;
+  CreatedAt: string;
+  AnsweredAt: string | null;
+  EndedAt: string | null;
+  EndReason: CallEndReason | null;
+}
+
+/** Reply of the hub call methods (StartCall / AcceptCall / ...) */
+export interface CallHubResult {
+  Success: boolean;
+  Call: CallPayload | null;
+  ErrorCode?: number | null;
+  ErrorKey?: string | null;
+  ErrorMessage?: string | null;
+}
+
+/** POST /api/chat/calls/{callId}/token */
+export interface CallTokenResult {
+  CallId: string;
+  RoomName: string;
+  Url: string;
+  Token: string;
+  Identity: string;
+  ExpiresAt: string;
+}

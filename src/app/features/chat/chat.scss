@@ -290,6 +290,46 @@ $shell-padding:  24px;   // shell__main padding
     flex-shrink: 0;
   }
 
+  // ── Voice / video call buttons ──
+  &__win-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  &__call-btn {
+    width: 38px;
+    height: 38px;
+    border: 1px solid $border;
+    border-radius: 50%;
+    background: $bg-white;
+    color: #0b5c3e;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease;
+
+    &:hover:not(:disabled) {
+      background: #e8f3ee;
+    }
+
+    &:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+  }
+
+  &__bubble-call {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+
+    &--missed {
+      color: #c0392b;
+    }
+  }
+
   &__win-user {
     display: flex;
     align-items: center;

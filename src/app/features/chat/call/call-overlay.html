@@ -1,0 +1,79 @@
+@if (calls.phase() !== 'idle') {
+  <div class="call-overlay" [class.call-overlay--video]="calls.isVideo() && calls.phase() === 'active'" role="dialog" aria-live="assertive">
+    <div class="call-card">
+
+      @if (calls.isVideo() && (calls.phase() === 'active' || calls.phase() === 'connecting')) {
+        <div class="call-video">
+          <video #remoteVideo class="call-video__remote" autoplay playsinline></video>
+          @if (!calls.remoteVideo()) {
+            <div class="call-video__placeholder">{{ calls.otherName().charAt(0) }}</div>
+          }
+          <video #localVideo class="call-video__local" [class.hidden]="!calls.localVideo()" autoplay playsinline muted></video>
+        </div>
+      } @else {
+        <div class="call-avatar">{{ calls.otherName().charAt(0) }}</div>
+      }
+
+      <div class="call-name">{{ calls.otherName() }}</div>
+
+      <div class="call-status">
+        @switch (calls.phase()) {
+          @case ('incoming') {
+            <span>{{ calls.isVideo() ? 'مكالمة فيديو واردة…' : 'مكالمة صوتية واردة…' }}</span>
+          }
+          @case ('outgoing') { <span>جاري الاتصال…</span> }
+          @case ('connecting') { <span>جاري التوصيل…</span> }
+          @case ('active') { <span class="call-timer">{{ calls.duration() }}</span> }
+          @case ('ended') { <span>{{ calls.endMessage() }}</span> }
+        }
+      </div>
+
+      @if (calls.error()) {
+        <div class="call-error">{{ calls.error() }}</div>
+      }
+
+      <div class="call-actions">
+        @switch (calls.phase()) {
+          @case ('incoming') {
+            <button type="button" class="call-btn call-btn--decline" (click)="calls.reject()" title="رفض">
+              <i class="pi pi-times"></i>
+            </button>
+            <button type="button" class="call-btn call-btn--accept" (click)="calls.accept()" title="رد">
+              <i class="pi" [class.pi-video]="calls.isVideo()" [class.pi-phone]="!calls.isVideo()"></i>
+            </button>
+          }
+          @case ('outgoing') {
+            <button type="button" class="call-btn call-btn--decline" (click)="calls.hangUp()" title="إلغاء">
+              <i class="pi pi-phone call-icon--hangup"></i>
+            </button>
+          }
+          @case ('connecting') {
+            <button type="button" class="call-btn call-btn--decline" (click)="calls.hangUp()" title="إنهاء">
+              <i class="pi pi-phone call-icon--hangup"></i>
+            </button>
+          }
+          @case ('active') {
+            <button type="button" class="call-btn" [class.call-btn--off]="!calls.micOn()" (click)="calls.toggleMic()"
+                    [title]="calls.micOn() ? 'كتم المايك' : 'تشغيل المايك'">
+              <i class="pi" [class.pi-microphone]="calls.micOn()" [class.pi-volume-off]="!calls.micOn()"></i>
+            </button>
+            @if (calls.isVideo()) {
+              <button type="button" class="call-btn" [class.call-btn--off]="!calls.cameraOn()" (click)="calls.toggleCamera()"
+                      [title]="calls.cameraOn() ? 'إيقاف الكاميرا' : 'تشغيل الكاميرا'">
+                <i class="pi" [class.pi-video]="calls.cameraOn()" [class.pi-eye-slash]="!calls.cameraOn()"></i>
+              </button>
+            }
+            <button type="button" class="call-btn call-btn--decline" (click)="calls.hangUp()" title="إنهاء المكالمة">
+              <i class="pi pi-phone call-icon--hangup"></i>
+            </button>
+          }
+          @case ('ended') {
+            <button type="button" class="call-btn" (click)="calls.close()" title="إغلاق">
+              <i class="pi pi-check"></i>
+            </button>
+          }
+        }
+      </div>
+    </div>
+  </div>
+}

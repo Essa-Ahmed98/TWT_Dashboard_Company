@@ -6,6 +6,11 @@ import { environment } from '../../../environments/environment';
 import { AuthService } from '../../core/auth/services/auth';
 import { ApiResult } from '../../core/models/api.models';
 import {
+  CallHubResult,
+  CallPayload,
+  CallTokenResult,
+  CallType,
+  MessageCallInfo,
   ConversationResult,
   MessageResult,
   MessageType,
@@ -34,6 +39,8 @@ export class ChatService implements OnDestroy {
   readonly friendOnline$   = new Subject<string>();
   readonly friendOffline$  = new Subject<string>();
   readonly connected$      = new Subject<boolean>();
+  readonly incomingCall$   = new Subject<CallPayload>();
+  readonly callEvent$      = new Subject<{ event: CallEventName; call: CallPayload }>();
 
   // ── REST API ─────────────────────────────────────────────────────
 
@@ -95,9 +102,16 @@ export class ChatService implements OnDestroy {
         ImageUrl:       raw.imageUrl    ?? raw.ImageUrl    ?? null,
         SentAt:         raw.sentAt         ?? raw.SentAt,
         IsRead:         raw.isRead         ?? raw.IsRead,
+        Call:           mapCallInfo(raw.call ?? raw.Call),
       };
       this.zone.run(() => this.receiveMessage$.next(msg));
     });
+
+    // ── Calls (voice / video) ──
+    this.hub.on('IncomingCall', (raw: any) => this.zone.run(() => this.incomingCall$.next(mapCall(raw))));
+    for (const name of ['CallAccepted', 'CallRejected', 'CallCancelled', 'CallMissed', 'CallEnded', 'CallAnsweredElsewhere']) {
+      this.hub.on(name, (raw: any) => this.zone.run(() => this.callEvent$.next({ event: name as CallEventName, call: mapCall(raw) })));
+    }
     this.hub.on('MessagesRead', (raw: any) => {
       const n: MessagesReadNotification = {
         ConversationId: raw.conversationId ?? raw.ConversationId,
@@ -162,6 +176,50 @@ export class ChatService implements OnDestroy {
     return this.hub.invoke('MarkAsRead', conversationId);
   }
 
+  // ── Calls (voice / video) ─────────────────────────────────────────
+
+  startCall(calleeId: string, callType: CallType): Promise<CallHubResult> {
+    return this.invokeCall('StartCall', calleeId, callType);
+  }
+
+  acceptCall(callId: string): Promise<CallHubResult> {
+    return this.invokeCall('AcceptCall', callId);
+  }
+
+  rejectCall(callId: string): Promise<CallHubResult> {
+    return this.invokeCall('RejectCall', callId);
+  }
+
+  cancelCall(callId: string): Promise<CallHubResult> {
+    return this.invokeCall('CancelCall', callId);
+  }
+
+  endCall(callId: string): Promise<CallHubResult> {
+    return this.invokeCall('EndCall', callId);
+  }
+
+  /** LiveKit room token for this call (POST /api/chat/calls/{callId}/token) */
+  getCallToken(callId: string) {
+    return this.http.post<ApiResult<CallTokenResult>>(
+      `${environment.chatApiBase}/chat/calls/${callId}/token`, {},
+    );
+  }
+
+  private async invokeCall(method: string, ...args: unknown[]): Promise<CallHubResult> {
+    if (!this.hub) {
+      await this.connect();
+      if (!this.hub) return { Success: false, Call: null, ErrorCode: 0, ErrorMessage: 'Not connected' };
+    }
+    const raw = await this.hub.invoke(method, ...args);
+    return {
+      Success:      raw.success ?? raw.Success ?? false,
+      Call:         (raw.call ?? raw.Call) ? mapCall(raw.call ?? raw.Call) : null,
+      ErrorCode:    raw.errorCode ?? raw.ErrorCode ?? null,
+      ErrorKey:     raw.errorKey ?? raw.ErrorKey ?? null,
+      ErrorMessage: raw.errorMessage ?? raw.ErrorMessage ?? null,
+    };
+  }
+
   ngOnDestroy(): void {
     this.disconnect();
     this.receiveMessage$.complete();
@@ -169,5 +227,43 @@ export class ChatService implements OnDestroy {
     this.friendOnline$.complete();
     this.friendOffline$.complete();
     this.connected$.complete();
+    this.incomingCall$.complete();
+    this.callEvent$.complete();
   }
+}
+
+export type CallEventName =
+  | 'CallAccepted' | 'CallRejected' | 'CallCancelled' | 'CallMissed' | 'CallEnded' | 'CallAnsweredElsewhere';
+
+// SignalR sends camelCase, REST sends PascalCase - accept both
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapCall(raw: any): CallPayload {
+  return {
+    CallId:          raw.callId          ?? raw.CallId,
+    ConversationId:  raw.conversationId  ?? raw.ConversationId,
+    CallType:        raw.callType        ?? raw.CallType,
+    Status:          raw.status          ?? raw.Status,
+    CallerId:        raw.callerId        ?? raw.CallerId,
+    CallerName:      raw.callerName      ?? raw.CallerName ?? '',
+    CallerAvatarUrl: raw.callerAvatarUrl ?? raw.CallerAvatarUrl ?? null,
+    CalleeId:        raw.calleeId        ?? raw.CalleeId,
+    CalleeName:      raw.calleeName      ?? raw.CalleeName ?? '',
+    CalleeAvatarUrl: raw.calleeAvatarUrl ?? raw.CalleeAvatarUrl ?? null,
+    CreatedAt:       raw.createdAt       ?? raw.CreatedAt,
+    AnsweredAt:      raw.answeredAt      ?? raw.AnsweredAt ?? null,
+    EndedAt:         raw.endedAt         ?? raw.EndedAt ?? null,
+    EndReason:       raw.endReason       ?? raw.EndReason ?? null,
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapCallInfo(raw: any): MessageCallInfo | null {
+  if (!raw) return null;
+  return {
+    CallId:          raw.callId          ?? raw.CallId,
+    CallType:        raw.callType        ?? raw.CallType,
+    Status:          raw.status          ?? raw.Status,
+    EndReason:       raw.endReason       ?? raw.EndReason ?? null,
+    DurationSeconds: raw.durationSeconds ?? raw.DurationSeconds ?? 0,
+  };
 }
