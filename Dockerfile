@@ -1,6 +1,6 @@
 # Company dashboard - static Angular build (no SSR) served by nginx.
 # The server addresses come from docker-compose at runtime (docker-entrypoint.sh -> env.js).
-FROM node:22-alpine AS build
+FROM node:24-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN --mount=type=cache,id=twt-hajj-npm,target=/root/.npm npm ci --prefer-offline --no-audit --no-fund
