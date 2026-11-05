@@ -3,7 +3,7 @@
 FROM node:24-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN --mount=type=cache,id=twt-hajj-npm,target=/root/.npm npm ci --prefer-offline --no-audit --no-fund
+RUN --mount=type=cache,id=twt-hajj-npm,target=/root/.npm npm ci --prefer-offline --no-audit --no-fund --fetch-retries=6 --fetch-retry-mintimeout=20000 --fetch-retry-maxtimeout=180000 --fetch-timeout=900000
 COPY . .
 RUN npx ng build --configuration production \
     && cd dist/*/browser \
