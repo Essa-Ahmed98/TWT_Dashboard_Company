@@ -62,7 +62,7 @@
     "LANGUAGE": "Language"
   },
   "SIDENAV": {
-    "BRAND_NAME": "Tatmen W Tamen",
+    "BRAND_NAME": "إكرام تطمن",
     "ADMIN": "Admin",
     "MAIN_MENU": "Main Menu",
     "DASHBOARD": "Dashboard",
@@ -101,7 +101,7 @@
     "SUCCESS_DETAIL": "Welcome to the Admin Dashboard",
     "ERROR_SUMMARY": "Login Error",
     "ERROR_DETAIL": "Please verify your email/phone and password",
-    "LOGO_ALT": "Tatamin Ikram logo",
+    "LOGO_ALT": "شعار إكرام تطمن",
     "PARTNER_LOGO_ALT": "AI partner logo",
     "SHOW_PASSWORD": "Show password",
     "HIDE_PASSWORD": "Hide password"
@@ -750,7 +750,9 @@
     "DELETE_IMAGE": "Delete image",
     "DELETE_AUDIO": "Delete recording",
     "STOP_RECORDING": "Stop recording",
-    "CANCEL_RECORDING": "Cancel recording"
+    "CANCEL_RECORDING": "Cancel recording",
+    "VOICE_CALL": "Voice call",
+    "VIDEO_CALL": "Video call"
   },
   "GEOFENCE": {
     "TITLE": "Monitoring Room",

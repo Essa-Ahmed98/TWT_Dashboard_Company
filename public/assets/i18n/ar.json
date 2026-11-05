@@ -62,7 +62,7 @@
     "LANGUAGE": "اللغة"
   },
   "SIDENAV": {
-    "BRAND_NAME": "تطمن وطمن",
+    "BRAND_NAME": "إكرام تطمن",
     "ADMIN": "أدمن",
     "MAIN_MENU": "القائمة الرئيسية",
     "DASHBOARD": "لوحة التحكم",
@@ -101,7 +101,7 @@
     "SUCCESS_DETAIL": "مرحباً بك في لوحة الأدمن",
     "ERROR_SUMMARY": "خطأ في تسجيل الدخول",
     "ERROR_DETAIL": "من فضلك تأكد من البريد الإلكتروني أو رقم الهاتف وكلمة السر",
-    "LOGO_ALT": "شعار تطمن إكرام",
+    "LOGO_ALT": "شعار إكرام تطمن",
     "PARTNER_LOGO_ALT": "شعار شريك الذكاء الاصطناعي",
     "SHOW_PASSWORD": "إظهار كلمة المرور",
     "HIDE_PASSWORD": "إخفاء كلمة المرور"
@@ -750,7 +750,9 @@
     "DELETE_IMAGE": "حذف الصورة",
     "DELETE_AUDIO": "حذف التسجيل",
     "STOP_RECORDING": "إيقاف التسجيل",
-    "CANCEL_RECORDING": "إلغاء التسجيل"
+    "CANCEL_RECORDING": "إلغاء التسجيل",
+    "VOICE_CALL": "مكالمة صوتية",
+    "VIDEO_CALL": "مكالمة فيديو"
   },
   "GEOFENCE": {
     "TITLE": "غرفة المراقبة",

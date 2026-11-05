@@ -62,7 +62,7 @@
     "LANGUAGE": "Langue"
   },
   "SIDENAV": {
-    "BRAND_NAME": "Tatamin Ikram",
+    "BRAND_NAME": "إكرام تطمن",
     "ADMIN": "Admin",
     "MAIN_MENU": "Menu Principal",
     "DASHBOARD": "Tableau de bord",
@@ -101,7 +101,7 @@
     "SUCCESS_DETAIL": "Bienvenue dans le tableau de bord Admin",
     "ERROR_SUMMARY": "Erreur de connexion",
     "ERROR_DETAIL": "Veuillez vérifier votre email/téléphone et mot de passe",
-    "LOGO_ALT": "Logo Tatamin Ikram",
+    "LOGO_ALT": "شعار إكرام تطمن",
     "PARTNER_LOGO_ALT": "Logo du partenaire IA",
     "SHOW_PASSWORD": "Afficher le mot de passe",
     "HIDE_PASSWORD": "Masquer le mot de passe"
@@ -750,7 +750,9 @@
     "DELETE_IMAGE": "Supprimer image",
     "DELETE_AUDIO": "Supprimer enregistrement",
     "STOP_RECORDING": "Arrêter enregistrement",
-    "CANCEL_RECORDING": "Annuler enregistrement"
+    "CANCEL_RECORDING": "Annuler enregistrement",
+    "VOICE_CALL": "Appel vocal",
+    "VIDEO_CALL": "Appel vidéo"
   },
   "GEOFENCE": {
     "TITLE": "Salle de Surveillance",

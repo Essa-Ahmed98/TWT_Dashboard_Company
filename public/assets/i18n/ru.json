@@ -62,7 +62,7 @@
     "LANGUAGE": "Язык"
   },
   "SIDENAV": {
-    "BRAND_NAME": "Tatamin Ikram",
+    "BRAND_NAME": "إكرام تطمن",
     "ADMIN": "Администратор",
     "MAIN_MENU": "Главное Меню",
     "DASHBOARD": "Панель управления",
@@ -101,7 +101,7 @@
     "SUCCESS_DETAIL": "Добро пожаловать в Панель Администратора",
     "ERROR_SUMMARY": "Ошибка входа",
     "ERROR_DETAIL": "Проверьте email/телефон и пароль",
-    "LOGO_ALT": "Логотип Tatamin Ikram",
+    "LOGO_ALT": "شعار إكرام تطمن",
     "PARTNER_LOGO_ALT": "Логотип партнера ИИ",
     "SHOW_PASSWORD": "Показать пароль",
     "HIDE_PASSWORD": "Скрыть пароль"
@@ -750,7 +750,9 @@
     "DELETE_IMAGE": "Удалить фото",
     "DELETE_AUDIO": "Удалить запись",
     "STOP_RECORDING": "Остановить запись",
-    "CANCEL_RECORDING": "Отмена записи"
+    "CANCEL_RECORDING": "Отмена записи",
+    "VOICE_CALL": "Голосовой звонок",
+    "VIDEO_CALL": "Видеозвонок"
   },
   "GEOFENCE": {
     "TITLE": "Зал Мониторинга",
