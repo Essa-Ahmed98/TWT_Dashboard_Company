@@ -3,7 +3,7 @@
 FROM node:22-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN --mount=type=cache,id=twt-hajj-npm,target=/root/.npm npm ci --prefer-offline --no-audit --no-fund
 COPY . .
 RUN npx ng build --configuration production \
     && cd dist/*/browser \
