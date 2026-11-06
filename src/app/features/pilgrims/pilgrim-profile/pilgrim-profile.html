@@ -36,7 +36,9 @@
             </div>
 
             <div class="pp__meta-row">
-              <span><i class="pi pi-calendar"></i> {{ p.age }} {{ 'PILGRIMS_PROFILE.AGE_UNIT' | translate }}</span>
+              @if (p.birthDate) {
+                <span><i class="pi pi-calendar"></i> {{ p.age }} {{ 'PILGRIMS_PROFILE.AGE_UNIT' | translate }}</span>
+              }
               <span><i class="pi pi-globe"></i> {{ p.nationality }}</span>
             </div>
 

@@ -320,7 +320,7 @@
 
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">{{ 'SUPERVISORS.FORM.DATE_OF_BIRTH' | translate }} <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'SUPERVISORS.FORM.DATE_OF_BIRTH' | translate }}</label>
           <p-datepicker
             [ngModel]="formData().dateOfBirth"
             (ngModelChange)="patchForm({ dateOfBirth: $event })"

@@ -14,6 +14,7 @@ import { FamilyTab } from './tabs/family-tab/family-tab';
 import { SupervisorsTab } from './tabs/supervisors-tab/supervisors-tab';
 import { RatingsTab } from './tabs/ratings-tab/ratings-tab';
 import { BagPathTab } from './tabs/bag-path-tab/bag-path-tab';
+import { toDateOnlyIso } from '../../../shared/utils/date-only';
 
 interface PilgrimDetailState {
   loading: boolean;
@@ -129,7 +130,7 @@ export class PilgrimDetail {
       HajjType:        data.hajjType,
       PassportNumber:  data.passportNumber,
       Nationality:     data.nationality,
-      DateOfBirth:     data.birthDate ? new Date(data.birthDate).toISOString() : '',
+      DateOfBirth:     toDateOnlyIso(data.birthDate),
       Gender:          data.gender,
       IDNumber:        data.idNumber,
       Accommodation:   data.accommodation,

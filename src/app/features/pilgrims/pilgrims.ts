@@ -17,6 +17,7 @@ import { AuthService } from '../../core/auth/services/auth';
 import { CampaignsService } from '../campaigns/campaigns.service';
 import { exportRowsToExcel } from '../../core/utils/excel-export';
 import { SsDropdownDirective } from '../../shared/directives/ss-dropdown.directive';
+import { toDateOnlyIso } from '../../shared/utils/date-only';
 
 const API_ERRORS: Record<string, string> = {
   'This username is already taken.': 'البريد الإلكتروني أو رقم الهاتف مستخدم بالفعل',
@@ -912,7 +913,7 @@ export class Pilgrims implements OnInit {
       GroupId: f.groupId,
       PassportNumber: f.passportNumber,
       Nationality: f.nationality,
-      DateOfBirth: f.dateOfBirth ? new Date(f.dateOfBirth).toISOString() : '',
+      DateOfBirth: toDateOnlyIso(f.dateOfBirth),
       Gender: f.gender !== '' ? +f.gender : 0,
       IDNumber: f.idNumber,
       Accommodation: f.accommodation,
@@ -927,7 +928,7 @@ export class Pilgrims implements OnInit {
           HajjType: editingPilgrim.HajjType ?? 0,
           PassportNumber: f.passportNumber.trim(),
           Nationality: f.nationality.trim(),
-          DateOfBirth: f.dateOfBirth ? new Date(f.dateOfBirth).toISOString() : '',
+          DateOfBirth: toDateOnlyIso(f.dateOfBirth),
           Gender: f.gender !== '' ? +f.gender : 0,
           IDNumber: f.idNumber.trim(),
           Accommodation: f.accommodation.trim(),
@@ -981,7 +982,6 @@ export class Pilgrims implements OnInit {
       f.idNumber.trim() &&
       f.ritualCardNumber.trim() &&
       !this.phoneInvalid() &&
-      f.dateOfBirth &&
       (this.editingPilgrim() || (f.campaignId && f.groupId))
     );
   }

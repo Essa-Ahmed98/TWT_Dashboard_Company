@@ -64,7 +64,7 @@ export interface CreatePilgrimRequest {
   GroupId:          string;
   PassportNumber:   string;
   Nationality:      string;
-  DateOfBirth:      string;
+  DateOfBirth:      string | null;
   Gender:           number;
   IDNumber:         string;
   Accommodation:    string;
@@ -78,7 +78,7 @@ export interface UpdatePilgrimRequest {
   HajjType:         number;
   PassportNumber:   string;
   Nationality:      string;
-  DateOfBirth:      string;
+  DateOfBirth:      string | null;
   Gender:           number;
   IDNumber:         string;
   Accommodation:    string;

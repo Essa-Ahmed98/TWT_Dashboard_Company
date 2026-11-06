@@ -27,6 +27,7 @@ import { environment } from '../../../environments/environment';
 import { MessageService } from 'primeng/api';
 import { exportRowsToExcel } from '../../core/utils/excel-export';
 import { SsDropdownDirective } from '../../shared/directives/ss-dropdown.directive';
+import { toDateOnlyIso } from '../../shared/utils/date-only';
 
 const EMPTY_FORM: SupervisorForm = {
   email: '', displayName: '', phone: '+966', password: '',
@@ -351,7 +352,7 @@ export class Supervisors implements OnInit {
       GroupId:           f.groupId,
       PassportNumber:    f.passportNumber,
       Nationality:       f.nationality,
-      DateOfBirth:       f.dateOfBirth ? new Date(f.dateOfBirth).toISOString() : '',
+      DateOfBirth:       toDateOnlyIso(f.dateOfBirth),
       Gender:            f.gender !== '' ? +f.gender : 0,
       Specialization:    f.specialization,
       YearsOfExperience: f.yearsOfExperience !== '' ? +f.yearsOfExperience : 0,
@@ -364,7 +365,7 @@ export class Supervisors implements OnInit {
           Id: editingSupervisor.Id,
           PassportNumber: f.passportNumber.trim(),
           Nationality: f.nationality.trim(),
-          DateOfBirth: f.dateOfBirth ? new Date(f.dateOfBirth).toISOString() : '',
+          DateOfBirth: toDateOnlyIso(f.dateOfBirth),
           Gender: f.gender !== '' ? +f.gender : 0,
           Specialization: f.specialization.trim(),
           YearsOfExperience: f.yearsOfExperience !== '' ? +f.yearsOfExperience : 0,
@@ -409,7 +410,6 @@ export class Supervisors implements OnInit {
       (this.editingSupervisor() || (f.campaignId && f.groupId)) &&
       f.passportNumber.trim() &&
       f.nationality.trim() &&
-      f.dateOfBirth        &&
       f.gender !== ''      &&
       f.languages.length > 0
     );

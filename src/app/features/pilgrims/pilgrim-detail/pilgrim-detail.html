@@ -48,7 +48,9 @@
             </span>
           </div>
           <div class="pd__meta-row">
-            <span><i class="pi pi-calendar"></i> {{ p.age }} {{ 'PILGRIM_DETAIL.AGE_UNIT' | translate }}</span>
+            @if (p.birthDate) {
+              <span><i class="pi pi-calendar"></i> {{ p.age }} {{ 'PILGRIM_DETAIL.AGE_UNIT' | translate }}</span>
+            }
             <span><i class="pi pi-globe"></i> {{ p.nationality }}</span>
             @if (p.location) {
               <span><i class="pi pi-map-marker"></i> {{ p.location }}</span>
