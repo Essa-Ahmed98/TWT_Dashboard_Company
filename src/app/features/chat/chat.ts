@@ -599,7 +599,9 @@ export class Chat implements OnInit, OnDestroy {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(msg => {
         if (msg.ConversationId === this.activeConvId()) {
-          // append to open chat window
+          // append to open chat window - the server can deliver the same message twice to the sender
+          // (e.g. caller + user group, or two open connections), so skip ids we already have
+          if (msg.Id && this.activeMessages().some(m => m.Id === msg.Id)) return;
           this.activeMessages.update(msgs => [...msgs, msg]);
           setTimeout(() => this.scrollToBottom(), 60);
 

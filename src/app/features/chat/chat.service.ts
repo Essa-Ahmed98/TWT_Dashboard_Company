@@ -115,11 +115,21 @@ export class ChatService implements OnDestroy {
 
   // ── SignalR ───────────────────────────────────────────────────────
 
-  async connect(): Promise<void> {
-    if (!this.isBrowser || this.hub) return;
+  private connecting: Promise<void> | null = null;
 
+  /** Opens the hub once. Two callers at the same time (layout + chat page) share one connection;
+   *  before, both passed the `this.hub` check while the import was loading and opened two
+   *  connections, so every message arrived twice. */
+  connect(): Promise<void> {
+    if (!this.isBrowser || this.hub) return Promise.resolve();
+    this.connecting ??= this.openHub().finally(() => (this.connecting = null));
+    return this.connecting;
+  }
+
+  private async openHub(): Promise<void> {
     // Dynamic import keeps SSR bundle clean
     const signalR = await import('@microsoft/signalr');
+    if (this.hub) return;
 
     this.hub = new signalR.HubConnectionBuilder()
       // the WebSocket handshake can't carry our Accept-Language header, so the language goes in the query
