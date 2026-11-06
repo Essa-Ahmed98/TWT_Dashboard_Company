@@ -767,7 +767,24 @@
     "STOP_RECORDING": "Остановить запись",
     "CANCEL_RECORDING": "Отмена записи",
     "VOICE_CALL": "Голосовой звонок",
-    "VIDEO_CALL": "Видеозвонок"
+    "VIDEO_CALL": "Видеозвонок",
+    "TAB_MANAGEMENT": "Руководство",
+    "NEW_CHAT": "Новый разговор",
+    "NEW_CHAT_SEARCH": "Поиск по имени или e-mail...",
+    "NO_RESULTS": "Ничего не найдено",
+    "SEARCH_FAILED": "Не удалось выполнить поиск, попробуйте ещё раз",
+    "CLOSE": "Закрыть",
+    "START_WITH_COLLEAGUE": "Начать разговор с коллегой",
+    "ROLES": {
+      "ADMIN": "Руководитель миссии",
+      "SPECIFIC": "Сотрудник",
+      "SUPERVISOR": "Супервизор",
+      "PILGRIM": "Паломник",
+      "FAMILY": "Семья",
+      "SUPER_ADMIN": "Администрация платформы",
+      "DELEGATE": "Делегат",
+      "TOUR_LEADER": "Руководитель группы"
+    }
   },
   "GEOFENCE": {
     "TITLE": "Зал Мониторинга",

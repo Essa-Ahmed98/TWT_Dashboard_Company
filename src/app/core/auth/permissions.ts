@@ -26,8 +26,12 @@ export type PermissionRule = string | readonly string[];
 
 const P = PERMISSIONS;
 
-/** Chat and calls follow the people they reach: pilgrims or supervisors (same rule as the chat server) */
-export const CHAT_PERMISSIONS = [P.Pilgrims, P.Supervisors] as const;
+/**
+ * The chat page is open to every account of the dashboard: the management chat (the company manager and its staff,
+ * inside the company) needs no permission. Chatting / calling pilgrims and supervisors follows these permissions
+ * (any one of them, same rule as the chat server); without them the page shows only the "management" tab.
+ */
+export const CHAT_FIELD_PERMISSIONS = [P.Pilgrims, P.Supervisors] as const;
 
 /** Groups and buses live inside a campaign, so their permissions also open the campaigns pages (read only) */
 export const CAMPAIGN_PAGE_PERMISSIONS = [P.Campaigns, P.Groups, P.Buses] as const;
@@ -52,6 +56,8 @@ export const STAFF_LANDING_ROUTES: { route: string; permission: PermissionRule }
   { route: '/devices', permission: P.Devices },
   { route: '/tour-leaders', permission: P.TourLeaders },
   { route: '/jamarat-delegates', permission: P.Delegates },
+  // every staff member has the management chat, so it is the last landing page (instead of "no access")
+  { route: '/chat', permission: [] },
 ];
 
 /** The permission picker of the staff page, grouped by kind of work */

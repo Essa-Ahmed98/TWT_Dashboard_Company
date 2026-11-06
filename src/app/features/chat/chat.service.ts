@@ -1,15 +1,17 @@
 import { Injectable, inject, PLATFORM_ID, NgZone, OnDestroy } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Subject } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, Subject, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../core/auth/services/auth';
-import { ApiResult } from '../../core/models/api.models';
+import { ApiResult, PaginatedResult } from '../../core/models/api.models';
 import {
   CallHubResult,
   CallPayload,
   CallTokenResult,
   CallType,
+  ChatContact,
+  ColleagueSearchResult,
   MessageCallInfo,
   ConversationResult,
   MessageResult,
@@ -21,7 +23,11 @@ import {
   UnreadCountResult,
   UploadAudioResult,
   UploadImageResult,
+  UserRole,
 } from './chat.model';
+
+/** How many people the "new conversation" search shows */
+const CONTACT_SEARCH_LIMIT = 20;
 
 @Injectable({ providedIn: 'root' })
 export class ChatService implements OnDestroy {
@@ -66,6 +72,39 @@ export class ChatService implements OnDestroy {
     return this.http.get<ApiResult<PilgrimSearchResult[]>>(
       `${environment.chatApiBase}/chat/search-pilgrims?searchText=${encodeURIComponent(query)}`,
     );
+  }
+
+  /** Managers and staff of my company (chat server, scoped by the company of the token) */
+  searchColleagues(query: string): Observable<ChatContact[]> {
+    const params = new HttpParams().set('searchText', query.trim()).set('limit', CONTACT_SEARCH_LIMIT);
+    return this.http
+      .get<ApiResult<ColleagueSearchResult[]>>(`${environment.chatApiBase}/chat/search-colleagues`, { params })
+      .pipe(map(res => (res.IsSuccess ? res.Data ?? [] : []).map(c => ({
+        UserId: c.UserId, DisplayName: c.DisplayName, Role: c.Role, IsOnline: c.IsOnline,
+      }))));
+  }
+
+  /** Pilgrims of my company (the same list as the pilgrims page - needs the Pilgrims permission) */
+  searchPilgrimContacts(query: string): Observable<ChatContact[]> {
+    let params = new HttpParams().set('PageNumber', 1).set('PageSize', CONTACT_SEARCH_LIMIT);
+    if (query.trim()) params = params.set('Search', query.trim());
+    return this.http
+      .get<ApiResult<PaginatedResult<{ UserId: string; DisplayName: string }>>>(`${environment.apiBase}/Pilgrims/for-admin`, { params })
+      .pipe(map(res => (res.IsSuccess ? res.Data?.Items ?? [] : [])
+        .filter(p => !!p.UserId)
+        .map(p => ({ UserId: p.UserId, DisplayName: p.DisplayName, Role: UserRole.Pilgrim, IsOnline: false }))));
+  }
+
+  /** Supervisors of my company (the same list as the supervisors page - needs the Supervisors permission) */
+  searchSupervisorContacts(query: string): Observable<ChatContact[]> {
+    let params = new HttpParams().set('PageNumber', 1).set('PageSize', CONTACT_SEARCH_LIMIT);
+    if (query.trim()) params = params.set('Search', query.trim());
+    return this.http
+      .get<ApiResult<{ Supervisors: PaginatedResult<{ UserId: string; DisplayName?: string; IsOnline: boolean }> }>>(
+        `${environment.apiBase}/Supervisors`, { params })
+      .pipe(map(res => (res.IsSuccess ? res.Data?.Supervisors?.Items ?? [] : [])
+        .filter(s => !!s.UserId)
+        .map(s => ({ UserId: s.UserId, DisplayName: s.DisplayName ?? '', Role: UserRole.Supervisor, IsOnline: s.IsOnline }))));
   }
 
   getUnreadCount() {

@@ -9,17 +9,39 @@ export enum UserRole {
   Pilgrim    = 0,
   Family     = 1,
   Supervisor = 2,
-  Admin      = 3,
+  Admin      = 3,   // مدير البعثة (مدير الشركة)
   SuperAdmin = 4,
+  Specific   = 5,   // موظف في الشركة (صلاحيات محددة)
+  Delegate   = 6,
+  TourLeader = 7,
 }
 
+/** Arabic fallback labels (the page itself uses ROLE_LABEL_KEYS through the translations) */
 export const ROLE_LABELS: Record<UserRole, string> = {
   [UserRole.Pilgrim]:    'حاج',
   [UserRole.Family]:     'عائلة',
   [UserRole.Supervisor]: 'مشرف',
-  [UserRole.Admin]:      'مسؤول',
-  [UserRole.SuperAdmin]: 'مسؤول عام',
+  [UserRole.Admin]:      'مدير البعثة',
+  [UserRole.SuperAdmin]: 'الإدارة العامة',
+  [UserRole.Specific]:   'موظف',
+  [UserRole.Delegate]:   'مندوب',
+  [UserRole.TourLeader]: 'قائد فوج',
 };
+
+/** i18n keys of the role labels shown in the chat (CHAT.ROLES.*) */
+export const ROLE_LABEL_KEYS: Record<UserRole, string> = {
+  [UserRole.Pilgrim]:    'CHAT.ROLES.PILGRIM',
+  [UserRole.Family]:     'CHAT.ROLES.FAMILY',
+  [UserRole.Supervisor]: 'CHAT.ROLES.SUPERVISOR',
+  [UserRole.Admin]:      'CHAT.ROLES.ADMIN',
+  [UserRole.SuperAdmin]: 'CHAT.ROLES.SUPER_ADMIN',
+  [UserRole.Specific]:   'CHAT.ROLES.SPECIFIC',
+  [UserRole.Delegate]:   'CHAT.ROLES.DELEGATE',
+  [UserRole.TourLeader]: 'CHAT.ROLES.TOUR_LEADER',
+};
+
+/** The "management" tab: the company manager, its staff (and the platform administration if such a chat exists) */
+export const MANAGEMENT_ROLES: readonly UserRole[] = [UserRole.Admin, UserRole.Specific, UserRole.SuperAdmin];
 
 // ── REST DTOs ────────────────────────────────────────────────────
 
@@ -80,6 +102,23 @@ export interface PilgrimSearchResult {
   Role: UserRole;
 }
 
+/** Returned by GET /api/chat/search-colleagues - managers and staff of the same company (never the caller) */
+export interface ColleagueSearchResult {
+  UserId: string;
+  DisplayName: string;
+  AvatarUrl: string | null;
+  Role: UserRole;
+  IsOnline: boolean;
+}
+
+/** One person in the "new conversation" search, whatever list it came from */
+export interface ChatContact {
+  UserId: string;
+  DisplayName: string;
+  Role: UserRole;
+  IsOnline: boolean;
+}
+
 /** Returned by GET /api/chat/unread-count */
 export interface UnreadCountResult {
   TotalUnreadCount: number;
@@ -93,7 +132,10 @@ export interface MessagesReadNotification {
 }
 
 // ── UI-only ──────────────────────────────────────────────────────
-export type ChatTab = 'all' | 'groups' | 'supervisors';
+export type ChatTab = 'all' | 'groups' | 'supervisors' | 'management';
+
+/** Who the "new conversation" search looks for */
+export type NewChatScope = 'pilgrims' | 'supervisors' | 'management';
 
 // ── Calls (voice / video over LiveKit) ───────────────────────────
 export enum CallType {

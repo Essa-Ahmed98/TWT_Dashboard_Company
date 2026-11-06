@@ -71,6 +71,96 @@ $shell-padding:  24px;   // shell__main padding
     padding: 0 5px;
   }
 
+  // ── New conversation ────────────────────────────────────────
+  &__new-btn {
+    margin-inline-start: auto;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid $border;
+    background: $bg-white;
+    color: $primary;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background .18s, color .18s, border-color .18s;
+
+    &:hover { background: $bg-page; }
+
+    &--open,
+    &--open:hover {
+      background: $primary;
+      border-color: $primary;
+      color: #fff;
+    }
+  }
+
+  &__new-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-muted;
+    margin-bottom: 8px;
+  }
+
+  &__scopes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  &__scope {
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid $border;
+    background: $bg-page;
+    font-family: inherit;
+    font-size: 12px;
+    color: $text-main;
+    cursor: pointer;
+    transition: background .18s, color .18s, border-color .18s;
+
+    &--active {
+      background: $primary;
+      border-color: $primary;
+      color: #fff;
+      font-weight: 600;
+    }
+  }
+
+  // role label: مدير البعثة / موظف / مشرف / حاج
+  &__role {
+    display: inline-block;
+    flex-shrink: 0;
+    padding: 1px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 18px;
+    white-space: nowrap;
+    background: rgba($primary, .08);
+    color: $primary;
+
+    &--management {
+      background: rgba(#b7450a, .1);
+      color: #b7450a;
+    }
+  }
+
+  &__empty-link {
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: $primary;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
   // ── Search ──────────────────────────────────────────────────
   &__search {
     position: relative;
@@ -177,6 +267,7 @@ $shell-padding:  24px;   // shell__main padding
     display: flex;
     justify-content: space-between;
     align-items: baseline;
+    gap: 6px;
     margin-bottom: 3px;
   }
 
@@ -193,7 +284,8 @@ $shell-padding:  24px;   // shell__main padding
     font-size: 11px;
     color: $text-muted;
     flex-shrink: 0;
-    margin-inline-start: 8px;
+    margin-inline-start: auto;
+    padding-inline-start: 2px;
   }
 
   &__item-bottom {
@@ -346,6 +438,8 @@ $shell-padding:  24px;   // shell__main padding
     font-size: 15px;
     font-weight: 700;
     color: $text-main;
+
+    .chat__role { margin-inline-start: 6px; vertical-align: middle; }
   }
 
   &__win-status {
@@ -651,6 +745,8 @@ $shell-padding:  24px;   // shell__main padding
   &__list-loading,
   &__list-empty {
     display: flex;
+    flex-wrap: wrap;
+    text-align: center;
     align-items: center;
     justify-content: center;
     padding: 32px 16px;

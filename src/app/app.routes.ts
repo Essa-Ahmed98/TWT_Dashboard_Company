@@ -4,7 +4,7 @@ import { authGuard } from './core/auth/guards/auth-guard';
 import { noAuthGuard } from './core/auth/guards/no-auth-guard';
 import { permissionGuard } from './core/auth/guards/permission-guard';
 import { AuthService } from './core/auth/services/auth';
-import { CAMPAIGN_PAGE_PERMISSIONS, CHAT_PERMISSIONS, PERMISSIONS as P, PermissionRule } from './core/auth/permissions';
+import { CAMPAIGN_PAGE_PERMISSIONS, PERMISSIONS as P, PermissionRule } from './core/auth/permissions';
 
 /** A feature page that needs a permission (the company manager passes every check) */
 const needs = (permission: PermissionRule) => ({ canActivate: [permissionGuard], data: { permission } });
@@ -109,7 +109,7 @@ export const routes: Routes = [
       },
       {
         path: 'chat',
-        ...needs(CHAT_PERMISSIONS),
+        // every company account: the management chat needs no permission (pilgrims / supervisors inside follow CHAT_FIELD_PERMISSIONS)
         loadComponent: () =>
           import('./features/chat/chat').then((m) => m.Chat),
       },

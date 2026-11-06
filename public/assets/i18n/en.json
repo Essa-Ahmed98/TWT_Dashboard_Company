@@ -767,7 +767,24 @@
     "STOP_RECORDING": "Stop recording",
     "CANCEL_RECORDING": "Cancel recording",
     "VOICE_CALL": "Voice call",
-    "VIDEO_CALL": "Video call"
+    "VIDEO_CALL": "Video call",
+    "TAB_MANAGEMENT": "Management",
+    "NEW_CHAT": "New conversation",
+    "NEW_CHAT_SEARCH": "Search by name or email...",
+    "NO_RESULTS": "No results",
+    "SEARCH_FAILED": "Search failed, please try again",
+    "CLOSE": "Close",
+    "START_WITH_COLLEAGUE": "Start a conversation with a colleague",
+    "ROLES": {
+      "ADMIN": "Mission manager",
+      "SPECIFIC": "Staff",
+      "SUPERVISOR": "Supervisor",
+      "PILGRIM": "Pilgrim",
+      "FAMILY": "Family",
+      "SUPER_ADMIN": "Platform administration",
+      "DELEGATE": "Delegate",
+      "TOUR_LEADER": "Tour leader"
+    }
   },
   "GEOFENCE": {
     "TITLE": "Monitoring Room",

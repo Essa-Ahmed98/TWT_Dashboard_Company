@@ -12,24 +12,32 @@ import {
   PLATFORM_ID,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Observable, Subject, catchError, debounceTime, of, switchMap, tap } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { isPlatformBrowser, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../core/auth/services/auth';
+import { CHAT_FIELD_PERMISSIONS, PERMISSIONS } from '../../core/auth/permissions';
 import { ChatService } from './chat.service';
 import { CallService } from './call/call.service';
 import {
   CallStatus,
   CallType,
+  ChatContact,
   ChatTab,
   ConversationResult,
+  MANAGEMENT_ROLES,
   MessageResult,
   MessageType,
-  ROLE_LABELS,
+  NewChatScope,
+  ROLE_LABEL_KEYS,
   UserRole,
 } from './chat.model';
+
+interface ChatTabDef { key: ChatTab; labelKey: string; }
+interface NewChatScopeDef { key: NewChatScope; labelKey: string; }
 
 @Component({
   selector: 'app-chat',
@@ -62,6 +70,37 @@ export class Chat implements OnInit, OnDestroy {
   nextCursor     = signal<string | null>(null);
 
   activeTab    = signal<ChatTab>('all');
+
+  // ── Who I may chat with ────────────────────────────────────────
+  // Management chat (the company manager and its staff) is open to every account of the dashboard.
+  // Pilgrims / supervisors: the manager always, staff with the Pilgrims or Supervisors permission
+  // (the same rule as the chat server). The search lists follow the pages they come from.
+  readonly canFieldChat         = computed(() => this.auth.hasPermission(CHAT_FIELD_PERMISSIONS));
+  readonly canSearchPilgrims    = computed(() => this.auth.hasPermission(PERMISSIONS.Pilgrims));
+  readonly canSearchSupervisors = computed(() => this.auth.hasPermission(PERMISSIONS.Supervisors));
+
+  readonly tabs = computed<ChatTabDef[]>(() => [
+    { key: 'all', labelKey: 'CHAT.TAB_ALL' },
+    ...(this.canFieldChat() ? [
+      { key: 'groups' as const,      labelKey: 'CHAT.TAB_PILGRIMS' },
+      { key: 'supervisors' as const, labelKey: 'CHAT.TAB_SUPERVISORS' },
+    ] : []),
+    { key: 'management', labelKey: 'CHAT.TAB_MANAGEMENT' },
+  ]);
+
+  // ── New conversation (search people) ───────────────────────────
+  readonly newChatScopes = computed<NewChatScopeDef[]>(() => [
+    ...(this.canSearchPilgrims()    ? [{ key: 'pilgrims' as const,    labelKey: 'CHAT.TAB_PILGRIMS' }] : []),
+    ...(this.canSearchSupervisors() ? [{ key: 'supervisors' as const, labelKey: 'CHAT.TAB_SUPERVISORS' }] : []),
+    { key: 'management', labelKey: 'CHAT.TAB_MANAGEMENT' },
+  ]);
+  newChatOpen    = signal(false);
+  newChatScope   = signal<NewChatScope>('management');
+  newChatQuery   = signal('');
+  newChatResults = signal<ChatContact[]>([]);
+  newChatLoading = signal(false);
+  newChatError   = signal(false);
+  private readonly newChatSearch$ = new Subject<{ scope: NewChatScope; query: string; immediate: boolean }>();
   newMessage   = signal('');
   searchQuery  = signal('');
   sendError    = signal<string | null>(null);
@@ -97,7 +136,8 @@ export class Chat implements OnInit, OnDestroy {
       const matchTab =
         tab === 'all' ||
         (tab === 'supervisors' && c.FriendRole === UserRole.Supervisor) ||
-        (tab === 'groups'      && c.FriendRole === UserRole.Pilgrim);
+        (tab === 'groups'      && c.FriendRole === UserRole.Pilgrim) ||
+        (tab === 'management'  && MANAGEMENT_ROLES.includes(c.FriendRole));
       return matchSearch && matchTab;
     });
   });
@@ -112,6 +152,7 @@ export class Chat implements OnInit, OnDestroy {
 
   // ── Lifecycle ──────────────────────────────────────────────────
   ngOnInit(): void {
+    this.subscribeToNewChatSearch();
     this.loadConversations();
     if (this.isBrowser) {
       this.chatService.connect();
@@ -152,7 +193,7 @@ export class Chat implements OnInit, OnDestroy {
       });
   }
 
-  openConversationByUserId(userId: string, displayName?: string): void {
+  openConversationByUserId(userId: string, displayName?: string, role: UserRole = UserRole.Pilgrim): void {
     if (this.activeFriendId() === userId && this.loadingMsgs()) return;
 
     this.conversations.update(list => {
@@ -161,7 +202,7 @@ export class Chat implements OnInit, OnDestroy {
         ConversationId: '',
         FriendId: userId,
         FriendDisplayName: displayName || userId,
-        FriendRole: UserRole.Pilgrim,
+        FriendRole: role,
         IsOnline: false,
         LastMessagePreview: '',
         LastMessageSenderId: '',
@@ -182,7 +223,7 @@ export class Chat implements OnInit, OnDestroy {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: res => {
-          if (!res.IsSuccess) { this.loadingMsgs.set(false); return; }
+          if (!res.IsSuccess) { this.dropPlaceholder(userId); return; }
           const d = res.Data;
           this.activeConvId.set(d.ConversationId);
           this.activeMessages.set(d.Messages);
@@ -202,7 +243,7 @@ export class Chat implements OnInit, OnDestroy {
               ConversationId: d.ConversationId,
               FriendId: userId,
               FriendDisplayName: displayName || userId,
-              FriendRole: UserRole.Pilgrim,
+              FriendRole: role,
               IsOnline: d.FriendIsOnline,
               LastMessagePreview: '',
               LastMessageSenderId: '',
@@ -215,8 +256,86 @@ export class Chat implements OnInit, OnDestroy {
           this.chatService.markAsRead(d.ConversationId).catch(() => {});
           setTimeout(() => this.scrollToBottom(), 60);
         },
-        error: () => this.loadingMsgs.set(false),
+        // e.g. 403: a person this account may not chat with - do not leave an empty placeholder behind
+        error: () => this.dropPlaceholder(userId),
       });
+  }
+
+  /** Opening failed: remove the placeholder row of a conversation that does not exist yet */
+  private dropPlaceholder(userId: string): void {
+    this.loadingMsgs.set(false);
+    this.conversations.update(list => list.filter(c => c.FriendId !== userId || !!c.ConversationId));
+    if (this.activeFriendId() === userId) this.activeFriendId.set(null);
+  }
+
+  // ── New conversation ───────────────────────────────────────────
+  toggleNewChat(): void {
+    if (this.newChatOpen()) { this.closeNewChat(); return; }
+    const scopes = this.newChatScopes();
+    if (!scopes.some(s => s.key === this.newChatScope())) this.newChatScope.set(scopes[0].key);
+    this.newChatQuery.set('');
+    this.newChatOpen.set(true);
+    this.runNewChatSearch(true);
+  }
+
+  closeNewChat(): void {
+    this.newChatOpen.set(false);
+    this.newChatResults.set([]);
+    this.newChatQuery.set('');
+  }
+
+  setNewChatScope(scope: NewChatScope): void {
+    if (this.newChatScope() === scope) return;
+    this.newChatScope.set(scope);
+    this.newChatResults.set([]);
+    this.runNewChatSearch(true);
+  }
+
+  onNewChatQuery(value: string): void {
+    this.newChatQuery.set(value);
+    this.runNewChatSearch(false);
+  }
+
+  pickContact(contact: ChatContact): void {
+    this.closeNewChat();
+    this.searchQuery.set('');
+    // show the conversation under its own tab (or "all" when that tab is hidden)
+    if (this.isManagement(contact.Role)) this.activeTab.set('management');
+    else if (!this.canFieldChat()) this.activeTab.set('all');
+    else this.activeTab.set(contact.Role === UserRole.Supervisor ? 'supervisors' : 'groups');
+
+    const existing = this.conversations().find(c => c.FriendId === contact.UserId && !!c.ConversationId);
+    if (existing) this.selectConversation(existing);
+    else this.openConversationByUserId(contact.UserId, contact.DisplayName, contact.Role);
+  }
+
+  private runNewChatSearch(immediate: boolean): void {
+    this.newChatSearch$.next({ scope: this.newChatScope(), query: this.newChatQuery(), immediate });
+  }
+
+  private subscribeToNewChatSearch(): void {
+    this.newChatSearch$
+      .pipe(
+        // typing waits a moment; opening the panel or switching the scope searches at once
+        switchMap(req => (req.immediate ? of(req) : of(req).pipe(debounceTime(300)))),
+        tap(() => { this.newChatLoading.set(true); this.newChatError.set(false); }),
+        switchMap(req => this.searchContacts(req.scope, req.query).pipe(
+          catchError(() => { this.newChatError.set(true); return of([] as ChatContact[]); }),
+        )),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(results => {
+        this.newChatLoading.set(false);
+        this.newChatResults.set(results);
+      });
+  }
+
+  private searchContacts(scope: NewChatScope, query: string): Observable<ChatContact[]> {
+    switch (scope) {
+      case 'pilgrims':    return this.chatService.searchPilgrimContacts(query);
+      case 'supervisors': return this.chatService.searchSupervisorContacts(query);
+      default:            return this.chatService.searchColleagues(query);
+    }
   }
 
   selectConversation(conv: ConversationResult): void {
@@ -596,8 +715,13 @@ export class Chat implements OnInit, OnDestroy {
     return palette[Math.abs(hash) % palette.length];
   }
 
-  getRoleLabel(role: UserRole): string {
-    return ROLE_LABELS[role] ?? '';
+  /** i18n key of a role label: مدير البعثة / موظف / مشرف / حاج ... */
+  roleLabelKey(role: UserRole): string {
+    return ROLE_LABEL_KEYS[role] ?? '';
+  }
+
+  isManagement(role: UserRole): boolean {
+    return MANAGEMENT_ROLES.includes(role);
   }
 
   formatTime(dateStr: string): string {

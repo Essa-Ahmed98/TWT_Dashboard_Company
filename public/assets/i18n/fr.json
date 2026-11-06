@@ -767,7 +767,24 @@
     "STOP_RECORDING": "Arrêter enregistrement",
     "CANCEL_RECORDING": "Annuler enregistrement",
     "VOICE_CALL": "Appel vocal",
-    "VIDEO_CALL": "Appel vidéo"
+    "VIDEO_CALL": "Appel vidéo",
+    "TAB_MANAGEMENT": "Direction",
+    "NEW_CHAT": "Nouvelle conversation",
+    "NEW_CHAT_SEARCH": "Rechercher par nom ou e-mail...",
+    "NO_RESULTS": "Aucun résultat",
+    "SEARCH_FAILED": "La recherche a échoué, réessayez",
+    "CLOSE": "Fermer",
+    "START_WITH_COLLEAGUE": "Démarrer une conversation avec un collègue",
+    "ROLES": {
+      "ADMIN": "Directeur de la mission",
+      "SPECIFIC": "Employé",
+      "SUPERVISOR": "Superviseur",
+      "PILGRIM": "Pèlerin",
+      "FAMILY": "Famille",
+      "SUPER_ADMIN": "Administration de la plateforme",
+      "DELEGATE": "Délégué",
+      "TOUR_LEADER": "Chef de groupe"
+    }
   },
   "GEOFENCE": {
     "TITLE": "Salle de Surveillance",

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, computed, inject, input } f
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../core/auth/services/auth';
-import { CAMPAIGN_PAGE_PERMISSIONS, CHAT_PERMISSIONS, PERMISSIONS as P, PermissionRule } from '../../core/auth/permissions';
+import { CAMPAIGN_PAGE_PERMISSIONS, PERMISSIONS as P, PermissionRule } from '../../core/auth/permissions';
 import { SettingsService } from '../../features/settings/settings.service';
 
 export interface NavItem {
@@ -63,7 +63,7 @@ export class Sidenav implements OnInit {
     {
       labelKey: 'SIDENAV.TOOLS',
       items: [
-        { labelKey: 'SIDENAV.CHAT',          icon: 'pi pi-comments',           route: '/chat',          permission: CHAT_PERMISSIONS },
+        { labelKey: 'SIDENAV.CHAT',          icon: 'pi pi-comments',           route: '/chat' },   // management chat: every account
         { labelKey: 'SIDENAV.TASKS',         icon: 'pi pi-briefcase',          route: '/tasks',         permission: P.SupervisorTasks },
         { labelKey: 'SIDENAV.NOTIFICATIONS', icon: 'pi pi-bell',               route: '/notifications', permission: P.Notifications },
         { labelKey: 'SIDENAV.BROADCAST',     icon: 'pi pi-send',               route: '/broadcast',     permission: P.Broadcast },

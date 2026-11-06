@@ -12,7 +12,40 @@
         @if (totalUnread() > 0) {
           <span class="chat__sidebar-badge">{{ totalUnread() }}</span>
         }
+        <!-- Start a conversation with a pilgrim / supervisor / colleague -->
+        <button type="button" class="chat__new-btn" [class.chat__new-btn--open]="newChatOpen()"
+                (click)="toggleNewChat()"
+                [title]="(newChatOpen() ? 'CHAT.CLOSE' : 'CHAT.NEW_CHAT') | translate"
+                [attr.aria-label]="(newChatOpen() ? 'CHAT.CLOSE' : 'CHAT.NEW_CHAT') | translate"
+                [attr.aria-expanded]="newChatOpen()">
+          <i class="pi" [class.pi-pen-to-square]="!newChatOpen()" [class.pi-times]="newChatOpen()"></i>
+        </button>
       </div>
+
+      @if (newChatOpen()) {
+        <!-- New conversation: who to look for, then search by name -->
+        <div class="chat__new-title">{{ 'CHAT.NEW_CHAT' | translate }}</div>
+        @if (newChatScopes().length > 1) {
+          <div class="chat__scopes" role="tablist">
+            @for (scope of newChatScopes(); track scope.key) {
+              <button type="button" role="tab" class="chat__scope"
+                      [class.chat__scope--active]="newChatScope() === scope.key"
+                      [attr.aria-selected]="newChatScope() === scope.key"
+                      (click)="setNewChatScope(scope.key)">{{ scope.labelKey | translate }}</button>
+            }
+          </div>
+        }
+        <div class="chat__search">
+          <i class="pi pi-search chat__search-icon"></i>
+          <input
+            class="chat__search-input"
+            type="text"
+            [placeholder]="'CHAT.NEW_CHAT_SEARCH' | translate"
+            [value]="newChatQuery()"
+            (input)="onNewChatQuery($any($event.target).value)"
+          />
+        </div>
+      } @else {
 
       <!-- Search -->
       <div class="chat__search">
@@ -26,13 +59,44 @@
         />
       </div>
 
-      <!-- Tabs -->
+      <!-- Tabs (pilgrims / supervisors only for accounts that may chat with them) -->
       <div class="chat__tabs">
-        <button class="chat__tab" [class.chat__tab--active]="activeTab() === 'all'"         (click)="setTab('all')">{{ 'CHAT.TAB_ALL' | translate }}</button>
-        <button class="chat__tab" [class.chat__tab--active]="activeTab() === 'groups'"      (click)="setTab('groups')">{{ 'CHAT.TAB_PILGRIMS' | translate }}</button>
-        <button class="chat__tab" [class.chat__tab--active]="activeTab() === 'supervisors'" (click)="setTab('supervisors')">{{ 'CHAT.TAB_SUPERVISORS' | translate }}</button>
+        @for (tab of tabs(); track tab.key) {
+          <button class="chat__tab" [class.chat__tab--active]="activeTab() === tab.key" (click)="setTab(tab.key)">{{ tab.labelKey | translate }}</button>
+        }
       </div>
+      }
     </div>
+
+    @if (newChatOpen()) {
+      <!-- New conversation results -->
+      <ul class="chat__list">
+        @if (newChatLoading()) {
+          <li class="chat__list-loading"><i class="pi pi-spin pi-spinner"></i></li>
+        } @else if (newChatError()) {
+          <li class="chat__list-empty">{{ 'CHAT.SEARCH_FAILED' | translate }}</li>
+        } @else if (newChatResults().length === 0) {
+          <li class="chat__list-empty">{{ 'CHAT.NO_RESULTS' | translate }}</li>
+        } @else {
+          @for (contact of newChatResults(); track contact.UserId) {
+            <li class="chat__item" (click)="pickContact(contact)">
+              <div class="chat__avatar" [style.background-color]="getAvatarColor(contact.UserId)">
+                {{ contact.DisplayName.charAt(0) }}
+                <span class="chat__avatar-dot" [class.chat__avatar-dot--online]="contact.IsOnline"></span>
+              </div>
+              <div class="chat__item-body">
+                <div class="chat__item-top">
+                  <span class="chat__item-name">{{ contact.DisplayName }}</span>
+                </div>
+                <div class="chat__item-bottom">
+                  <span class="chat__role" [class.chat__role--management]="isManagement(contact.Role)">{{ roleLabelKey(contact.Role) | translate }}</span>
+                </div>
+              </div>
+            </li>
+          }
+        }
+      </ul>
+    } @else {
 
     <!-- Conversation list -->
     <ul class="chat__list">
@@ -42,7 +106,12 @@
           <i class="pi pi-spin pi-spinner"></i>
         </li>
       } @else if (filteredConversations().length === 0) {
-        <li class="chat__list-empty">{{ 'CHAT.EMPTY_CONVS' | translate }}</li>
+        <li class="chat__list-empty">
+          {{ 'CHAT.EMPTY_CONVS' | translate }}
+          @if (activeTab() === 'management') {
+            <button type="button" class="chat__empty-link" (click)="toggleNewChat()">{{ 'CHAT.START_WITH_COLLEAGUE' | translate }}</button>
+          }
+        </li>
       } @else {
         @for (conv of filteredConversations(); track conv.ConversationId) {
           <li
@@ -60,6 +129,9 @@
             <div class="chat__item-body">
               <div class="chat__item-top">
                 <span class="chat__item-name">{{ conv.FriendDisplayName }}</span>
+                @if (isManagement(conv.FriendRole)) {
+                  <span class="chat__role chat__role--management">{{ roleLabelKey(conv.FriendRole) | translate }}</span>
+                }
                 <span class="chat__item-time">{{ lastMessageTime(conv) }}</span>
               </div>
               <div class="chat__item-bottom">
@@ -73,6 +145,7 @@
         }
       }
     </ul>
+    }
 
   </aside>
 
@@ -99,7 +172,10 @@
               <span class="chat__avatar-dot" [class.chat__avatar-dot--online]="conv.IsOnline"></span>
             </div>
             <div class="chat__win-info">
-              <span class="chat__win-name">{{ conv.FriendDisplayName }}</span>
+              <span class="chat__win-name">
+                {{ conv.FriendDisplayName }}
+                <span class="chat__role" [class.chat__role--management]="isManagement(conv.FriendRole)">{{ roleLabelKey(conv.FriendRole) | translate }}</span>
+              </span>
               <span class="chat__win-status" [class.chat__win-status--online]="conv.IsOnline">
                 {{ (conv.IsOnline ? 'CHAT.ONLINE' : 'CHAT.OFFLINE') | translate }}
               </span>

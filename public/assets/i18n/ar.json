@@ -767,7 +767,24 @@
     "STOP_RECORDING": "إيقاف التسجيل",
     "CANCEL_RECORDING": "إلغاء التسجيل",
     "VOICE_CALL": "مكالمة صوتية",
-    "VIDEO_CALL": "مكالمة فيديو"
+    "VIDEO_CALL": "مكالمة فيديو",
+    "TAB_MANAGEMENT": "الإدارة",
+    "NEW_CHAT": "محادثة جديدة",
+    "NEW_CHAT_SEARCH": "ابحث بالاسم أو البريد الإلكتروني...",
+    "NO_RESULTS": "لا توجد نتائج",
+    "SEARCH_FAILED": "تعذر البحث، حاول مرة أخرى",
+    "CLOSE": "إغلاق",
+    "START_WITH_COLLEAGUE": "ابدأ محادثة مع زميل",
+    "ROLES": {
+      "ADMIN": "مدير البعثة",
+      "SPECIFIC": "موظف",
+      "SUPERVISOR": "مشرف",
+      "PILGRIM": "حاج",
+      "FAMILY": "عائلة",
+      "SUPER_ADMIN": "الإدارة العامة",
+      "DELEGATE": "مندوب",
+      "TOUR_LEADER": "قائد فوج"
+    }
   },
   "GEOFENCE": {
     "TITLE": "غرفة المراقبة",
