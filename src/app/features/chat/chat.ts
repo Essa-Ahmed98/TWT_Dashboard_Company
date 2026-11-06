@@ -48,6 +48,7 @@ interface NewChatScopeDef { key: NewChatScope; labelKey: string; }
 })
 export class Chat implements OnInit, OnDestroy {
   @ViewChild('msgsEl') msgsEl!: ElementRef<HTMLDivElement>;
+  @ViewChild('msgInput') msgInput?: ElementRef<HTMLInputElement>;
 
   readonly MessageType = MessageType;
   readonly CallType = CallType;
@@ -413,6 +414,9 @@ export class Chat implements OnInit, OnDestroy {
     if (!text || !friendId) return;
 
     this.newMessage.set('');
+    // clear the box itself too: when Enter comes right after typing/pasting, the [value] binding
+    // has not caught up yet, sees '' -> '' and would leave the sent text in the box
+    if (this.msgInput) this.msgInput.nativeElement.value = '';
     this.sendError.set(null);
 
     this.chatService.sendMessage(friendId, text).catch(err => {
