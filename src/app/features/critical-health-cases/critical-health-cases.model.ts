@@ -10,11 +10,12 @@ export interface HealthConditionItem {
   DisplayName: string;
   Nationality: string;
   DateOfBirth: string;
-  SystolicPressure: number;
-  DiastolicPressure: number;
-  HeartRate: number;
-  Temperature: number;
-  OxygenSaturation: number;
+  // vitals are nullable on the server (a reading may not include every value)
+  SystolicPressure: number | null;
+  DiastolicPressure: number | null;
+  HeartRate: number | null;
+  Temperature: number | null;
+  OxygenSaturation: number | null;
   MeasuredAt: string;
   Longitude: number;
   Latitude: number;

@@ -1,4 +1,4 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, computed, effect, inject, signal, untracked } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
@@ -14,6 +14,17 @@ export class SettingsService {
 
   private readonly _settings = signal<CompanySettingsApiItem | null>(null);
   private readonly _loading = signal(false);
+  private lastCompanyId: string | null = this.auth.currentUser()?.companyId ?? null;
+
+  constructor() {
+    // drop the cached settings on logout or when another company logs in
+    effect(() => {
+      const companyId = this.auth.currentUser()?.companyId ?? null;
+      if (companyId === this.lastCompanyId) return;
+      this.lastCompanyId = companyId;
+      untracked(() => this._settings.set(null));
+    });
+  }
 
   readonly settings = this._settings.asReadonly();
   readonly loading = this._loading.asReadonly();

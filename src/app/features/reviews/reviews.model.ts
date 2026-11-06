@@ -33,12 +33,13 @@ export interface ReviewsSummaryApiData {
   PositiveCount: number;
   NegativeCount: number;
   Distribution: ReviewDistributionApiItem[];
+  /** per-category averages live inside Ratings (RatingsResponseDto.Categories) */
+  Categories?: ReviewCategorySummaryApiItem[] | null;
 }
 
 export interface ReviewsApiData {
   Reviews: PaginatedResult<ReviewApiItem>;
   Ratings: ReviewsSummaryApiData;
-  Categories: ReviewCategorySummaryApiItem[];
 }
 
 export interface ReviewsQuery {

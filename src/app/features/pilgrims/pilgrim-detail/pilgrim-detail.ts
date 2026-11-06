@@ -127,16 +127,19 @@ export class PilgrimDetail {
     this.saving.set(true);
     this.service.updatePilgrim({
       Id:              data.id,
-      HajjType:        data.hajjType,
+      HajjType:        data.hajjType ?? null,
       PassportNumber:  data.passportNumber,
       Nationality:     data.nationality,
       DateOfBirth:     toDateOnlyIso(data.birthDate),
-      Gender:          data.gender,
+      Gender:          data.gender ?? null,
       IDNumber:        data.idNumber,
       Accommodation:   data.accommodation,
       NuskCardNumber:  data.nusukCard,
       PermitNumber:    data.permitNumber,
-      BloodType:       data.bloodTypeValue,
+      BloodType:       data.bloodTypeValue ?? null,
+      // the command overwrites every field - send the loaded location so saving doesn't wipe it
+      AccommodationLatitude:  data.accommodationLat ?? null,
+      AccommodationLongitude: data.accommodationLng ?? null,
       Email:           data.email,
       DisplayName:     data.name,
       Phone:           data.phone,

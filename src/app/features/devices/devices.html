@@ -8,6 +8,9 @@
 @if (showLinkModal()) {
   <div class="modal-backdrop" (click)="closeLinkModal()"></div>
 }
+@if (deleteTarget()) {
+  <div class="modal-backdrop" (click)="cancelDelete()"></div>
+}
 @if (showPilgrimDrop()) {
   <div class="backdrop" (click)="showPilgrimDrop.set(false)"></div>
 }
@@ -117,7 +120,8 @@
                     class="row-actions__btn row-actions__btn--danger"
                     [pTooltip]="'DEVICES.DELETE' | translate"
                     tooltipPosition="top"
-                    (click)="deleteDevice(d.Id)"
+                    [disabled]="deleting()"
+                    (click)="askDeleteDevice(d)"
                   >
                     <i class="pi pi-trash"></i>
                   </button>
@@ -234,6 +238,41 @@
           }
         </div>
       </section>
+
+      @if (importResult(); as result) {
+        <section class="import-result">
+          <p class="import-result__summary">
+            {{ 'DEVICES.IMPORT.RESULT_SUMMARY' | translate: { success: result.SuccessCount, total: result.TotalRows } }}
+          </p>
+          <p class="import-result__title">{{ 'DEVICES.IMPORT.RESULT_ERRORS' | translate }}</p>
+          <ul class="import-result__errors">
+            @for (e of result.Errors; track $index) {
+              <li>{{ e }}</li>
+            }
+          </ul>
+        </section>
+      }
+    </div>
+  </div>
+}
+
+@if (deleteTarget(); as target) {
+  <div class="dialog" (click)="$event.stopPropagation()">
+    <div class="dialog__header">
+      <div>
+        <h2 class="dialog__title">{{ 'DEVICES.DELETE_CONFIRM_TITLE' | translate }}</h2>
+        <p class="dialog__sub">{{ 'DEVICES.DELETE_CONFIRM_TEXT' | translate: { imei: target.ImeiNumber } }}</p>
+      </div>
+      <button class="dialog__close" (click)="cancelDelete()" [disabled]="deleting()">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <div class="dialog__footer">
+      <button class="btn btn--outline" (click)="cancelDelete()" [disabled]="deleting()">{{ 'COMMON.CANCEL' | translate }}</button>
+      <button class="btn btn--danger" (click)="confirmDelete()" [disabled]="deleting()">
+        @if (deleting()) { <i class="pi pi-spin pi-spinner"></i> } @else { {{ 'DEVICES.DELETE_CONFIRM_BTN' | translate }} }
+      </button>
     </div>
   </div>
 }
@@ -254,14 +293,14 @@
     <div class="dialog__body">
       <div class="form-field">
         <label class="form-label">{{ 'DEVICES.FORM.IMEI' | translate }} <span class="form-req">*</span></label>
-        <input class="form-input" type="text"
+        <input class="form-input" type="text" maxlength="50"
           [value]="formData().imeiNumber"
           (input)="patchForm({ imeiNumber: $any($event.target).value })" />
       </div>
 
       <div class="form-field">
         <label class="form-label">{{ 'DEVICES.FORM.SIM' | translate }} <span class="form-req">*</span></label>
-        <input class="form-input" type="text"
+        <input class="form-input" type="text" maxlength="50"
           [value]="formData().simNumber"
           (input)="patchForm({ simNumber: $any($event.target).value })" />
       </div>

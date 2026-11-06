@@ -236,7 +236,8 @@ export class Complaints implements OnInit {
   }
 
   selectSupervisorFilter(supervisor: SupervisorDropdownItem): void {
-    this.selectedSupervisorId.set(supervisor.Id);
+    // the complaints list filters AssignerId, which holds the supervisor's user id
+    this.selectedSupervisorId.set(supervisor.UserId);
     this.selectedSupervisorName.set(supervisor.Name);
     this.openSupervisorDrop.set(false);
     this.currentPage.set(1);

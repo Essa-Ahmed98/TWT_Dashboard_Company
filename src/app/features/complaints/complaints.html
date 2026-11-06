@@ -159,10 +159,10 @@
               @for (supervisor of supervisorList(); track supervisor.Id) {
                 <li
                   class="dropdown__item"
-                  [class.dropdown__item--active]="selectedSupervisorId() === supervisor.Id"
+                  [class.dropdown__item--active]="selectedSupervisorId() === supervisor.UserId"
                   (click)="selectSupervisorFilter(supervisor)"
                 >
-                  @if (selectedSupervisorId() === supervisor.Id) { <i class="pi pi-check"></i> }
+                  @if (selectedSupervisorId() === supervisor.UserId) { <i class="pi pi-check"></i> }
                   {{ supervisor.Name }}
                 </li>
               }

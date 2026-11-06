@@ -155,6 +155,7 @@
             class="broadcast__textarea"
             [placeholder]="'BROADCAST.MESSAGE_PLACEHOLDER' | translate"
             rows="7"
+            maxlength="4000"
             [value]="content()"
             (input)="content.set($any($event.target).value)"
             [disabled]="submitting() || uploadingMedia()"

@@ -192,6 +192,15 @@
           <span class="form-hint">{{ bodyCount() }}/500</span>
         </div>
 
+        <div class="form-field">
+          <label class="urgent-toggle">
+            <input type="checkbox"
+                   [checked]="isUrgent()"
+                   (change)="isUrgent.set($any($event.target).checked)" />
+            <span class="form-label">{{ 'NOTIFICATIONS.URGENT' | translate }}</span>
+          </label>
+        </div>
+
         @if (title().trim() || body().trim()) {
           <div class="form-field">
             <label class="form-label">{{ 'NOTIFICATIONS.PREVIEW' | translate }}</label>

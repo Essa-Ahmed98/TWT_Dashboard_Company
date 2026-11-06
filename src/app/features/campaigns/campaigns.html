@@ -12,7 +12,7 @@
     <div class="campaigns__title">
       <h1 class="campaigns__title-text">{{ 'CAMPAIGNS.TITLE' | translate }}</h1>
       <span class="campaigns__title-count">
-        {{ campaigns().length }} {{ 'CAMPAIGNS.CENTER_UNIT' | translate }} &bull; {{ totalGroups() }} {{ 'CAMPAIGNS.GROUP_UNIT' | translate }}
+        {{ totalCount() }} {{ 'CAMPAIGNS.CENTER_UNIT' | translate }} &bull; {{ totalGroups() }} {{ 'CAMPAIGNS.GROUP_UNIT' | translate }}
       </span>
     </div>
     <div class="campaigns__actions">
@@ -259,14 +259,14 @@
       <div class="form-row">
         <div class="form-field">
           <label class="form-label">{{ 'CAMPAIGNS.FORM.CENTER_NAME' | translate }} <span class="form-req">*</span></label>
-          <input class="form-input" type="text" [placeholder]="'CAMPAIGNS.FORM.CENTER_NAME_PLACEHOLDER' | translate"
+          <input class="form-input" type="text" maxlength="100" [placeholder]="'CAMPAIGNS.FORM.CENTER_NAME_PLACEHOLDER' | translate"
             [value]="formData().name"
             [disabled]="submitting()"
             (input)="patchForm({ name: $any($event.target).value })" />
         </div>
         <div class="form-field">
           <label class="form-label">{{ 'CAMPAIGNS.FORM.CENTER_NUMBER' | translate }} <span class="form-req">*</span></label>
-          <input class="form-input" type="text" [placeholder]="'CAMPAIGNS.FORM.CENTER_NUMBER' | translate"
+          <input class="form-input" type="text" maxlength="100" [placeholder]="'CAMPAIGNS.FORM.CENTER_NUMBER' | translate"
             [value]="formData().number"
             [disabled]="submitting()"
             (input)="patchForm({ number: $any($event.target).value })" />

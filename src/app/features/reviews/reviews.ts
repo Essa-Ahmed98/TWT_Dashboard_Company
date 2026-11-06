@@ -72,7 +72,7 @@ export class Reviews {
   readonly selectedGroupId = signal('');
   readonly selectedGroupName = signal('');
   readonly selectedCategory = signal<number | undefined>(undefined);
-  readonly selectedSortBy = signal(0);
+  readonly selectedSortBy = signal(1); // ReviewSortOption: 0 = Rating, 1 = CreatedAt (newest first)
 
   readonly campaignList = signal<CampaignApiItem[]>([]);
   readonly campaignLoading = signal(false);
@@ -380,7 +380,7 @@ export class Reviews {
             ...(res.Data?.Ratings ?? {}),
             Distribution: res.Data?.Ratings?.Distribution ?? [],
           });
-          this.categoriesSummary.set(res.Data?.Categories ?? []);
+          this.categoriesSummary.set(res.Data?.Ratings?.Categories ?? []);
         },
         error: () => {
           this.reviews.set([]);

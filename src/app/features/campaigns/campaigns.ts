@@ -7,7 +7,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Campaign, CampaignForm, CampaignStatus } from './campaigns.model';
 import { CampaignsService } from './campaigns.service';
 
-const EMPTY_FORM: CampaignForm = { name: '', number: '', color: '' };
+// same colour the picker shows by default, so Create isn't disabled until the picker is touched
+const EMPTY_FORM: CampaignForm = { name: '', number: '', color: '#22c35d' };
 
 @Component({
   selector: 'app-campaigns',
@@ -55,9 +56,8 @@ export class Campaigns implements OnDestroy {
   selectedPageSize = signal(10);
 
   // ── Stats ────────────────────────────────────────────────────
-  totalGroups = computed(() =>
-    this.campaigns().reduce((s, c) => s + c.groupsCount, 0)
-  );
+  // company-wide count from the server (summing the current page would undercount)
+  readonly totalGroups = this.service.groupsCount;
 
   // API does server-side filtering; alias for template compatibility
   filteredCampaigns = this.campaigns;

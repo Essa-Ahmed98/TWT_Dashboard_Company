@@ -103,7 +103,7 @@
                 formControlName="Phone"
                 [class.profile-input--error]="fieldInvalid('Phone') || validationError('Phone')" />
               @if (fieldInvalid('Phone')) {
-                <span class="profile-field__error">{{ 'PROFILE.REQUIRED_FIELD' | translate }}</span>
+                <span class="profile-field__error">{{ 'PROFILE.INVALID_PHONE' | translate }}</span>
               } @else if (validationError('Phone')) {
                 <span class="profile-field__error">{{ validationError('Phone') }}</span>
               }
@@ -176,7 +176,7 @@
                 </button>
               </div>
               @if (passwordFieldInvalid('NewPassword')) {
-                <span class="profile-field__error">{{ 'PROFILE.REQUIRED_FIELD' | translate }}</span>
+                <span class="profile-field__error">{{ (passwordForm.controls.NewPassword.errors?.['minlength'] ? 'PROFILE.PASSWORD_MIN_LENGTH' : 'PROFILE.REQUIRED_FIELD') | translate }}</span>
               }
             </div>
 

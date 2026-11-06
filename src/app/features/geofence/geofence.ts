@@ -15,6 +15,7 @@ import {
   CampaignWithGroupsApiItem,
   GroupPilgrimMapApiItem,
   ZONE_TYPES, GeofenceZone, ZoneType, AlertType, CreateGeoZoneRequest, UpdateGeoZoneRequest, ZONE_TYPE_API_MAP, GeoZoneApiItem,
+  ZONE_TYPE_FROM_API, ZONE_TYPE_LABEL_KEYS,
 } from './geofence.model';
 import { GeofenceService } from './geofence.service';
 
@@ -115,12 +116,13 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
 
   campaigns = signal<Campaign[]>([]);
 
-  readonly filterOptions = ['all', 'sacred', 'camp'];
+  readonly filterOptions = ['all', ...ZONE_TYPES];
 
   private readonly TYPE_FILTER_MAP: Record<string, ZoneType | null> = {
-    all:    null,
-    sacred: 'sacred',
-    camp:   'camp',
+    all:      null,
+    assembly: 'assembly',
+    custom:   'custom',
+    location: 'location',
   };
 
   private readonly LOCATION_COORDS: Record<string, [number, number]> = {
@@ -158,7 +160,7 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
   ];
 
   form = signal<AddZoneForm>({
-    name: '', type: 'sacred', description: '',
+    name: '', type: 'assembly', description: '',
     lat: 21.3549, lng: 39.9842, radius: 500, opacity: 0.22, color: '#22c35d',
   });
 
@@ -209,7 +211,7 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
   });
 
   zoneTypeKey(type: ZoneType): string {
-    return type === 'sacred' ? 'GEOFENCE.SACRED_SITE' : 'GEOFENCE.CAMP_ZONE';
+    return ZONE_TYPE_LABEL_KEYS[type] ?? type;
   }
 
   alertTypeKey(type: AlertType): string {
@@ -218,8 +220,8 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
 
   formValid = computed(() => {
     const form = this.form();
+    // Description is optional on the server
     return !!form.name.trim()
-      && !!form.description.trim()
       && Number.isFinite(form.lat)
       && Number.isFinite(form.lng)
       && form.radius > 0
@@ -379,11 +381,8 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
   }
 
   filterLabelKey(opt: string): string {
-    return {
-      all:    'GEOFENCE.FILTER_ALL',
-      sacred: 'GEOFENCE.SACRED_SITE',
-      camp:   'GEOFENCE.CAMP_ZONE',
-    }[opt] ?? opt;
+    if (opt === 'all') return 'GEOFENCE.FILTER_ALL';
+    return ZONE_TYPE_LABEL_KEYS[opt as ZoneType] ?? opt;
   }
 
   setActiveTab(tab: 'zones' | 'campaigns'): void {
@@ -460,17 +459,15 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
             this.toast.add({ severity: 'error', summary: this.translate.instant('GEOFENCE.TOAST.ERROR_SUMMARY'), detail: this.translate.instant('GEOFENCE.TOAST.ERROR_DETAIL') });
           }
         },
-        error: () => {
-          this.deletingZoneId.set(null);
-          this.toast.add({ severity: 'error', summary: this.translate.instant('GEOFENCE.TOAST.ERROR_SUMMARY'), detail: this.translate.instant('GEOFENCE.TOAST.ERROR_DETAIL') });
-        },
+        // the error interceptor already shows the server message
+        error: () => this.deletingZoneId.set(null),
       });
   }
 
   openModal(): void {
     this.editingZoneId.set(null);
     this.form.set({
-      name: '', type: 'sacred', description: '',
+      name: '', type: 'assembly', description: '',
       lat: 21.3549, lng: 39.9842, radius: 500, opacity: 0.22, color: '#22c35d',
     });
     this.showModal.set(true);
@@ -564,10 +561,8 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
               this.toast.add({ severity: 'error', summary: this.translate.instant('GEOFENCE.TOAST.ERROR_SUMMARY'), detail: this.translate.instant('GEOFENCE.TOAST.ERROR_DETAIL') });
             }
           },
-          error: () => {
-            this.submitting.set(false);
-            this.toast.add({ severity: 'error', summary: this.translate.instant('GEOFENCE.TOAST.ERROR_SUMMARY'), detail: this.translate.instant('GEOFENCE.TOAST.ERROR_DETAIL') });
-          },
+          // the error interceptor already shows the server message
+          error: () => this.submitting.set(false),
         });
       return;
     }
@@ -587,10 +582,8 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
             this.toast.add({ severity: 'error', summary: this.translate.instant('GEOFENCE.TOAST.ERROR_SUMMARY'), detail: this.translate.instant('GEOFENCE.TOAST.CREATE_ERROR') });
           }
         },
-        error: () => {
-          this.submitting.set(false);
-          this.toast.add({ severity: 'error', summary: this.translate.instant('GEOFENCE.TOAST.ERROR_SUMMARY'), detail: this.translate.instant('GEOFENCE.TOAST.CREATE_ERROR') });
-        },
+        // the error interceptor already shows the server message
+        error: () => this.submitting.set(false),
       });
   }
 
@@ -656,8 +649,8 @@ export class Geofence implements AfterViewInit, OnDestroy, OnInit {
     return {
       id: item.Id,
       name: item.Name,
-      type: item.GeofenceType === 0 ? 'sacred' : 'camp',
-      description: item.Description,
+      type: ZONE_TYPE_FROM_API[item.GeofenceType] ?? 'custom',
+      description: item.Description ?? '',
       lat: item.Latitude,
       lng: item.Longitude,
       radius: item.RadiusMeters,

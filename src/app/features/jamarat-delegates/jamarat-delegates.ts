@@ -52,6 +52,10 @@ const PAGE_SIZE_OPTIONS = [10, 20, 50, 100] as const;
 
 const T = (key: string) => `JAMARAT_DELEGATES.${key}`;
 
+/** Phone format accepted by both CreateDelegateCommandValidator and UpdateDelegateCommandValidator */
+const DELEGATE_PHONE_PATTERN = /^(\+966|0)?5\d{8}$/;
+const ID_NUMBER_VALIDATORS = [Validators.required, Validators.pattern(/^\d{10}$/)];
+
 @Component({
   selector: 'app-jamarat-delegates',
   imports: [
@@ -115,19 +119,19 @@ export class JamaratDelegates implements OnInit {
   readonly requestsTotal = signal(0);
 
   readonly delegateForm: DelegateForm = new FormGroup<DelegateFormControls>({
-    DisplayName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    IdNumber: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.pattern(/^\d{10}$/)] }),
-    Phone: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    Age: new FormControl<number | null>(null, { validators: [Validators.required, Validators.min(1)] }),
+    DisplayName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200)] }),
+    IdNumber: new FormControl('', { nonNullable: true, validators: ID_NUMBER_VALIDATORS }),
+    Phone: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.pattern(DELEGATE_PHONE_PATTERN)] }),
+    Age: new FormControl<number | null>(null, { validators: [Validators.required, Validators.min(1), Validators.max(149)] }),
     Email: new FormControl('', { nonNullable: true, validators: [Validators.email] }),
     Password: new FormControl('', { nonNullable: true }),
-    Nationality: new FormControl('', { nonNullable: true }),
-    Affiliation: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    Nationality: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(100)] }),
+    Affiliation: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(100)] }),
     WorkFrom: new FormControl('08:00', { nonNullable: true }),
     WorkTo: new FormControl('17:00', { nonNullable: true }),
-    MaxConcurrent: new FormControl<number | null>(3, { validators: [Validators.min(0)] }),
+    MaxConcurrent: new FormControl<number | null>(3, { validators: [Validators.min(1)] }),
     IsAvailable: new FormControl(true, { nonNullable: true }),
-    Notes: new FormControl('', { nonNullable: true }),
+    Notes: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(500)] }),
   });
 
   readonly isEditMode = computed(() => !!this.selectedDelegate());
@@ -197,12 +201,12 @@ export class JamaratDelegates implements OnInit {
           this.totalPages.set(Math.max(data?.TotalPages ?? 1, 1));
         },
         error: err => {
+          // the error interceptor already shows the server message
           const message = this.resolveApiErrorMessage(err?.error, this.t('MSG_LOAD_LIST_FAIL'));
           this.delegates.set([]);
           this.totalCount.set(0);
           this.totalPages.set(1);
           this.loadError.set(message);
-          this.toast.add({ severity: 'error', summary: this.t('TOAST_ERROR'), detail: message });
         },
       });
   }
@@ -277,11 +281,11 @@ export class JamaratDelegates implements OnInit {
           this.requestsTotal.set(res.Data?.TotalCount ?? 0);
         },
         error: err => {
+          // the error interceptor already shows the server message
           const message = this.resolveApiErrorMessage(err?.error, this.t('MSG_LOAD_REQUESTS_FAIL'));
           this.requests.set([]);
           this.requestsTotal.set(0);
           this.requestsError.set(message);
-          this.toast.add({ severity: 'error', summary: this.t('TOAST_ERROR'), detail: message });
         },
       });
   }
@@ -311,8 +315,10 @@ export class JamaratDelegates implements OnInit {
   openAddDialog(): void {
     this.selectedDelegate.set(null);
     this.resetForm();
-    this.delegateForm.controls.Password.setValidators([Validators.required]);
+    this.delegateForm.controls.Password.setValidators([Validators.required, Validators.minLength(6)]);
     this.delegateForm.controls.Password.updateValueAndValidity();
+    this.delegateForm.controls.IdNumber.setValidators(ID_NUMBER_VALIDATORS);
+    this.delegateForm.controls.IdNumber.updateValueAndValidity();
     this.showDialog.set(true);
   }
 
@@ -321,7 +327,12 @@ export class JamaratDelegates implements OnInit {
     this.resetForm();
     this.delegateForm.controls.Password.clearValidators();
     this.delegateForm.controls.Password.updateValueAndValidity();
+    // UpdateDelegateCommand has no IdNumber: it is read-only in edit mode and never sent
+    this.delegateForm.controls.IdNumber.clearValidators();
+    this.delegateForm.controls.IdNumber.updateValueAndValidity();
 
+    // work hours / MaxConcurrent come from the list item (GET Delegates/{id} returns Work as a string)
+    this.patchFormFromDelegate(delegate);
     this.loadingDelegateDetails.set(true);
     this.showDialog.set(true);
 
@@ -333,7 +344,6 @@ export class JamaratDelegates implements OnInit {
       .subscribe({
         next: res => {
           if (!res.IsSuccess) {
-            this.patchFormFromDelegate(delegate);
             this.toast.add({
               severity: 'warn',
               summary: this.t('TOAST_WARNING'),
@@ -341,16 +351,11 @@ export class JamaratDelegates implements OnInit {
             });
             return;
           }
-          this.patchFormFromDelegate(res.Data ?? delegate);
+          // only the details endpoint has Notes
+          this.delegateForm.patchValue({ Notes: res.Data?.Notes ?? '' });
         },
-        error: err => {
-          this.patchFormFromDelegate(delegate);
-          this.toast.add({
-            severity: 'warn',
-            summary: this.t('TOAST_WARNING'),
-            detail: this.resolveApiErrorMessage(err?.error, this.t('MSG_LOAD_DETAILS_FAIL')),
-          });
-        },
+        // the error interceptor already shows the server message
+        error: () => undefined,
       });
   }
 
@@ -395,26 +400,26 @@ export class JamaratDelegates implements OnInit {
     const formData = new FormData();
     if (selected) {
       formData.append('DelegateId', selected.DelegateId);
-      if (selected.UserId) formData.append('UserId', selected.UserId);
     }
     formData.append('DisplayName', value.DisplayName.trim());
-    formData.append('IdNumber', value.IdNumber.trim());
+    if (!selected) formData.append('IdNumber', value.IdNumber.trim());
     formData.append('Phone', value.Phone.trim());
     formData.append('Age', String(value.Age ?? ''));
     if (value.Email.trim()) formData.append('Email', value.Email.trim());
     if (!selected && value.Password) formData.append('Password', value.Password);
     if (value.Nationality.trim()) formData.append('Nationality', value.Nationality.trim());
     if (value.Affiliation.trim()) formData.append('Affiliation', value.Affiliation.trim());
-    if (value.WorkFrom) formData.append('WorkFrom', value.WorkFrom);
-    if (value.WorkTo) formData.append('WorkTo', value.WorkTo);
+    // nested Work DTO (HH:mm, as produced by <input type="time">)
+    if (value.WorkFrom) formData.append('Work.From', value.WorkFrom.slice(0, 5));
+    if (value.WorkTo) formData.append('Work.To', value.WorkTo.slice(0, 5));
     if (value.MaxConcurrent !== null && value.MaxConcurrent !== undefined) {
-      formData.append('MaxConcurrent', String(value.MaxConcurrent));
+      formData.append('Work.MaxConcurrent', String(value.MaxConcurrent));
     }
-    formData.append('IsAvailable', String(value.IsAvailable));
+    formData.append('Work.IsAvailable', String(value.IsAvailable));
     if (value.Notes.trim()) formData.append('Notes', value.Notes.trim());
 
     const file = this.imageFile();
-    if (file) formData.append('Image', file, file.name);
+    if (file) formData.append('ProfilePicture', file, file.name);
 
     const request$ = selected
       ? this.service.updateDelegate(selected.DelegateId, formData)
@@ -485,11 +490,12 @@ export class JamaratDelegates implements OnInit {
       Affiliation: delegate.Affiliation ?? '',
       WorkFrom: delegate.Work?.From ?? '',
       WorkTo: delegate.Work?.To ?? '',
-      MaxConcurrent: delegate.Work?.MaxConcurrent ?? 0,
+      MaxConcurrent: delegate.Work?.MaxConcurrent ?? 3,
       IsAvailable: delegate.Work?.IsAvailable ?? true,
       Notes: '',
     });
-    this.imagePreview.set(delegate.ImageUrl ?? null);
+    // the list DTO has no image field
+    this.imagePreview.set(null);
     this.imageFile.set(null);
   }
 
@@ -524,9 +530,8 @@ export class JamaratDelegates implements OnInit {
   };
 
   private handleSubmitError(error: ApiResult<unknown> | undefined, fallback: string): void {
-    const messages = this.resolveApiErrorMessages(error, fallback);
-    this.backendErrors.set(messages);
-    messages.forEach(detail => this.toast.add({ severity: 'error', summary: this.t('TOAST_ERROR'), detail, life: 6000 }));
+    // inline list only - the error interceptor already toasts the server message
+    this.backendErrors.set(this.resolveApiErrorMessages(error, fallback));
   }
 
   private resolveApiErrorMessages(error: ApiResult<unknown> | undefined, fallback: string): string[] {

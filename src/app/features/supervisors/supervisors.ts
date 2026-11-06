@@ -87,6 +87,12 @@ export class Supervisors implements OnInit {
     return !this.saudiPhoneRegex.test(phone);
   });
 
+  /** Email is optional on the server - only its format is checked when filled */
+  readonly emailInvalid = computed(() => {
+    const email = this.formData().email.trim();
+    return !!email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  });
+
   // Campaigns dropdown
   campList         = signal<CampaignApiItem[]>([]);
   campLoading      = signal(false);
@@ -353,7 +359,7 @@ export class Supervisors implements OnInit {
       PassportNumber:    f.passportNumber,
       Nationality:       f.nationality,
       DateOfBirth:       toDateOnlyIso(f.dateOfBirth),
-      Gender:            f.gender !== '' ? +f.gender : 0,
+      Gender:            f.gender !== '' ? +f.gender : null,
       Specialization:    f.specialization,
       YearsOfExperience: f.yearsOfExperience !== '' ? +f.yearsOfExperience : 0,
       Languages:         f.languages,
@@ -366,7 +372,7 @@ export class Supervisors implements OnInit {
           PassportNumber: f.passportNumber.trim(),
           Nationality: f.nationality.trim(),
           DateOfBirth: toDateOnlyIso(f.dateOfBirth),
-          Gender: f.gender !== '' ? +f.gender : 0,
+          Gender: f.gender !== '' ? +f.gender : null,
           Specialization: f.specialization.trim(),
           YearsOfExperience: f.yearsOfExperience !== '' ? +f.yearsOfExperience : 0,
           Languages: f.languages,
@@ -402,15 +408,13 @@ export class Supervisors implements OnInit {
 
   isFormValid(): boolean {
     const f = this.formData();
+    // aligned with CreateSupervisorCommandValidator: email / passport / nationality / gender are optional
     return !!(
-      f.displayName.trim() &&
-      f.email.trim()       &&
+      f.displayName.trim() && f.displayName.trim().length <= 100 &&
+      !this.emailInvalid() &&
       f.phone.trim()       && !this.phoneInvalid() &&
       (this.editingSupervisor() || f.password.trim()) &&
       (this.editingSupervisor() || (f.campaignId && f.groupId)) &&
-      f.passportNumber.trim() &&
-      f.nationality.trim() &&
-      f.gender !== ''      &&
       f.languages.length > 0
     );
   }

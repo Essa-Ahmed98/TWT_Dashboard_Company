@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { ApiResult, PaginatedResult } from '../../core/models/api.models';
-import { CreatePilgrimRequest, DrugApiItem, LuggageLocationHistoryApiData, PilgrimApiItem, PilgrimDetailApiItem, PilgrimFamilyApiItem, PilgrimQrCodeApiItem, PilgrimRitualsApiItem, PilgrimsQuery, ReviewApiItem, UpdatePilgrimRequest } from './pilgrims.model';
+import { CreatePilgrimRequest, DrugApiItem, LuggageLocationHistoryApiData, PilgrimApiItem, PilgrimDetailApiItem, PilgrimFamilyApiItem, PilgrimQrCodeApiItem, PilgrimRitualsApiItem, PilgrimsQuery, ReviewApiItem, UpdatePilgrimRequest, UploadPilgrimsResult } from './pilgrims.model';
 
 @Injectable({ providedIn: 'root' })
 export class PilgrimsService {
@@ -100,11 +100,11 @@ export class PilgrimsService {
     });
   }
 
-  uploadPilgrimsFile(file: File): Observable<ApiResult<unknown> | { issuccess?: boolean; IsSuccess?: boolean }> {
+  uploadPilgrimsFile(file: File): Observable<ApiResult<UploadPilgrimsResult>> {
     const formData = new FormData();
     formData.append('file', file);
 
-    return this.http.post<ApiResult<unknown> | { issuccess?: boolean; IsSuccess?: boolean }>(
+    return this.http.post<ApiResult<UploadPilgrimsResult>>(
       `${environment.apiBase}/Pilgrims/upload`,
       formData,
     );

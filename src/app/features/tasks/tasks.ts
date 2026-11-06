@@ -17,6 +17,7 @@ import {
   TaskCategory,
   TaskForm,
   TaskSupervisorStatus,
+  TaskStatusFilter,
 } from './tasks.model';
 import { TasksService } from './tasks.service';
 import { SsDropdownDirective } from '../../shared/directives/ss-dropdown.directive';
@@ -50,6 +51,7 @@ export class Tasks implements OnInit {
   private readonly translate = inject(TranslateService);
 
   readonly TaskSupervisorStatus = TaskSupervisorStatus;
+  readonly TaskStatusFilter = TaskStatusFilter;
   readonly minDueDate = new Date();
 
   pageSize = signal(10);
@@ -65,7 +67,7 @@ export class Tasks implements OnInit {
   hasNext = signal(false);
   hasPrevious = signal(false);
 
-  statusFilter = signal<TaskSupervisorStatus | ''>('');
+  statusFilter = signal<TaskStatusFilter>(TaskStatusFilter.All);
   filterSupervisorId = signal('');
   filterSupervisorName = signal('');
 
@@ -101,9 +103,9 @@ export class Tasks implements OnInit {
     { value: TaskCategory.Reports, labelKey: 'TASKS.CATEGORY.REPORTS' },
   ];
 
-  readonly statusOptions: TaskOption<TaskSupervisorStatus>[] = [
-    { value: TaskSupervisorStatus.Pending, labelKey: 'TASKS.STATUS.PENDING' },
-    { value: TaskSupervisorStatus.Completed, labelKey: 'TASKS.STATUS.COMPLETED' },
+  readonly statusOptions: TaskOption<TaskStatusFilter>[] = [
+    { value: TaskStatusFilter.Pending, labelKey: 'TASKS.STATUS.PENDING' },
+    { value: TaskStatusFilter.Completed, labelKey: 'TASKS.STATUS.COMPLETED' },
   ];
 
   readonly filteredTasks = computed(() => this.tasks());
@@ -157,7 +159,7 @@ export class Tasks implements OnInit {
     this.service.getAssigned({
       pageNumber: page,
       pageSize: this.pageSize(),
-      statusFilter: this.statusFilter() === '' ? undefined : this.statusFilter() as TaskSupervisorStatus,
+      statusFilter: this.statusFilter(),
       supervisorId: this.filterSupervisorId() || undefined,
     })
       .pipe(finalize(() => this.loading.set(false)), takeUntilDestroyed(this.destroyRef))
@@ -194,7 +196,7 @@ export class Tasks implements OnInit {
     this.showStatusDrop.set(true);
   }
 
-  selectStatusFilter(value: TaskSupervisorStatus | ''): void {
+  selectStatusFilter(value: TaskStatusFilter): void {
     this.statusFilter.set(value);
     this.showStatusDrop.set(false);
     this.currentPage.set(1);
@@ -203,7 +205,9 @@ export class Tasks implements OnInit {
 
   statusFilterLabelKey(): string {
     const status = this.statusFilter();
-    return status === '' ? 'TASKS.FILTERS.ALL_STATUSES' : this.statusLabelKey(status);
+    if (status === TaskStatusFilter.Completed) return 'TASKS.STATUS.COMPLETED';
+    if (status === TaskStatusFilter.Pending) return 'TASKS.STATUS.PENDING';
+    return 'TASKS.FILTERS.ALL_STATUSES';
   }
 
   onPageSizeChange(size: number): void {

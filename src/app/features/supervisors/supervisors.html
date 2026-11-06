@@ -202,15 +202,19 @@
       <div class="form-row">
         <div class="form-field">
           <label class="form-label">{{ 'SUPERVISORS.FORM.FULL_NAME' | translate }} <span class="form-req">*</span></label>
-          <input class="form-input" type="text" [placeholder]="'SUPERVISORS.FORM.FULL_NAME_PLACEHOLDER' | translate"
+          <input class="form-input" type="text" maxlength="100" [placeholder]="'SUPERVISORS.FORM.FULL_NAME_PLACEHOLDER' | translate"
             [value]="formData().displayName" [disabled]="submitting()"
             (input)="patchForm({ displayName: $any($event.target).value })" />
         </div>
         <div class="form-field">
-          <label class="form-label">{{ 'SUPERVISORS.FORM.EMAIL' | translate }} <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'SUPERVISORS.FORM.EMAIL' | translate }}</label>
           <input class="form-input" type="email" placeholder="example@gmail.com"
             [value]="formData().email" [disabled]="submitting()"
+            [class.form-input--error]="emailInvalid()"
             (input)="patchForm({ email: $any($event.target).value })" />
+          @if (emailInvalid()) {
+            <span class="form-hint form-hint--error">{{ 'SUPERVISORS.FORM.EMAIL_INVALID' | translate }}</span>
+          }
         </div>
       </div>
 
@@ -305,13 +309,13 @@
 
       <div class="form-row">
         <div class="form-field">
-          <label class="form-label">{{ 'SUPERVISORS.FORM.PASSPORT' | translate }} <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'SUPERVISORS.FORM.PASSPORT' | translate }}</label>
           <input class="form-input" type="text" [placeholder]="'SUPERVISORS.FORM.PASSPORT' | translate"
             [value]="formData().passportNumber" [disabled]="submitting()"
             (input)="patchForm({ passportNumber: $any($event.target).value })" />
         </div>
         <div class="form-field">
-          <label class="form-label">{{ 'SUPERVISORS.FORM.NATIONALITY' | translate }} <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'SUPERVISORS.FORM.NATIONALITY' | translate }}</label>
           <input class="form-input" type="text" [placeholder]="'SUPERVISORS.FORM.NATIONALITY' | translate"
             [value]="formData().nationality" [disabled]="submitting()"
             (input)="patchForm({ nationality: $any($event.target).value })" />
@@ -329,7 +333,7 @@
           </p-datepicker>
         </div>
         <div class="form-field">
-          <label class="form-label">{{ 'SUPERVISORS.FORM.GENDER' | translate }} <span class="form-req">*</span></label>
+          <label class="form-label">{{ 'SUPERVISORS.FORM.GENDER' | translate }}</label>
           <select class="form-select" [disabled]="submitting()"
             (change)="patchForm({ gender: $any($event.target).value })">
             <option value="" [selected]="formData().gender === ''">{{ 'SUPERVISORS.FORM.SELECT_GENDER' | translate }}</option>

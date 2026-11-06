@@ -496,6 +496,20 @@
           }
         </div>
       </section>
+
+      @if (importResult(); as result) {
+        <section class="import-result">
+          <p class="import-result__summary">
+            {{ 'PILGRIMS.IMPORT.RESULT_SUMMARY' | translate: { success: result.SuccessCount, total: result.TotalRows } }}
+          </p>
+          <p class="import-result__title">{{ 'PILGRIMS.IMPORT.RESULT_ERRORS' | translate }}</p>
+          <ul class="import-result__errors">
+            @for (e of result.Errors; track $index) {
+              <li>{{ e }}</li>
+            }
+          </ul>
+        </section>
+      }
     </div>
   </div>
 }

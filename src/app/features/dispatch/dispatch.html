@@ -162,6 +162,7 @@
           <input
             class="form-input"
             type="text"
+            maxlength="200"
             [placeholder]="'DISPATCH.FROM_PLACEHOLDER' | translate"
             [disabled]="saving()"
             [value]="form().fromLocation"
@@ -174,6 +175,7 @@
           <input
             class="form-input"
             type="text"
+            maxlength="200"
             [placeholder]="'DISPATCH.TO_PLACEHOLDER' | translate"
             [disabled]="saving()"
             [value]="form().toLocation"
@@ -187,6 +189,7 @@
         <textarea
           class="form-input form-input--textarea"
           rows="4"
+          maxlength="500"
           [placeholder]="'DISPATCH.NOTES_PLACEHOLDER' | translate"
           [disabled]="saving()"
           [value]="form().notes"

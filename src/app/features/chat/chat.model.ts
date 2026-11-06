@@ -82,7 +82,7 @@ export interface PilgrimSearchResult {
 
 /** Returned by GET /api/chat/unread-count */
 export interface UnreadCountResult {
-  UnreadCount: number;
+  TotalUnreadCount: number;
 }
 
 // ── SignalR event payloads ────────────────────────────────────────

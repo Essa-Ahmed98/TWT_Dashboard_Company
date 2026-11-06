@@ -9,7 +9,9 @@ export const authGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
 
-  if (auth.isLoggedIn()) return true;
+  // a token whose JWT `exp` is in the past counts as logged out
+  if (auth.isLoggedIn() && !auth.isTokenExpired()) return true;
 
+  if (auth.getToken()) auth.clearSession();
   return router.createUrlTree(['/auth/login']);
 };

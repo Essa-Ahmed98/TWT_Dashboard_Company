@@ -25,6 +25,8 @@ export class CampaignsService {
   private readonly _campaigns       = signal<Campaign[]>([]);
   private readonly _loading         = signal(false);
   private readonly _totalCount      = signal(0);
+  /** company-wide groups count (GetCampaignListForAdminResult.GroupsCount), not just the current page */
+  private readonly _groupsCount     = signal(0);
   private readonly _totalPages      = signal(0);
   private readonly _currentPage     = signal(1);
   private readonly _pageSize        = signal(10);
@@ -44,6 +46,7 @@ export class CampaignsService {
   readonly campaigns          = this._campaigns.asReadonly();
   readonly loading            = this._loading.asReadonly();
   readonly totalCount         = this._totalCount.asReadonly();
+  readonly groupsCount        = this._groupsCount.asReadonly();
   readonly totalPages         = this._totalPages.asReadonly();
   readonly currentPage        = this._currentPage.asReadonly();
   readonly pageSize           = this._pageSize.asReadonly();
@@ -102,6 +105,7 @@ export class CampaignsService {
           const p = res.Data.Campaigns;
           this._campaigns.set(p.Items.map(i => this.mapItem(i)));
           this._totalCount.set(p.TotalCount);
+          this._groupsCount.set(res.Data.GroupsCount ?? 0);
           this._totalPages.set(p.TotalPages);
           this._currentPage.set(p.CurrentPage);
           this._pageSize.set(p.PageSize);
@@ -249,8 +253,8 @@ export class CampaignsService {
     const body = {
       BusNumber:   form.number.trim(),
       DriverName:  form.driverName.trim(),
-      SeatsCount:  form.capacity ? +form.capacity : 45,
-      DriverPhone: form.driverPhone,
+      SeatsCount:  String(form.capacity ?? '').trim() ? +form.capacity : 45,
+      DriverPhone: form.driverPhone.trim(),
       BusType:     form.type,
       PlateNumber: form.plateNumber.trim(),
       Notes:       form.notes.trim(),
@@ -276,8 +280,8 @@ export class CampaignsService {
       Id: id,
       BusNumber:   form.number.trim(),
       DriverName:  form.driverName.trim(),
-      SeatsCount:  form.capacity ? +form.capacity : 45,
-      DriverPhone: form.driverPhone,
+      SeatsCount:  String(form.capacity ?? '').trim() ? +form.capacity : 45,
+      DriverPhone: form.driverPhone.trim(),
       BusType:     form.type,
       PlateNumber: form.plateNumber.trim(),
       Notes:       form.notes.trim(),

@@ -237,20 +237,25 @@ export class CriticalHealthCases implements OnInit {
   }
 
   severity(item: HealthConditionItem): HealthSeverity {
+    // a missing value (null) must never count as abnormal - `null < 90` is true in JS
+    const has = (v: number | null | undefined): v is number => v !== null && v !== undefined;
+    const hr = item.HeartRate, o2 = item.OxygenSaturation, temp = item.Temperature;
+    const sys = item.SystolicPressure, dia = item.DiastolicPressure;
+
     if (
-      item.HeartRate >= 130 ||
-      item.OxygenSaturation < 90 ||
-      item.Temperature >= 39 ||
-      item.SystolicPressure >= 180 ||
-      item.DiastolicPressure >= 120
+      (has(hr) && hr >= 130) ||
+      (has(o2) && o2 < 90) ||
+      (has(temp) && temp >= 39) ||
+      (has(sys) && sys >= 180) ||
+      (has(dia) && dia >= 120)
     ) return 'very-critical';
 
     if (
-      item.HeartRate >= 110 ||
-      item.OxygenSaturation < 94 ||
-      item.Temperature >= 38 ||
-      item.SystolicPressure >= 160 ||
-      item.DiastolicPressure >= 100
+      (has(hr) && hr >= 110) ||
+      (has(o2) && o2 < 94) ||
+      (has(temp) && temp >= 38) ||
+      (has(sys) && sys >= 160) ||
+      (has(dia) && dia >= 100)
     ) return 'critical';
 
     return 'medium';

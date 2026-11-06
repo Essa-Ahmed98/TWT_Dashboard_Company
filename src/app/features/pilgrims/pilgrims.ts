@@ -11,7 +11,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment';
 import { ApiResult } from '../../core/models/api.models';
 import { CampaignApiItem, GroupApiItem } from '../campaigns/campaigns.model';
-import { BLOOD_TYPE_OPTIONS, CreatePilgrimRequest, PilgrimApiItem, PilgrimDetailApiItem, PilgrimForm, UpdatePilgrimRequest } from './pilgrims.model';
+import { BLOOD_TYPE_OPTIONS, CreatePilgrimRequest, PilgrimApiItem, PilgrimDetailApiItem, PilgrimForm, UpdatePilgrimRequest, UploadPilgrimsResult } from './pilgrims.model';
 import { PilgrimsService } from './pilgrims.service';
 import { AuthService } from '../../core/auth/services/auth';
 import { CampaignsService } from '../campaigns/campaigns.service';
@@ -133,6 +133,7 @@ export class Pilgrims implements OnInit {
   downloadingTemplate = signal(false);
   importSelectedFile = signal<File | null>(null);
   uploadingImportFile = signal(false);
+  importResult = signal<UploadPilgrimsResult | null>(null);
   showQrDownloadModal = signal(false);
   qrDownloadCampList = signal<CampaignApiItem[]>([]);
   qrDownloadCampLoading = signal(false);
@@ -405,6 +406,7 @@ export class Pilgrims implements OnInit {
 
   openImportModal(): void {
     this.showImportModal.set(true);
+    this.importResult.set(null);
     this.importSelectedFileName.set('');
     this.importSelectedFile.set(null);
     this.importCampList.set([]);
@@ -674,6 +676,7 @@ export class Pilgrims implements OnInit {
     const file = input.files?.[0];
     this.importSelectedFile.set(file ?? null);
     this.importSelectedFileName.set(file?.name ?? '');
+    this.importResult.set(null);
   }
 
   clearImportFile(fileInput: HTMLInputElement): void {
@@ -692,53 +695,41 @@ export class Pilgrims implements OnInit {
     }
 
     this.uploadingImportFile.set(true);
+    this.importResult.set(null);
 
     this.service.uploadPilgrimsFile(selectedFile)
       .pipe(finalize(() => this.uploadingImportFile.set(false)), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: response => {
-          const res = response as ApiResult<unknown>;
-          const isSuccess = res?.IsSuccess ?? (response as { issuccess?: boolean })?.issuccess ?? false;
+          const result: UploadPilgrimsResult = {
+            TotalRows: response?.Data?.TotalRows ?? 0,
+            SuccessCount: response?.Data?.SuccessCount ?? 0,
+            Errors: response?.Data?.Errors ?? [],
+          };
 
-          if (isSuccess) {
-            this.closeImportModalAfterSuccess(fileInput);
+          this.importSelectedFile.set(null);
+          this.importSelectedFileName.set('');
+          fileInput.value = '';
+          if (result.SuccessCount > 0) this.loadPilgrims(1);
+
+          const summary = this.translate.instant('PILGRIMS.IMPORT.RESULT_SUMMARY', {
+            success: result.SuccessCount,
+            total: result.TotalRows,
+          });
+
+          if (result.Errors.length) {
+            // keep the modal open and list the rows that failed
+            this.importResult.set(result);
+            this.toast.add({ severity: 'warn', summary: 'تنبيه', detail: summary });
             return;
           }
 
-          const errorMsg =
-            res?.Error?.MessageKey ||
-            res?.Error?.message ||
-            res?.ValidationErrors?.[0]?.ErrorMessage ||
-            null;
-
-          this.showImportError(errorMsg);
+          this.showImportModal.set(false);
+          this.toast.add({ severity: 'success', summary: 'نجاح', detail: summary });
         },
-        error: err => {
-          const body = err?.error as ApiResult<unknown> | undefined;
-          const errorMsg =
-            body?.Error?.MessageKey ||
-            body?.Error?.message ||
-            body?.ValidationErrors?.[0]?.ErrorMessage ||
-            null;
-          this.showImportError(errorMsg);
-        },
+        // the error interceptor already shows the server message
+        error: () => undefined,
       });
-  }
-
-  private closeImportModalAfterSuccess(fileInput: HTMLInputElement): void {
-    this.showImportModal.set(false);
-    this.importSelectedFile.set(null);
-    this.importSelectedFileName.set('');
-    fileInput.value = '';
-    this.loadPilgrims(1);
-  }
-
-  private showImportError(message?: string | null): void {
-    this.toast.add({
-      severity: 'error',
-      summary: 'خطأ',
-      detail: message || 'فيه مشكلة ولم نتمكن من تنفيذ العملية',
-    });
   }
 
   downloadImportTemplate(): void {
@@ -778,13 +769,8 @@ export class Pilgrims implements OnInit {
           anchor.remove();
           window.URL.revokeObjectURL(url);
         },
-        error: () => {
-          this.toast.add({
-            severity: 'error',
-            summary: 'فشل التحميل',
-            detail: 'حدث خطأ أثناء تحميل نموذج Excel.',
-          });
-        },
+        // the error interceptor reads the blob error body and shows the server message
+        error: () => undefined,
       });
   }
 
@@ -826,13 +812,8 @@ export class Pilgrims implements OnInit {
           window.URL.revokeObjectURL(url);
           this.showQrDownloadModal.set(false);
         },
-        error: () => {
-          this.toast.add({
-            severity: 'error',
-            summary: 'فشل التحميل',
-            detail: 'حدث خطأ أثناء تحميل ملف رموز QR.',
-          });
-        },
+        // the error interceptor reads the blob error body and shows the server message
+        error: () => undefined,
       });
   }
 
@@ -879,13 +860,8 @@ export class Pilgrims implements OnInit {
             detail: this.translate.instant('PILGRIMS.LUGGAGE_DOWNLOAD.SUCCESS'),
           });
         },
-        error: () => {
-          this.toast.add({
-            severity: 'error',
-            summary: this.translate.instant('COMMON.ERROR'),
-            detail: this.translate.instant('PILGRIMS.LUGGAGE_DOWNLOAD.ERROR'),
-          });
-        },
+        // the error interceptor reads the blob error body and shows the server message
+        error: () => undefined,
       });
   }
 
@@ -914,29 +890,29 @@ export class Pilgrims implements OnInit {
       PassportNumber: f.passportNumber,
       Nationality: f.nationality,
       DateOfBirth: toDateOnlyIso(f.dateOfBirth),
-      Gender: f.gender !== '' ? +f.gender : 0,
+      Gender: f.gender !== '' ? +f.gender : null,
       IDNumber: f.idNumber,
       Accommodation: f.accommodation,
       NuskCardNumber: f.ritualCardNumber,
       PermitNumber: f.permitNumber,
-      BloodType: f.bloodType !== '' ? +f.bloodType : 0,
+      BloodType: f.bloodType !== '' ? +f.bloodType : null,
     };
 
     const updateReq: UpdatePilgrimRequest | null = editingPilgrim
       ? {
           Id: editingPilgrim.Id,
-          HajjType: editingPilgrim.HajjType ?? 0,
+          HajjType: editingPilgrim.HajjType ?? null,
           PassportNumber: f.passportNumber.trim(),
           Nationality: f.nationality.trim(),
           DateOfBirth: toDateOnlyIso(f.dateOfBirth),
-          Gender: f.gender !== '' ? +f.gender : 0,
+          Gender: f.gender !== '' ? +f.gender : null,
           IDNumber: f.idNumber.trim(),
           Accommodation: f.accommodation.trim(),
           NuskCardNumber: f.ritualCardNumber.trim(),
           PermitNumber: f.permitNumber.trim(),
-          BloodType: f.bloodType !== '' ? +f.bloodType : 0,
-          AccommodationLatitude: editingPilgrim.AccommodationLat ?? 0,
-          AccommodationLongitude: editingPilgrim.AccommodationLong ?? 0,
+          BloodType: f.bloodType !== '' ? +f.bloodType : null,
+          AccommodationLatitude: editingPilgrim.AccommodationLat ?? null,
+          AccommodationLongitude: editingPilgrim.AccommodationLong ?? null,
           Email: f.email.trim(),
           DisplayName: f.displayName.trim(),
           Phone: f.phone.trim(),

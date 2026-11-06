@@ -131,6 +131,7 @@ export class Notifications {
   selectedType = signal<NotificationType>(NotificationType.General);
   title = signal('');
   body = signal('');
+  isUrgent = signal(false);
   submitting = signal(false);
   submitError = signal<string | null>(null);
   activeTab = signal<NotificationsTab>('send');
@@ -295,7 +296,7 @@ export class Notifications {
       Title: this.title().trim(),
       Body: this.body().trim(),
       Type: this.selectedType(),
-      IsUrgent: true,
+      IsUrgent: this.isUrgent(),
       Audience: {
         Role: this.selectedAudienceRole(),
         CompanyId: companyId,
@@ -337,6 +338,7 @@ export class Notifications {
     this.selectedType.set(NotificationType.General);
     this.title.set('');
     this.body.set('');
+    this.isUrgent.set(false);
     this.closeAllDrops();
   }
 

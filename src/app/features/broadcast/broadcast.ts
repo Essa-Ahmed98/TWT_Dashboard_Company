@@ -30,6 +30,14 @@ const API_ERRORS: Record<string, string> = {
   'This username is already taken.': 'LOGIN.ERROR_DETAIL',
 };
 
+/** limits of the Chat API UploadImageCommandValidator / UploadAudioCommandValidator */
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const MAX_AUDIO_BYTES = 10 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = [
+  'image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/bmp', 'image/tiff', 'image/svg+xml',
+  'image/x-icon', 'image/vnd.microsoft.icon', 'image/heif', 'image/heic', 'image/heif-sequence', 'image/heic-sequence',
+];
+
 @Component({
   selector: 'app-broadcast',
   imports: [TranslateModule, SsDropdownDirective],
@@ -236,6 +244,16 @@ export class Broadcast implements OnInit, OnDestroy {
     input.value = '';
     if (!file) return;
 
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+      this.submitError.set(this.translate.instant('BROADCAST.IMAGE_TYPE_INVALID'));
+      return;
+    }
+    if (file.size > MAX_IMAGE_BYTES) {
+      this.submitError.set(this.translate.instant('BROADCAST.IMAGE_TOO_LARGE'));
+      return;
+    }
+
+    this.submitError.set(null);
     this.discardImagePreview();
     this.content.set('');
     this.imagePreviewFile.set(file);
@@ -403,7 +421,6 @@ export class Broadcast implements OnInit, OnDestroy {
             return;
           }
 
-          this.discardImagePreview();
           this.service.send({
             Content: this.translate.instant('BROADCAST.CONTENT_IMAGE'),
             TargetType: type,
@@ -432,10 +449,15 @@ export class Broadcast implements OnInit, OnDestroy {
 
   private sendWithAudio(blob: Blob): void {
     const { type, id } = this.buildTarget();
+    if (blob.size > MAX_AUDIO_BYTES) {
+      this.submitError.set(this.translate.instant('BROADCAST.AUDIO_TOO_LARGE'));
+      return;
+    }
+
     const file = new File([blob], `broadcast-${Date.now()}.webm`, { type: 'audio/webm' });
     this.uploadingMedia.set(true);
     this.submitError.set(null);
-    this.discardAudioPreview();
+    // the recording is kept until upload + send succeed (showSuccess -> resetForm discards it)
 
     this.service.uploadAudio(file)
       .pipe(takeUntilDestroyed(this.destroyRef))

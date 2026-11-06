@@ -9,7 +9,7 @@ export const noAuthGuard: CanActivateFn = () => {
   const auth   = inject(AuthService);
   const router = inject(Router);
 
-  if (auth.isLoggedIn()) return router.createUrlTree(['/']);
+  if (auth.isLoggedIn() && !auth.isTokenExpired()) return router.createUrlTree(['/']);
 
   return true;
 };

@@ -604,6 +604,15 @@ $text-label: #374151;
   font-weight: 700;
 }
 
+.urgent-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+
+  input { width: 16px; height: 16px; accent-color: #e53935; cursor: pointer; }
+}
+
 .form-control {
   width: 100%;
   min-height: 38px;

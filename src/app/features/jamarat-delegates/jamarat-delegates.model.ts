@@ -25,7 +25,21 @@ export interface DelegateListItem {
   Affiliation: string;
   Work: DelegateWork;
   Stats: DelegateStats;
-  ImageUrl?: string;
+}
+
+/** GET Delegates/{id} (GetDelegateByIdResult) - note `Work` is a plain string here, not an object */
+export interface DelegateDetails {
+  Id: string;
+  UserId: string;
+  FullName: string;
+  Email: string;
+  Phone: string;
+  IdNumber: string;
+  Age: number;
+  Nationality: string | null;
+  Notes: string | null;
+  Affiliation: string | null;
+  Work: string | null;
 }
 
 export interface DelegatesPagedResult {

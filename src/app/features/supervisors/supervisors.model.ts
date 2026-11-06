@@ -93,7 +93,7 @@ export interface CreateSupervisorRequest {
   PassportNumber: string;
   Nationality: string;
   DateOfBirth: string | null;
-  Gender: number;
+  Gender: number | null;
   Specialization: string;
   YearsOfExperience: number;
   Languages: number[];
@@ -105,7 +105,7 @@ export interface UpdateSupervisorRequest {
   PassportNumber: string;
   Nationality: string;
   DateOfBirth: string | null;
-  Gender: number;
+  Gender: number | null;
   Specialization: string;
   YearsOfExperience: number;
   Languages: number[];

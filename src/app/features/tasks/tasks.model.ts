@@ -10,9 +10,17 @@ export enum TaskCategory {
   Reports = 6,
 }
 
+/** status of a single task (for display) */
 export enum TaskSupervisorStatus {
   Pending = 0,
   Completed = 1,
+}
+
+/** `statusFilter` query values of GET SupervisorTasks/assigned (backend TaskStatusFilter) */
+export enum TaskStatusFilter {
+  All = 0,
+  Completed = 1,
+  Pending = 2,
 }
 
 export interface SupervisorTaskItem {
@@ -43,7 +51,7 @@ export interface SupervisorTasksData {
 export interface SupervisorTasksQuery {
   pageNumber: number;
   pageSize: number;
-  statusFilter?: TaskSupervisorStatus;
+  statusFilter?: TaskStatusFilter;
   search?: string;
   supervisorId?: string;
 }

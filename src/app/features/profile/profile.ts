@@ -6,7 +6,7 @@ import { MessageService } from 'primeng/api';
 import { finalize } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../core/auth/services/auth';
-import { ValidationError } from '../../core/models/api.models';
+import { ApiResult, ValidationError } from '../../core/models/api.models';
 import { ProfileService } from './profile.service';
 import { UserProfile } from './profile.model';
 
@@ -41,12 +41,13 @@ export class Profile implements OnInit {
   readonly profileForm = this.fb.nonNullable.group({
     DisplayName: ['', Validators.required],
     Email: ['', [Validators.required, Validators.email]],
-    Phone: ['', Validators.required],
+    // optional on the server (UpdateUserInfoCommandValidator), format checked only when filled
+    Phone: ['', Validators.pattern(/^\+?[0-9]{7,15}$/)],
   });
 
   readonly passwordForm = this.fb.nonNullable.group({
     OldPassword: ['', Validators.required],
-    NewPassword: ['', Validators.required],
+    NewPassword: ['', [Validators.required, Validators.minLength(6)]],
     ConfirmPassword: ['', Validators.required],
   });
 
@@ -76,9 +77,8 @@ export class Profile implements OnInit {
 
           this.setProfile(res.Data);
         },
-        error: () => {
-          if (showErrorToast) this.showError('PROFILE.LOAD_ERROR');
-        },
+        // the error interceptor already shows the server message
+        error: () => undefined,
       });
   }
 
@@ -128,10 +128,8 @@ export class Profile implements OnInit {
           this.showSuccess('PROFILE.IMAGE_UPLOAD_SUCCESS');
           this.loadProfile(false, false);
         },
-        error: () => {
-          this.showError('PROFILE.IMAGE_UPLOAD_ERROR');
-          this.avatarPreviewUrl.set(this.resolveAvatarUrl(this.profile()?.AvatarUrl));
-        },
+        // the error interceptor already shows the server message
+        error: () => this.avatarPreviewUrl.set(this.resolveAvatarUrl(this.profile()?.AvatarUrl)),
       });
   }
 
@@ -174,7 +172,11 @@ export class Profile implements OnInit {
           this.showSuccess('PROFILE.UPDATE_SUCCESS');
           this.loadProfile(false, false);
         },
-        error: () => this.showError('PROFILE.UPDATE_ERROR'),
+        // failures come back as non-2xx: the interceptor toasts, we show the field errors inline
+        error: err => {
+          const body = err?.error as ApiResult<unknown> | undefined;
+          this.profileValidationErrors.set(this.mapValidationErrors(body?.ValidationErrors));
+        },
       });
   }
 
@@ -200,7 +202,8 @@ export class Profile implements OnInit {
           this.passwordForm.reset();
           this.showSuccess('PROFILE.PASSWORD_RESET_SUCCESS');
         },
-        error: () => this.showError('PROFILE.PASSWORD_RESET_ERROR'),
+        // the error interceptor already shows the server message
+        error: () => undefined,
       });
   }
 

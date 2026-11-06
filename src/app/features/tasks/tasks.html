@@ -85,8 +85,8 @@
       @if (showStatusDrop()) {
         <div class="ss__dropdown">
           <ul class="ss__list">
-            <li class="ss__item" [class.ss__item--active]="statusFilter() === ''" (click)="selectStatusFilter('')">
-              @if (statusFilter() === '') { <i class="pi pi-check"></i> }
+            <li class="ss__item" [class.ss__item--active]="statusFilter() === TaskStatusFilter.All" (click)="selectStatusFilter(TaskStatusFilter.All)">
+              @if (statusFilter() === TaskStatusFilter.All) { <i class="pi pi-check"></i> }
               {{ 'TASKS.FILTERS.ALL_STATUSES' | translate }}
             </li>
             @for (status of statusOptions; track status.value) {

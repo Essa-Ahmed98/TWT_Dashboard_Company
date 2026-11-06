@@ -3,8 +3,8 @@ export interface DeviceItem {
   ImeiNumber:  string;
   SimNumber:   string;
   Notes:       string;
-  UserId:      string;
-  UserName:    string;
+  UserId:      string | null;
+  UserName:    string | null;
 }
 
 export interface DeviceForm {
@@ -24,6 +24,15 @@ export interface UpdateDeviceRequest {
   ImeiNumber: string;
   SimNumber:  string;
   Notes:      string;
+  /** UpdateDeviceCommand maps every field onto the device - send the current link or it gets cleared */
+  UserId:     string | null;
+}
+
+/** Result of POST Devices/upload (UploadDevicesResult) */
+export interface UploadDevicesResult {
+  TotalRows:    number;
+  SuccessCount: number;
+  Errors:       string[];
 }
 
 export interface UpdateDeviceConnectionRequest {

@@ -143,10 +143,10 @@
                 </td>
                 <td>
                   <div class="vitals">
-                    <span><i class="pi pi-heart"></i> {{ 'CRITICAL_HEALTH.HEART_RATE' | translate }}: <strong>{{ item.HeartRate }}</strong> bpm</span>
-                    <span><i class="pi pi-tint"></i> {{ 'CRITICAL_HEALTH.PRESSURE' | translate }}: <strong>{{ item.SystolicPressure }}/{{ item.DiastolicPressure }}</strong></span>
-                    <span><i class="pi pi-sun"></i> {{ 'CRITICAL_HEALTH.TEMP' | translate }}: <strong>{{ item.Temperature }}</strong>°</span>
-                    <span><i class="pi pi-cloud"></i> O₂: <strong>{{ item.OxygenSaturation }}%</strong></span>
+                    <span><i class="pi pi-heart"></i> {{ 'CRITICAL_HEALTH.HEART_RATE' | translate }}: <strong>{{ item.HeartRate ?? '—' }}</strong> bpm</span>
+                    <span><i class="pi pi-tint"></i> {{ 'CRITICAL_HEALTH.PRESSURE' | translate }}: <strong>{{ item.SystolicPressure ?? '—' }}/{{ item.DiastolicPressure ?? '—' }}</strong></span>
+                    <span><i class="pi pi-sun"></i> {{ 'CRITICAL_HEALTH.TEMP' | translate }}: <strong>{{ item.Temperature ?? '—' }}</strong>°</span>
+                    <span><i class="pi pi-cloud"></i> O₂: <strong>{{ item.OxygenSaturation ?? '—' }}%</strong></span>
                   </div>
                 </td>
                 <td><span class="location-text">{{ locationLabel(item) }}</span></td>

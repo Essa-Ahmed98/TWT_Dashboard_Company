@@ -10,8 +10,12 @@ import { UserLoginResult, StoredUser } from '../../models/user.model';
 interface LoginCommand {
   EmailOrPhone: string;
   Password: string;
+  IsRememberMeChecked: boolean;
   UserRole: number;
 }
+
+/** Thrown by login() when the account is valid but is not a company admin. */
+export const LOGIN_ROLE_NOT_ALLOWED = 'LOGIN_ROLE_NOT_ALLOWED';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -24,10 +28,11 @@ export class AuthService {
   currentUser = signal<StoredUser | null>(this.loadUser());
   isLoggedIn  = signal<boolean>(this.hasToken());
 
-  login(emailOrPhone: string, password: string) {
+  login(emailOrPhone: string, password: string, rememberMe = false) {
     const body: LoginCommand = {
       EmailOrPhone: emailOrPhone,
       Password: password,
+      IsRememberMeChecked: rememberMe,
       UserRole: 3,
     };
 
@@ -37,6 +42,10 @@ export class AuthService {
         map(res => {
           if (!res.IsSuccess) {
             throw new Error(res.Error?.message ?? 'فشل تسجيل الدخول');
+          }
+          // only company admins may use this dashboard - store nothing for any other role
+          if (res.Data?.Role !== 'Admin') {
+            throw new Error(LOGIN_ROLE_NOT_ALLOWED);
           }
           return res.Data;
         }),
@@ -60,13 +69,26 @@ export class AuthService {
   }
 
   logout(): void {
+    this.clearSession();
+    this.router.navigate(['/auth/login']);
+  }
+
+  /** Clears the stored token/user without navigating (used by the guard for an expired token). */
+  clearSession(): void {
     if (this.isBrowser) {
       localStorage.removeItem(this.TOKEN_KEY);
       localStorage.removeItem(this.USER_KEY);
     }
     this.currentUser.set(null);
     this.isLoggedIn.set(false);
-    this.router.navigate(['/auth/login']);
+  }
+
+  /** True when the JWT has an `exp` claim in the past. Undecodable tokens are not treated as expired. */
+  isTokenExpired(token: string | null = this.getToken()): boolean {
+    if (!token) return false;
+    const exp = Number(this.decodeToken(token)['exp']);
+    if (!Number.isFinite(exp) || exp <= 0) return false;
+    return exp * 1000 <= Date.now();
   }
 
   getToken(): string | null {
@@ -94,7 +116,9 @@ export class AuthService {
   }
 
   private hasToken(): boolean {
-    return this.isBrowser ? !!localStorage.getItem(this.TOKEN_KEY) : false;
+    if (!this.isBrowser) return false;
+    const token = localStorage.getItem(this.TOKEN_KEY);
+    return !!token && !this.isTokenExpired(token);
   }
 
   private loadUser(): StoredUser | null {

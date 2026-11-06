@@ -7,7 +7,7 @@ import { BusApiItem, BusForm, BUS_TYPES } from '../campaigns.model';
 import { CampaignsService } from '../campaigns.service';
 
 const EMPTY_FORM: BusForm = {
-  number: '', driverName: '', driverPhone: '+966',
+  number: '', driverName: '', driverPhone: '',
   capacity: '45', type: '', plateNumber: '', notes: '',
 };
 
@@ -72,6 +72,23 @@ export class CampaignBusesTab {
     return !this.saudiPhoneRegex.test(phone);
   });
 
+  /** Seats: empty falls back to the default (45); anything filled must be a whole number >= 1 */
+  readonly capacityInvalid = computed(() => {
+    const raw = String(this.form().capacity ?? '').trim();
+    if (!raw) return false;
+    const n = Number(raw);
+    return !Number.isInteger(n) || n < 1;
+  });
+
+  /** Driver name / phone are optional on the server (phone format checked only when filled) */
+  readonly isFormValid = computed(() => {
+    const f = this.form();
+    const phone = f.driverPhone.trim();
+    return !!f.number.trim() && !!f.type && !!f.plateNumber.trim()
+      && (!phone || this.saudiPhoneRegex.test(phone))
+      && !this.capacityInvalid();
+  });
+
   openModal(): void  {
     this.editingBus.set(null);
     this.form.set({ ...EMPTY_FORM });
@@ -82,12 +99,12 @@ export class CampaignBusesTab {
   openEditModal(bus: BusApiItem): void {
     this.editingBus.set(bus);
     this.form.set({
-      number: bus.BusNumber,
-      driverName: bus.DriverName,
-      driverPhone: bus.DriverPhone,
+      number: bus.BusNumber ?? '',
+      driverName: bus.DriverName ?? '',
+      driverPhone: bus.DriverPhone ?? '',
       capacity: String(bus.SeatsCount ?? 45),
-      type: bus.BusType,
-      plateNumber: bus.PlateNumber,
+      type: bus.BusType ?? '',
+      plateNumber: bus.PlateNumber ?? '',
       notes: bus.Notes ?? '',
     });
     this.phoneTouched.set(false);
@@ -103,7 +120,7 @@ export class CampaignBusesTab {
 
   submit(): void {
     const f = this.form();
-    if (!f.number.trim() || !f.driverName.trim() || !f.type || !f.plateNumber.trim() || this.phoneInvalid() || !f.driverPhone.trim() || this.submitting()) return;
+    if (!this.isFormValid() || this.submitting()) return;
 
     this.submitting.set(true);
     const editingBus = this.editingBus();

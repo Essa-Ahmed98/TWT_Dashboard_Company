@@ -67,7 +67,7 @@ export class ComplaintsService {
   }
 
   getSupervisors(groupId: string, companyId: string, search?: string): Observable<ApiResult<SupervisorDropdownItem[]>> {
-    let params = new HttpParams().set('pageSize', '10').set('groupId', groupId).set('companyId', companyId);
+    let params = new HttpParams().set('groupId', groupId).set('companyId', companyId);
     if (search?.trim()) params = params.set('search', search.trim());
     return this.http.get<ApiResult<SupervisorDropdownItem[]>>(
       `${environment.apiBase}/Supervisors/all`,

@@ -267,7 +267,10 @@ export class AccommodationLocation implements OnInit, AfterViewInit, OnDestroy {
             this.submitError.set('حدث خطأ أثناء تحديث السكن');
           }
         },
-        error: () => this.submitError.set('حدث خطأ أثناء تحديث السكن'),
+        // the interceptor already toasts; show the server message inline instead of a generic one
+        error: err => this.submitError.set(
+          err?.error?.Error?.MessageKey || err?.error?.ValidationErrors?.[0]?.ErrorMessage || 'حدث خطأ أثناء تحديث السكن',
+        ),
       });
   }
 

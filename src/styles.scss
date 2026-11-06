@@ -111,3 +111,23 @@ html[dir='ltr'] {
     }
   }
 }
+
+// Excel import result (rows that failed) - devices / pilgrims import modals
+.import-result {
+  border: 1px solid #ffd6d6;
+  background: #fff8f8;
+  border-radius: 12px;
+  padding: 12px 14px;
+
+  &__summary { margin: 0 0 6px; font-weight: 600; color: #1a2e3b; font-size: 13.5px; }
+  &__title   { margin: 0 0 6px; color: #e53935; font-size: 13px; font-weight: 600; }
+  &__errors {
+    margin: 0;
+    padding-inline-start: 18px;
+    max-height: 180px;
+    overflow-y: auto;
+    font-size: 12.5px;
+    color: #374151;
+    li + li { margin-top: 4px; }
+  }
+}

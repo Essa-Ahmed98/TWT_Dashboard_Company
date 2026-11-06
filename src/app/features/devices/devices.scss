@@ -416,6 +416,14 @@ $text-label:   #374151;
     border-color: $border;
     &:hover { background: $bg-page; }
   }
+
+  &--danger {
+    background: $red;
+    color: #fff;
+    &:hover { background: color.adjust($red, $lightness: -8%); }
+  }
+
+  &:disabled { opacity: .6; cursor: not-allowed; }
 }
 
 // ── Centered dialog ───────────────────────────────────────────────

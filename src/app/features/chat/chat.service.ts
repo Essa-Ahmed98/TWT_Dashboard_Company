@@ -64,7 +64,7 @@ export class ChatService implements OnDestroy {
 
   searchPilgrims(query: string) {
     return this.http.get<ApiResult<PilgrimSearchResult[]>>(
-      `${environment.chatApiBase}/chat/search-pilgrims?search=${encodeURIComponent(query)}`,
+      `${environment.chatApiBase}/chat/search-pilgrims?searchText=${encodeURIComponent(query)}`,
     );
   }
 
@@ -83,7 +83,9 @@ export class ChatService implements OnDestroy {
     const signalR = await import('@microsoft/signalr');
 
     this.hub = new signalR.HubConnectionBuilder()
-      .withUrl(environment.hubUrl, {
+      // the WebSocket handshake can't carry our Accept-Language header, so the language goes in the query
+      // (otherwise call errors come back in the browser's language, e.g. English)
+      .withUrl(`${environment.hubUrl}${environment.hubUrl.includes('?') ? '&' : '?'}culture=ar&ui-culture=ar`, {
         accessTokenFactory: () => this.auth.getToken() ?? '',
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets,

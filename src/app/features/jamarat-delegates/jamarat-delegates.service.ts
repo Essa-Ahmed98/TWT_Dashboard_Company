@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ApiResult } from '../../core/models/api.models';
 import {
-  DelegateListItem,
+  DelegateDetails,
   DelegatesPagedResult,
   DelegatesQuery,
   PilgrimRequestsResult,
@@ -27,8 +27,8 @@ export class JamaratDelegatesService {
     return this.http.get<ApiResult<DelegatesPagedResult>>(this.base, { params });
   }
 
-  getDelegateById(id: string): Observable<ApiResult<DelegateListItem>> {
-    return this.http.get<ApiResult<DelegateListItem>>(`${this.base}/${id}`);
+  getDelegateById(id: string): Observable<ApiResult<DelegateDetails>> {
+    return this.http.get<ApiResult<DelegateDetails>>(`${this.base}/${id}`);
   }
 
   createDelegate(formData: FormData): Observable<ApiResult<unknown>> {

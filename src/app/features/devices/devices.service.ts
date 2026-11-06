@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResult, PaginatedResult } from '../../core/models/api.models';
-import { DeviceItem, CreateDeviceRequest, UpdateDeviceRequest, UpdateDeviceConnectionRequest, PilgrimOption } from './devices.model';
+import { DeviceItem, CreateDeviceRequest, UpdateDeviceRequest, UpdateDeviceConnectionRequest, PilgrimOption, UploadDevicesResult } from './devices.model';
 import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -68,11 +68,11 @@ export class DevicesService {
     });
   }
 
-  uploadDevicesFile(file: File): Observable<ApiResult<unknown> | { issuccess?: boolean; IsSuccess?: boolean }> {
+  uploadDevicesFile(file: File): Observable<ApiResult<UploadDevicesResult>> {
     const formData = new FormData();
     formData.append('file', file);
 
-    return this.http.post<ApiResult<unknown> | { issuccess?: boolean; IsSuccess?: boolean }>(
+    return this.http.post<ApiResult<UploadDevicesResult>>(
       `${environment.apiBase}/Devices/upload`,
       formData,
     );

@@ -55,6 +55,13 @@ export interface PilgrimForm {
   bloodType:        string;   // enum value as string
 }
 
+/** Result of POST Pilgrims/upload (UploadPilgrimsResult) */
+export interface UploadPilgrimsResult {
+  TotalRows:    number;
+  SuccessCount: number;
+  Errors:       string[];
+}
+
 export interface CreatePilgrimRequest {
   Email:            string;
   DisplayName:      string;
@@ -65,28 +72,29 @@ export interface CreatePilgrimRequest {
   PassportNumber:   string;
   Nationality:      string;
   DateOfBirth:      string | null;
-  Gender:           number;
+  Gender:           number | null;
   IDNumber:         string;
   Accommodation:    string;
   NuskCardNumber:   string;
   PermitNumber:     string;
-  BloodType:        number;
+  BloodType:        number | null;
 }
 
+/** UpdatePilgrimCommand overwrites every field it receives (nulls included) - always send the current values */
 export interface UpdatePilgrimRequest {
   Id:               string;
-  HajjType:         number;
+  HajjType:         number | null;
   PassportNumber:   string;
   Nationality:      string;
   DateOfBirth:      string | null;
-  Gender:           number;
+  Gender:           number | null;
   IDNumber:         string;
   Accommodation:    string;
   NuskCardNumber:   string;
   PermitNumber:     string;
-  BloodType:        number;
-  AccommodationLatitude?: number;
-  AccommodationLongitude?: number;
+  BloodType:        number | null;
+  AccommodationLatitude:  number | null;
+  AccommodationLongitude: number | null;
   Email:            string;
   DisplayName:      string;
   Phone:            string;

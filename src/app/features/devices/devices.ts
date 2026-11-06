@@ -14,12 +14,11 @@ import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TooltipModule } from 'primeng/tooltip';
 import { MessageService } from 'primeng/api';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { AuthService } from '../../core/auth/services/auth';
-import { ApiResult } from '../../core/models/api.models';
 import { DevicesService } from './devices.service';
-import { DeviceItem, DeviceForm, PilgrimOption } from './devices.model';
+import { DeviceItem, DeviceForm, PilgrimOption, UploadDevicesResult } from './devices.model';
 import { SsDropdownDirective } from '../../shared/directives/ss-dropdown.directive';
 
 const EMPTY_FORM: DeviceForm = { imeiNumber: '', simNumber: '', notes: '' };
@@ -36,6 +35,7 @@ export class Devices implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly toast      = inject(MessageService);
   private readonly auth       = inject(AuthService);
+  private readonly translate  = inject(TranslateService);
 
   // ── State ────────────────────────────────────────────────────────
   devices     = signal<DeviceItem[]>([]);
@@ -65,6 +65,8 @@ export class Devices implements OnInit {
   showModal   = signal(false);
   saving      = signal(false);
   editingId   = signal<string | null>(null);
+  /** UserId of the device being edited - sent back so the update doesn't unlink the watch */
+  editingUserId = signal<string | null>(null);
   formData    = signal<DeviceForm>({ ...EMPTY_FORM });
 
   showImportModal      = signal(false);
@@ -72,6 +74,11 @@ export class Devices implements OnInit {
   importSelectedFile   = signal<File | null>(null);
   importSelectedName   = signal('');
   uploadingImportFile  = signal(false);
+  importResult         = signal<UploadDevicesResult | null>(null);
+
+  // ── Delete confirmation ──────────────────────────────────────────
+  deleteTarget = signal<DeviceItem | null>(null);
+  deleting     = signal(false);
 
   // ── Link modal state ─────────────────────────────────────────────
   showLinkModal      = signal(false);
@@ -151,11 +158,13 @@ export class Devices implements OnInit {
     this.importSelectedName.set('');
     this.downloadingTemplate.set(false);
     this.uploadingImportFile.set(false);
+    this.importResult.set(null);
     this.showImportModal.set(true);
   }
 
   openEditModal(device: DeviceItem): void {
     this.editingId.set(device.Id);
+    this.editingUserId.set(device.UserId ?? null);
     this.formData.set({
       imeiNumber: device.ImeiNumber ?? '',
       simNumber:  device.SimNumber  ?? '',
@@ -180,6 +189,7 @@ export class Devices implements OnInit {
     const file = input.files?.[0];
     this.importSelectedFile.set(file ?? null);
     this.importSelectedName.set(file?.name ?? '');
+    this.importResult.set(null);
   }
 
   clearImportFile(fileInput: HTMLInputElement): void {
@@ -214,10 +224,8 @@ export class Devices implements OnInit {
           anchor.remove();
           window.URL.revokeObjectURL(url);
         },
-        error: () => {
-          this.downloadingTemplate.set(false);
-          this.showImportError();
-        },
+        // the error interceptor already shows the server message
+        error: () => this.downloadingTemplate.set(false),
       });
   }
 
@@ -231,43 +239,40 @@ export class Devices implements OnInit {
     }
 
     this.uploadingImportFile.set(true);
+    this.importResult.set(null);
     this.service.uploadDevicesFile(selectedFile)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: response => {
           this.uploadingImportFile.set(false);
-          const isSuccess = (response as ApiResult<unknown>)?.IsSuccess
-            ?? (response as { issuccess?: boolean; IsSuccess?: boolean })?.issuccess
-            ?? false;
+          const result: UploadDevicesResult = {
+            TotalRows:    response?.Data?.TotalRows ?? 0,
+            SuccessCount: response?.Data?.SuccessCount ?? 0,
+            Errors:       response?.Data?.Errors ?? [],
+          };
 
-          if (isSuccess) {
-            this.showImportModal.set(false);
-            this.importSelectedFile.set(null);
-            this.importSelectedName.set('');
-            fileInput.value = '';
-            this.load(this.searchQuery());
+          this.importSelectedFile.set(null);
+          this.importSelectedName.set('');
+          fileInput.value = '';
+          if (result.SuccessCount > 0) this.load(this.searchQuery());
+
+          const summary = this.translate.instant('DEVICES.IMPORT.RESULT_SUMMARY', {
+            success: result.SuccessCount,
+            total:   result.TotalRows,
+          });
+
+          if (result.Errors.length) {
+            // keep the modal open and list the rows that failed
+            this.importResult.set(result);
+            this.toast.add({ severity: 'warn', summary: 'تنبيه', detail: summary });
             return;
           }
 
-          const res = response as ApiResult<unknown>;
-          const errorMsg =
-            res?.Error?.MessageKey ||
-            res?.Error?.message ||
-            res?.ValidationErrors?.[0]?.ErrorMessage ||
-            null;
-
-          this.showImportError(errorMsg);
+          this.showImportModal.set(false);
+          this.toast.add({ severity: 'success', summary: 'تم', detail: summary });
         },
-        error: err => {
-          this.uploadingImportFile.set(false);
-          const body = err?.error as ApiResult<unknown> | undefined;
-          const errorMsg =
-            body?.Error?.MessageKey ||
-            body?.Error?.message ||
-            body?.ValidationErrors?.[0]?.ErrorMessage ||
-            null;
-          this.showImportError(errorMsg);
-        },
+        // the error interceptor already shows the server message
+        error: () => this.uploadingImportFile.set(false),
       });
   }
 
@@ -301,6 +306,8 @@ export class Devices implements OnInit {
           ImeiNumber: f.imeiNumber.trim(),
           SimNumber:  f.simNumber.trim(),
           Notes:      f.notes.trim(),
+          // keep the watch linked to its pilgrim (the command overwrites UserId)
+          UserId:     this.editingUserId(),
         })
       : this.service.addDevice({
           ImeiNumber: f.imeiNumber.trim(),
@@ -318,10 +325,8 @@ export class Devices implements OnInit {
           this.toast.add({ severity: 'error', summary: 'خطأ', detail: 'حدث خطأ، حاول مرة أخرى' });
         }
       },
-      error: () => {
-        this.saving.set(false);
-        this.toast.add({ severity: 'error', summary: 'خطأ', detail: 'حدث خطأ، حاول مرة أخرى' });
-      },
+      // the error interceptor already shows the server message
+      error: () => this.saving.set(false),
     });
   }
 
@@ -388,10 +393,7 @@ export class Devices implements OnInit {
             this.toast.add({ severity: 'error', summary: 'خطأ', detail: 'تعذّر ربط الجهاز' });
           }
         },
-        error: () => {
-          this.savingLink.set(false);
-          this.toast.add({ severity: 'error', summary: 'خطأ', detail: 'تعذّر ربط الجهاز' });
-        },
+        error: () => this.savingLink.set(false),
       });
   }
 
@@ -404,21 +406,37 @@ export class Devices implements OnInit {
           if (res.IsSuccess) this.load(this.searchQuery());
           else this.toast.add({ severity: 'error', summary: 'خطأ', detail: 'تعذّر فك الربط' });
         },
-        error: () => this.toast.add({ severity: 'error', summary: 'خطأ', detail: 'تعذّر فك الربط' }),
       });
   }
 
   // ── Delete ───────────────────────────────────────────────────────
-  deleteDevice(id: string): void {
+  askDeleteDevice(device: DeviceItem): void {
+    if (this.deleting()) return;
+    this.deleteTarget.set(device);
+  }
+
+  cancelDelete(): void {
+    if (this.deleting()) return;
+    this.deleteTarget.set(null);
+  }
+
+  confirmDelete(): void {
+    const device = this.deleteTarget();
+    if (!device || this.deleting()) return;
+
+    this.deleting.set(true);
     this.service
-      .deleteDevice(id)
+      .deleteDevice(device.Id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: res => {
+          this.deleting.set(false);
+          this.deleteTarget.set(null);
           if (res.IsSuccess) this.load(this.searchQuery());
           else this.toast.add({ severity: 'error', summary: 'خطأ', detail: 'تعذّر حذف الجهاز' });
         },
-        error: () => this.toast.add({ severity: 'error', summary: 'خطأ', detail: 'تعذّر حذف الجهاز' }),
+        // the error interceptor already shows the server message
+        error: () => this.deleting.set(false),
       });
   }
 }

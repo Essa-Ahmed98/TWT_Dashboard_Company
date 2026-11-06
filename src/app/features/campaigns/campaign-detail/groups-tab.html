@@ -179,14 +179,14 @@
     <div class="dialog__body">
       <div class="form-field">
         <label class="form-label">{{ 'GROUPS_TAB.GROUP_NAME' | translate }} <span class="form-req">*</span></label>
-        <input class="form-input" type="text" [placeholder]="'GROUPS_TAB.GROUP_NAME_PLACEHOLDER' | translate"
+        <input class="form-input" type="text" maxlength="100" [placeholder]="'GROUPS_TAB.GROUP_NAME_PLACEHOLDER' | translate"
           [value]="form().name"
           [disabled]="submitting()"
           (input)="patchForm({ name: $any($event.target).value })" />
       </div>
       <div class="form-field">
         <label class="form-label">{{ 'GROUPS_TAB.NOTES' | translate }}</label>
-        <textarea class="form-input form-input--textarea" rows="3" [placeholder]="'GROUPS_TAB.NOTES_PLACEHOLDER' | translate"
+        <textarea class="form-input form-input--textarea" rows="3" maxlength="200" [placeholder]="'GROUPS_TAB.NOTES_PLACEHOLDER' | translate"
           [value]="form().notes"
           [disabled]="submitting()"
           (input)="patchForm({ notes: $any($event.target).value })"></textarea>
