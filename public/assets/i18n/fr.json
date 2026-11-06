@@ -1510,6 +1510,8 @@
       "BROADCAST": "Envoyer des messages groupés",
       "PORTALS": "Contenu de sensibilisation",
       "SURVEYS": "Questionnaires"
-    }
+    },
+    "CHAT": "Envoyer un message",
+    "MANAGERS": "Responsables de la mission"
   }
 }

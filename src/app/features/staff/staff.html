@@ -35,6 +35,23 @@
     </div>
   </div>
 
+  @if (managers().length) {
+    <div class="managers">
+      <span class="managers__title"><i class="pi pi-crown"></i> {{ 'STAFF.MANAGERS' | translate }}</span>
+      <div class="managers__list">
+        @for (m of managers(); track m.UserId) {
+          <div class="manager">
+            <span class="manager__avatar">{{ m.DisplayName.charAt(0) }}@if (m.IsOnline) {<span class="manager__online"></span>}</span>
+            <span class="manager__name">{{ m.DisplayName }}</span>
+            <button class="row-actions__btn row-actions__btn--chat" [pTooltip]="'STAFF.CHAT' | translate" tooltipPosition="top" (click)="openChat(m.UserId, m.DisplayName, managerRole)">
+              <i class="pi pi-comments"></i>
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
   <p class="staff__note">
     <i class="pi pi-info-circle"></i>
     {{ 'STAFF.NOTE' | translate }}
@@ -93,6 +110,11 @@
               <td>{{ formatDate(member.CreatedAt) }}</td>
               <td>
                 <div class="row-actions">
+                  @if (isActive(member)) {
+                    <button class="row-actions__btn row-actions__btn--chat" [pTooltip]="'STAFF.CHAT' | translate" tooltipPosition="top" (click)="openChat(member.Id, member.DisplayName)">
+                      <i class="pi pi-comments"></i>
+                    </button>
+                  }
                   <button class="row-actions__btn" [pTooltip]="'STAFF.EDIT' | translate" tooltipPosition="top" (click)="openEdit(member)">
                     <i class="pi pi-pencil"></i>
                   </button>

@@ -76,7 +76,8 @@ export class CallService implements OnDestroy {
       this.call.set(call);
       switch (event) {
         case 'CallAccepted':
-          // the caller joins the room when the callee answers
+          // the caller joins the room when the callee answers - the "ringing" tone must stop now
+          this.stopRingtone();
           if (call.CallerId === this.myId() && this.phase() === 'outgoing') void this.joinRoom();
           break;
         case 'CallAnsweredElsewhere':
@@ -98,6 +99,17 @@ export class CallService implements OnDestroy {
     this.error.set(null);
     this.cameraOn.set(callType === CallType.Video);
     this.micOn.set(true);
+
+    // ask for the mic (and camera) now, while the user's click is fresh - asking only when the other
+    // side answers made the first call fail while the browser permission prompt was still open
+    const denied = await this.ensureMediaPermission(callType);
+    if (denied) {
+      this.call.set(null);
+      this.phase.set('ended');
+      this.endMessage.set(denied);
+      this.scheduleClose();
+      return;
+    }
 
     const result = await this.chat.startCall(calleeId, callType).catch(() => null);
     if (!result || !result.Success || !result.Call) {
@@ -126,6 +138,13 @@ export class CallService implements OnDestroy {
     this.cameraOn.set(call.CallType === CallType.Video);
     this.micOn.set(true);
     this.phase.set('connecting');
+
+    const denied = await this.ensureMediaPermission(call.CallType);
+    if (denied) {
+      await this.chat.rejectCall(call.CallId).catch(() => null);
+      this.finish(denied);
+      return;
+    }
 
     const result = await this.chat.acceptCall(call.CallId).catch(() => null);
     if (!result?.Success) {
@@ -177,6 +196,7 @@ export class CallService implements OnDestroy {
   private async joinRoom(): Promise<void> {
     const call = this.call();
     if (!call) return;
+    this.stopRingtone();
     this.phase.set('connecting');
 
     try {
@@ -202,7 +222,10 @@ export class CallService implements OnDestroy {
 
       await room.connect(res.Data.Url, res.Data.Token);
       await room.localParticipant.setMicrophoneEnabled(true);
-      if (call.CallType === CallType.Video) await room.localParticipant.setCameraEnabled(true);
+      if (call.CallType === CallType.Video) {
+        // no camera (or it is busy): keep the call going with voice
+        await room.localParticipant.setCameraEnabled(true).catch(() => this.zone.run(() => this.cameraOn.set(false)));
+      }
       this.refreshLocalVideo();
 
       this.zone.run(() => {
@@ -214,6 +237,35 @@ export class CallService implements OnDestroy {
       this.error.set('تعذر الاتصال بخدمة المكالمات (تأكد من إذن المايك / الكاميرا)');
       await this.chat.endCall(call.CallId).catch(() => null);
       this.finish('تعذر إتمام المكالمة');
+    }
+  }
+
+  /**
+   * Makes sure the browser lets us use the mic (and the camera for video) before the call starts.
+   * Returns null when allowed, otherwise the message to show. The test stream is closed right away;
+   * LiveKit opens its own tracks when the room connects (no second prompt once allowed).
+   */
+  private async ensureMediaPermission(callType: CallType): Promise<string | null> {
+    if (!navigator.mediaDevices?.getUserMedia) return 'المتصفح لا يدعم المكالمات أو الصفحة غير آمنة (https)';
+    const video = callType === CallType.Video;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video });
+      stream.getTracks().forEach(t => t.stop());
+      return null;
+    } catch (err) {
+      const name = (err as DOMException)?.name;
+      if (name === 'NotAllowedError' || name === 'SecurityError') {
+        return video
+          ? 'يرجى السماح للمتصفح باستخدام المايك والكاميرا (من علامة القفل بجوار عنوان الموقع) ثم أعد المحاولة'
+          : 'يرجى السماح للمتصفح باستخدام المايك (من علامة القفل بجوار عنوان الموقع) ثم أعد المحاولة';
+      }
+      if (name === 'NotFoundError' || name === 'OverconstrainedError') {
+        // no camera: a video call can still go on with voice only
+        if (video) return (await this.ensureMediaPermission(CallType.Audio)) ?? null;
+        return 'لا يوجد مايك متصل بالجهاز';
+      }
+      if (name === 'NotReadableError') return 'المايك أو الكاميرا مستخدمة في برنامج آخر';
+      return 'تعذر الوصول إلى المايك';
     }
   }
 

@@ -165,8 +165,8 @@ export class Chat implements OnInit, OnDestroy {
       .subscribe(params => {
         const userId = params['userId'];
         if (userId) {
-          const state = this.location.getState() as { displayName?: string } | null;
-          this.openConversationByUserId(userId, state?.displayName);
+          const state = this.location.getState() as { displayName?: string; role?: UserRole } | null;
+          this.openConversationByUserId(userId, state?.displayName, state?.role ?? UserRole.Pilgrim);
         }
       });
   }

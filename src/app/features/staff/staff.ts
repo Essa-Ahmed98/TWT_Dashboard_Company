@@ -13,7 +13,10 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { Tooltip } from 'primeng/tooltip';
+import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
+import { ChatService } from '../chat/chat.service';
+import { ChatContact, UserRole } from '../chat/chat.model';
 
 import {
   PERMISSION_GROUPS,
@@ -55,6 +58,11 @@ export class Staff implements OnInit {
   private readonly toast = inject(MessageService);
   private readonly translate = inject(TranslateService);
   private readonly translation = inject(TranslationService);
+  private readonly router = inject(Router);
+  private readonly chat = inject(ChatService);
+
+  /** The other managers of my company (to open a chat with them) */
+  readonly managers = signal<ChatContact[]>([]);
 
   readonly groups: PermissionGroup[] = PERMISSION_GROUPS;
   readonly rules = STAFF_RULES;
@@ -109,7 +117,21 @@ export class Staff implements OnInit {
   readonly stoppedCount = computed(() => this.totalCount() - this.activeCount());
   readonly isEdit = computed(() => !!this.editing());
 
+  private loadManagers(): void {
+    this.chat.searchColleagues('')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({ next: list => this.managers.set(list.filter(c => c.Role === UserRole.Admin)), error: () => this.managers.set([]) });
+  }
+
+  /** Opens (or starts) the chat with a manager or a staff member */
+  openChat(userId: string, displayName: string, role: UserRole = UserRole.Specific): void {
+    this.router.navigate(['/chat'], { queryParams: { userId }, state: { displayName, role } });
+  }
+
+  readonly managerRole = UserRole.Admin;
+
   ngOnInit(): void {
+    this.loadManagers();
     this.load();
   }
 
