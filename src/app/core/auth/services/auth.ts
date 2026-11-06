@@ -1,4 +1,4 @@
-import { Injectable, PLATFORM_ID, inject, signal } from '@angular/core';
+import { Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -6,6 +6,7 @@ import { tap, map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { ApiResult } from '../../models/api.models';
 import { UserLoginResult, StoredUser } from '../../models/user.model';
+import { PermissionRule, STAFF_LANDING_ROUTES } from '../permissions';
 
 interface LoginCommand {
   EmailOrPhone: string;
@@ -14,8 +15,11 @@ interface LoginCommand {
   UserRole: number;
 }
 
-/** Thrown by login() when the account is valid but is not a company admin. */
+/** Thrown by login() when the account is valid but is not a company admin or company staff. */
 export const LOGIN_ROLE_NOT_ALLOWED = 'LOGIN_ROLE_NOT_ALLOWED';
+
+/** Shown to a staff member who has no section at all */
+export const NO_ACCESS_ROUTE = '/no-access';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -27,6 +31,15 @@ export class AuthService {
 
   currentUser = signal<StoredUser | null>(this.loadUser());
   isLoggedIn  = signal<boolean>(this.hasToken());
+
+  /** The company manager: every section, plus staff management and company settings */
+  readonly isAdmin = computed(() => this.currentUser()?.role === 'Admin');
+
+  /** A company staff account (role Specific): only the sections it was given */
+  readonly isStaff = computed(() => {
+    const user = this.currentUser();
+    return user?.role === 'Specific' && !!user.companyId;
+  });
 
   login(emailOrPhone: string, password: string, rememberMe = false) {
     const body: LoginCommand = {
@@ -43,20 +56,23 @@ export class AuthService {
           if (!res.IsSuccess) {
             throw new Error(res.Error?.message ?? 'فشل تسجيل الدخول');
           }
-          // only company admins may use this dashboard - store nothing for any other role
-          if (res.Data?.Role !== 'Admin') {
+          // only the company manager and the company's staff may use this dashboard - store nothing for any other role
+          const data = res.Data;
+          const companyId = data ? this.companyIdOf(data) : '';
+          const allowed = data?.Role === 'Admin' || (data?.Role === 'Specific' && !!companyId);
+          if (!allowed) {
             throw new Error(LOGIN_ROLE_NOT_ALLOWED);
           }
-          return res.Data;
+          return data;
         }),
         tap(value => {
-          const claims  = this.decodeToken(value.Token);
           const user: StoredUser = {
             userId:      value.Id,
             displayName: value.DisplayName,
             email:       value.Email,
             role:        value.Role,
-            companyId:   String(value.CompanyId ?? claims['CompanyId'] ?? claims['companyId'] ?? claims['company_id'] ?? ''),
+            companyId:   this.companyIdOf(value),
+            permissions: value.Role === 'Specific' ? [...(value.Permissions ?? [])] : [],
           };
           if (this.isBrowser) {
             localStorage.setItem(this.TOKEN_KEY, value.Token);
@@ -66,6 +82,32 @@ export class AuthService {
           this.isLoggedIn.set(true);
         })
       );
+  }
+
+  /** A stored session this dashboard accepts: the company manager, or staff of a company */
+  isCompanyUser(): boolean {
+    return this.isAdmin() || this.isStaff();
+  }
+
+  /** The manager may use everything; staff only what they were given (any one permission of a list is enough) */
+  hasPermission(rule: PermissionRule | null | undefined): boolean {
+    if (this.isAdmin()) return true;
+    if (!this.isStaff()) return false;
+    if (!rule || (Array.isArray(rule) && rule.length === 0)) return true;
+
+    const granted = this.currentUser()?.permissions ?? [];
+    const needed: readonly string[] = typeof rule === 'string' ? [rule] : rule;
+    return needed.some(permission => granted.includes(permission));
+  }
+
+  /**
+   * Where to go after login, or when a page cannot be opened: the manager keeps the old start page,
+   * staff go to the first section they may use (or the "no access" page).
+   */
+  defaultRoute(): string {
+    if (this.isAdmin()) return '/campaigns';
+    const first = STAFF_LANDING_ROUTES.find(item => this.hasPermission(item.permission));
+    return first?.route ?? NO_ACCESS_ROUTE;
   }
 
   logout(): void {
@@ -106,9 +148,14 @@ export class AuthService {
     this.currentUser.set(updated);
   }
 
-  private decodeToken(token: string): Record<string, unknown> {
+  private companyIdOf(value: UserLoginResult): string {
+    const claims = this.decodeToken(value.Token);
+    return String(value.CompanyId || claims['CompanyId'] || claims['companyId'] || claims['company_id'] || '');
+  }
+
+  private decodeToken(token: string | null | undefined): Record<string, unknown> {
     try {
-      const payload = token.split('.')[1];
+      const payload = (token ?? '').split('.')[1];
       return JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
     } catch {
       return {};

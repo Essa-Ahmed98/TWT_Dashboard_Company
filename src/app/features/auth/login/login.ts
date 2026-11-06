@@ -60,7 +60,8 @@ export class Login {
     this.hasError.set(false);
     this.auth.login(emailOrPhone, password, this.rememberMe()).subscribe({
       next: () => {
-        this.router.navigate(['/campaigns']).then(() => {
+        // the manager keeps the campaigns start page; staff start at their first allowed section
+        this.router.navigateByUrl(this.auth.defaultRoute()).then(() => {
           this.message.add({
             severity: 'success',
             summary: this.translate.instant('LOGIN.SUCCESS_SUMMARY'),

@@ -128,7 +128,7 @@
           </thead>
           <tbody>
             @for (item of healthConditions(); track item.Id) {
-              <tr class="health-table__row" [class.health-table__row--clickable]="item.PilgrimId" (click)="openPilgrimProfile(item)">
+              <tr class="health-table__row" [class.health-table__row--clickable]="item.PilgrimId && canOpenPilgrims" (click)="openPilgrimProfile(item)">
                 <td>
                   <div class="pilgrim-cell">
                     <span class="pilgrim-cell__avatar">{{ initial(item.DisplayName) }}</span>

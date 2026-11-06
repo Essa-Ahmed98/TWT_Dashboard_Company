@@ -8,10 +8,12 @@
     <span class="cd__tab-panel-count">
       {{ totalCount() | number }} {{ 'GROUPS_TAB.GROUP_UNIT' | translate }}
     </span>
-    <button class="btn btn--primary" (click)="openModal()">
-      <i class="pi pi-plus"></i>
-      {{ 'GROUPS_TAB.ADD_GROUP' | translate }}
-    </button>
+    @if (canEditGroups) {
+      <button class="btn btn--primary" (click)="openModal()">
+        <i class="pi pi-plus"></i>
+        {{ 'GROUPS_TAB.ADD_GROUP' | translate }}
+      </button>
+    }
   </div>
 
   @if (loading()) {
@@ -48,12 +50,14 @@
               </div>
             </div>
             <div class="group-card__row-end">
-              <button class="group-card__edit"
-                      [title]="'GROUPS_TAB.EDIT_GROUP' | translate"
-                      type="button"
-                      (click)="openEditModal(g, $event)">
-                <i class="pi pi-pencil"></i>
-              </button>
+              @if (canEditGroups) {
+                <button class="group-card__edit"
+                        [title]="'GROUPS_TAB.EDIT_GROUP' | translate"
+                        type="button"
+                        (click)="openEditModal(g, $event)">
+                  <i class="pi pi-pencil"></i>
+                </button>
+              }
               <span class="group-card__supervisors">
                 <i class="pi pi-user-edit"></i>
                 {{ g.SupervisorsCount }} {{ 'GROUPS_TAB.SUPERVISOR_UNIT' | translate }}
@@ -108,9 +112,11 @@
                           <td>{{ p.DisplayName }}</td>
                           <td>{{ p.Nationality }}</td>
                           <td>
-                            <button class="icon-btn" [title]="'COMMON.VIEW_DETAILS' | translate" (click)="openPilgrimDetail(p.Id)">
-                              <i class="pi pi-eye"></i>
-                            </button>
+                            @if (canOpenPilgrims) {
+                              <button class="icon-btn" [title]="'COMMON.VIEW_DETAILS' | translate" (click)="openPilgrimDetail(p.Id)">
+                                <i class="pi pi-eye"></i>
+                              </button>
+                            }
                           </td>
                         </tr>
                       }
@@ -119,7 +125,7 @@
                 </div>
               </div>
 
-              @if (g.PilgrimsCount > 0) {
+              @if (g.PilgrimsCount > 0 && canOpenPilgrims) {
                 <div class="group-section group-section--footer">
                   <button class="group-section__more" (click)="viewGroupPilgrims()">
                     {{ 'GROUPS_TAB.VIEW_ALL_GROUP_PILGRIMS' | translate }} ({{ g.PilgrimsCount }})

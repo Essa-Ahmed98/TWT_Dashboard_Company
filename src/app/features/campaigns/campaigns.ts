@@ -6,6 +6,8 @@ import { debounceTime } from 'rxjs/operators';
 import { TranslateModule } from '@ngx-translate/core';
 import { Campaign, CampaignForm, CampaignStatus } from './campaigns.model';
 import { CampaignsService } from './campaigns.service';
+import { AuthService } from '../../core/auth/services/auth';
+import { PERMISSIONS } from '../../core/auth/permissions';
 
 // same colour the picker shows by default, so Create isn't disabled until the picker is touched
 const EMPTY_FORM: CampaignForm = { name: '', number: '', color: '#22c35d' };
@@ -19,6 +21,8 @@ const EMPTY_FORM: CampaignForm = { name: '', number: '', color: '#22c35d' };
 })
 export class Campaigns implements OnDestroy {
   private readonly service       = inject(CampaignsService);
+  /** adding / editing a campaign needs the Campaigns permission (staff with Groups / Buses only open campaigns) */
+  readonly canEdit = inject(AuthService).hasPermission(PERMISSIONS.Campaigns);
   private readonly router        = inject(Router);
   private readonly searchSubject = new Subject<string>();
   private readonly subs          = new Subscription();

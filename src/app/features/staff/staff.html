@@ -1,0 +1,276 @@
+@if (showForm()) {
+  <div class="modal-backdrop" (click)="closeForm()"></div>
+}
+@if (statusTarget()) {
+  <div class="modal-backdrop" (click)="cancelStatus()"></div>
+}
+
+<div class="staff">
+  <div class="staff__header">
+    <div class="staff__title">
+      <h1 class="staff__title-text">
+        <i class="pi pi-id-card"></i>
+        {{ 'STAFF.TITLE' | translate }}
+      </h1>
+      <span class="staff__subtitle">{{ 'STAFF.SUBTITLE' | translate }}</span>
+    </div>
+    <button class="btn btn--primary" (click)="openAdd()">
+      <i class="pi pi-user-plus"></i>
+      <span>{{ 'STAFF.ADD' | translate }}</span>
+    </button>
+  </div>
+
+  <div class="staff__stats">
+    <div class="stat">
+      <span class="stat__value">{{ totalCount() }}</span>
+      <span class="stat__label">{{ 'STAFF.STATS.TOTAL' | translate }}</span>
+    </div>
+    <div class="stat stat--green">
+      <span class="stat__value">{{ activeCount() }}</span>
+      <span class="stat__label">{{ 'STAFF.STATS.ACTIVE' | translate }}</span>
+    </div>
+    <div class="stat stat--red">
+      <span class="stat__value">{{ stoppedCount() }}</span>
+      <span class="stat__label">{{ 'STAFF.STATS.SUSPENDED' | translate }}</span>
+    </div>
+  </div>
+
+  <p class="staff__note">
+    <i class="pi pi-info-circle"></i>
+    {{ 'STAFF.NOTE' | translate }}
+  </p>
+
+  <div class="staff__search">
+    <i class="pi pi-search"></i>
+    <input
+      type="text"
+      [placeholder]="'STAFF.SEARCH_PLACEHOLDER' | translate"
+      [value]="search()"
+      (input)="onSearch($any($event.target).value)"
+    />
+  </div>
+
+  <div class="staff__table-wrap">
+    @if (loading()) {
+      <div class="staff__spinner">
+        <p-progressSpinner strokeWidth="4" styleClass="staff__progress" />
+      </div>
+    } @else {
+      <table class="staff__table">
+        <thead>
+          <tr>
+            <th>{{ 'STAFF.TABLE.NAME' | translate }}</th>
+            <th>{{ 'STAFF.TABLE.EMAIL' | translate }}</th>
+            <th>{{ 'STAFF.TABLE.PHONE' | translate }}</th>
+            <th>{{ 'STAFF.TABLE.PERMISSIONS' | translate }}</th>
+            <th>{{ 'STAFF.TABLE.STATUS' | translate }}</th>
+            <th>{{ 'STAFF.TABLE.CREATED_AT' | translate }}</th>
+            <th>{{ 'STAFF.TABLE.ACTIONS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (member of filtered(); track member.Id) {
+            <tr [class.is-stopped]="!isActive(member)">
+              <td class="staff__name">{{ member.DisplayName || '—' }}</td>
+              <td dir="ltr" class="staff__ltr">{{ member.Email || '—' }}</td>
+              <td dir="ltr" class="staff__ltr">{{ member.Phone || '—' }}</td>
+              <td>
+                <div class="chips">
+                  @for (permission of chips(member); track permission) {
+                    <span class="chip">{{ labelKey(permission) | translate }}</span>
+                  }
+                  @if (moreCount(member) > 0) {
+                    <span class="chip chip--more" [pTooltip]="moreLabel(member)" tooltipPosition="top">+{{ moreCount(member) }}</span>
+                  }
+                  @if (!member.Permissions.length) {
+                    <span class="muted">—</span>
+                  }
+                </div>
+              </td>
+              <td>
+                <span class="badge" [class.badge--active]="isActive(member)">{{ statusKey(member) | translate }}</span>
+              </td>
+              <td>{{ formatDate(member.CreatedAt) }}</td>
+              <td>
+                <div class="row-actions">
+                  <button class="row-actions__btn" [pTooltip]="'STAFF.EDIT' | translate" tooltipPosition="top" (click)="openEdit(member)">
+                    <i class="pi pi-pencil"></i>
+                  </button>
+                  @if (isActive(member)) {
+                    <button class="row-actions__btn row-actions__btn--danger" [pTooltip]="'STAFF.SUSPEND' | translate" tooltipPosition="top" (click)="askStatus(member)">
+                      <i class="pi pi-ban"></i>
+                    </button>
+                  } @else {
+                    <button class="row-actions__btn row-actions__btn--success" [pTooltip]="'STAFF.ACTIVATE' | translate" tooltipPosition="top" (click)="askStatus(member)">
+                      <i class="pi pi-check-circle"></i>
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+
+          @if (filtered().length === 0) {
+            <tr>
+              <td colspan="7" class="staff__empty">
+                <i class="pi pi-id-card"></i>
+                <p>{{ (loadFailed() ? 'STAFF.LOAD_ERROR' : search() ? 'COMMON.NO_RESULTS' : 'STAFF.EMPTY') | translate }}</p>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>
+
+<!-- Add / edit -->
+@if (showForm()) {
+  <div class="dialog dialog--wide" role="dialog" (click)="$event.stopPropagation()">
+    <div class="dialog__header">
+      <div>
+        <h2 class="dialog__title">{{ (isEdit() ? 'STAFF.EDIT_TITLE' : 'STAFF.ADD_TITLE') | translate }}</h2>
+        <p class="dialog__sub">{{ (isEdit() ? 'STAFF.EDIT_SUBTITLE' : 'STAFF.ADD_SUBTITLE') | translate }}</p>
+      </div>
+      <button class="dialog__close" (click)="closeForm()" [disabled]="saving()">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <form class="dialog__body" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="form-grid">
+        <div class="form-field">
+          <label class="form-label" for="staff-name">{{ 'STAFF.FORM.NAME' | translate }}<span class="form-req">*</span></label>
+          <input id="staff-name" class="form-input" formControlName="DisplayName" [maxlength]="rules.nameMaxLength"
+                 [class.form-input--error]="invalid('DisplayName')" [placeholder]="'STAFF.FORM.NAME_PLACEHOLDER' | translate" />
+          @if (invalid('DisplayName')) {
+            <span class="form-error">{{ (form.controls.DisplayName.hasError('maxlength') ? 'STAFF.ERRORS.NAME_MAX' : 'STAFF.ERRORS.NAME_REQUIRED') | translate: { max: rules.nameMaxLength } }}</span>
+          }
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="staff-email">{{ 'STAFF.FORM.EMAIL' | translate }}<span class="form-req">*</span></label>
+          <input id="staff-email" class="form-input" type="email" dir="ltr" formControlName="Email" autocomplete="off"
+                 [class.form-input--error]="invalid('Email')" placeholder="name@example.com" />
+          @if (invalid('Email')) {
+            <span class="form-error">{{ (form.controls.Email.hasError('required') ? 'STAFF.ERRORS.EMAIL_REQUIRED' : 'STAFF.ERRORS.EMAIL_INVALID') | translate }}</span>
+          }
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="staff-phone">{{ 'STAFF.FORM.PHONE' | translate }}</label>
+          <input id="staff-phone" class="form-input" type="tel" dir="ltr" formControlName="Phone"
+                 [class.form-input--error]="invalid('Phone')" placeholder="05xxxxxxxx" />
+          @if (invalid('Phone')) {
+            <span class="form-error">{{ 'COMMON.PHONE_INVALID_SA' | translate }}</span>
+          } @else {
+            <span class="form-hint">{{ 'STAFF.FORM.PHONE_HINT' | translate }}</span>
+          }
+        </div>
+
+        @if (!isEdit()) {
+          <div class="form-field">
+            <label class="form-label" for="staff-password">{{ 'STAFF.FORM.PASSWORD' | translate }}<span class="form-req">*</span></label>
+            <div class="password">
+              <input id="staff-password" class="form-input" dir="ltr" formControlName="Password" autocomplete="new-password"
+                     [type]="showPassword() ? 'text' : 'password'" [class.form-input--error]="invalid('Password')" />
+              <button type="button" class="password__toggle" (click)="togglePassword()" [attr.aria-label]="'STAFF.FORM.SHOW_PASSWORD' | translate">
+                <i [class]="showPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+              </button>
+            </div>
+            @if (invalid('Password')) {
+              <span class="form-error">{{ (form.controls.Password.hasError('required') ? 'STAFF.ERRORS.PASSWORD_REQUIRED' : 'STAFF.ERRORS.PASSWORD_MIN') | translate: { min: rules.passwordMinLength } }}</span>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="picker">
+        <div class="picker__head">
+          <div>
+            <h3 class="picker__title">{{ 'STAFF.FORM.PERMISSIONS' | translate }}<span class="form-req">*</span></h3>
+            <p class="picker__sub">{{ 'STAFF.FORM.PERMISSIONS_HINT' | translate }}</p>
+          </div>
+          <label class="check check--strong">
+            <input type="checkbox" [checked]="allSelected()" (change)="toggleAll($any($event.target).checked)" />
+            <span>{{ 'STAFF.FORM.SELECT_ALL' | translate }}</span>
+          </label>
+        </div>
+
+        <div class="picker__groups">
+          @for (group of groups; track group.key) {
+            <section class="pgroup">
+              <label class="pgroup__head check check--strong">
+                <input type="checkbox"
+                       [checked]="groupState(group) === 'all'"
+                       [indeterminate]="groupState(group) === 'some'"
+                       (change)="toggleGroup(group, $any($event.target).checked)" />
+                <span>{{ group.labelKey | translate }}</span>
+              </label>
+              @for (permission of group.permissions; track permission) {
+                <label class="check pgroup__item">
+                  <input type="checkbox" [checked]="isSelected(permission)" (change)="toggle(permission, $any($event.target).checked)" />
+                  <span>
+                    <strong>{{ labelKey(permission) | translate }}</strong>
+                    <small>{{ hintKey(permission) | translate }}</small>
+                  </span>
+                </label>
+              }
+            </section>
+          }
+        </div>
+
+        @if (invalid('Permissions')) {
+          <span class="form-error">{{ 'STAFF.ERRORS.PERMISSIONS_REQUIRED' | translate }}</span>
+        }
+      </div>
+
+      @if (serverErrors().length) {
+        <ul class="server-errors">
+          @for (message of serverErrors(); track $index) {
+            <li><i class="pi pi-exclamation-circle"></i> {{ message }}</li>
+          }
+        </ul>
+      }
+    </form>
+
+    <div class="dialog__footer">
+      <button type="button" class="btn btn--outline" (click)="closeForm()" [disabled]="saving()">{{ 'COMMON.CANCEL' | translate }}</button>
+      <button type="button" class="btn btn--primary" (click)="submit()" [disabled]="saving()">
+        @if (saving()) {
+          <i class="pi pi-spin pi-spinner"></i>
+          {{ 'COMMON.SAVING' | translate }}
+        } @else {
+          {{ (isEdit() ? 'COMMON.SAVE_CHANGES' : 'STAFF.ADD') | translate }}
+        }
+      </button>
+    </div>
+  </div>
+}
+
+<!-- Suspend / reactivate confirmation -->
+@if (statusTarget(); as member) {
+  <div class="dialog" role="alertdialog" (click)="$event.stopPropagation()">
+    <div class="dialog__header">
+      <h2 class="dialog__title">{{ (isActive(member) ? 'STAFF.SUSPEND_TITLE' : 'STAFF.ACTIVATE_TITLE') | translate }}</h2>
+      <button class="dialog__close" (click)="cancelStatus()" [disabled]="statusSaving()">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+    <div class="dialog__body">
+      <p class="confirm-text">
+        {{ (isActive(member) ? 'STAFF.SUSPEND_CONFIRM' : 'STAFF.ACTIVATE_CONFIRM') | translate: { name: member.DisplayName } }}
+      </p>
+    </div>
+    <div class="dialog__footer">
+      <button class="btn btn--outline" (click)="cancelStatus()" [disabled]="statusSaving()">{{ 'COMMON.CANCEL' | translate }}</button>
+      <button class="btn" [class.btn--danger]="isActive(member)" [class.btn--primary]="!isActive(member)"
+              (click)="confirmStatus()" [disabled]="statusSaving()">
+        @if (statusSaving()) {
+          <i class="pi pi-spin pi-spinner"></i>
+        }
+        {{ (isActive(member) ? 'STAFF.SUSPEND' : 'STAFF.ACTIVATE') | translate }}
+      </button>
+    </div>
+  </div>
+}

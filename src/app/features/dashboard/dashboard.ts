@@ -3,6 +3,8 @@ import { RouterLink } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { DashboardService } from './dashboard.service';
+import { AuthService } from '../../core/auth/services/auth';
+import { PERMISSIONS } from '../../core/auth/permissions';
 
 export interface DonutSegment {
   labelKey: string;
@@ -21,6 +23,8 @@ export interface DonutSegment {
 })
 export class Dashboard implements OnInit {
   readonly svc = inject(DashboardService);
+  /** staff without the monitoring room (GeoZones) do not see its button */
+  readonly canOpenMonitoring = inject(AuthService).hasPermission(PERMISSIONS.GeoZones);
 
   readonly hijriYear = new Intl.DateTimeFormat('ar', {
     calendar: 'islamic-umalqura',

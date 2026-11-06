@@ -8,14 +8,14 @@
     @if (!collapsed()) {
       <div class="sidenav__brand-text">
         <span class="sidenav__brand-name">{{ 'SIDENAV.BRAND_NAME' | translate }}</span>
-        <span class="sidenav__brand-role">{{ auth.currentUser()?.displayName || ('SIDENAV.ADMIN' | translate) }}</span>
+        <span class="sidenav__brand-role">{{ auth.currentUser()?.displayName || ((auth.isStaff() ? 'SIDENAV.STAFF_MEMBER' : 'SIDENAV.ADMIN') | translate) }}</span>
       </div>
     }
   </div>
 
   <!-- Nav Groups -->
   <div class="sidenav__nav">
-    @for (group of navGroups; track group.labelKey) {
+    @for (group of visibleGroups(); track group.labelKey) {
       <div class="sidenav__group">
         @if (!collapsed()) {
           <span class="sidenav__group-label">{{ group.labelKey | translate }}</span>

@@ -49,10 +49,12 @@
         </button>
       </div>
 
-      <button class="btn btn--primary" (click)="openModal()">
-        <i class="pi pi-plus"></i>
-        <span>{{ 'CAMPAIGNS.ADD' | translate }}</span>
-      </button>
+      @if (canEdit) {
+        <button class="btn btn--primary" (click)="openModal()">
+          <i class="pi pi-plus"></i>
+          <span>{{ 'CAMPAIGNS.ADD' | translate }}</span>
+        </button>
+      }
     </div>
   </div>
 
@@ -112,12 +114,14 @@
                   {{ 'CAMPAIGNS.VIEW_DETAILS' | translate }}
                   <i class="pi pi-angle-left dir-forward__icon"></i>
                 </a>
-            <button class="campaign-edit-btn campaign-edit-btn--card"
-                    type="button"
-                    [title]="'CAMPAIGNS.EDIT' | translate"
-                    (click)="openEditModal(c, $event)">
-              <i class="pi pi-pencil"></i>
-            </button>
+            @if (canEdit) {
+              <button class="campaign-edit-btn campaign-edit-btn--card"
+                      type="button"
+                      [title]="'CAMPAIGNS.EDIT' | translate"
+                      (click)="openEditModal(c, $event)">
+                <i class="pi pi-pencil"></i>
+              </button>
+            }
           </div>
         </div>
       }
@@ -169,12 +173,14 @@
               </td>
               <td>
                 <div class="table-actions">
-                  <button class="campaign-edit-btn"
-                          type="button"
-                          [title]="'CAMPAIGNS.EDIT' | translate"
-                          (click)="openEditModal(c, $event)">
-                    <i class="pi pi-pencil"></i>
-                  </button>
+                  @if (canEdit) {
+                    <button class="campaign-edit-btn"
+                            type="button"
+                            [title]="'CAMPAIGNS.EDIT' | translate"
+                            (click)="openEditModal(c, $event)">
+                      <i class="pi pi-pencil"></i>
+                    </button>
+                  }
                   <button class="campaign-icon-btn"
                           type="button"
                           [title]="'CAMPAIGNS.VIEW_DETAILS' | translate"

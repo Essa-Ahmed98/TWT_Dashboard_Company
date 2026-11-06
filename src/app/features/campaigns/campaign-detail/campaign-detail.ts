@@ -6,6 +6,8 @@ import { CampaignStatus, CampaignTab } from '../campaigns.model';
 import { CampaignsService } from '../campaigns.service';
 import { CampaignGroupsTab } from './groups-tab';
 import { CampaignBusesTab } from './buses-tab';
+import { AuthService } from '../../../core/auth/services/auth';
+import { PERMISSIONS } from '../../../core/auth/permissions';
 
 @Component({
   selector: 'app-campaign-detail',
@@ -34,10 +36,14 @@ export class CampaignDetail implements OnDestroy {
   // ── Tabs ──────────────────────────────────────────────────────
   activeTab = signal<CampaignTab>('groups');
 
-  readonly tabs: { key: CampaignTab; labelKey: string; icon: string }[] = [
+  private readonly auth = inject(AuthService);
+
+  // staff see the buses tab only with the Buses permission (the groups list is open to every campaign reader)
+  readonly tabs: { key: CampaignTab; labelKey: string; icon: string }[] = ([
     { key: 'groups', labelKey: 'CAMPAIGN_DETAIL.TABS.GROUPS', icon: 'pi pi-sitemap' },
     { key: 'buses',  labelKey: 'CAMPAIGN_DETAIL.TABS.BUSES',  icon: 'pi pi-car'     },
-  ];
+  ] as { key: CampaignTab; labelKey: string; icon: string }[])
+    .filter(tab => tab.key !== 'buses' || this.auth.hasPermission(PERMISSIONS.Buses));
 
   goBack(): void { this.router.navigate(['/campaigns']); }
 

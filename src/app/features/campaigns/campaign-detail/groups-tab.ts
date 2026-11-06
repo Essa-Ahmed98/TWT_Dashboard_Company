@@ -6,6 +6,8 @@ import { finalize } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { GroupApiItem, GroupForm } from '../campaigns.model';
 import { CampaignsService } from '../campaigns.service';
+import { AuthService } from '../../../core/auth/services/auth';
+import { PERMISSIONS } from '../../../core/auth/permissions';
 
 const EMPTY_FORM: GroupForm = { name: '', notes: '' };
 
@@ -18,6 +20,10 @@ const EMPTY_FORM: GroupForm = { name: '', notes: '' };
 })
 export class CampaignGroupsTab {
   private readonly service = inject(CampaignsService);
+  private readonly auth    = inject(AuthService);
+  /** staff: adding / editing groups needs Groups, opening a pilgrim needs Pilgrims */
+  readonly canEditGroups   = this.auth.hasPermission(PERMISSIONS.Groups);
+  readonly canOpenPilgrims = this.auth.hasPermission(PERMISSIONS.Pilgrims);
   private readonly router  = inject(Router);
   private readonly toast   = inject(MessageService);
   private readonly translate = inject(TranslateService);

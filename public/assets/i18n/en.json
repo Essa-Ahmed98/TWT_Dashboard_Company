@@ -87,7 +87,9 @@
     "CRITICAL_HEALTH": "Critical Health Cases",
     "JAMARAT_DELEGATES": "Jamarat Delegates",
     "PROFILE": "User Profile",
-    "SETTINGS": "Settings"
+    "SETTINGS": "Settings",
+    "STAFF": "Staff & Permissions",
+    "STAFF_MEMBER": "Staff"
   },
   "LOGIN": {
     "TITLE": "Admin",
@@ -963,8 +965,11 @@
       "SUPERVISOR": "Supervisor",
       "COMPANY_ADMIN": "Company Admin",
       "SUPER_ADMIN": "System Admin",
-      "UNKNOWN": "Unknown"
-    }
+      "UNKNOWN": "Unknown",
+      "COMPANY_STAFF": "Company staff"
+    },
+    "MY_PERMISSIONS": "Sections you can use",
+    "NO_PERMISSIONS": "No section has been given to you yet"
   },
   "CAMPAIGN_DETAIL": {
     "LOADING": "Loading...",
@@ -1373,5 +1378,121 @@
     "SEVERITY_VERY_CRITICAL": "Very Critical",
     "SEVERITY_CRITICAL": "Critical",
     "SEVERITY_MEDIUM": "Medium"
+  },
+  "NO_ACCESS": {
+    "TITLE": "No sections available to you",
+    "TEXT": "The company manager has not given you any section yet. Ask them to set your permissions, then sign in again."
+  },
+  "STAFF": {
+    "TITLE": "Staff & Permissions",
+    "SUBTITLE": "Add staff to the company dashboard and choose which sections each one can use",
+    "ADD": "Add staff",
+    "EDIT": "Edit details and permissions",
+    "SUSPEND": "Suspend",
+    "ACTIVATE": "Activate",
+    "STATS": {
+      "TOTAL": "Total staff",
+      "ACTIVE": "Active",
+      "SUSPENDED": "Suspended"
+    },
+    "NOTE": "Permission changes and suspensions apply on the server immediately. The staff member's menu updates the next time they sign in.",
+    "SEARCH_PLACEHOLDER": "Search by name, email or phone...",
+    "TABLE": {
+      "NAME": "Name",
+      "EMAIL": "Email",
+      "PHONE": "Phone",
+      "PERMISSIONS": "Permissions",
+      "STATUS": "Status",
+      "CREATED_AT": "Added on",
+      "ACTIONS": "Actions"
+    },
+    "STATUS": {
+      "ACTIVE": "Active",
+      "SUSPENDED": "Suspended",
+      "PENDING": "Pending"
+    },
+    "EMPTY": "No staff yet. Add your first staff member and choose their permissions.",
+    "LOAD_ERROR": "Could not load the staff list",
+    "ADD_TITLE": "Add a staff member",
+    "ADD_SUBTITLE": "The staff member signs in to the company dashboard with this email and password",
+    "EDIT_TITLE": "Edit staff member",
+    "EDIT_SUBTITLE": "Change the details or the sections this staff member can use",
+    "FORM": {
+      "NAME": "Name",
+      "NAME_PLACEHOLDER": "Staff member name",
+      "EMAIL": "Email",
+      "PHONE": "Mobile number",
+      "PHONE_HINT": "Optional - a Saudi mobile number such as 05xxxxxxxx",
+      "PASSWORD": "Password",
+      "SHOW_PASSWORD": "Show password",
+      "PERMISSIONS": "Allowed sections",
+      "PERMISSIONS_HINT": "The staff member only sees and uses these sections; the rest of the dashboard is hidden",
+      "SELECT_ALL": "Select all"
+    },
+    "ERRORS": {
+      "NAME_REQUIRED": "Name is required",
+      "NAME_MAX": "Name must not exceed {{max}} characters",
+      "EMAIL_REQUIRED": "Email is required",
+      "EMAIL_INVALID": "Please enter a valid email address",
+      "PASSWORD_REQUIRED": "Password is required",
+      "PASSWORD_MIN": "Password must be at least {{min}} characters",
+      "PERMISSIONS_REQUIRED": "Choose at least one section"
+    },
+    "SAVE_ERROR": "Could not save the staff member",
+    "STATUS_ERROR": "Could not change the staff member's status",
+    "CREATED": "Staff member added",
+    "UPDATED": "Staff member updated",
+    "ACTIVATED": "Staff member activated",
+    "SUSPENDED": "Staff member suspended",
+    "SUSPEND_TITLE": "Suspend staff member",
+    "ACTIVATE_TITLE": "Activate staff member",
+    "SUSPEND_CONFIRM": "Suspend {{name}}? They will not be able to sign in or use the dashboard until you activate them again.",
+    "ACTIVATE_CONFIRM": "Activate {{name}} again? They will be able to sign in with their allowed sections.",
+    "GROUPS": {
+      "OVERVIEW": "Overview & centers",
+      "PEOPLE": "People",
+      "FIELD": "Field & monitoring",
+      "COMMUNICATION": "Communication & follow-up"
+    },
+    "PERMS": {
+      "DASHBOARDS": "Dashboard",
+      "CAMPAIGNS": "Centers (campaigns)",
+      "GROUPS": "Groups",
+      "BUSES": "Buses & dispatch",
+      "PILGRIMS": "Pilgrims",
+      "SUPERVISORS": "Supervisors",
+      "DEVICES": "Devices",
+      "TOUR_LEADERS": "Tour leaders & tours",
+      "DELEGATES": "Jamarat delegates",
+      "GEO_ZONES": "Monitoring room",
+      "EMERGENCIES": "Critical cases",
+      "SUPERVISOR_TASKS": "Task management",
+      "COMPLAINTS": "Complaints",
+      "REVIEWS": "Reviews",
+      "NOTIFICATIONS": "Bulk notifications",
+      "BROADCAST": "Broadcast messages",
+      "PORTALS": "Awareness",
+      "SURVEYS": "Surveys"
+    },
+    "PERM_HINTS": {
+      "DASHBOARDS": "Statistics and the general summary",
+      "CAMPAIGNS": "View, add and edit centers",
+      "GROUPS": "Add and edit groups inside the centers",
+      "BUSES": "Buses inside the centers and the dispatch schedule",
+      "PILGRIMS": "Pilgrims, rituals control, accommodation and chat",
+      "SUPERVISORS": "Supervisors, their reviews and chat with them",
+      "DEVICES": "Devices and linking them to pilgrims",
+      "TOUR_LEADERS": "View tour leaders and tours",
+      "DELEGATES": "View the Jamarat delegates",
+      "GEO_ZONES": "Geo zones and following pilgrims on the map",
+      "EMERGENCIES": "Critical health readings of pilgrims",
+      "SUPERVISOR_TASKS": "Assign tasks to supervisors and follow them",
+      "COMPLAINTS": "Complaints, their status and assigning a supervisor",
+      "REVIEWS": "Pilgrims' reviews",
+      "NOTIFICATIONS": "Send notifications and see what was sent",
+      "BROADCAST": "Send broadcast messages",
+      "PORTALS": "Awareness content",
+      "SURVEYS": "Surveys"
+    }
   }
 }

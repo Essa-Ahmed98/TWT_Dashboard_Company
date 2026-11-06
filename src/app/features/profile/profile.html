@@ -245,6 +245,19 @@
             </strong>
           </div>
 
+          @if (isStaff()) {
+            <div class="profile-info profile-info--wide">
+              <span>{{ 'PROFILE.MY_PERMISSIONS' | translate }}</span>
+              <strong class="profile-perms">
+                @for (permission of staffPermissions(); track permission) {
+                  <span class="profile-perms__chip">{{ permissionLabelKey(permission) | translate }}</span>
+                } @empty {
+                  {{ 'PROFILE.NO_PERMISSIONS' | translate }}
+                }
+              </strong>
+            </div>
+          }
+
           <div class="profile-info">
             <span>{{ 'PROFILE.EMAIL' | translate }}</span>
             <strong>

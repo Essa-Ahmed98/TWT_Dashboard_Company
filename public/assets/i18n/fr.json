@@ -87,7 +87,9 @@
     "CRITICAL_HEALTH": "Cas de Santé Critiques",
     "JAMARAT_DELEGATES": "Délégués de Jamarat",
     "PROFILE": "Profil utilisateur",
-    "SETTINGS": "Paramètres"
+    "SETTINGS": "Paramètres",
+    "STAFF": "Personnel et autorisations",
+    "STAFF_MEMBER": "Employé"
   },
   "LOGIN": {
     "TITLE": "Admin",
@@ -963,8 +965,11 @@
       "SUPERVISOR": "Superviseur",
       "COMPANY_ADMIN": "Administrateur de l'entreprise",
       "SUPER_ADMIN": "Administrateur système",
-      "UNKNOWN": "Inconnu"
-    }
+      "UNKNOWN": "Inconnu",
+      "COMPANY_STAFF": "Employé de la société"
+    },
+    "MY_PERMISSIONS": "Sections autorisées",
+    "NO_PERMISSIONS": "Aucune section ne vous a encore été attribuée"
   },
   "CAMPAIGN_DETAIL": {
     "LOADING": "Chargement...",
@@ -1373,5 +1378,121 @@
     "SEVERITY_VERY_CRITICAL": "Très critique",
     "SEVERITY_CRITICAL": "Critique",
     "SEVERITY_MEDIUM": "Moyenne"
+  },
+  "NO_ACCESS": {
+    "TITLE": "Aucune section disponible",
+    "TEXT": "Le responsable de la société ne vous a encore attribué aucune section. Demandez-lui de définir vos autorisations, puis reconnectez-vous."
+  },
+  "STAFF": {
+    "TITLE": "Personnel et autorisations",
+    "SUBTITLE": "Ajoutez du personnel au tableau de bord de la société et choisissez les sections de chacun",
+    "ADD": "Ajouter un employé",
+    "EDIT": "Modifier les données et les autorisations",
+    "SUSPEND": "Suspendre",
+    "ACTIVATE": "Activer",
+    "STATS": {
+      "TOTAL": "Total du personnel",
+      "ACTIVE": "Actifs",
+      "SUSPENDED": "Suspendus"
+    },
+    "NOTE": "Les changements d'autorisations et les suspensions s'appliquent immédiatement sur le serveur. Le menu de l'employé se met à jour à sa prochaine connexion.",
+    "SEARCH_PLACEHOLDER": "Rechercher par nom, e-mail ou téléphone...",
+    "TABLE": {
+      "NAME": "Nom",
+      "EMAIL": "E-mail",
+      "PHONE": "Téléphone",
+      "PERMISSIONS": "Autorisations",
+      "STATUS": "Statut",
+      "CREATED_AT": "Ajouté le",
+      "ACTIONS": "Actions"
+    },
+    "STATUS": {
+      "ACTIVE": "Actif",
+      "SUSPENDED": "Suspendu",
+      "PENDING": "En attente"
+    },
+    "EMPTY": "Aucun employé pour le moment. Ajoutez le premier et choisissez ses autorisations.",
+    "LOAD_ERROR": "Impossible de charger la liste du personnel",
+    "ADD_TITLE": "Ajouter un employé",
+    "ADD_SUBTITLE": "L'employé se connecte au tableau de bord de la société avec cet e-mail et ce mot de passe",
+    "EDIT_TITLE": "Modifier l'employé",
+    "EDIT_SUBTITLE": "Modifiez les données ou les sections autorisées de l'employé",
+    "FORM": {
+      "NAME": "Nom",
+      "NAME_PLACEHOLDER": "Nom de l'employé",
+      "EMAIL": "E-mail",
+      "PHONE": "Numéro de mobile",
+      "PHONE_HINT": "Facultatif - un numéro mobile saoudien comme 05xxxxxxxx",
+      "PASSWORD": "Mot de passe",
+      "SHOW_PASSWORD": "Afficher le mot de passe",
+      "PERMISSIONS": "Sections autorisées",
+      "PERMISSIONS_HINT": "L'employé voit et utilise uniquement ces sections ; le reste du tableau de bord est masqué",
+      "SELECT_ALL": "Tout sélectionner"
+    },
+    "ERRORS": {
+      "NAME_REQUIRED": "Le nom est obligatoire",
+      "NAME_MAX": "Le nom ne doit pas dépasser {{max}} caractères",
+      "EMAIL_REQUIRED": "L'e-mail est obligatoire",
+      "EMAIL_INVALID": "Veuillez saisir une adresse e-mail valide",
+      "PASSWORD_REQUIRED": "Le mot de passe est obligatoire",
+      "PASSWORD_MIN": "Le mot de passe doit contenir au moins {{min}} caractères",
+      "PERMISSIONS_REQUIRED": "Choisissez au moins une section"
+    },
+    "SAVE_ERROR": "Impossible d'enregistrer l'employé",
+    "STATUS_ERROR": "Impossible de changer le statut de l'employé",
+    "CREATED": "Employé ajouté",
+    "UPDATED": "Employé mis à jour",
+    "ACTIVATED": "Employé activé",
+    "SUSPENDED": "Employé suspendu",
+    "SUSPEND_TITLE": "Suspendre l'employé",
+    "ACTIVATE_TITLE": "Activer l'employé",
+    "SUSPEND_CONFIRM": "Suspendre {{name}} ? Il ne pourra plus se connecter ni utiliser le tableau de bord jusqu'à sa réactivation.",
+    "ACTIVATE_CONFIRM": "Réactiver {{name}} ? Il pourra se connecter avec ses sections autorisées.",
+    "GROUPS": {
+      "OVERVIEW": "Vue d'ensemble et centres",
+      "PEOPLE": "Personnes",
+      "FIELD": "Terrain et surveillance",
+      "COMMUNICATION": "Communication et suivi"
+    },
+    "PERMS": {
+      "DASHBOARDS": "Tableau de bord",
+      "CAMPAIGNS": "Centres (campagnes)",
+      "GROUPS": "Groupes",
+      "BUSES": "Bus et transport",
+      "PILGRIMS": "Pèlerins",
+      "SUPERVISORS": "Superviseurs",
+      "DEVICES": "Appareils",
+      "TOUR_LEADERS": "Guides et sorties",
+      "DELEGATES": "Mandataires des Jamarat",
+      "GEO_ZONES": "Salle de surveillance",
+      "EMERGENCIES": "Cas critiques",
+      "SUPERVISOR_TASKS": "Gestion des tâches",
+      "COMPLAINTS": "Réclamations",
+      "REVIEWS": "Évaluations",
+      "NOTIFICATIONS": "Notifications groupées",
+      "BROADCAST": "Messages groupés",
+      "PORTALS": "Sensibilisation",
+      "SURVEYS": "Questionnaires"
+    },
+    "PERM_HINTS": {
+      "DASHBOARDS": "Statistiques et résumé général",
+      "CAMPAIGNS": "Voir, ajouter et modifier les centres",
+      "GROUPS": "Ajouter et modifier les groupes dans les centres",
+      "BUSES": "Les bus des centres et le planning de transport",
+      "PILGRIMS": "Pèlerins, rites, lieu d'hébergement et discussion",
+      "SUPERVISORS": "Superviseurs, leurs évaluations et la discussion avec eux",
+      "DEVICES": "Appareils et leur liaison aux pèlerins",
+      "TOUR_LEADERS": "Voir les guides et les sorties",
+      "DELEGATES": "Voir les mandataires des Jamarat",
+      "GEO_ZONES": "Zones géographiques et suivi des pèlerins sur la carte",
+      "EMERGENCIES": "Relevés de santé critiques des pèlerins",
+      "SUPERVISOR_TASKS": "Attribuer des tâches aux superviseurs et les suivre",
+      "COMPLAINTS": "Réclamations, statut et attribution à un superviseur",
+      "REVIEWS": "Évaluations des pèlerins",
+      "NOTIFICATIONS": "Envoyer des notifications et voir les envois",
+      "BROADCAST": "Envoyer des messages groupés",
+      "PORTALS": "Contenu de sensibilisation",
+      "SURVEYS": "Questionnaires"
+    }
   }
 }

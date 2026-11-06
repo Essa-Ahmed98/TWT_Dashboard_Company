@@ -9,6 +9,7 @@ import { AuthService } from '../../core/auth/services/auth';
 import { ApiResult, ValidationError } from '../../core/models/api.models';
 import { ProfileService } from './profile.service';
 import { UserProfile } from './profile.model';
+import { permissionLabelKey } from '../../core/auth/permissions';
 
 @Component({
   selector: 'app-profile',
@@ -53,6 +54,10 @@ export class Profile implements OnInit {
 
   readonly currentUserId = computed(() => this.auth.currentUser()?.userId ?? '');
   readonly roleLabelKey = computed(() => this.roleKey(this.profile()?.Role ?? this.auth.currentUser()?.role));
+  /** a staff member sees the sections the company manager gave them (read only) */
+  readonly isStaff = this.auth.isStaff;
+  readonly staffPermissions = computed(() => (this.auth.isStaff() ? this.auth.currentUser()?.permissions ?? [] : []));
+  readonly permissionLabelKey = permissionLabelKey;
 
   ngOnInit(): void {
     this.loadProfile();
@@ -270,6 +275,7 @@ export class Profile implements OnInit {
     const normalized = String(role ?? '').toLowerCase();
     if (normalized === '4' || normalized === 'superadmin' || normalized === 'super_admin') return 'PROFILE.ROLES.SUPER_ADMIN';
     if (normalized === '3' || normalized === 'admin') return 'PROFILE.ROLES.COMPANY_ADMIN';
+    if (normalized === '5' || normalized === 'specific') return 'PROFILE.ROLES.COMPANY_STAFF';
     if (normalized === '2' || normalized === 'supervisor') return 'PROFILE.ROLES.SUPERVISOR';
     if (normalized === '1' || normalized === 'family') return 'PROFILE.ROLES.FAMILY';
     if (normalized === '0' || normalized === 'pilgrim') return 'PROFILE.ROLES.PILGRIM';

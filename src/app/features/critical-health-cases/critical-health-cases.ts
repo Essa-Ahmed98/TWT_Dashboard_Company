@@ -13,6 +13,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, finalize } from 'rxjs/operators';
 
 import { AuthService } from '../../core/auth/services/auth';
+import { PERMISSIONS } from '../../core/auth/permissions';
 import {
   CampaignDropdownItem,
   GroupDropdownItem,
@@ -34,6 +35,8 @@ const HEALTH_PAGE_SIZE_OPTIONS = [10, 20, 50, 100] as const;
 })
 export class CriticalHealthCases implements OnInit {
   private readonly auth = inject(AuthService);
+  /** staff without the Pilgrims section stay on this page */
+  readonly canOpenPilgrims = this.auth.hasPermission(PERMISSIONS.Pilgrims);
   private readonly service = inject(CriticalHealthCasesService);
   private readonly complaintsService = inject(ComplaintsService);
   private readonly destroyRef = inject(DestroyRef);
@@ -212,6 +215,7 @@ export class CriticalHealthCases implements OnInit {
   nextPage(): void { this.goToPage(this.currentPage() + 1); }
 
   openPilgrimProfile(item: HealthConditionItem): void {
+    if (!this.canOpenPilgrims) return;
     if (!item.PilgrimId) {
       this.toast.add({
         severity: 'warn',

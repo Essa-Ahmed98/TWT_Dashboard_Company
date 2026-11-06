@@ -13,10 +13,12 @@
         <span class="system-badge__dot"></span>
         {{ 'DASHBOARD.SYSTEM_WORKING' | translate }}
       </span>
-      <a class="btn-monitor" routerLink="/geo-fence">
-        <i class="pi pi-eye"></i>
-        {{ 'DASHBOARD.MONITORING_ROOM' | translate }}
-      </a>
+      @if (canOpenMonitoring) {
+        <a class="btn-monitor" routerLink="/geo-fence">
+          <i class="pi pi-eye"></i>
+          {{ 'DASHBOARD.MONITORING_ROOM' | translate }}
+        </a>
+      }
     </div>
   </div>
 
